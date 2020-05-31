@@ -1,19 +1,21 @@
 <template>
     <div class="ckeditor" data-editor='DecoupledDocumentEditor'>
         <div style="margin-bottom:40px">
-            <button @click="exportHtml">导出html模板</button>
+            <button @click="exportHtml">从富文本编辑器导出html</button>
             <button @click="importHtml">导入html模板</button>
+            <button @click="importHtmlThenRender">模板导入-先渲染</button>
+
             <button @click="exportHtmlWithStyle">导出html带样式</button>
             <button @click="printPreview">打印预览</button>
             <button @click="renderTpl">模板渲染</button>
-            <button @click="importHtmlThenRender">模板导入同时渲染</button>
+            
             <button @click="downloadDocx">生成word</button>|||
             <button @click="getHtmlToAce">在线获取html</button>
             <button @click="setHtmlToEditor">在线html->富文本编辑器</button>|||
-            当前页<input v-model="page"/>
+            当前页<input v-model="page" style="width:30px"/>
             <button @click="savePage">当前页保存</button>
-             <button @click="loadPage">当前页加载</button>
-     
+            <button @click="loadPage">当前页加载</button>
+            <button @click="exportHtmlFromAce">从code编辑器导出html</button>
         </div>
 
         <!-- <button @click="convertToPdf">转pdf</button> -->
@@ -140,7 +142,7 @@ export default {
                 },
                 fontSize: {
                     options: [
-                        10, 12, 14, 18.67, 16, "default", 18, 20, 22
+                        10, 12, 14, 18.67, 16,17,17.5,17.8, "default", 18, 20, 22
                     ],
                     supportAllValues: true
                 },
@@ -380,6 +382,11 @@ export default {
         loadPage(){
             let html=localStorage.getItem([this.page]);
             this. editor.data.set({  [this.page]:html });
+        },
+        exportHtmlFromAce(){
+            let html = this.ace.getValue();
+
+            this.downloadFile(html, "code模板.html")
         }
 
 
