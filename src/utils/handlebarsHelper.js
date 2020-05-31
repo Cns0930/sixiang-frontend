@@ -11,7 +11,7 @@ Handlebars.registerHelper('equal', function (arg1, arg2, options) {
 
 
 Handlebars.registerHelper("setVar", function (varName, varValue, options) {
-    console.log(options.data.root)
+  
     options.data.root[varName] = varValue;
 
 });
@@ -21,7 +21,7 @@ Handlebars.registerHelper("inc", function (name, options) {
     return options.data.root[name];
 });
 
-Handlebars.registerHelper("incInCn", function (index, options) {
+Handlebars.registerHelper("indexInCn", function (index, options) {
 
     
 
