@@ -180,12 +180,15 @@ export default {
             });
     
              // 渲染 ace
+             this.beautify = ace.require("ace/ext/beautify");
                  this.ace = ace.edit("ace");
-                    this.ace.setTheme("ace/theme/twilight");
+
+              
+                    this.ace.setTheme("ace/theme/monokai");
                     this.ace.session.setMode("ace/mode/html");
                     this.ace.setOption("wrap", "free")
-                    this.beautify = ace.require("ace/ext/beautify");
-    
+                    
+               
     },
     methods: {
         exportHtml() {
