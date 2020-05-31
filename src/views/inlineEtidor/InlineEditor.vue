@@ -1,11 +1,13 @@
 <template>
     <div class="ckeditor" data-editor='DecoupledDocumentEditor'>
-        <div >
+        <div>
             <button @click="exportHtml">导出html模板</button>
             <button @click="importHtml">导入html模板</button>
             <button @click="exportHtmlWithStyle">导出html带样式</button>
             <button @click="printPreview">打印预览</button>
             <button @click="renderTpl">模板渲染</button>
+            <button @click="importHtmlThenRender">模板导入同时渲染</button>
+            <button @click="downloadDocx">生成word</button>
         </div>
 
         <!-- <button @click="convertToPdf">转pdf</button> -->
@@ -14,19 +16,21 @@
             <div class="row-editor">
                 <div class="x" style="padding: 2.54cm 1.17cm">
                     <h2 v-pre>{{1_1}}</h2>
-
+                    如果 参数a==参数b
+                    <span v-pre>{{#equal 1 1}} 等于{{else}}不等于{{/equal}}</span>
+                    <div v-pre>{{#if true}} true{{else}}false{{/if}}</div>
                 </div>
 
             </div>
             <div class="row-editor">
                 <div class="x">
-                    <h2>Bilingual Personality Disorder</h2>
+
                 </div>
 
             </div>
             <div class="row-editor">
                 <div class="x" style="width: 29.7cm;height:21cm;padding: 2.54cm 1.17cm">
-                    <h2>Bilingual Personality Disorder</h2>
+
                 </div>
 
             </div>
@@ -42,15 +46,15 @@ import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
 import renderjson from "@/assets/render.json"
 import Handlebars from "@/utils/handlebarsHelper"
-// import LineHeight from 'ckeditor5-line-height-plugin/src/lineheight';
 
+import axios from "axios"
 export default {
     name: "InlineEditor",
     data() {
         return {
             editor: null,
             ifShow: true,
-            page:"0",
+            page: "0",
         }
     },
     mounted() {
@@ -122,7 +126,7 @@ export default {
                 },
                 fontSize: {
                     options: [
-                        10, 12, 14, 18.67,"default", 18, 20, 22
+                        10, 12, 14, 18.67, "default", 18, 20, 22
                     ],
                     supportAllValues: true
                 },
@@ -148,20 +152,20 @@ export default {
 
                 toolbarContainer.appendChild(editor.ui.view.toolbar.element);
 
-                
 
-                editor.editing.view.change( writer => {
-              
+
+                editor.editing.view.change(writer => {
+
                     let roots = writer.document.roots
-                  
-              
-                    for(let root of roots){
-                        writer.removeClass( 'ck-editor__editable_inline', root );
+
+
+                    for (let root of roots) {
+                        writer.removeClass('ck-editor__editable_inline', root);
                         // writer.removeClass( 'ck-content', root );
                     }
-                    
-                    
-                } );
+
+
+                });
             })
             .catch(error => {
                 console.log(error);
@@ -189,12 +193,42 @@ export default {
             </html>`
             this.downloadFile(str, "样式.html")
         },
+        getHtmlWithStyle() {
+            let html = this.editor.model.document.getRootNames().map(v => editor.getData({ rootName: v })).join("");
+            let str = `<html>
+                <head>
+                    <title>${ document.title}</title>
+                    <style>@page{size:A4}</style>
+                    ${contentCss}
+                </head>
+                <body style="margin:0">
+                <div class="ck-content">
+                    ${html}
+                </div>
+                </body>
+            </html>`
+            return str;
+        },
         importHtml() {
             let page = prompt("输入页数", "0");
             if (!page) return;
             let html = prompt("粘贴html", "");
             if (html != null && html != "") {
                 this.editor.data.set({ [page]: html })
+            } else {
+                alert("未输入")
+            }
+        },
+        importHtmlThenRender(){
+            let page = prompt("输入页数", "0");
+            if (!page) return;
+            let html = prompt("粘贴html", "");
+            if (html != null && html != "") {
+                 let template = Handlebars.compile(html);
+                let result = template(renderjson);
+                this.editor.data.set({ [page]: result })
+
+               
             } else {
                 alert("未输入")
             }
@@ -275,10 +309,28 @@ export default {
 
             })
         },
-        renderTpl(){
-            let template = Handlebars.compile(this.editor.getData({rootName:this.page}));
+        renderTpl() {
+            let template = Handlebars.compile(this.editor.getData({ rootName: this.page }));
             let result = template(renderjson);
             this.editor.data.set({ [this.page]: result })
+        },
+      
+        async downloadDocx() {
+            let result = axios.post("http://192.168.3.88:5001/api/selfservice/html2Doc", {
+                name: "test",
+                fileName: "test.docx",
+                pages: [
+                    {
+                        html: this.getHtmlWithStyle(),
+                        strict: true,
+
+                    }
+                ]
+            }).then(res => res.data)
+
+            if(result.code ==200){
+                window.open(`http://192.168.3.88:5001/api/getHtmlDoc?filePath=${result.data}`) 
+            }
         }
 
 
