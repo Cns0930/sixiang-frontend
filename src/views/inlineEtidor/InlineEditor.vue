@@ -142,7 +142,7 @@ export default {
                 },
                 fontSize: {
                     options: [
-                        10, 12, 14, 18.67, 16,17,17.5,17.8, "default", 18, 20, 22
+                        10, 12, 14, 18.67, 16,16.5,17,17.2,17.5, "default", 18, 20, 22
                     ],
                     supportAllValues: true
                 },
