@@ -1,0 +1,38 @@
+<figure class="table" style="float:left;">
+    <table>
+        <tbody>
+            <tr>
+                <td style="height:32.3pt;padding:0cm 5.4pt;width:501.65pt;" colspan="3">
+                    <p style="text-align:center;">
+                        <span style="font-family:Wingdings;font-size:14.0pt;"><strong>þ</strong></span>
+                        <span style="font-family:黑体;font-size:14.0pt;"><strong>变更（仅限变更登记填写，只填写与本次申请有关的事项）</strong></span>
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td style="height:39.7pt;padding:0cm 5.4pt;width:74.65pt;">
+                    <p style="text-align:center;"><span style="font-family:宋体;">变更事项</span></p>
+                </td>
+                <td style="height:39.7pt;padding:0cm 5.4pt;width:219.0pt;">
+                    <p style="text-align:center;"><span style="font-family:宋体;">原登记内容</span></p>
+                </td>
+                <td style="height:39.7pt;padding:0cm 5.4pt;width:208.0pt;">
+                    <p style="text-align:center;"><span style="font-family:宋体;">变更后登记内容</span></p>
+                </td>
+            </tr>
+            {{#each 88_22}}
+                 <tr>
+                    <td style="height:36.05pt;padding:0cm 5.4pt;width:74.65pt;">
+                        <p>&nbsp;{{变更名称}}</p>
+                    </td>
+                    <td style="height:36.05pt;padding:0cm 5.4pt;width:219.0pt;">
+                        <p style="text-align:center;">&nbsp;{{原登记内容}}</p>
+                    </td>
+                    <td style="height:36.05pt;padding:0cm 5.4pt;width:208.0pt;">
+                        <p style="text-align:center;">&nbsp;{{变更后登记内容}}</p>
+                    </td>
+                </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</figure>

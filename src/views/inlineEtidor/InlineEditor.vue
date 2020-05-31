@@ -24,9 +24,7 @@
             </div>
             <div class="row-editor">
                 <div class="x">
-
                 </div>
-
             </div>
             <div class="row-editor">
                 <div class="x" style="width: 29.7cm;height:21cm;padding: 2.54cm 1.17cm">
@@ -311,6 +309,10 @@ export default {
         },
         renderTpl() {
             let template = Handlebars.compile(this.editor.getData({ rootName: this.page }));
+            Handlebars.registerHelper("addCIndex",function(index, options){
+                let opt = ["零、","一、","二、","三、"]
+                return opt[parseInt(index) + 1];
+            });
             let result = template(renderjson);
             this.editor.data.set({ [this.page]: result })
         },
