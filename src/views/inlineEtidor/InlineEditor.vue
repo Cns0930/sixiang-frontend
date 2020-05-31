@@ -1,6 +1,6 @@
 <template>
     <div class="ckeditor" data-editor='DecoupledDocumentEditor'>
-        <div>
+        <div style="margin-bottom:40px">
             <button @click="exportHtml">导出html模板</button>
             <button @click="importHtml">导入html模板</button>
             <button @click="exportHtmlWithStyle">导出html带样式</button>
@@ -11,10 +11,10 @@
         </div>
 
         <!-- <button @click="convertToPdf">转pdf</button> -->
-        <div ref="toolbar"></div>
-        <div style="height:100vh;overflow:auto">
+        <div ref="toolbar" style="position:fixed;top:32px;z-index:30"></div>
+        <div style="">
             <div class="row-editor">
-                <div class="x" style="padding: 2.54cm 1.17cm">
+                <div class="x" style="padding: 2.54cm 1.60cm">
                     <h2 v-pre>{{1_1}}</h2>
                     如果 参数a==参数b
                     <span v-pre>{{#equal 1 1}} 等于{{else}}不等于{{/equal}}</span>
@@ -53,7 +53,7 @@ export default {
     data() {
         return {
             editor: null,
-            ifShow: true,
+            ifShow: false,
             page: "0",
         }
     },
@@ -126,7 +126,7 @@ export default {
                 },
                 fontSize: {
                     options: [
-                        10, 12, 14, 18.67, "default", 18, 20, 22
+                        10, 12, 14, 18.67,16, "default", 18, 20, 22
                     ],
                     supportAllValues: true
                 },
@@ -316,20 +316,21 @@ export default {
         },
       
         async downloadDocx() {
-            let result = axios.post("http://192.168.3.88:5001/api/selfservice/html2Doc", {
+            let result =await axios.post("http://192.168.3.88:5001/api/selfservice/html2Doc", {
                 name: "test",
                 fileName: "test.docx",
                 pages: [
                     {
                         html: this.getHtmlWithStyle(),
                         strict: true,
-
+                        nextPageOrient:"portrait",
                     }
                 ]
             }).then(res => res.data)
 
             if(result.code ==200){
-                window.open(`http://192.168.3.88:5001/api/getHtmlDoc?filePath=${result.data}`) 
+                
+                window.open(`http://192.168.3.88:5001/api/selfservice/getHtmlDoc?filePath=${result.data}`) 
             }
         }
 
@@ -362,5 +363,6 @@ export default {
 }
 .ckeditor {
     background-color: #f2f2f2;
+
 }
 </style>
