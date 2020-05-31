@@ -9,8 +9,10 @@
             <button @click="importHtmlThenRender">模板导入同时渲染</button>
             <button @click="downloadDocx">生成word</button>|||
             <button @click="getHtmlToAce">在线获取html</button>
-            <button @click="setHtmlToEditor">在线html->富文本编辑器</button>
-            
+            <button @click="setHtmlToEditor">在线html->富文本编辑器</button>|||
+            当前页<input v-model="page"/>
+            <button @click="savePage">当前页保存</button>
+             <button @click="loadPage">当前页加载</button>
         </div>
 
         <!-- <button @click="convertToPdf">转pdf</button> -->
@@ -367,7 +369,17 @@ export default {
                 let result = template(renderjson);
                 this.editor.data.set({ [this.page]: result })
 
+        },
+        savePage(){
+            let html=  this. editor.getData({ rootName: this.page });
+            localStorage.setItem([this.page],html);
+            alert("保存到localStorage");
+        },
+        loadPage(){
+            let html=localStorage.getItem([this.page]);
+            this. editor.data.set({  [this.page]:html });
         }
+
 
     }
 }
