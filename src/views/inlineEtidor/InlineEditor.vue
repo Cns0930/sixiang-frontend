@@ -7,11 +7,15 @@
             <button @click="printPreview">打印预览</button>
             <button @click="renderTpl">模板渲染</button>
             <button @click="importHtmlThenRender">模板导入同时渲染</button>
-            <button @click="downloadDocx">生成word</button>
+            <button @click="downloadDocx">生成word</button>|||
+            <button @click="getHtmlToAce">在线获取html</button>
+            <button @click="setHtmlToEditor">在线html->富文本编辑器</button>
+            
         </div>
 
         <!-- <button @click="convertToPdf">转pdf</button> -->
-        <div>
+        <div class="main">
+        <div style="width:30cm">
             <div ref="toolbar" style="position:fixed;top:32px;z-index:30"></div>
             <div style="">
                 <div class="row-editor">
@@ -35,8 +39,9 @@
                 </div>
             </div>
         </div>
-        <div>
+        <div id="ace" style="flex:1;height:500px;top:30px;position:relative;margin-top:30px">
             
+        </div>
         </div>
         <iframe id="print-data-container" tabindex="-1" :class="ifShow?'iframe-show':'iframe-off'"></iframe>
     </div>
@@ -58,6 +63,8 @@ export default {
             editor: null,
             ifShow: false,
             page: "0",
+            ace:null,
+            beautify:null,
         }
     },
     mounted() {
@@ -144,8 +151,6 @@ export default {
                 },
                 licenseKey: '',
 
-
-
             })
             .then(editor => {
 
@@ -173,6 +178,14 @@ export default {
             .catch(error => {
                 console.log(error);
             });
+    
+             // 渲染 ace
+                 this.ace = ace.edit("ace");
+                    this.ace.setTheme("ace/theme/twilight");
+                    this.ace.session.setMode("ace/mode/html");
+                    this.ace.setOption("wrap", "free")
+                    this.beautify = ace.require("ace/ext/beautify");
+    
     },
     methods: {
         exportHtml() {
@@ -339,8 +352,19 @@ export default {
 
                 window.open(`http://192.168.3.88:5001/api/selfservice/getHtmlDoc?filePath=${result.data}`)
             }
-        }
+        },
+        getHtmlToAce(){
+            let html=  this.editor.model.document.getRootNames().map(v => editor.getData({ rootName: v })).join("");
+            this.ace.setValue(html)
+            this.beautify.beautify(this.ace.session);
+        },
+        setHtmlToEditor(){
+            let html = this.ace.getValue();
+             let template = Handlebars.compile(html);
+                let result = template(renderjson);
+                this.editor.data.set({ [this.page]: result })
 
+        }
 
     }
 }
@@ -370,5 +394,9 @@ export default {
 }
 .ckeditor {
     background-color: #f2f2f2;
+
+}
+.main{
+    display:flex;
 }
 </style>
