@@ -5,6 +5,7 @@
             <button @click="importHtml">导入html模板</button>
             <button @click="exportHtmlWithStyle">导出html带样式</button>
             <button @click="printPreview">打印预览</button>
+            <button @click="renderTpl">模板渲染</button>
         </div>
 
         <!-- <button @click="convertToPdf">转pdf</button> -->
@@ -12,7 +13,7 @@
         <div style="height:100vh;overflow:auto">
             <div class="row-editor">
                 <div class="x" style="padding: 2.54cm 1.17cm">
-                    <h2>content here</h2>
+                    <h2 v-pre>{{1_1}}</h2>
 
                 </div>
 
@@ -24,7 +25,7 @@
 
             </div>
             <div class="row-editor">
-                <div class="x">
+                <div class="x" style="width: 29.7cm;height:21cm;padding: 2.54cm 1.17cm">
                     <h2>Bilingual Personality Disorder</h2>
                 </div>
 
@@ -39,7 +40,8 @@ import CKEditor from '@/assets/js/ckeditor.js';
 import contentCss from "@/assets/js/contentStyle.js"
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
-
+import renderjson from "@/assets/render.json"
+import Handlebars from "@/utils/handlebarsHelper"
 // import LineHeight from 'ckeditor5-line-height-plugin/src/lineheight';
 
 export default {
@@ -48,6 +50,7 @@ export default {
         return {
             editor: null,
             ifShow: true,
+            page:"0",
         }
     },
     mounted() {
@@ -271,6 +274,11 @@ export default {
                 pdf.save('report_pdf_' + new Date().getTime() + '.pdf')
 
             })
+        },
+        renderTpl(){
+            let template = Handlebars.compile(this.editor.getData({rootName:this.page}));
+            let result = template(renderjson);
+            this.editor.data.set({ [this.page]: result })
         }
 
 
