@@ -11,27 +11,32 @@
         </div>
 
         <!-- <button @click="convertToPdf">转pdf</button> -->
-        <div ref="toolbar" style="position:fixed;top:32px;z-index:30"></div>
-        <div style="">
-            <div class="row-editor">
-                <div class="x" style="padding: 2.54cm 1.60cm">
-                    <h2 v-pre>{{1_1}}</h2>
-                    如果 参数a==参数b
-                    <span v-pre>{{#equal 1 1}} 等于{{else}}不等于{{/equal}}</span>
-                    <div v-pre>{{#if true}} true{{else}}false{{/if}}</div>
-                </div>
-
-            </div>
-            <div class="row-editor">
-                <div class="x">
-                </div>
-            </div>
-            <div class="row-editor">
-                <div class="x" style="width: 29.7cm;height:21cm;padding: 2.54cm 1.17cm">
+        <div>
+            <div ref="toolbar" style="position:fixed;top:32px;z-index:30"></div>
+            <div style="">
+                <div class="row-editor">
+                    <div class="x" style="padding: 2.54cm 1.60cm">
+                        <h2 v-pre>{{1_1}}</h2>
+                        如果 参数a==参数b
+                        <span v-pre>{{#equal 1 1}} 等于{{else}}不等于{{/equal}}</span>
+                        <div v-pre>{{#if true}} true{{else}}false{{/if}}</div>
+                    </div>
 
                 </div>
+                <div class="row-editor">
+                    <div class="x">
+                    </div>
+                </div>
+                <div class="row-editor">
+                    <div class="x" style="width: 29.7cm;height:21cm;padding: 2.54cm 1.17cm">
 
+                    </div>
+
+                </div>
             </div>
+        </div>
+        <div>
+            
         </div>
         <iframe id="print-data-container" tabindex="-1" :class="ifShow?'iframe-show':'iframe-off'"></iframe>
     </div>
@@ -124,7 +129,7 @@ export default {
                 },
                 fontSize: {
                     options: [
-                        10, 12, 14, 18.67,16, "default", 18, 20, 22
+                        10, 12, 14, 18.67, 16, "default", 18, 20, 22
                     ],
                     supportAllValues: true
                 },
@@ -217,16 +222,16 @@ export default {
                 alert("未输入")
             }
         },
-        importHtmlThenRender(){
+        importHtmlThenRender() {
             let page = prompt("输入页数", "0");
             if (!page) return;
             let html = prompt("粘贴html", "");
             if (html != null && html != "") {
-                 let template = Handlebars.compile(html);
+                let template = Handlebars.compile(html);
                 let result = template(renderjson);
                 this.editor.data.set({ [page]: result })
 
-               
+
             } else {
                 alert("未输入")
             }
@@ -309,30 +314,30 @@ export default {
         },
         renderTpl() {
             let template = Handlebars.compile(this.editor.getData({ rootName: this.page }));
-            Handlebars.registerHelper("addCIndex",function(index, options){
-                let opt = ["零、","一、","二、","三、"]
+            Handlebars.registerHelper("addCIndex", function (index, options) {
+                let opt = ["零、", "一、", "二、", "三、"]
                 return opt[parseInt(index) + 1];
             });
             let result = template(renderjson);
             this.editor.data.set({ [this.page]: result })
         },
-      
+
         async downloadDocx() {
-            let result =await axios.post("http://192.168.3.88:5001/api/selfservice/html2Doc", {
+            let result = await axios.post("http://192.168.3.88:5001/api/selfservice/html2Doc", {
                 name: "test",
                 fileName: "test.docx",
                 pages: [
                     {
                         html: this.getHtmlWithStyle(),
                         strict: true,
-                        nextPageOrient:"portrait",
+                        nextPageOrient: "portrait",
                     }
                 ]
             }).then(res => res.data)
 
-            if(result.code ==200){
-                
-                window.open(`http://192.168.3.88:5001/api/selfservice/getHtmlDoc?filePath=${result.data}`) 
+            if (result.code == 200) {
+
+                window.open(`http://192.168.3.88:5001/api/selfservice/getHtmlDoc?filePath=${result.data}`)
             }
         }
 
@@ -365,6 +370,5 @@ export default {
 }
 .ckeditor {
     background-color: #f2f2f2;
-
 }
 </style>
