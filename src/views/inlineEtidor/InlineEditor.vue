@@ -13,6 +13,7 @@
             当前页<input v-model="page"/>
             <button @click="savePage">当前页保存</button>
              <button @click="loadPage">当前页加载</button>
+     
         </div>
 
         <!-- <button @click="convertToPdf">转pdf</button> -->
@@ -132,7 +133,8 @@ export default {
                         '微软雅黑',
                         '仿宋',
                         '黑体',
-                        '宋体'
+                        '宋体',
+                        "Wingdings 2"
                     ],
                     supportAllValues: true
                 },

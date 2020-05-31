@@ -28,5 +28,17 @@ Handlebars.registerHelper("indexInCn", function (index, options) {
     return indexCn[index.toString()];
 });
 
+Handlebars.registerHelper("includes", function (arr,value, options) {
+
+
+    if (arr.includes(value)) {
+        return options.fn(this)
+    } else {
+        return options.inverse(this)
+    }
+    
+});
+
+
 
 export default Handlebars
