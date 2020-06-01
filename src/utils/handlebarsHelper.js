@@ -10,6 +10,7 @@ Handlebars.registerHelper('equal', function (arg1, arg2, options) {
 });
 
 
+
 Handlebars.registerHelper("setVar", function (varName, varValue, options) {
 
     options.data.root[varName] = varValue;
@@ -94,6 +95,16 @@ Handlebars.registerHelper('cond', function (v1, operator, v2, options) {
             return false;
     }
 });
-
+Handlebars.registerHelper('calculate', function (arg1,symbol,arg2,options) {
+    if(symbol=='+'){
+       return arg1+arg2;
+    }else if(symbol=='*'){
+       return  arg1*arg2;
+    }else if(symbol=='-'){
+        return  arg1-arg2;
+    }else if(symbol=='/'){
+        return  arg1/arg2;
+    }
+  });
 
 export default Handlebars
