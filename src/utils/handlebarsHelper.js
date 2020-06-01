@@ -40,6 +40,17 @@ Handlebars.registerHelper("includes", function (arr, value, options) {
 
 });
 
+Handlebars.registerHelper("contains", function (arr, value, options) {
+
+
+    if (arr.includes(value)) {
+        return true
+    } else {
+        return false
+    }
+
+});
+
 Handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
 
     switch (operator) {
