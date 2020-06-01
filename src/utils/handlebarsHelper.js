@@ -39,6 +39,22 @@ Handlebars.registerHelper("includes", function (arr, value, options) {
 
 });
 
+// 写这个js的原因是因为股权转让需要，数组循环，两个一组
+Handlebars.registerHelper("guquan_zhuanrang_gaizhang", function (arr, options) {
+    var str = ""
+    for(var j = 0;j < arr.length;j=j+2) {
+        var v1 = arr[j];
+        var v2 = arr[j+1];
+        if(j == arr.length-1){
+            // 需要直接返回单个
+            str = str+'<p><span style="color:black;font-family:仿宋;font-size:12.0pt;">'+v1.othername+'（签字、盖章）</span></p><p>&nbsp;</p><p>&nbsp;</p>';
+            break;
+        }
+        str = str+'<p><span style="color:black;font-family:仿宋;font-size:12.0pt;">'+v1.othername+'（签字、盖章）&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;'+v2.othername+'（签字、盖章）</span></p><p>&nbsp;</p><p>&nbsp;</p>';
+    }
+    return str;
+});
+
 Handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
 
     switch (operator) {
