@@ -10,6 +10,7 @@ Handlebars.registerHelper('equal', function (arg1, arg2, options) {
 });
 
 
+
 Handlebars.registerHelper("setVar", function (varName, varValue, options) {
 
     options.data.root[varName] = varValue;
@@ -53,6 +54,17 @@ Handlebars.registerHelper("guquan_zhuanrang_gaizhang", function (arr, options) {
         str = str+'<p><span style="color:black;font-family:仿宋;font-size:12.0pt;">'+v1.othername+'（签字、盖章）&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;'+v2.othername+'（签字、盖章）</span></p><p>&nbsp;</p><p>&nbsp;</p>';
     }
     return str;
+});
+
+Handlebars.registerHelper("contains", function (arr, value, options) {
+
+
+    if (arr.includes(value)) {
+        return true
+    } else {
+        return false
+    }
+
 });
 
 Handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
@@ -110,6 +122,16 @@ Handlebars.registerHelper('cond', function (v1, operator, v2, options) {
             return false;
     }
 });
-
+Handlebars.registerHelper('calculate', function (arg1,symbol,arg2,options) {
+    if(symbol=='+'){
+       return arg1+arg2;
+    }else if(symbol=='*'){
+       return  arg1*arg2;
+    }else if(symbol=='-'){
+        return  arg1-arg2;
+    }else if(symbol=='/'){
+        return  arg1/arg2;
+    }
+  });
 
 export default Handlebars
