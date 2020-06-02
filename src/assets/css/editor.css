@@ -20,6 +20,10 @@ body * {
     width:100%;
     float: none !important;
 }
+.ck-content .image{
+   display:inline-block !important;
+   padding:10px;
+}
 .ck-content p{
     margin:0;
 }
