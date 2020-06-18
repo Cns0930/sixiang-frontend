@@ -1,7 +1,7 @@
-import Handlebars from "handlebars"
-import indexCn from "./indexCn.json"
-import _ from "lodash"
-import {CheckSocialCreditCode, IdentityCodeValid} from './function.js'
+import Handlebars from "handlebars";
+import _ from "lodash";
+// import { CheckSocialCreditCode, IdentityCodeValid } from './function.js';
+import indexCn from "./indexCn.json";
 
 Handlebars.registerHelper('equal', function (arg1, arg2, options) {
 
