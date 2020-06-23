@@ -20,7 +20,8 @@
             <!-- 字段组件属性填写 -->
             <div class="attribute-content">
                  <div v-for="(v,i) in temp_component_attribute" :key="i">{{i}}
-                    <component  :is="v.renderType" v-model="v.value" ></component>
+                    <component  :is="v.renderType" v-model="v.value"></component>
+                    
                 </div>
             </div>
 
