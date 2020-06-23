@@ -61,6 +61,8 @@ import renderjson from "@/assets/render.json"
 import Handlebars from "@/utils/handlebarsHelper"
 
 import axios from "axios"
+
+import renderedHtml from "@/assets/result"
 export default {
     name: "InlineEditor",
     data() {
@@ -127,6 +129,19 @@ export default {
                         'imageTextAlternative',
                         'imageStyle:full',
                         'imageStyle:side'
+                    ]
+                },
+                 indentBlock: {
+                    classes: [
+                        
+                        'custom-block-indent-1', // First step - smallest indentation.
+                        'custom-block-indent-2',
+                        'custom-block-indent-3',
+                        'custom-block-indent-4', 
+                        'custom-block-indent-5',
+                        'custom-block-indent-6',
+                        'custom-block-indent-7',
+                        'custom-block-indent-8',
                     ]
                 },
                 fontFamily: {
@@ -345,22 +360,23 @@ export default {
         },
 
         async downloadDocx() {
-            let result = await axios.post("http://192.168.3.88:5001/api/selfservice/html2Doc", {
+            let result = await axios.post("http://127.0.0.1:8081/hw", {
                 name: "test",
                 fileName: "test.docx",
                 pages: [
                     {
-                        html: this.getHtmlWithStyle(),
-                        strict: true,
-                        nextPageOrient: "portrait",
+                        html:this.getHtmlWithStyle(),
+                        "nextPageOrient" : "column",
+                        "strict" : false
                     }
                 ]
             }).then(res => res.data)
+            console.log(this.getHtmlWithStyle())
+            console.log(result)
+            // if (result.code == 200) {
 
-            if (result.code == 200) {
-
-                window.open(`http://192.168.3.88:5001/api/selfservice/getHtmlDoc?filePath=${result.data}`)
-            }
+            //     window.open(`http://192.168.3.88:5002/api/selfservice/getHtmlDoc?filePath=${result.data}`)
+            // }
         },
         getHtmlToAce(){
             let html=  this.editor.model.document.getRootNames().map(v => editor.getData({ rootName: v })).join("");
