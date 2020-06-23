@@ -1,6 +1,13 @@
+<<<<<<< HEAD
 import Handlebars from "handlebars"
 import indexCn from "./indexCn.json"
 import {CheckSocialCreditCode, IdentityCodeValid} from './function.js'
+=======
+import Handlebars from "handlebars";
+import _ from "lodash";
+// import { CheckSocialCreditCode, IdentityCodeValid } from './function.js';
+import indexCn from "./indexCn.json";
+>>>>>>> 7325c87fbe8efa2970ba3ffa987b353ec7aaf8d1
 
 Handlebars.registerHelper('equal', function (arg1, arg2, options) {
 
@@ -141,7 +148,7 @@ Handlebars.registerHelper("singleFact1", function(arr)
  */
 Handlebars.registerHelper("rmWY", function(obj)
 {	
-    if (obj) return obj.replace('万元', '')
+    if (obj) return obj.replace('万元人民币','').replace('万元', '')
 });
 
 /**
@@ -186,5 +193,44 @@ Handlebars.registerHelper("guquan_zhuanrang_gaizhang", function (arr, options) {
 Handlebars.registerHelper('delta', function(arg1, arg2){		      
     return arg1-arg2	  
 });
+<<<<<<< HEAD
+=======
+
+
+
+/**
+ * 获取真实数组
+ */
+Handlebars.registerHelper("realList", function(arr)
+{	
+    // arr=[].filter
+    // let length=arr.reduce(()=>{});
+	return arr.filter(item=>!_.isEmpty(item))
+ 
+});
+
+
+
+/**
+ * 获取真实数组长度
+ */
+Handlebars.registerHelper("realLlength", function(arr)
+{	
+    // arr=[].filter
+    // let length=arr.reduce(()=>{});
+	return arr.filter(item=>!_.isEmpty(item)).length
+ 
+});
+
+/**
+ * 删除字符串前后特殊符号,暂时只实现了逗号
+ */
+Handlebars.registerHelper("removeSymbol", function(str)
+{	
+    if(!str)return;
+    return str.replace(/^(\s|，)+|(\s|，)+$/g, '').replace(new RegExp('，+',"gm"),'，');
+ 
+});
+>>>>>>> 7325c87fbe8efa2970ba3ffa987b353ec7aaf8d1
 
 export default Handlebars
