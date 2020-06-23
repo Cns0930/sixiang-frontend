@@ -1,13 +1,10 @@
-<<<<<<< HEAD
 import Handlebars from "handlebars"
 import indexCn from "./indexCn.json"
 import {CheckSocialCreditCode, IdentityCodeValid} from './function.js'
-=======
-import Handlebars from "handlebars";
+
 import _ from "lodash";
 // import { CheckSocialCreditCode, IdentityCodeValid } from './function.js';
-import indexCn from "./indexCn.json";
->>>>>>> 7325c87fbe8efa2970ba3ffa987b353ec7aaf8d1
+
 
 Handlebars.registerHelper('equal', function (arg1, arg2, options) {
 
@@ -193,8 +190,6 @@ Handlebars.registerHelper("guquan_zhuanrang_gaizhang", function (arr, options) {
 Handlebars.registerHelper('delta', function(arg1, arg2){		      
     return arg1-arg2	  
 });
-<<<<<<< HEAD
-=======
 
 
 
@@ -231,6 +226,5 @@ Handlebars.registerHelper("removeSymbol", function(str)
     return str.replace(/^(\s|，)+|(\s|，)+$/g, '').replace(new RegExp('，+',"gm"),'，');
  
 });
->>>>>>> 7325c87fbe8efa2970ba3ffa987b353ec7aaf8d1
 
 export default Handlebars
