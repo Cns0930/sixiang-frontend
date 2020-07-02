@@ -3,19 +3,18 @@ body * {
 }
 .ck-content {
 	width: 21cm;
-
 	height: 29.7cm;
 	/* padding: 1.75cm 1.5cm; */
 	/*margin: 2.5rem;*/
     font-size: 1em;
     line-height: 1.6em;
-   
     border: 1px solid hsl(0, 0%, 77%);
-	
 }
 
-
-
+.ck-content .image{
+	display:inline-block !important;
+	padding:0 6px;
+}
 .ck-content figure{
     width:100%;
     float: none !important;
@@ -34,7 +33,37 @@ body * {
 	font-size: 1em;
 	line-height: 1.6em;
 	min-height: var(--ck-sample-editor-min-height);
-	padding: 2.54cm 3.17cm;
+	/*padding: 2.54cm 3.17cm;*/
+}
+.ck-content .custom-block-indent-1{
+    text-indent:1em;
+}
+.ck-content .custom-block-indent-2{
+    text-indent:2em;
+}
+.ck-content .custom-block-indent-3{
+    text-indent:3em;
+}
+.ck-content .custom-block-indent-4{
+    text-indent:4em;
+}
+.ck-content .custom-block-indent-5{
+    text-indent:5em;
+}
+.ck-content .custom-block-indent-6{
+    text-indent:6em;
+}
+.ck-content .custom-block-indent-7{
+    text-indent:7em;
+}
+.ck-content .custom-block-indent-8{
+    text-indent:8em;
+}
+.ck-content .custom-block-indent-10{
+    text-indent:10em;
+}
+.ck-content .custom-block-indent-12{
+    text-indent:12em;
 }
 /*
  * CKEditor 5 (v19.0.0) content styles.
@@ -262,7 +291,7 @@ body * {
 .ck-content .table table th {
 	min-width: 2em;
 	padding: 0;
-	border: 1px solid black;
+	border: 1px solid black !important;
 }
 /* D:\testworkspace\ckeditor5-master\node_modules\@ckeditor\ckeditor5-table\theme\table.css */
 .ck-content .table table th {
@@ -291,7 +320,7 @@ body * {
 }
 /* D:\testworkspace\ckeditor5-master\node_modules\@ckeditor\ckeditor5-highlight\theme\highlight.css */
 .ck-content .marker-blue {
-	background-color: var(--ck-highlight-marker-blue);
+	background-color: #d4f0ff !important;
 }
 /* D:\testworkspace\ckeditor5-master\node_modules\@ckeditor\ckeditor5-highlight\theme\highlight.css */
 .ck-content .pen-red {

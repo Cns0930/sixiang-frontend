@@ -2,9 +2,8 @@
 	display: flex;
 	position: relative;
 	justify-content: center;
-	overflow-y: auto;
-	background-color: #f2f2f2;
-    /* border: 1px solid hsl(0, 0%, 77%); */
-
+    /* overflow-y: auto; */
     
+	/*background-color: #f2f2f2;*/
+    /* border: 1px solid hsl(0, 0%, 77%); */
 }
