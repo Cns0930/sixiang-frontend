@@ -21,6 +21,19 @@ body * {
 }
 .ck-content p{
     margin:0;
+    
+}
+.custom-block-indent-a{
+    text-indent: 2em;
+}
+.custom-block-indent-b{
+    text-indent: 3em;
+}
+.custom-block-indent-c{
+    text-indent: 4em;
+}
+.custom-block-indent-d{
+    text-indent: 5em;
 }
 .ck-editor[role='application'] .ck.ck-content,
 /* Decoupled document build. */

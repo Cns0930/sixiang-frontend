@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Editor from "../views/editor/Editor"
 import InlineEditor from "../views/inlineEtidor/InlineEditor"
+import FormConstructor from "@/views/formConstructor/FormConstructor"
 Vue.use(VueRouter)
 
 const routes = [
@@ -11,6 +12,11 @@ const routes = [
         name: 'Home',
         component: Home,
         children: [
+            {
+                path:"/",
+                name:"FormConstructor",
+                component:FormConstructor
+            },
             {
                 path: '/editor',
                 name: 'Editor',
