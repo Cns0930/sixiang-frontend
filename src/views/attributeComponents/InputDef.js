@@ -1,8 +1,9 @@
 import CommonComponents from "./CommonComponents"
-import Renderer from "./Renderer"
+import {rendererBuilder} from "./Renderer"
 class InputDef extends CommonComponents{
     constructor(){
-        super()
+        super({type:"input"})
+        this.component = rendererBuilder("text","ElInput")
     }
 }
 

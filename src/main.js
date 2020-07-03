@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
-import store from './store'
+import store from '@/vuex/store'
 import "@/assets/css/editor.css"
 import "@/assets/css/editor_frame.css"
 import "@/assets/js/ckeditor.js"

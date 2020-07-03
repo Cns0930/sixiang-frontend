@@ -4,12 +4,14 @@ import Home from '../views/Home.vue'
 import Editor from "../views/editor/Editor"
 import InlineEditor from "../views/inlineEtidor/InlineEditor"
 import FormConstructor from "@/views/formConstructor/FormConstructor"
+import Preview from "@/views/formConstructor/PreviewLayout"
+import PageConfigure from "@/views/formConstructor/PageConfigure"
 Vue.use(VueRouter)
 
 const routes = [
     {
         path: '/',
-        name: 'Home',
+        
         component: Home,
         children: [
             {
@@ -26,7 +28,17 @@ const routes = [
                 path: '/inlineeditor',
                 name: 'InlineEditor',
                 component: InlineEditor,
-            }
+            },
+            {
+                path:"/preview",
+                name:"Preview",
+                component:Preview
+            },
+            {
+                path:"/pageconfigure",
+                name:"PageConfigure",
+                component:PageConfigure
+            },
 
         ]
     },
