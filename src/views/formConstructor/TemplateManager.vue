@@ -13,15 +13,15 @@
             <div class="computed-field">
                 <div v-for="(v,i) in templates" :key="i">
                     <el-button type="text" @click="handleClickTemplate(v,i)" style="width:100px;margin:0;color:orange">
-                        {{v.name}}
+                        {{v.template.templateName}}
                     </el-button>
                     <el-button-group>
                         <el-button style="width:45px;" @click="addPage(v,i)" icon="el-icon-plus"></el-button>
                         <el-button style="width:45px;" @click="handleDelete(i)">删除</el-button>
                     </el-button-group>
                     <div style="margin-left:40px;">
-                        <div v-for="(page,pageIndex) in v.pages">
-                            - <el-button type="text" style="width:50px;margin:0" @click="handleClickPage(page,pageIndex)">{{page.pageNo}} 页
+                        <div v-for="(page,pageIndex) in v.templatePagesList">
+                            - <el-button type="text" style="width:50px;margin:0" @click="handleClickPage(page,pageIndex)">{{page.templatePagenum}} 页
                             </el-button>
                             <el-button-group>
                                 <el-button style="width:45px;" @click="savePage(page,pageIndex,v.name)" icon="el-icon-upload2"></el-button>
@@ -49,11 +49,11 @@
             </div>
             <div class="computed-field computed-field-direction">
                 <div v-if="temp_page">
-                    <el-select v-model="temp_page.orientation" placeholder="">
+                    <el-select v-model="temp_page.templateOrientation" placeholder="">
                         <el-option label="横向" value="landscape" :key=""></el-option>
                         <el-option label="纵向" value="portrait" :key=""></el-option>
                     </el-select>
-                    <el-select v-model="temp_page.paddingType" placeholder="">
+                    <el-select v-model="temp_page.templatePadding" placeholder="">
                         <el-option label="表格" value="table" :key=""></el-option>
                         <el-option label="纯文本" value="text" :key=""></el-option>
                     </el-select>
@@ -71,7 +71,7 @@
                     </div>
                 </div> -->
 
-                <inlineEditor v-if="temp_page" :temp_page="temp_page" />
+                <inlineEditor ref="inlineEditor" v-if="temp_page" :temp_page="temp_page" />
             </div>
 
         </div>
@@ -94,7 +94,7 @@ import _ from "lodash"
 import { mapState } from "vuex"
 import { mergeFieldAttr } from "./util"
 
-import { getTemplate } from '@/api/template/index'
+import { getTemplate, addTemplate } from '@/api/template/index'
 import { getField } from '@/api/superForm/index'
 
 import inlineEditor from "@/views/inlineEtidor/InlineEditor"
@@ -143,29 +143,46 @@ export default {
             })
             if (!res.success) return;
             this.templates = res.data;
-            console.log(this.templates);
         },
-        addTemplate() {
-            console.log(this.temp_template_name);
-            // this.$store.commit("pushTemplate", {
-            //     name: this.temp_template_name,
-            //     pages: [],
-            // })
-            // this.templateCreateVisible = false;
-            // this.temp_template_name = '';
+        async addTemplate() {
+            if (!this.temp_template_name) return;
+
+            const res = await addTemplate({
+                itemName: this.$store.state.home.itemName,
+                templateName: this.temp_template_name,
+            })
+
+            if (!res.success) return;
+
+            this.$message.success('新增模板成功');
+            this.templateCreateVisible = false;
+            this.temp_template_name = '';
+            
+            this.getTemplate();
         },
         addPage(template, index) {
-            let length = template.pages?.length || 0;
+            // let length = template.pages?.length || 0;
+            // let data = { pageNo: length, orientation: "portrait", paddingType: "text" }
+            // this.$store.commit("pushPage", { index, data })
 
-            let data = { pageNo: length, orientation: "portrait", paddingType: "text" }
-            this.$store.commit("pushPage", { index, data })
-
+            const length = template.templatePagesList.length;
+            template.templatePagesList.push({
+                id: null,
+                itemName: template.template.itemName,
+                templateContent: "",
+                templateId: null,
+                templateOrientation: "portrait",
+                templatePadding: "text",
+                templatePagenum: length,
+                templateType: "",
+                templateWordCss: "",
+            })
         },
         savePage(page,pageIndex,templateName){
 
         },
         handleClickPage(page) {
-            this.temp_page = page
+            this.temp_page = page;
         },
         handleDelete(i) {
             this.$store.commit("deleteTemplate", i)

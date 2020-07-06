@@ -30,10 +30,10 @@
                 <div class="row-editor">
                     <div class="x"
                         :class="{
-                            'page-portrait': temp_page.orientation=='portrait',
-                            'page-landscape': temp_page.orientation=='landscape',
-                            'table-padding': temp_page.paddingType=='table',
-                            'text-padding': temp_page.paddingType=='text'
+                            'page-portrait': temp_page.templateOrientation=='portrait',
+                            'page-landscape': temp_page.templateOrientation=='landscape',
+                            'table-padding': temp_page.templatePadding=='table',
+                            'text-padding': temp_page.templatePadding=='text'
                         }"
                     ></div>
                 </div>
