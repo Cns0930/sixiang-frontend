@@ -21,7 +21,7 @@
                     </el-button-group>
                     <div style="margin-left:40px;">
                         <div v-for="(page,pageIndex) in v.pages">
-                            - <el-button type="text" @click="handleClickPage(page,pageIndex)">{{page.pageNo}} 页
+                            - <el-button type="text" style="width:50px;margin:0" @click="handleClickPage(page,pageIndex)">{{page.pageNo}} 页
                             </el-button>
                             <el-button-group>
                                 <el-button style="width:45px;" @click="savePage(page,pageIndex,v.name)" icon="el-icon-upload2"></el-button>
@@ -39,7 +39,7 @@
                     ({{v.fieldNo}}){{v.label}}：{{v.sample}}
 
                 </div>
-                <el-divider />
+                <el-divider v-if="Object.keys(computedJSON).length > 0" />
                 <div v-for="(v,i) in computedJSON" :key="i">
 
                     ({{v.fieldNo}}){{v.label}}:{{v.sample}}
@@ -47,7 +47,7 @@
                 </div>
 
             </div>
-            <div class="computed-field">
+            <div class="computed-field computed-field-direction">
                 <div v-if="temp_page">
                     <el-select v-model="temp_page.orientation" placeholder="">
                         <el-option label="横向" value="landscape" :key=""></el-option>
@@ -62,17 +62,16 @@
             </div>
             <!-- 模板制作 -->
             <div class="attribute-content">
-                <!-- 预览 -->
-                <div class="row-editor" v-if="temp_page">
+                <!-- <div class="row-editor" v-if="temp_page">
                     <div :class="{'page-portrait':temp_page.orientation=='portrait','page-landscape':temp_page.orientation=='landscape','table-padding':temp_page.paddingType=='table','text-padding':temp_page.paddingType=='text'}">
                         <h2 v-pre>{{1_1}}</h2>
                         如果 参数a==参数b
                         <span v-pre>{{#equal 1 1}} 等于{{else}}不等于{{/equal}}</span>
                         <div v-pre>{{#if true}} true{{else}}false{{/if}}</div>
                     </div>
+                </div> -->
 
-                </div>
-
+                <inlineEditor v-if="temp_page" :temp_page="temp_page" />
             </div>
 
         </div>
@@ -94,10 +93,20 @@
 import _ from "lodash"
 import { mapState } from "vuex"
 import { mergeFieldAttr } from "./util"
+
+import { getTemplate } from '@/api/template/index'
+
+import inlineEditor from "@/views/inlineEtidor/InlineEditor"
+
 export default {
     name: "TemplateManager",
+    components: {
+        inlineEditor
+    },
     data() {
         return {
+            templates: [],
+
             templateCreateVisible: false,
             // 模板弹窗用
             temp_template_name: "",
@@ -117,17 +126,29 @@ export default {
         ...mapState({
             baseFields: state => state.fieldModel.baseFields,
             computedFields: state => state.fieldModel.computedFields,
-            templates: state => state.fieldModel.templates,
+            // templates: state => state.fieldModel.templates,
         })
     },
+    mounted() {
+        this.getTemplate()
+    },
     methods: {
-        addTemplate() {
-            this.$store.commit("pushTemplate", {
-                name: this.temp_template_name,
-                pages: [],
-
+        async getTemplate() {
+            const res = await getTemplate({
+                itemName: 'new',
             })
-            this.templateCreateVisible = false;
+            if (!res.success) return;
+            this.templates = res.data;
+            console.log(this.templates);
+        },
+        addTemplate() {
+            console.log(this.temp_template_name);
+            // this.$store.commit("pushTemplate", {
+            //     name: this.temp_template_name,
+            //     pages: [],
+            // })
+            // this.templateCreateVisible = false;
+            // this.temp_template_name = '';
         },
         addPage(template, index) {
             let length = template.pages?.length || 0;
@@ -151,9 +172,7 @@ export default {
         loadAllField() {
             this.baseJSON = this.baseFields.reduce(mergeFieldAttr, {})
             this.computedJSON = this.computedFields.reduce(mergeFieldAttr, {})
-
             this.renderJSON = { ..._.mapValues(this.baseJSON), ..._.mapValues(this.computedJSON) }
-
         }
     }
 }
@@ -165,7 +184,9 @@ export default {
     flex-direction: column;
     .main {
         display: flex;
-        height: calc(100vh - 40px);
+        overflow-x: auto;
+        height: calc(100vh - 28px);
+        overflow-y: auto;
     }
     .el-input {
         width: 400px;
@@ -175,46 +196,29 @@ export default {
     }
 
 }
-.base-field-list {
-    width: 200px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border: red 1px solid;
-
-    height: 100%;
-}
+// .base-field-list {
+//     width: 200px;
+//     display: flex;
+//     flex-direction: column;
+//     align-items: center;
+//     border: red 1px solid;
+// }
 .computed-field {
     width: 200px;
+    flex: none;
     border: green 1px solid;
-    height: 100%;
+}
+.computed-field-direction{
+    width: 120px;
+    flex: none;
 }
 .attribute-content {
-    flex: 1;
+    width: 1700px;
+    flex: none;
     border: blue 1px solid;
-    height: 100%;
-    overflow:auto;
-    .attribute {
-        margin: 4px 0;
-    }
+    // overflow:auto;
+    // .attribute {
+    //     margin: 4px 0;
+    // }
 }
-.page-portrait {
-    width: 21cm;
-    height: 29.7cm;
-    margin: 10px 0;
-    &.table-padding{
-        padding: 2.54cm 1.5cm;
-    }
-    &.text-padding {
-        padding: 2.54cm 3.18cm;
-    }
-}
- 
-.page-landscape{
-    width: 29.7cm;
-    height:21cm;
-    padding: 2.54cm 1.17cm
-}
-
-
 </style>

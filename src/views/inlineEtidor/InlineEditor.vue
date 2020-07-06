@@ -1,6 +1,6 @@
 <template>
     <div class="ckeditor" data-editor='DecoupledDocumentEditor'>
-        <div style="margin-bottom:40px">
+        <div style="margin-bottom:10px">
             <button @click="exportHtml">从富文本编辑器导出html</button>
             <button @click="importHtml">导入html模板</button>
             <button @click="importHtmlThenRender">模板导入-先渲染</button>
@@ -21,32 +21,32 @@
         <!-- <button @click="convertToPdf">转pdf</button> -->
         <div class="main">
         <div style="width:30cm">
-            <div ref="toolbar" style="position:fixed;top:32px;z-index:30"></div>
-            <div style="">
-                <div class="row-editor">
-                    <div class="x" style="padding: 2.54cm 1.60cm">
-                        <h2 v-pre>{{1_1}}</h2>
-                        如果 参数a==参数b
-                        <span v-pre>{{#equal 1 1}} 等于{{else}}不等于{{/equal}}</span>
-                        <div v-pre>{{#if true}} true{{else}}false{{/if}}</div>
-                    </div>
+            <!-- <div ref="toolbar" style="position:fixed;top:32px;z-index:30"></div> -->
+            <div ref="toolbar" style="width: 100%;"></div>
 
-                </div>
+            <div>
+                
+                <!-- 纵向 -->
                 <div class="row-editor">
-                    <div class="x">
-                    </div>
+                    <div class="x"
+                        :class="{
+                            'page-portrait': temp_page.orientation=='portrait',
+                            'page-landscape': temp_page.orientation=='landscape',
+                            'table-padding': temp_page.paddingType=='table',
+                            'text-padding': temp_page.paddingType=='text'
+                        }"
+                    ></div>
                 </div>
-                <div class="row-editor">
-                    <div class="x" style="width: 29.7cm;height:21cm;padding: 2.54cm 1.17cm">
 
-                    </div>
+                <!-- 横向 -->
+                <!-- <div class="row-editor">
+                    <div class="x" style="width: 29.7cm;height:21cm;padding: 2.54cm 1.17cm"></div>
+                </div> -->
 
-                </div>
             </div>
         </div>
-        <div id="ace" style="flex:1;height:500px;top:30px;position:relative;margin-top:30px">
-            
-        </div>
+        <div id="ace" style="flex:1;height:500px;top:30px;position:relative;margin-top:58px"></div>
+
         </div>
         <iframe id="print-data-container" tabindex="-1" :class="ifShow?'iframe-show':'iframe-off'"></iframe>
     </div>
@@ -67,6 +67,7 @@ var ace = require('brace');
 
 export default {
     name: "InlineEditor",
+    props: ['temp_page'],
     data() {
         return {
             editor: null,
@@ -76,10 +77,36 @@ export default {
             beautify:null,
         }
     },
+    watch: {
+        temp_page: {
+            handler(val) {
+                this.initEditor();
+            },
+            deep: true,
+        }
+    },
     mounted() {
-        let sourceEl = Array.from(document.querySelectorAll(".x")).reduce((result, item, i) => { result[i] = item; return result }, {})
 
-        CKEditor
+        this.initEditor();
+
+        // 渲染 ace
+        this.beautify = ace.acequire("ace/ext/beautify");
+        this.ace = ace.edit("ace");
+
+        this.ace.setTheme("ace/theme/monokai");
+        this.ace.session.setMode("ace/mode/html");
+        this.ace.setOption("wrap", "free")
+    },
+    methods: {
+        async initEditor() {
+
+            if (this.editor) {
+                await this.editor.destroy();
+                this.editor = null;
+            }
+
+            let sourceEl = Array.from(document.querySelectorAll(".x")).reduce((result, item, i) => { result[i] = item; return result }, {})
+            CKEditor
             .create(sourceEl, {
 
                 lineHeight: { // specify your otions in the lineHeight config object. Default values are [ 0, 0.5, 1, 1.5, 2 ]
@@ -133,7 +160,7 @@ export default {
                         'imageStyle:side'
                     ]
                 },
-                 indentBlock: {
+                    indentBlock: {
                     classes: [
                         
                         'custom-block-indent-1', // First step - smallest indentation.
@@ -181,9 +208,9 @@ export default {
                 this.editor = editor;
                 const toolbarContainer = this.$refs.toolbar
 
+                toolbarContainer.innerHTML = ''
+
                 toolbarContainer.appendChild(editor.ui.view.toolbar.element);
-
-
 
                 editor.editing.view.change(writer => {
 
@@ -201,20 +228,7 @@ export default {
             .catch(error => {
                 console.log(error);
             });
-
-           
-             // 渲染 ace
-             this.beautify = ace.acequire("ace/ext/beautify");
-                 this.ace = ace.edit("ace");
-
-              
-                    this.ace.setTheme("ace/theme/monokai");
-                    this.ace.session.setMode("ace/mode/html");
-                    this.ace.setOption("wrap", "free")
-                    
-               
-    },
-    methods: {
+        },
         exportHtml() {
             let html = this.editor.model.document.getRootNames().map(v => editor.getData({ rootName: v })).join("");
 
@@ -388,10 +402,9 @@ export default {
         },
         setHtmlToEditor(){
             let html = this.ace.getValue();
-             let template = Handlebars.compile(html);
-                let result = template(renderjson);
-                this.editor.data.set({ [this.page]: result })
-
+            let template = Handlebars.compile(html);
+            let result = template(renderjson);
+            this.editor.data.set({ [this.page]: result })
         },
         savePage(){
             let html=  this. editor.getData({ rootName: this.page });
@@ -414,10 +427,28 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.x {
+// .x {
+//     width: 21cm;
+//     height: 29.7cm;
+//     margin: 10px 0;
+// }
+.page-portrait {
     width: 21cm;
     height: 29.7cm;
-    margin: 10px 0;
+    margin-top: 10px;
+    &.table-padding{
+        padding: 2.54cm 1.5cm;
+    }
+    &.text-padding {
+        padding: 2.54cm 3.18cm;
+    }
+}
+ 
+.page-landscape{
+    width: 29.7cm;
+    height:21cm;
+    margin-top: 10px;
+    padding: 2.54cm 1.17cm
 }
 .iframe-off {
     position: absolute;
@@ -436,8 +467,8 @@ export default {
     min-height: 29.7cm;
 }
 .ckeditor {
+    padding: 10px;
     background-color: #f2f2f2;
-
 }
 .main{
     display:flex;
