@@ -63,6 +63,8 @@ import Handlebars from "@/utils/handlebarsHelper"
 import axios from "axios"
 
 import renderedHtml from "@/assets/result"
+var ace = require('brace');
+
 export default {
     name: "InlineEditor",
     data() {
@@ -199,9 +201,10 @@ export default {
             .catch(error => {
                 console.log(error);
             });
-    
+
+           
              // 渲染 ace
-             this.beautify = ace.require("ace/ext/beautify");
+             this.beautify = ace.acequire("ace/ext/beautify");
                  this.ace = ace.edit("ace");
 
               

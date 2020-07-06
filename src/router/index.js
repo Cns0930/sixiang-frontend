@@ -6,6 +6,7 @@ import InlineEditor from "../views/inlineEtidor/InlineEditor"
 import FormConstructor from "@/views/formConstructor/FormConstructor"
 import Preview from "@/views/formConstructor/PreviewLayout"
 import PageConfigure from "@/views/formConstructor/PageConfigure"
+import TemplateManager from "@/views/formConstructor/TemplateManager"
 Vue.use(VueRouter)
 
 const routes = [
@@ -38,6 +39,11 @@ const routes = [
                 path:"/pageconfigure",
                 name:"PageConfigure",
                 component:PageConfigure
+            },
+            {
+                path:"/templatemanager",
+                name:"templateManager",
+                component:TemplateManager
             },
 
         ]

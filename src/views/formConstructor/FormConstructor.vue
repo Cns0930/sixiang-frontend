@@ -3,8 +3,9 @@
         <div class="op-bar">
             <el-button @click="handleAddBaseField"> 创建字段模型</el-button>
             <el-button @click="handleAddComputedField"> 创建合成字段模型</el-button>
-            <el-button @click="handlePreview"> 预览布局</el-button>
-            
+            <el-button @click="$router.push('/pageconfigure')"> -> 步骤页面管理</el-button>
+            <el-button @click="$router.push('/templatemanager')"> -> 模板管理</el-button>
+            <el-button @click="save"> 保存</el-button>
         </div>
         <div class="main">
             <!-- 基本字段 -->
@@ -41,7 +42,7 @@
 
         </div>
         <!-- 创建基本字段 -->
-        <el-dialog title="创建基本字段" :visible.sync="dialogVisible" width="50%">
+        <el-dialog title="创建基本字段" :visible.sync="dialogVisible" width="80%" :close-on-click-modal="false">
             <div>
                 fieldNo:<el-input v-model="temp_fieldNo"></el-input>
             </div>
@@ -59,7 +60,7 @@
             </span>
         </el-dialog>
         <!-- 创建合成字段 -->
-        <el-dialog title="创建合成字段" :visible.sync="dialogComputedVisible" width="50%">
+        <el-dialog title="创建合成字段" :visible.sync="dialogComputedVisible" width="50%" :close-on-click-modal="false">
             <div>
                 fieldNo:<el-input v-model="temp_computed_fieldNo"></el-input>
             </div>
@@ -80,6 +81,7 @@ import defs from "../attributeComponents/index"
 import { mapState } from "vuex"
 import _ from "lodash"
 import defRenderers from "../attributeComponents/defRendererComponents"
+import {save} from "@/api/superForm/index"
 export default {
     name: "FormConstructor",
     components: {
@@ -172,6 +174,27 @@ export default {
             }
             this.$store.registerModule("preview", module);
             this.$router.push("/preview")
+        },
+        // save 保存
+        async save(){
+            let baseFieldList =this.baseFields.map(field=>({
+                fieldNo:field.filedNo,
+                label:field.label,
+                fieldComponentName:field.componentDefs?.type?.value,
+                itemName:"new",
+                fieldType:1,
+                object:field,
+            })) 
+            let computedFieldList = this.computedFields.map(field=>({
+                fieldNo:field.filedNo,
+                label:field.label,
+                itemName:"new",
+                fieldType:2,
+                object:field,
+            }))
+            let result = await save({itemName:"new",fieldsList:[...baseFieldList,...computedFieldList]})
+            if(!result.success) return;
+            this.$message({type:"success",message:"保存成功"})
         }
     }
 }

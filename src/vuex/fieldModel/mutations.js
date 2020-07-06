@@ -17,6 +17,18 @@ const mutations = {
     },
     deleteStepPage(state,data){
         state.stepPages.splice(data,1)
+    },
+    putStepPageFields(state,data){
+        state.stepPages.fields = data;
+    },
+    pushTemplate(state,data){
+        state.templates.push(data)
+    },
+    pushPage(state,{index,data}){
+        state.templates[index].pages.push(data)
+    },
+    deleteTemplate(state,data){
+        state.templates.splice(data,1)
     }
 }
 
