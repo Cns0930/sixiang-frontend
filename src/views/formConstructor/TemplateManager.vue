@@ -95,6 +95,7 @@ import { mapState } from "vuex"
 import { mergeFieldAttr } from "./util"
 
 import { getTemplate } from '@/api/template/index'
+import { getField } from '@/api/superForm/index'
 
 import inlineEditor from "@/views/inlineEtidor/InlineEditor"
 
@@ -115,9 +116,12 @@ export default {
             // 临时的页面对象
             temp_page: null,
             // 显示的 field 键值对
+
             baseJSON: {},
+            
             computedJSON: {},
             // fieldNo 的键值对
+            
             renderJSON: {}
 
         }
@@ -135,7 +139,7 @@ export default {
     methods: {
         async getTemplate() {
             const res = await getTemplate({
-                itemName: 'new',
+                itemName: this.$store.state.home.itemName,
             })
             if (!res.success) return;
             this.templates = res.data;
@@ -169,10 +173,15 @@ export default {
         handleClickTemplate(template) {
             this.temp_template = template;
         },
-        loadAllField() {
-            this.baseJSON = this.baseFields.reduce(mergeFieldAttr, {})
-            this.computedJSON = this.computedFields.reduce(mergeFieldAttr, {})
-            this.renderJSON = { ..._.mapValues(this.baseJSON), ..._.mapValues(this.computedJSON) }
+        async loadAllField() {
+            // this.baseJSON = this.baseFields.reduce(mergeFieldAttr, {})
+            // this.computedJSON = this.computedFields.reduce(mergeFieldAttr, {})
+            // this.renderJSON = { ..._.mapValues(this.baseJSON), ..._.mapValues(this.computedJSON) }
+            const res = await getField({
+                itemName: this.$store.state.home.itemName,
+            })
+            if (!res.success) return;
+            this.baseJSON = res.data;
         }
     }
 }
