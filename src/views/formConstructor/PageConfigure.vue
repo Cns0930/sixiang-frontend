@@ -25,7 +25,7 @@
                 <div>始终存在</div>
                 <el-button type="primary" @click="addFieldDialogVisible = true">添加</el-button>
                 <el-table :data="temp_page.fields">
-                    <el-table-column prop="fieldNo" label="filedNo"></el-table-column>
+                    <el-table-column prop="fieldNo" label="fieldNo"></el-table-column>
                     <el-table-column prop="label" label="字段"></el-table-column>
                     <el-table-column label="操作">
                         <template slot-scope="scope">
@@ -52,7 +52,7 @@
         <el-dialog title="添加字段" :visible.sync="addFieldDialogVisible" width="50%" :close-on-click-modal="false">
 
             <el-table :data="baseFields">
-                <el-table-column prop="fieldNo" label="filedNo"></el-table-column>
+                <el-table-column prop="fieldNo" label="fieldNo"></el-table-column>
                 <el-table-column prop="label" label="字段名"></el-table-column>
                 <el-table-column label="操作">
                     <template slot-scope="scope">
