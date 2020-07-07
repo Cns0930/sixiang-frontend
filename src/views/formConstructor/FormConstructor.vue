@@ -4,7 +4,7 @@
             <el-button @click="handleAddBaseField"> 创建字段模型</el-button>
             <el-button @click="handleAddComputedField"> 创建合成字段模型</el-button>
             <el-button @click="$router.push('/pageconfigure')"> -> 步骤页面管理</el-button>
-            <el-button @click="$router.push('/templatemanager')"> -> 模板管理</el-button>
+            <!-- <el-button @click="$router.push('/templatemanager')"> -> 模板管理</el-button> -->
             <el-button @click="$router.push('/materialmanager')"> -> 材料管理</el-button>
             <el-button @click="save"> 全部保存</el-button>
         </div>
