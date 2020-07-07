@@ -28,6 +28,7 @@ export function deserializeBaseField(fieldJSON) {
     
 
     let output = {
+        id:fieldJSON.id,
         fieldNo: fieldJSON.fieldNo,
         type: fieldJSON.type,
         label: fieldJSON.label,
@@ -49,11 +50,12 @@ export function deserializeComputedField(fieldJSON){
 
 
     let output = {
+        id:fieldJSON.id,
         fieldNo: fieldJSON.fieldNo,
         label: fieldJSON.label,
         componentDefs:actualComponentDefs
     }
-    return fieldJSON
+    return output
 
 }
 

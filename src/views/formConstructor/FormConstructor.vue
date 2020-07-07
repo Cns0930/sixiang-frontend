@@ -14,9 +14,10 @@
 
             <div class="base-field-list">
                 <div v-for="(v,i) in baseFields" :key="i">
-                    <el-button type="text" @click="handleClickField(v)" style="width:150px;margin:0">
+                    <el-button type="text" @click="handleClickField(v)" style="width:100px;margin:0">
                         ({{v.fieldNo}}){{v.label}}
                     </el-button>
+                    <el-button style="width:45px;margin:0" @click="handleSaveField(v,1)">保存</el-button>
                     <el-button style="width:45px;margin:0" @click="handleDeleteBaseField(i)">删除</el-button>
                 </div>
 
@@ -25,9 +26,10 @@
             <!-- 计算字段 -->
             <div class="computed-field">
                 <div v-for="(v,i) in computedFields" :key="i">
-                    <el-button type="text" @click="handleClickField(v)" style="width:150px;margin:0">
+                    <el-button type="text" @click="handleClickField(v)" style="width:100px;margin:0">
                         ({{v.fieldNo}}){{v.label}}
                     </el-button>
+                    <el-button style="width:45px;margin:0" @click="handleSaveField(v,2)">保存</el-button>
                     <el-button style="width:45px;margin:0" @click="handleDeleteComputedField(i)">删除</el-button>
                 </div>
             </div>
@@ -83,7 +85,7 @@ import defs,{deserializeComputedField,deserializeBaseField} from "../attributeCo
 import { mapState } from "vuex"
 import _ from "lodash"
 import defRenderers from "../attributeComponents/defRendererComponents"
-import {save,getField} from "@/api/superForm/index"
+import {save,getField,saveOne} from "@/api/superForm/index"
 export default {
     name: "FormConstructor",
     components: {
@@ -148,7 +150,7 @@ export default {
         },
         // 点击 fieldNo
         handleClickField(fieldObj) {
-            console.log(fieldObj)
+      
             this.temp_component_attribute = fieldObj.componentDefs;
         },
         // 删除 fieldNo
@@ -178,7 +180,22 @@ export default {
             this.$store.registerModule("preview", module);
             this.$router.push("/preview")
         },
-        // save 保存
+        // 单个保存
+        async handleSaveField(v,type){
+            let param = {
+                fieldNo:v.fieldNo,
+                label:v.label,
+                fieldComponentName:v.componentDefs?.type?.value,
+                itemName:this.itemName,
+                fieldType:type,
+                object:v,
+            }
+            let result = await saveOne(param);
+         
+            if(!result.success) return
+            this.$message({type:"success",message:"保存成功"})
+        },
+        // save 全部保存
         async save(){
             let baseFieldList =this.baseFields.map(field=>({
                 fieldNo:field.fieldNo,
