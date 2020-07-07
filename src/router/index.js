@@ -7,6 +7,7 @@ import FormConstructor from "@/views/formConstructor/FormConstructor"
 import Preview from "@/views/formConstructor/PreviewLayout"
 import PageConfigure from "@/views/formConstructor/PageConfigure"
 import TemplateManager from "@/views/formConstructor/TemplateManager"
+import MaterialManager from "@/views/formConstructor/MaterialManager"
 Vue.use(VueRouter)
 
 const routes = [
@@ -44,6 +45,11 @@ const routes = [
                 path:"/templatemanager",
                 name:"templateManager",
                 component:TemplateManager
+            },
+            {
+                path:"/materialmanager",
+                name:"materialManager",
+                component:MaterialManager
             },
 
         ]
