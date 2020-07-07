@@ -57,7 +57,7 @@
                         <el-option label="表格" value="table" :key=""></el-option>
                         <el-option label="纯文本" value="text" :key=""></el-option>
                     </el-select>
-                    <el-input v-model="temp_page.templatePagenum" placeholder="请输入页码"></el-input>
+                    <el-input v-model="currentPagenum" placeholder="请输入页码"></el-input>
                 </div>
 
             </div>
@@ -72,7 +72,7 @@
                     </div>
                 </div> -->
 
-                <inlineEditor ref="inlineEditor" v-if="temp_page" :temp_page="temp_page" @updateTemplate="getTemplate" />
+                <inlineEditor ref="inlineEditor" v-if="temp_page" :temp_page="temp_page" :currentPagenum="currentPagenum" @updateTemplate="getTemplate" />
             </div>
 
         </div>
@@ -129,7 +129,9 @@ export default {
             computedJSON: {},
             // fieldNo 的键值对
             
-            renderJSON: {}
+            renderJSON: {},
+
+            currentPagenum: null,
 
         }
     },
@@ -190,11 +192,13 @@ export default {
                 templateType: "",
                 templateWordCss: "",
             })
+            this.currentPagenum = length;
         },
         async savePage(page,pageIndex){
             if (this.temp_page && this.temp_page.id === page.id) {
                 this.$refs.inlineEditor.savePage();
             } else {
+
                 const res = await addEditPage(page);
 
                 if (!res.success) return;
@@ -213,6 +217,7 @@ export default {
         },
         handleClickPage(page) {
             this.temp_page = page;
+            this.currentPagenum = page.templatePagenum;
         },
         // handleDelete(i) {
         //     this.$store.commit("deleteTemplate", i)
@@ -241,7 +246,7 @@ export default {
     .main {
         display: flex;
         overflow-x: auto;
-        height: calc(100vh - 28px);
+        height: calc(100vh - 108px);
         overflow-y: auto;
     }
     .el-input {

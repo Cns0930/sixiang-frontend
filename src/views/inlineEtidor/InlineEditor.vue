@@ -71,7 +71,7 @@ import beautify from "ace-builds/src-noconflict/ext-beautify"
 
 export default {
     name: "InlineEditor",
-    props: ['temp_page'],
+    props: ['temp_page', 'currentPagenum'],
     data() {
         return {
             editor: null,
@@ -84,9 +84,10 @@ export default {
     watch: {
         temp_page: {
             handler(val, oldVal) {
-                if (val.id !== oldVal.id || val.templateOrientation !== oldVal.templateOrientation || val.templatePadding !== oldVal.templatePadding) {
-                    this.initEditor();
-                }
+                // if (val.id !== oldVal.id || val.templateOrientation !== oldVal.templateOrientation || val.templatePadding !== oldVal.templatePadding) {
+                //     this.initEditor();
+                // }
+                this.initEditor();
             },
             deep: true,
         }
@@ -105,6 +106,8 @@ export default {
     },
     methods: {
         async initEditor() {
+
+            console.log(2333);
 
             if (this.editor) {
                 await this.editor.destroy();
@@ -433,7 +436,7 @@ export default {
                 templateId: this.temp_page.templateId,
                 templateOrientation: this.temp_page.templateOrientation,
                 templatePadding: this.temp_page.templatePadding,
-                templatePagenum: this.temp_page.templatePagenum,
+                templatePagenum: this.currentPagenum,
                 templateType: this.temp_page.templateType,
                 templateWordCss: this.temp_page.templateWordCss,
             })
