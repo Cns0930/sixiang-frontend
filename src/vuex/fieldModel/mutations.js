@@ -1,5 +1,13 @@
+import state from "../home/state"
+
 // 定义所需的 mutations
 const mutations = {
+    putBaseFields(state,data){
+        state.baseFields = data
+    },
+    putComputedFields(state,data){
+        state.computedFields = data;
+    },
     pushBaseField(state,data){
         state.baseFields.push(data)
     },

@@ -6,6 +6,7 @@
             <el-button @click="$router.push('/pageconfigure')"> -> 步骤页面管理</el-button>
             <el-button @click="$router.push('/templatemanager')"> -> 模板管理</el-button>
             <el-button @click="$router.push('/materialmanager')"> -> 材料管理</el-button>
+            <el-button @click="load"> 载入字段</el-button>
             <el-button @click="save"> 全部保存</el-button>
         </div>
         <div class="main">
@@ -78,11 +79,11 @@
 </template>
 
 <script>
-import defs from "../attributeComponents/index"
+import defs,{deserializeComputedField,deserializeBaseField} from "../attributeComponents/index"
 import { mapState } from "vuex"
 import _ from "lodash"
 import defRenderers from "../attributeComponents/defRendererComponents"
-import {save} from "@/api/superForm/index"
+import {save,getField} from "@/api/superForm/index"
 export default {
     name: "FormConstructor",
     components: {
@@ -103,7 +104,8 @@ export default {
             temp_computed_label: "",
             // 属性填写用
             temp_component_attribute: null,
-           
+        //    baseFields:[],
+        //    computedFields:[],
 
         }
     },
@@ -111,7 +113,7 @@ export default {
         ...mapState({
             baseFields: state => state.fieldModel.baseFields,
             computedFields: state => state.fieldModel.computedFields,
-          
+            itemName:state=>state.home.itemName,
         })
 
     },
@@ -179,27 +181,31 @@ export default {
         // save 保存
         async save(){
             let baseFieldList =this.baseFields.map(field=>({
-                fieldNo:field.filedNo,
+                fieldNo:field.fieldNo,
                 label:field.label,
                 fieldComponentName:field.componentDefs?.type?.value,
-                itemName:this.$store.state.home.itemName,
+                itemName:this.itemName,
                 fieldType:1,
                 object:field,
             })) 
             let computedFieldList = this.computedFields.map(field=>({
-                fieldNo:field.filedNo,
+                fieldNo:field.fieldNo,
                 label:field.label,
-                itemName:this.$store.state.home.itemName,
+                itemName:this.itemName,
                 fieldType:2,
                 object:field,
             }))
-            let result = await save({itemName:this.$store.state.home.itemName,fieldsList:[...baseFieldList,...computedFieldList]})
+            let result = await save({itemName:this.itemName,fieldsList:[...baseFieldList,...computedFieldList]})
             if(!result.success) return;
             this.$message({type:"success",message:"保存成功"})
         },
         // 载入
         async load(){
-            
+            let result = await getField({itemName:this.itemName})
+            if(!result.success) return;
+            console.log(result.data)
+            this.$store.commit("putBaseFields",result.data.filter(v=>v.fieldType == 1).map(v=>v.object).map(deserializeBaseField))
+            this.$store.commit("putComputedFields",result.data.filter(v=>v.fieldType == 2).map(v=>v.object).map(deserializeComputedField))
         }
     }
 }
