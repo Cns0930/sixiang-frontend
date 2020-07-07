@@ -10,6 +10,7 @@
             <button @click="renderTpl">模板渲染</button>
             
             <button @click="downloadDocx">生成word</button>|||
+            <button @click="beautifyHtml">html格式化</button>
             <button @click="getHtmlToAce">在线获取html</button>
             <button @click="setHtmlToEditor">在线html->富文本编辑器</button>|||
             当前页<input v-model="page" style="width:30px"/>
@@ -48,7 +49,7 @@
         <div id="ace" style="flex:1;height:500px;top:30px;position:relative;margin-top:58px"></div>
 
         </div>
-        <iframe id="print-data-container" tabindex="-1" :class="ifShow?'iframe-show':'iframe-off'"></iframe>
+        <!-- <iframe id="print-data-container" tabindex="-1" :class="ifShow?'iframe-show':'iframe-off'"></iframe> -->
     </div>
 </template>
 
@@ -402,6 +403,9 @@ export default {
         getHtmlToAce(){
             let html=  this.editor.model.document.getRootNames().map(v => editor.getData({ rootName: v })).join("");
             this.ace.setValue(html)
+            this.beautify.beautify(this.ace.session);
+        },
+        beautifyHtml(){
             this.beautify.beautify(this.ace.session);
         },
         setHtmlToEditor(){
