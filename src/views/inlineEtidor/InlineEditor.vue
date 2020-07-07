@@ -66,7 +66,8 @@ import axios from "axios"
 import { addEditPage } from '@/api/template/index';
 
 import renderedHtml from "@/assets/result"
-var ace = require('brace');
+import ace from 'ace-builds'
+import beautify from "ace-builds/src-noconflict/ext-beautify"
 
 export default {
     name: "InlineEditor",
@@ -90,7 +91,8 @@ export default {
     },
     mounted() {
         // 渲染 ace
-        this.beautify = ace.acequire("ace/ext/beautify");
+        // beautify = ace.require("ace/ext-beautify");
+        // console.log( beautify)
         this.ace = ace.edit("ace");
 
         this.ace.setTheme("ace/theme/monokai");
@@ -227,7 +229,7 @@ export default {
                 });
 
                 this.ace.setValue(this.temp_page.templateContent);
-                this.beautify.beautify(this.ace.session);
+                beautify.beautify(this.ace.session);
                 this.setHtmlToEditor();
             })
             .catch(error => {
@@ -403,10 +405,10 @@ export default {
         getHtmlToAce(){
             let html=  this.editor.model.document.getRootNames().map(v => editor.getData({ rootName: v })).join("");
             this.ace.setValue(html)
-            this.beautify.beautify(this.ace.session);
+            beautify.beautify(this.ace.session);
         },
         beautifyHtml(){
-            this.beautify.beautify(this.ace.session);
+            beautify.beautify(this.ace.session);
         },
         setHtmlToEditor(){
             let html = this.ace.getValue();
