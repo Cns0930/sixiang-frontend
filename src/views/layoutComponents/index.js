@@ -15,6 +15,25 @@ let ElSelectC = {
 }
 
 
+{/* <el-radio-group v-model="radio">
+<el-radio :label="3">备选项</el-radio>
+<el-radio :label="6">备选项</el-radio>
+<el-radio :label="9">备选项</el-radio>
+</el-radio-group */}
+//  radio
+let ElRadioC = {
+    name:"ElRadioC",
+    props:['options','value'],
+    render(){
+        return <ElRadioGroup value={this.value} onInput={(e)=>this.$emit("input",e)}>
+            {
+                this.options.map(option=>
+                <el-radio label={option}></el-radio>)
+            }
+        </ElRadioGroup>
+    }
+}
+
 // 情形 checkbox
 let ElCheckboxC = {
     name:"ElCheckboxC",
@@ -36,5 +55,6 @@ let ElCheckboxC = {
 }
 export default {
     ElSelectC,
-    ElCheckboxC
+    ElCheckboxC,
+    ElRadioC
 }

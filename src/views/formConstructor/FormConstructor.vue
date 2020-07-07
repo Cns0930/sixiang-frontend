@@ -5,7 +5,7 @@
             <el-button @click="handleAddComputedField"> 创建合成字段模型</el-button>
             <el-button @click="$router.push('/pageconfigure')"> -> 步骤页面管理</el-button>
             <el-button @click="$router.push('/templatemanager')"> -> 模板管理</el-button>
-            <el-button @click="save"> 保存</el-button>
+            <el-button @click="save"> 全部保存</el-button>
         </div>
         <div class="main">
             <!-- 基本字段 -->
@@ -181,18 +181,18 @@ export default {
                 fieldNo:field.filedNo,
                 label:field.label,
                 fieldComponentName:field.componentDefs?.type?.value,
-                itemName:"new",
+                itemName:this.$store.state.home.itemName,
                 fieldType:1,
                 object:field,
             })) 
             let computedFieldList = this.computedFields.map(field=>({
                 fieldNo:field.filedNo,
                 label:field.label,
-                itemName:"new",
+                itemName:this.$store.state.home.itemName,
                 fieldType:2,
                 object:field,
             }))
-            let result = await save({itemName:"new",fieldsList:[...baseFieldList,...computedFieldList]})
+            let result = await save({itemName:this.$store.state.home.itemName,fieldsList:[...baseFieldList,...computedFieldList]})
             if(!result.success) return;
             this.$message({type:"success",message:"保存成功"})
         }
