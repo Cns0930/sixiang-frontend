@@ -145,6 +145,7 @@ export default {
     },
     methods: {
         async getTemplate() {
+            if (!this.$route.query.id) return;
             const res = await getSingleTemplate({
                 templateId: this.$route.query.id,
             })
