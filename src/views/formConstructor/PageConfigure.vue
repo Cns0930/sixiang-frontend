@@ -21,16 +21,16 @@
             <!-- 页面属性填写 -->
             <div class="attribute-content">
                 <!-- 根据上个页面的值 -->
-                
+
                 <div>始终存在</div>
                 <el-button type="primary" @click="addFieldDialogVisible = true">添加</el-button>
                 <el-table :data="temp_page.fields">
                     <el-table-column prop="fieldNo" label="filedNo"></el-table-column>
                     <el-table-column prop="label" label="字段"></el-table-column>
-                    <el-table-column  label="操作">
+                    <el-table-column label="操作">
                         <template slot-scope="scope">
-                        <el-button type="text"> 删除</el-button>
-                    </template>
+                            <el-button type="text" @click="deleteField(scope)"> 删除</el-button>
+                        </template>
                     </el-table-column>
                 </el-table>
             </div>
@@ -50,18 +50,20 @@
         </el-dialog>
         <!-- 添加field 页面 -->
         <el-dialog title="添加字段" :visible.sync="addFieldDialogVisible" width="50%" :close-on-click-modal="false">
-            
-            <el-table :data="baseFields">
-                    <el-table-column prop="fieldNo" label="filedNo"></el-table-column>
-                    <el-table-column prop="label" label="字段名"></el-table-column>
-                    <el-table-column  label="操作">
-                        <template slot-scope="scope">
-                        <el-button type="text" @click="chooseFieldToTemp(scope)" :disabled = "temp_chosen_fields.find(v=>v.fieldNo==='scope.row.fieldNo')"> 选择</el-button>
-                    </template>
-                    </el-table-column>
-                </el-table>
 
-                <el-tag size="mini" closable v-for="(v,i) in temp_chosen_fields" :key="i" @close="handleDeleteFromTempChosenFields(i)">{{v.label}}</el-tag>
+            <el-table :data="baseFields">
+                <el-table-column prop="fieldNo" label="filedNo"></el-table-column>
+                <el-table-column prop="label" label="字段名"></el-table-column>
+                <el-table-column label="操作">
+                    <template slot-scope="scope">
+                        <el-button type="text" @click="chooseFieldToTemp(scope)"
+                            :disabled="temp_chosen_fields.find(v=>v.fieldNo==='scope.row.fieldNo')"> 选择</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+
+            <el-tag size="mini" closable v-for="(v,i) in temp_chosen_fields" :key="i"
+                @close="handleDeleteFromTempChosenFields(i)">{{v.label}}</el-tag>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="addFieldDialogVisible = false">取 消</el-button>
                 <el-button type="primary" @click="addFields">添 加</el-button>
@@ -79,10 +81,10 @@ export default {
             // 创建页面用
             stepPageCreateVisible: false,
             temp_page_name: "",
-            temp_page:{},
+            temp_page: {},
             //  添加字段dialog用
-            addFieldDialogVisible:false,
-            temp_chosen_fields:[]
+            addFieldDialogVisible: false,
+            temp_chosen_fields: []
         }
 
     },
@@ -102,7 +104,7 @@ export default {
         addStepPage() {
             let data = {
                 name: this.temp_page_name,
-                fields:[],
+                fields: [],
             }
             this.$store.commit("pushStepPage", data);
             this.stepPageCreateVisible = false;
@@ -111,25 +113,31 @@ export default {
             this.$store.commit("deleteStepPage", i)
         },
         // 选中 某个页面
-        handleClickPage(page){
+        handleClickPage(page) {
             this.temp_page = page;
             this.temp_chosen_fields = page.fields;
         },
         // 选择某个字段
-        chooseFieldToTemp(scope){
+        chooseFieldToTemp(scope) {
             this.temp_chosen_fields.push(scope.row);
         },
         //删除 选中的字段
-        handleDeleteFromTempChosenFields(i){
-            this.temp_chosen_fields.splice(i,1)
+        handleDeleteFromTempChosenFields(i) {
+            this.temp_chosen_fields.splice(i, 1)
         },
         // 将选中字段添加到页面中
-        addFields(){
+        addFields() {
 
-            this.$set(this.temp_page,"fields",this.temp_chosen_fields)
+            this.$set(this.temp_page, "fields", this.temp_chosen_fields)
             this.addFieldDialogVisible = false;
         },
-         //  预览
+        deleteField(scope) {
+            console.log(scope)
+            let index = scope.$index;
+            this.temp_page.fields.splice(index,1)
+             
+        },
+        //  预览
         handlePreview() {
             let module = {
                 state: {},
