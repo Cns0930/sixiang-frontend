@@ -24,7 +24,7 @@
                             - <el-button type="text" style="width:50px;margin:0" @click="handleClickPage(page,pageIndex)">{{page.templatePagenum}} 页
                             </el-button>
                             <el-button-group>
-                                <el-button style="width:45px;" @click="savePage(page,pageIndex,v.name)" icon="el-icon-upload2"></el-button>
+                                <el-button style="width:45px;" @click="savePage(page,pageIndex)" icon="el-icon-upload2"></el-button>
                                 <el-button style="width:45px;" @click="deletePage(page)">删除</el-button>
                             </el-button-group>
                         </div>
@@ -191,7 +191,7 @@ export default {
                 templateWordCss: "",
             })
         },
-        async savePage(page,pageIndex,templateName){
+        async savePage(page,pageIndex){
             if (this.temp_page && this.temp_page.id === page.id) {
                 this.$refs.inlineEditor.savePage();
             } else {
