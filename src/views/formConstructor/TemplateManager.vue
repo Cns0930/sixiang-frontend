@@ -25,7 +25,7 @@
                             </el-button>
                             <el-button-group>
                                 <el-button style="width:45px;" @click="savePage(page,pageIndex,v.name)" icon="el-icon-upload2"></el-button>
-                                <el-button style="width:45px;" @click="">删除</el-button>
+                                <el-button style="width:45px;" @click="deletePage(page)">删除</el-button>
                             </el-button-group>
                         </div>
                     </div>
@@ -71,7 +71,7 @@
                     </div>
                 </div> -->
 
-                <inlineEditor ref="inlineEditor" v-if="temp_page" :temp_page="temp_page" />
+                <inlineEditor ref="inlineEditor" v-if="temp_page" :temp_page="temp_page" @updateTemplate="getTemplate" />
             </div>
 
         </div>
@@ -94,7 +94,7 @@ import _ from "lodash"
 import { mapState } from "vuex"
 import { mergeFieldAttr } from "./util"
 
-import { getTemplate, addTemplate } from '@/api/template/index'
+import { getTemplate, addTemplate, deletePage } from '@/api/template/index'
 import { getField } from '@/api/superForm/index'
 
 import inlineEditor from "@/views/inlineEtidor/InlineEditor"
@@ -109,14 +109,17 @@ export default {
             templates: [],
 
             templateCreateVisible: false,
+            
             // 模板弹窗用
             temp_template_name: "",
+            
             // 临时的 模板对象
             temp_template: null,
+            
             // 临时的页面对象
             temp_page: null,
-            // 显示的 field 键值对
 
+            // 显示的 field 键值对
             baseJSON: {},
             
             computedJSON: {},
@@ -165,27 +168,41 @@ export default {
             // let data = { pageNo: length, orientation: "portrait", paddingType: "text" }
             // this.$store.commit("pushPage", { index, data })
 
-            const length = template.templatePagesList.length;
+            let length = 0;
+            if (template.templatePagesList.length > 0) {
+                const pageNumArr = template.templatePagesList.map(item => { return item.templatePagenum });
+                length = Math.max(...pageNumArr) + 1;
+            }
             template.templatePagesList.push({
-                id: null,
-                itemName: template.template.itemName,
-                templateContent: "",
-                templateId: null,
-                templateOrientation: "portrait",
-                templatePadding: "text",
-                templatePagenum: length,
+                id: null, // 当前页面的id
+                itemName: template.template.itemName, // 事项名称
+                templateContent: "<p>等待编辑</p>", // html的内容
+                templateId: template.template.id, // 所属的父模板的id
+                templateOrientation: "portrait", // 方向
+                templatePadding: "text", // 边距
+                templatePagenum: length, // 第几页
                 templateType: "",
                 templateWordCss: "",
             })
         },
         savePage(page,pageIndex,templateName){
-
+            if (!this.temp_page) return;
+            if (this.temp_page.id !== page.id) return;
+            this.$refs.inlineEditor.savePage(); // 调用子组件中的保存方法
+        },
+        async deletePage(page) {
+            const res = await deletePage({
+                templatePageId: page.id,
+            })
+            if (!res.success) return;
+            this.$message.success('删除页面成功');
+            this.getTemplate();
         },
         handleClickPage(page) {
             this.temp_page = page;
         },
         handleDelete(i) {
-            this.$store.commit("deleteTemplate", i)
+            // this.$store.commit("deleteTemplate", i)
         },
         handleClickTemplate(template) {
             this.temp_template = template;

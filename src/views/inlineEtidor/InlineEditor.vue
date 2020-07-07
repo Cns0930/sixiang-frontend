@@ -62,6 +62,8 @@ import Handlebars from "@/utils/handlebarsHelper"
 
 import axios from "axios"
 
+import { addEditPage } from '@/api/template/index';
+
 import renderedHtml from "@/assets/result"
 var ace = require('brace');
 
@@ -86,9 +88,6 @@ export default {
         }
     },
     mounted() {
-
-        this.initEditor();
-
         // 渲染 ace
         this.beautify = ace.acequire("ace/ext/beautify");
         this.ace = ace.edit("ace");
@@ -96,6 +95,8 @@ export default {
         this.ace.setTheme("ace/theme/monokai");
         this.ace.session.setMode("ace/mode/html");
         this.ace.setOption("wrap", "free")
+
+        this.initEditor();
     },
     methods: {
         async initEditor() {
@@ -222,8 +223,11 @@ export default {
                         // writer.removeClass( 'ck-content', root );
                     }
 
-
                 });
+
+                this.ace.setValue(this.temp_page.templateContent);
+                this.beautify.beautify(this.ace.session);
+                this.setHtmlToEditor();
             })
             .catch(error => {
                 console.log(error);
@@ -406,10 +410,29 @@ export default {
             let result = template(renderjson);
             this.editor.data.set({ [this.page]: result })
         },
-        savePage(){
-            let html=  this. editor.getData({ rootName: this.page });
-            localStorage.setItem([this.page],html);
-            alert("保存到localStorage");
+        async savePage(){
+            // let html=  this. editor.getData({ rootName: this.page });
+            // localStorage.setItem([this.page],html);
+            // alert("保存到localStorage");
+            
+            const html=  this.editor.getData({ rootName: this.page });
+
+            const res = await addEditPage({
+                id: this.temp_page.id,
+                itemName: this.temp_page.itemName,
+                templateContent: html,
+                templateId: this.temp_page.templateId,
+                templateOrientation: this.temp_page.templateOrientation,
+                templatePadding: this.temp_page.templatePadding,
+                templatePagenum: this.temp_page.templatePagenum,
+                templateType: this.temp_page.templateType,
+                templateWordCss: this.temp_page.templateWordCss,
+            })
+
+            if (!res.success) return;
+
+            this.$message.success('保存页面成功');
+            this.$emit('updateTemplate');
         },
         loadPage(){
             let html=localStorage.getItem([this.page]);
@@ -419,7 +442,7 @@ export default {
             let html = this.ace.getValue();
 
             this.downloadFile(html, "code模板.html")
-        }
+        },
 
 
     }
