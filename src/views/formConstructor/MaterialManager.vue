@@ -1,21 +1,22 @@
 <template>
     <div class="material-manager">
+        
         <div class="op-bar">
             <el-button @click="templateCreateVisible = true"> 新建材料</el-button>
-            <el-button> 载入字段</el-button>
         </div>
 
+        <!-- 模板列表 -->
         <div class="material-list">
-            <div v-for="(v,i) in templates" :key="i">
-                {{ v.template.templateName }}
-                <el-button>删除</el-button>
+            <div v-for="(v,i) in templates" :key="i" class="material-item">
+                <el-button type="text" style="color: orange;" @click="goTemplatemanager(v.template.id)">{{ v.template.templateName }}</el-button>
+                <el-button @click="deleteTemplate(v.template.id)">删除</el-button>
             </div>
         </div>
 
         <!-- 创建模板弹窗 -->
         <el-dialog title="创建模板" :visible.sync="templateCreateVisible" width="50%" :close-on-click-modal="false">
             <div>
-                模板名称:<el-input v-model="temp_template_name"></el-input>
+                模板名称:<el-input v-model="temp_template_name" @keyup.enter.native="addTemplate"></el-input>
             </div>
 
             <span slot="footer" class="dialog-footer">
@@ -28,7 +29,7 @@
 </template>
 
 <script>
-import { getTemplate, addTemplate } from '@/api/template/index'
+import { getTemplate, addTemplate, deleteTemplate } from '@/api/template/index'
 
 export default {
     name: "MaterialManager",
@@ -48,17 +49,18 @@ export default {
         async getTemplate() {
             const res = await getTemplate({
                 itemName: this.$store.state.home.itemName,
-            })
+            });
             if (!res.success) return;
             this.templates = res.data;
         },
+
         async addTemplate() {
             if (!this.temp_template_name) return;
 
             const res = await addTemplate({
                 itemName: this.$store.state.home.itemName,
                 templateName: this.temp_template_name,
-            })
+            });
 
             if (!res.success) return;
 
@@ -68,6 +70,26 @@ export default {
             
             this.getTemplate();
         },
+        
+        async deleteTemplate(id) {
+            const res = await deleteTemplate({
+                templateId: id,
+            });
+
+            if (!res.success) return;
+
+            this.$message.success('删除模板成功');
+            this.getTemplate();
+        },
+
+        goTemplatemanager(id) {
+            this.$router.push({
+                path: '/templatemanager',
+                query: {
+                    id: id,
+                },
+            });
+        },
     }
 }
 </script>
@@ -75,10 +97,14 @@ export default {
 <style lang="scss" scoped>
 .material-manager{
     padding: 20px;
+    .op-bar{
+        padding-left: 20px;
+    }
     .material-list{
+        margin-top: 10px;
         padding: 20px;
         border: 1px solid green;
-        >div{
+        .material-item{
             margin-bottom: 10px;
         }
     }

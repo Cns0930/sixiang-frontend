@@ -427,6 +427,7 @@ export default {
 
             const res = await addEditPage({
                 id: this.temp_page.id,
+                itemId: this.temp_page.itemId,
                 itemName: this.temp_page.itemName,
                 templateContent: html,
                 templateId: this.temp_page.templateId,

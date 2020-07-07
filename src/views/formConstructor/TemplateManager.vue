@@ -2,7 +2,7 @@
     <div class="template-manager">
         <div class="op-bar">
 
-            <el-button @click="templateCreateVisible = true"> 新建材料</el-button>
+            <!-- <el-button @click="templateCreateVisible = true"> 新建材料</el-button> -->
             <el-button @click="loadAllField"> 载入字段</el-button>
             <el-button @click="$router.push('/')"> -> 字段管理</el-button>
 
@@ -11,16 +11,16 @@
 
             <!-- template -->
             <div class="computed-field">
-                <div v-for="(v,i) in templates" :key="i">
-                    <el-button type="text" @click="handleClickTemplate(v,i)" style="width:100px;margin:0;color:orange">
-                        {{v.template.templateName}}
+                <div style="margin-top: 10px;">
+                    <el-button type="text" @click="handleClickTemplate(templates)" style="width:100px;margin:0;color:orange">
+                        {{templates.template.templateName}}
                     </el-button>
                     <el-button-group>
-                        <el-button style="width:45px;" @click="addPage(v,i)" icon="el-icon-plus"></el-button>
+                        <el-button style="width:45px;" @click="addPage(templates)" icon="el-icon-plus"></el-button>
                         <!-- <el-button style="width:45px;" @click="handleDelete(i)">删除</el-button> -->
                     </el-button-group>
                     <div style="margin-left:40px;">
-                        <div v-for="(page,pageIndex) in v.templatePagesList">
+                        <div v-for="(page,pageIndex) in templates.templatePagesList" style="margin-top: 2px;">
                             - <el-button type="text" style="width:50px;margin:0" @click="handleClickPage(page,pageIndex)">{{page.templatePagenum}} 页
                             </el-button>
                             <el-button-group>
@@ -95,7 +95,7 @@ import _ from "lodash"
 import { mapState } from "vuex"
 import { mergeFieldAttr } from "./util"
 
-import { getTemplate, addTemplate, deletePage } from '@/api/template/index'
+import { getSingleTemplate, addTemplate, addEditPage, deletePage } from '@/api/template/index'
 import { getField } from '@/api/superForm/index'
 
 import inlineEditor from "@/views/inlineEtidor/InlineEditor"
@@ -107,7 +107,10 @@ export default {
     },
     data() {
         return {
-            templates: [],
+            templates: {
+                template: {},
+                templatePagesList: [],
+            },
 
             templateCreateVisible: false,
             
@@ -142,8 +145,9 @@ export default {
     },
     methods: {
         async getTemplate() {
-            const res = await getTemplate({
-                itemName: this.$store.state.home.itemName,
+            if (!this.$route.query.id) return;
+            const res = await getSingleTemplate({
+                templateId: this.$route.query.id,
             })
             if (!res.success) return;
             this.templates = res.data;
@@ -164,7 +168,7 @@ export default {
             
             this.getTemplate();
         },
-        addPage(template, index) {
+        addPage(template) {
             // let length = template.pages?.length || 0;
             // let data = { pageNo: length, orientation: "portrait", paddingType: "text" }
             // this.$store.commit("pushPage", { index, data })
@@ -176,6 +180,7 @@ export default {
             }
             template.templatePagesList.push({
                 id: null, // 当前页面的id
+                itemId: template.template.itemId, // 事项id
                 itemName: template.template.itemName, // 事项名称
                 templateContent: "<p>等待编辑</p>", // html的内容
                 templateId: template.template.id, // 所属的父模板的id
@@ -186,10 +191,17 @@ export default {
                 templateWordCss: "",
             })
         },
-        savePage(page,pageIndex,templateName){
-            if (!this.temp_page) return;
-            if (this.temp_page.id !== page.id) return;
-            this.$refs.inlineEditor.savePage(); // 调用子组件中的保存方法
+        async savePage(page,pageIndex,templateName){
+            if (this.temp_page && this.temp_page.id === page.id) {
+                this.$refs.inlineEditor.savePage();
+            } else {
+                const res = await addEditPage(page);
+
+                if (!res.success) return;
+
+                this.$message.success('保存页面成功');
+                this.$emit('updateTemplate');
+            }
         },
         async deletePage(page) {
             const res = await deletePage({
