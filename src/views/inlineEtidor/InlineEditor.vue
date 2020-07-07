@@ -83,8 +83,10 @@ export default {
     },
     watch: {
         temp_page: {
-            handler(val) {
-                this.initEditor();
+            handler(val, oldVal) {
+                if (val.id !== oldVal.id || val.templateOrientation !== oldVal.templateOrientation || val.templatePadding !== oldVal.templatePadding) {
+                    this.initEditor();
+                }
             },
             deep: true,
         }

@@ -17,7 +17,7 @@
                     </el-button>
                     <el-button-group>
                         <el-button style="width:45px;" @click="addPage(v,i)" icon="el-icon-plus"></el-button>
-                        <el-button style="width:45px;" @click="handleDelete(i)">删除</el-button>
+                        <!-- <el-button style="width:45px;" @click="handleDelete(i)">删除</el-button> -->
                     </el-button-group>
                     <div style="margin-left:40px;">
                         <div v-for="(page,pageIndex) in v.templatePagesList">
@@ -57,6 +57,7 @@
                         <el-option label="表格" value="table" :key=""></el-option>
                         <el-option label="纯文本" value="text" :key=""></el-option>
                     </el-select>
+                    <el-input v-model="temp_page.templatePagenum" placeholder="请输入页码"></el-input>
                 </div>
 
             </div>
@@ -168,7 +169,7 @@ export default {
             // let data = { pageNo: length, orientation: "portrait", paddingType: "text" }
             // this.$store.commit("pushPage", { index, data })
 
-            let length = 0;
+            let length = 1;
             if (template.templatePagesList.length > 0) {
                 const pageNumArr = template.templatePagesList.map(item => { return item.templatePagenum });
                 length = Math.max(...pageNumArr) + 1;
@@ -201,9 +202,9 @@ export default {
         handleClickPage(page) {
             this.temp_page = page;
         },
-        handleDelete(i) {
-            // this.$store.commit("deleteTemplate", i)
-        },
+        // handleDelete(i) {
+        //     this.$store.commit("deleteTemplate", i)
+        // },
         handleClickTemplate(template) {
             this.temp_template = template;
         },
@@ -250,6 +251,9 @@ export default {
     width: 200px;
     flex: none;
     border: green 1px solid;
+    .el-input{
+        width: 100%;
+    }
 }
 .computed-field-direction{
     width: 120px;
