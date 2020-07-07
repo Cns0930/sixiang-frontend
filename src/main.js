@@ -7,10 +7,7 @@ import "@/assets/css/editor_frame.css"
 import "@/assets/js/ckeditor.js"
 import 'element-ui/lib/theme-chalk/index.css'
 import ElementUI from 'element-ui'
-//引入 ace 的内容
-require('brace/mode/html');
-require('brace/theme/monokai');
-require('brace/ext/beautify')
+import "ace-builds/webpack-resolver";
 
 import '@/api/config'
 Vue.config.productionTip = false

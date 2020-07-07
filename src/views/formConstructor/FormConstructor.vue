@@ -196,6 +196,10 @@ export default {
             let result = await save({itemName:this.$store.state.home.itemName,fieldsList:[...baseFieldList,...computedFieldList]})
             if(!result.success) return;
             this.$message({type:"success",message:"保存成功"})
+        },
+        // 载入
+        async load(){
+            
         }
     }
 }

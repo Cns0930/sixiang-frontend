@@ -10,6 +10,7 @@
             <button @click="renderTpl">模板渲染</button>
             
             <button @click="downloadDocx">生成word</button>|||
+            <button @click="beautifyHtml">html格式化</button>
             <button @click="getHtmlToAce">在线获取html</button>
             <button @click="setHtmlToEditor">在线html->富文本编辑器</button>|||
             当前页<input v-model="page" style="width:30px"/>
@@ -48,7 +49,7 @@
         <div id="ace" style="flex:1;height:500px;top:30px;position:relative;margin-top:58px"></div>
 
         </div>
-        <iframe id="print-data-container" tabindex="-1" :class="ifShow?'iframe-show':'iframe-off'"></iframe>
+        <!-- <iframe id="print-data-container" tabindex="-1" :class="ifShow?'iframe-show':'iframe-off'"></iframe> -->
     </div>
 </template>
 
@@ -65,7 +66,8 @@ import axios from "axios"
 import { addEditPage } from '@/api/template/index';
 
 import renderedHtml from "@/assets/result"
-var ace = require('brace');
+import ace from 'ace-builds'
+import beautify from "ace-builds/src-noconflict/ext-beautify"
 
 export default {
     name: "InlineEditor",
@@ -91,7 +93,8 @@ export default {
     },
     mounted() {
         // 渲染 ace
-        this.beautify = ace.acequire("ace/ext/beautify");
+        // beautify = ace.require("ace/ext-beautify");
+        // console.log( beautify)
         this.ace = ace.edit("ace");
 
         this.ace.setTheme("ace/theme/monokai");
@@ -228,7 +231,7 @@ export default {
                 });
 
                 this.ace.setValue(this.temp_page.templateContent);
-                this.beautify.beautify(this.ace.session);
+                beautify.beautify(this.ace.session);
                 this.setHtmlToEditor();
             })
             .catch(error => {
@@ -404,7 +407,10 @@ export default {
         getHtmlToAce(){
             let html=  this.editor.model.document.getRootNames().map(v => editor.getData({ rootName: v })).join("");
             this.ace.setValue(html)
-            this.beautify.beautify(this.ace.session);
+            beautify.beautify(this.ace.session);
+        },
+        beautifyHtml(){
+            beautify.beautify(this.ace.session);
         },
         setHtmlToEditor(){
             let html = this.ace.getValue();
