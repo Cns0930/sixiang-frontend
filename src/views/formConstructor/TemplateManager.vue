@@ -98,7 +98,7 @@ import { mergeFieldAttr } from "./util"
 import { getSingleTemplate, addTemplate, addEditPage, deletePage } from '@/api/template/index'
 import { getField } from '@/api/superForm/index'
 import defs,{deserializeComputedField,deserializeBaseField} from "../attributeComponents/index"
-import inlineEditor from "@/views/inlineEtidor/InlineEditor"
+import inlineEditor from "@/views/inlineEditorComponent/InlineEditor"
 
 export default {
     name: "TemplateManager",

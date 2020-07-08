@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Editor from "../views/editor/Editor"
-import InlineEditor from "../views/inlineEtidor/InlineEditor"
+// import InlineEditor from "../views/inlineEditor/InlineEditor"
 import FormConstructor from "@/views/formConstructor/FormConstructor"
 import Preview from "@/views/formConstructor/PreviewLayout"
 import PageConfigure from "@/views/formConstructor/PageConfigure"
@@ -26,11 +26,11 @@ const routes = [
                 name: 'Editor',
                 component: Editor,
             },
-            {
-                path: '/inlineeditor',
-                name: 'InlineEditor',
-                component: InlineEditor,
-            },
+            // {
+            //     path: '/inlineeditor',
+            //     name: 'InlineEditor',
+            //     component: InlineEditor,
+            // },
             {
                 path:"/preview",
                 name:"Preview",

@@ -10,7 +10,7 @@
             <button @click="renderTpl">模板渲染</button>
             
             <button @click="downloadDocx">生成word</button>|||
-            <button @click="beautifyHtml">html格式化</button>
+            
             <button @click="getHtmlToAce">在线获取html</button>
             <button @click="setHtmlToEditor">在线html->富文本编辑器</button>|||
             当前页<input v-model="page" style="width:30px"/>
@@ -58,7 +58,7 @@ import CKEditor from '@/assets/js/ckeditor.js';
 import contentCss from "@/assets/js/contentStyle.js"
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
-import renderjson from "@/assets/render.json"
+// import renderjson from "@/assets/render.json"
 import Handlebars from "@/utils/handlebarsHelper"
 
 import axios from "axios"
@@ -68,7 +68,9 @@ import { addEditPage } from '@/api/template/index';
 import renderedHtml from "@/assets/result"
 import ace from 'ace-builds'
 import beautify from "ace-builds/src-noconflict/ext-beautify"
-
+import { mergeFieldAttr } from "../formConstructor/util"
+import {mapState} from "vuex"
+import _ from "lodash"
 export default {
     name: "InlineEditor",
     props: ['temp_page', 'currentPagenum'],
@@ -92,6 +94,19 @@ export default {
             deep: true,
         }
     },
+    computed:{
+        ...mapState({
+            baseFields: state => state.fieldModel.baseFields,
+            computedFields: state => state.fieldModel.computedFields,
+            // templates: state => state.fieldModel.templates,
+        }),
+        renderjson(){
+             let baseJSON = this.baseFields.reduce(mergeFieldAttr, {})
+            let computedJSON = this.computedFields.reduce(mergeFieldAttr, {})
+            console.log(baseJSON,computedJSON,_)
+            return { ..._.mapValues(baseJSON,"sample"), ..._.mapValues(computedJSON,"sample") }
+        }
+    },
     mounted() {
         // 渲染 ace
         // beautify = ace.require("ace/ext-beautify");
@@ -107,7 +122,7 @@ export default {
     methods: {
         async initEditor() {
 
-            console.log(2333);
+           
 
             if (this.editor) {
                 await this.editor.destroy();
@@ -294,7 +309,7 @@ export default {
             let html = prompt("粘贴html", "");
             if (html != null && html != "") {
                 let template = Handlebars.compile(html);
-                let result = template(renderjson);
+                let result = template(this.renderjson);
                 this.editor.data.set({ [page]: result })
 
 
@@ -384,7 +399,7 @@ export default {
                 let opt = ["零、", "一、", "二、", "三、"]
                 return opt[parseInt(index) + 1];
             });
-            let result = template(renderjson);
+            let result = template(this.renderjson);
             this.editor.data.set({ [this.page]: result })
         },
 
@@ -418,7 +433,8 @@ export default {
         setHtmlToEditor(){
             let html = this.ace.getValue();
             let template = Handlebars.compile(html);
-            let result = template(renderjson);
+            console.log(this.renderjson)
+            let result = template(this.renderjson);
             this.editor.data.set({ [this.page]: result })
         },
         async savePage(){
