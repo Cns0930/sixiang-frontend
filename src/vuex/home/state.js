@@ -9,6 +9,6 @@ const state = {
         }
     ],
     //  事项名
-    itemName: '310115-418-04',
+    itemName: '内资公司注销登记',
 };
 export default state

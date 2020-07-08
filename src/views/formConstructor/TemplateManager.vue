@@ -97,7 +97,7 @@ import { mergeFieldAttr } from "./util"
 
 import { getSingleTemplate, addTemplate, addEditPage, deletePage } from '@/api/template/index'
 import { getField } from '@/api/superForm/index'
-
+import defs,{deserializeComputedField,deserializeBaseField} from "../attributeComponents/index"
 import inlineEditor from "@/views/inlineEtidor/InlineEditor"
 
 export default {
@@ -226,14 +226,17 @@ export default {
             this.temp_template = template;
         },
         async loadAllField() {
-            // this.baseJSON = this.baseFields.reduce(mergeFieldAttr, {})
-            // this.computedJSON = this.computedFields.reduce(mergeFieldAttr, {})
-            // this.renderJSON = { ..._.mapValues(this.baseJSON), ..._.mapValues(this.computedJSON) }
-            const res = await getField({
+            
+            const result = await getField({
                 itemName: this.$store.state.home.itemName,
             })
-            if (!res.success) return;
-            this.baseJSON = res.data;
+            if (!result.success) return;
+            this.$store.commit("putBaseFields",result.data.filter(v=>v.fieldType == 1).map(v=>v.object).map(deserializeBaseField))
+            this.$store.commit("putComputedFields",result.data.filter(v=>v.fieldType == 2).map(v=>v.object).map(deserializeComputedField))
+            this.baseJSON = this.baseFields.reduce(mergeFieldAttr, {})
+            this.computedJSON = this.computedFields.reduce(mergeFieldAttr, {})
+            // this.renderJSON = { ..._.mapValues(this.baseJSON), ..._.mapValues(this.computedJSON) }
+
         }
     }
 }

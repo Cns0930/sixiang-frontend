@@ -183,6 +183,7 @@ export default {
         // 单个保存
         async handleSaveField(v,type){
             let param = {
+                id:v.id,
                 fieldNo:v.fieldNo,
                 label:v.label,
                 fieldComponentName:v.componentDefs?.type?.value,
@@ -193,6 +194,7 @@ export default {
             let result = await saveOne(param);
          
             if(!result.success) return
+            v.id = result.data.id;
             this.$message({type:"success",message:"保存成功"})
         },
         // save 全部保存
