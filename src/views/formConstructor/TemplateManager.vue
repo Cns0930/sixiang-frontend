@@ -12,7 +12,8 @@
             <!-- template -->
             <div class="computed-field">
                 <div style="margin-top: 10px;">
-                    <el-button type="text" @click="handleClickTemplate(templates)" style="width:100px;margin:0;color:orange">
+                    <el-button type="text" @click="handleClickTemplate(templates)"
+                        style="width:100px;margin:0;color:orange">
                         {{templates.template.templateName}}
                     </el-button>
                     <el-button-group>
@@ -21,10 +22,12 @@
                     </el-button-group>
                     <div style="margin-left:40px;">
                         <div v-for="(page,pageIndex) in templates.templatePagesList" style="margin-top: 2px;">
-                            - <el-button type="text" style="width:50px;margin:0" @click="handleClickPage(page,pageIndex)">{{page.templatePagenum}} 页
+                            - <el-button type="text" style="width:50px;margin:0"
+                                @click="handleClickPage(page,pageIndex)">{{page.templatePagenum}} 页
                             </el-button>
                             <el-button-group>
-                                <el-button style="width:45px;" @click="savePage(page,pageIndex)" icon="el-icon-upload2"></el-button>
+                                <el-button style="width:45px;" @click="savePage(page,pageIndex)" icon="el-icon-upload2">
+                                </el-button>
                                 <el-button style="width:45px;" @click="deletePage(page)">删除</el-button>
                             </el-button-group>
                         </div>
@@ -72,7 +75,8 @@
                     </div>
                 </div> -->
 
-                <inlineEditor ref="inlineEditor" v-if="temp_page" :temp_page="temp_page" :currentPagenum="currentPagenum" @updateTemplate="getTemplate" />
+                <inlineEditor ref="inlineEditor" v-if="temp_page" :temp_page="temp_page"
+                    :currentPagenum="currentPagenum" @updateTemplate="getTemplate" />
             </div>
 
         </div>
@@ -97,7 +101,7 @@ import { mergeFieldAttr } from "./util"
 
 import { getSingleTemplate, addTemplate, addEditPage, deletePage } from '@/api/template/index'
 import { getField } from '@/api/superForm/index'
-import defs,{deserializeComputedField,deserializeBaseField} from "../attributeComponents/index"
+import defs, { deserializeComputedField, deserializeBaseField } from "../attributeComponents/index"
 import inlineEditor from "@/views/inlineEditorComponent/InlineEditor"
 
 export default {
@@ -113,22 +117,22 @@ export default {
             },
 
             templateCreateVisible: false,
-            
+
             // 模板弹窗用
             temp_template_name: "",
-            
+
             // 临时的 模板对象
             temp_template: null,
-            
+
             // 临时的页面对象
             temp_page: null,
 
             // 显示的 field 键值对
             baseJSON: {},
-            
+
             computedJSON: {},
             // fieldNo 的键值对
-            
+
             renderJSON: {},
 
             currentPagenum: null,
@@ -167,7 +171,7 @@ export default {
             this.$message.success('新增模板成功');
             this.templateCreateVisible = false;
             this.temp_template_name = '';
-            
+
             this.getTemplate();
         },
         addPage(template) {
@@ -194,18 +198,19 @@ export default {
             })
             this.currentPagenum = length;
         },
-        async savePage(page,pageIndex){
+        async savePage(page, pageIndex) {
             if (this.temp_page && this.temp_page.id === page.id) {
-                this.$refs.inlineEditor.savePage();
+                const res = await this.$refs.inlineEditor.savePage();
             } else {
 
                 const res = await addEditPage(page);
 
-                if (!res.success) return;
 
-                this.$message.success('保存页面成功');
-                this.$emit('updateTemplate');
             }
+            if (!res.success) return;
+
+            this.$message.success('保存页面成功');
+            this.getTemplate();
         },
         async deletePage(page) {
             const res = await deletePage({
@@ -226,13 +231,13 @@ export default {
             this.temp_template = template;
         },
         async loadAllField() {
-            
+
             const result = await getField({
                 itemName: this.$store.state.home.itemName,
             })
             if (!result.success) return;
-            this.$store.commit("putBaseFields",result.data.filter(v=>v.fieldType == 1).map(v=>v.object).map(deserializeBaseField))
-            this.$store.commit("putComputedFields",result.data.filter(v=>v.fieldType == 2).map(v=>v.object).map(deserializeComputedField))
+            this.$store.commit("putBaseFields", result.data.filter(v => v.fieldType == 1).map(v => v.object).map(deserializeBaseField))
+            this.$store.commit("putComputedFields", result.data.filter(v => v.fieldType == 2).map(v => v.object).map(deserializeComputedField))
             this.baseJSON = this.baseFields.reduce(mergeFieldAttr, {})
             this.computedJSON = this.computedFields.reduce(mergeFieldAttr, {})
             // this.renderJSON = { ..._.mapValues(this.baseJSON), ..._.mapValues(this.computedJSON) }
@@ -258,7 +263,6 @@ export default {
     .el-textarea {
         width: 400px;
     }
-
 }
 // .base-field-list {
 //     width: 200px;
@@ -271,11 +275,11 @@ export default {
     width: 200px;
     flex: none;
     border: green 1px solid;
-    .el-input{
+    .el-input {
         width: 100%;
     }
 }
-.computed-field-direction{
+.computed-field-direction {
     width: 120px;
     flex: none;
 }
