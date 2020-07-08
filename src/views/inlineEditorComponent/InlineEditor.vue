@@ -103,7 +103,7 @@ export default {
         renderjson(){
              let baseJSON = this.baseFields.reduce(mergeFieldAttr, {})
             let computedJSON = this.computedFields.reduce(mergeFieldAttr, {})
-            console.log(baseJSON,computedJSON,_)
+ 
             return { ..._.mapValues(baseJSON,"sample"), ..._.mapValues(computedJSON,"sample") }
         }
     },
@@ -442,7 +442,7 @@ export default {
             // localStorage.setItem([this.page],html);
             // alert("保存到localStorage");
             
-            const html=  this.editor.getData({ rootName: this.page });
+            const html= this.ace.getValue();
 
             const res = await addEditPage({
                 id: this.temp_page.id,
