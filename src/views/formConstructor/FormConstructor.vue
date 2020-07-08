@@ -7,7 +7,7 @@
             <!-- <el-button @click="$router.push('/templatemanager')"> -> 模板管理</el-button> -->
             <el-button @click="$router.push('/materialmanager')"> -> 材料管理</el-button>
             <el-button @click="load"> 载入字段</el-button>
-            <el-button @click="save"> 全部保存</el-button>
+            <el-button @click="save"> 全部覆盖保存</el-button>
         </div>
         <div class="main">
             <!-- 基本字段 -->
