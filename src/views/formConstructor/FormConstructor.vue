@@ -18,7 +18,7 @@
                         ({{v.fieldNo}}){{v.label}}
                     </el-button>
                     <el-button style="width:45px;margin:0" @click="handleSaveField(v,1)">保存</el-button>
-                    <el-button style="width:45px;margin:0" @click="handleDeleteBaseField(i)">删除</el-button>
+                    <el-button style="width:45px;margin:0" @click="handleDeleteBaseField(v,i)">删除</el-button>
                 </div>
 
             </div>
@@ -30,13 +30,17 @@
                         ({{v.fieldNo}}){{v.label}}
                     </el-button>
                     <el-button style="width:45px;margin:0" @click="handleSaveField(v,2)">保存</el-button>
-                    <el-button style="width:45px;margin:0" @click="handleDeleteComputedField(i)">删除</el-button>
+                    <el-button style="width:45px;margin:0" @click="handleDeleteComputedField(v,i)">删除</el-button>
                 </div>
             </div>
            
 
             <!-- 字段组件属性填写 -->
             <div class="attribute-content">
+                <div class="attribute" v-if="temp_fieldObj">
+                    fieldNo<el-input v-model="temp_fieldObj.fieldNo"></el-input>
+                    label<el-input v-model="temp_fieldObj.label"></el-input>
+                </div>
                 <div class="attribute" v-for="(v,i) in temp_component_attribute" :key="i">{{i}}
 
                     <component :is="v.renderTemplateName" v-model="v.value" v-bind="v.attributes"></component>
@@ -85,7 +89,7 @@ import defs,{deserializeComputedField,deserializeBaseField} from "../attributeCo
 import { mapState } from "vuex"
 import _ from "lodash"
 import defRenderers from "../attributeComponents/defRendererComponents"
-import {save,getField,saveOne} from "@/api/superForm/index"
+import {save,getField,saveOne,deleteOne} from "@/api/superForm/index"
 export default {
     name: "FormConstructor",
     components: {
@@ -106,6 +110,7 @@ export default {
             temp_computed_label: "",
             // 属性填写用
             temp_component_attribute: null,
+            temp_fieldObj: null,
         //    baseFields:[],
         //    computedFields:[],
 
@@ -150,15 +155,35 @@ export default {
         },
         // 点击 fieldNo
         handleClickField(fieldObj) {
-      
+
+            this.temp_fieldObj = fieldObj;
+            console.log("=====temp_fieldObj======")
+            console.log(this.temp_fieldObj)
             this.temp_component_attribute = fieldObj.componentDefs;
+            // this.temp_component_attribute = {fieldNo:fieldObj.fieldNo, label:fieldObj.label, ...fieldObj.componentDefs};
+            // console.log("=====temp_component_attribute======")
+            // console.log(this.temp_component_attribute)
         },
         // 删除 fieldNo
-        handleDeleteBaseField(i) {
+        async handleDeleteBaseField(v,i) {
+            let param = {
+                fieldId:v.id
+            }
+            console.log(param);
+            let result = await deleteOne(param);
+            if(!result.success) return
+            this.$message({type:"success",message:"删除成功"})
             this.$store.commit("deleteBaseField", i)
         },
         // 删除 computed fieldNo
-        handleDeleteComputedField(i) {
+        async handleDeleteComputedField(v,i) {
+            let param = {
+                fieldId:v.id
+            }
+            console.log(param);
+            let result = await deleteOne(param);
+            if(!result.success) return
+            this.$message({type:"success",message:"删除成功"})
             this.$store.commit("deleteComputedField", i)
         },
         
@@ -223,8 +248,8 @@ export default {
             let result = await getField({itemName:this.itemName})
             if(!result.success) return;
             console.log(result.data)
-            this.$store.commit("putBaseFields",result.data.filter(v=>v.fieldType == 1).map(v=>v.object).map(deserializeBaseField))
-            this.$store.commit("putComputedFields",result.data.filter(v=>v.fieldType == 2).map(v=>v.object).map(deserializeComputedField))
+            this.$store.commit("putBaseFields",result.data.filter(v=>v.fieldType == 1).map(v=> ({id:v.id,...v.object})).map(deserializeBaseField))
+            this.$store.commit("putComputedFields",result.data.filter(v=>v.fieldType == 2).map(v=> ({id:v.id,...v.object})).map(deserializeComputedField))
         }
     }
 }
