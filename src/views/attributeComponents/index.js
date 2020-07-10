@@ -20,6 +20,9 @@ export function getMapping() {
 
 export function deserializeBaseField(fieldJSON) {
 
+    console.log("===fieldJSON===")
+    console.log(fieldJSON)
+
     let componentDefs = fieldJSON.componentDefs
     let actualComponentDefs = new defs[fieldJSON.type]();
     Object.keys(actualComponentDefs).forEach(key => {
@@ -31,6 +34,8 @@ export function deserializeBaseField(fieldJSON) {
         id:fieldJSON.id,
         fieldNo: fieldJSON.fieldNo,
         type: fieldJSON.type,
+        fieldType: 1,
+        fieldTypeCn: "基础字段",
         label: fieldJSON.label,
         componentDefs: actualComponentDefs
     }
@@ -52,10 +57,17 @@ export function deserializeComputedField(fieldJSON){
     let output = {
         id:fieldJSON.id,
         fieldNo: fieldJSON.fieldNo,
+        type: fieldJSON.type,
+        fieldType: 2,
+        fieldTypeCn: "合成字段",
         label: fieldJSON.label,
         componentDefs:actualComponentDefs
     }
     return output
+
+}
+
+export function deserializeTableData(fieldJSON){
 
 }
 

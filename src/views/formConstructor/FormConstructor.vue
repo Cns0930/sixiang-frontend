@@ -11,7 +11,7 @@
         </div>
         <div class="main">
             <!-- 基本字段 -->
-
+            <!-- 
             <div class="base-field-list">
                 <div v-for="(v,i) in baseFields" :key="i">
                     <el-button
@@ -22,10 +22,10 @@
                     <el-button style="width:45px;margin:0" @click="handleSaveField(v,1)">保存</el-button>
                     <el-button style="width:45px;margin:0" @click="handleDeleteBaseField(v,i)">删除</el-button>
                 </div>
-            </div>
+            </div>-->
 
             <!-- 计算字段 -->
-            <div class="computed-field">
+            <!-- <div class="computed-field">
                 <div v-for="(v,i) in computedFields" :key="i">
                     <el-button
                         type="text"
@@ -38,14 +38,46 @@
                         @click="handleDeleteComputedField(v,i)"
                     >删除</el-button>
                 </div>
-            </div>
+            </div>-->
 
-            <!-- 字段组件属性填写 -->
+            <!-- 字段表格 -->
+            <div class="fields-table">
+                <el-table :data="tableData" border style="width: 100%">
+                    <el-table-column fixed prop="fieldNo" label="fieldNo" width="150"></el-table-column>
+                    <el-table-column prop="label" label="label" width="120"></el-table-column>
+                    <el-table-column prop="type" label="组件名" width="120"></el-table-column>
+                    <el-table-column prop="fieldTypeCn" label="类型" width="120"></el-table-column>
+                    <el-table-column fixed="right" label="操作" width="150">
+                        <template slot-scope="scope">
+                            <el-button @click="handleClickField(scope.row);handleEditField()" type="text" size="small">编辑</el-button>
+                            <!-- <el-button
+                                @click="handleSaveField(scope.row, scope.row.fieldType)"
+                                type="text"
+                                size="small"
+                            >保存</el-button> -->
+                            <el-button
+                                @click="handleDeleteField(scope.row)"
+                                type="text"
+                                size="small"
+                            >删除</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </div>
+        </div>
+
+        <!-- 字段组件属性填写 -->
+        <el-dialog
+            title="字段组件属性填写"
+            :visible.sync="editDialogVisible"
+            width="80%"
+            :close-on-click-modal="false"
+        >
             <div class="attribute-content">
                 <div class="attribute" v-if="temp_fieldObj">
                     fieldNo
                     <el-input v-model="temp_fieldObj.fieldNo"></el-input>
-                    label
+                    <br />label
                     <el-input v-model="temp_fieldObj.label"></el-input>
                     <div class="attribute" v-for="(v,i) in temp_fieldObj.componentDefs" :key="i">
                         {{i}}
@@ -57,7 +89,12 @@
                     </div>
                 </div>
             </div>
-        </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="editDialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="handleSaveField(temp_fieldObj, temp_fieldObj.fieldType);editDialogVisible = false">确 定</el-button>
+            </span>
+        </el-dialog>
+
         <!-- 创建基本字段 -->
         <el-dialog
             title="创建基本字段"
@@ -130,6 +167,7 @@ export default {
             defRenderers,
             // 添加 fieldNo 的dialog 用
             dialogVisible: false,
+            editDialogVisible: false,
             typeOptions: Object.keys(defs).map(v => ({ value: v, label: v })),
             temp_fieldNo: "",
             temp_type: "",
@@ -142,13 +180,18 @@ export default {
             temp_fieldObj: null
             //    baseFields:[],
             //    computedFields:[],
+            // tableData: []
         };
     },
     computed: {
         ...mapState({
             baseFields: state => state.fieldModel.baseFields,
             computedFields: state => state.fieldModel.computedFields,
-            itemName: state => state.home.itemName
+            itemName: state => state.home.itemName,
+            tableData: state =>
+                state.fieldModel.baseFields.concat(
+                    state.fieldModel.computedFields
+                )
         })
     },
     methods: {
@@ -160,28 +203,87 @@ export default {
         handleAddComputedField() {
             this.dialogComputedVisible = true;
         },
+        handleEditField() {
+            this.editDialogVisible = true;
+        },
         // 确定添加字段
-        addFieldConfirm() {
-            this.$store.commit("pushBaseField", {
-                fieldNo: this.temp_fieldNo,
+        async addFieldConfirm() {
+            // this.$store.commit("pushBaseField", {
+            //     fieldNo: this.temp_fieldNo,
+            //     type: this.temp_type,
+            //     label: this.temp_label,
+            //     fieldType: 1,
+            //     componentDefs: new defs[this.temp_type]()
+            // });
+            // 改成直接保存到数据库 而不是直接操作state
+
+            let v = {
+                fieldNo:this.temp_fieldNo,
                 type: this.temp_type,
                 label: this.temp_label,
+                fieldComponentName: this.temp_type,
+                fieldType: 1,
                 componentDefs: new defs[this.temp_type]()
-            });
+            };
+            let param = {
+                fieldNo: v.fieldNo,
+                label: v.label,
+                fieldComponentName: v.componentDefs?.type?.value,
+                itemName: this.itemName,
+                fieldType: 1,
+                object: v
+            }
+            console.log("===param===")
+            console.log(param)
+
+            let result = await saveOne(param);
+
+            if (!result.success) return;
+        
+            this.$message({ type: "success", message: "保存成功" });
+            this.load();
 
             this.dialogVisible = false;
         },
         // 确定添加计算字段
-        addComputedFieldConfirm() {
-            this.$store.commit("pushComputedField", {
-                fieldNo: this.temp_computed_fieldNo,
+        async addComputedFieldConfirm() {
+            // this.$store.commit("pushComputedField", {
+            //     fieldNo: this.temp_computed_fieldNo,
+            //     label: this.temp_computed_label,
+            //     fieldType: 2,
+            //     componentDefs: new defs["computed"]()
+            // });
+
+            let v = {
+                fieldNo:this.temp_computed_fieldNo,
+                type: this.temp_type,
                 label: this.temp_computed_label,
+                fieldType: 2,
                 componentDefs: new defs["computed"]()
-            });
+            };
+            let param = {
+                fieldNo: v.fieldNo,
+                label: v.label,
+                fieldComponentName: v.componentDefs?.type?.value,
+                itemName: this.itemName,
+                fieldType: 2,
+                object: v
+            }
+            console.log("===param===")
+            console.log(param)
+
+            let result = await saveOne(param);
+
+            if (!result.success) return;
+        
+            this.$message({ type: "success", message: "保存成功" });
+            this.load();
+
             this.dialogComputedVisible = false;
         },
         // 点击 fieldNo
         handleClickField(fieldObj) {
+            console.log(fieldObj);
             this.temp_fieldObj = fieldObj;
         },
         // 删除 fieldNo
@@ -193,7 +295,7 @@ export default {
             let result = await deleteOne(param);
             if (!result.success) return;
             this.$message({ type: "success", message: "删除成功" });
-            this.$store.commit("deleteBaseField", i);
+            // this.$store.commit("deleteBaseField", i);
         },
         // 删除 computed fieldNo
         async handleDeleteComputedField(v, i) {
@@ -204,7 +306,19 @@ export default {
             let result = await deleteOne(param);
             if (!result.success) return;
             this.$message({ type: "success", message: "删除成功" });
-            this.$store.commit("deleteComputedField", i);
+            // this.$store.commit("deleteComputedField", i);
+        },
+
+        // 重新定义删除
+        async handleDeleteField(v) {
+            let param = {
+                fieldId: v.id
+            };
+            console.log(param);
+            let result = await deleteOne(param);
+            if (!result.success) return;
+            this.$message({ type: "success", message: "删除成功" });
+            this.load();
         },
 
         //  预览
@@ -244,6 +358,7 @@ export default {
             if (!result.success) return;
             v.id = result.data.id;
             this.$message({ type: "success", message: "保存成功" });
+            this.load();
         },
         // save 全部保存
         async save() {
@@ -322,12 +437,12 @@ export default {
     border: green 1px solid;
     height: 100%;
 }
-.attribute-content {
-    flex: 1;
-    border: blue 1px solid;
-    height: 100%;
-    .attribute {
-        margin: 4px 0;
-    }
-}
+// .attribute-content {
+//     flex: 1;
+//     border: blue 1px solid;
+//     height: 100%;
+//     .attribute {
+//         margin: 4px 0;
+//     }
+// }
 </style>
