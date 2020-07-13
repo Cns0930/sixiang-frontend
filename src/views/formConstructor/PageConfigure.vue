@@ -54,6 +54,7 @@
             <el-table :data="baseFields">
                 <el-table-column prop="fieldNo" label="fieldNo"></el-table-column>
                 <el-table-column prop="label" label="字段名"></el-table-column>
+                <el-table-column prop="type" label="组件"></el-table-column>
                 <el-table-column label="操作">
                     <template slot-scope="scope">
                         <el-button type="text" @click="chooseFieldToTemp(scope)"
@@ -153,6 +154,7 @@ export default {
             if (this.$store.hasModule("preview")) {
                 this.$store.unregisterModule("preview")
             }
+            console.log(JSON.stringify(module.state,null,4))
             this.$store.registerModule("preview", module);
             this.$router.push("/preview")
         }

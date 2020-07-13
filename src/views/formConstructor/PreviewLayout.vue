@@ -101,6 +101,7 @@ export default {
     },
     computed: {
         previewFields(){
+            
             return this.$store.state.preview
         }
     }
