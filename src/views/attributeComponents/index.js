@@ -22,8 +22,8 @@ export function getMapping() {
 
 export function deserializeBaseField(fieldJSON) {
 
-    console.log("===fieldJSON===")
-    console.log(fieldJSON)
+    // console.log("===fieldJSON===")
+    // console.log(fieldJSON)
 
     let componentDefs = fieldJSON.componentDefs
     let actualComponentDefs = new defs[fieldJSON.type]();
@@ -70,6 +70,7 @@ export function deserializeComputedField(fieldJSON){
 }
 
 export function deserializeTableData(fieldJSON){
+    console.log(fieldJSON)
     // type为1或2时分别调用其他方法
     if(fieldJSON.fieldType == 1){
         return deserializeBaseField(fieldJSON)

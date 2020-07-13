@@ -34,20 +34,5 @@ export default new Vuex.Store({
         home: homeModule,
         fieldModel: fieldModel,
     },
-    plugins: [createPersistedState(/* {
-        storage: {
-          getItem: (key) =>{
-              
-
-            return deserialize(localStorage.getItem(key))
-            
-          } ,
-          setItem: (key, value) =>{
-       
-            // let json = JSON.stringify(value)
-            return localStorage.setItem(key, value)
-          },
-          removeItem: (key) => localStorage.removeItem(key),
-        },
-      } */)],
+    
 })
