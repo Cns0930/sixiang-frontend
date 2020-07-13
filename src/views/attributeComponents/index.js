@@ -2,6 +2,7 @@ import InputDef from "./InputDef"
 import ComputedDef from "./ComputedDef"
 import SelectDef from "./SelectDef"
 import QingxingCheckboxDef from "./QingxingCheckboxDef"
+import DatePickerDef from "./DatePickerDef"
 import RadioDef from "./RadioDef"
 import defs from "@/views/attributeComponents/index"
 let mapping = {
