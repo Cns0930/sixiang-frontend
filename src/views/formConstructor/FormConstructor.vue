@@ -219,6 +219,7 @@ export default {
                     }
 
             await this.handleSaveField(this.temp_fieldObj, this.temp_fieldObj.fieldType)
+            this.dialogChangeTypeVisible= false;
         },
         // 确定添加字段
         async addFieldConfirm() {
