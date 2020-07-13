@@ -11,16 +11,26 @@ let NumberInput =  {
     }
 }
 // 选择器组件
-let TypeSelector = {
-    name:"TypeSelector",
-    props: ['value','options'],
+let ElSelectC = {
+    name:"ElSelectC",
+    props: ['options',"value","onChange"],
+    
     render() {
-        return <ElSelect vModel={this.value}>{
-
-            this.options.map(option => <ElOption label={option.label} value={option.value}></ElOption>)
-
-        }</ElSelect>
+        let realOption 
+        if(Object.prototype.toString.call(this.options)=== "[object Array]"){
+            realOption = this.options.map(option=>({label:option,value:option}))
+        }else {
+            realOption = this.options
         }
+ 
+        return <ElSelect value={this.value} onInput={(e)=>this.$emit("input",e)} onChange={(e)=>{this.onChange(e)}}>
+            {
+                realOption.map(option=> <ElOption lable={option.label} value={option.value} ></ElOption>)
+            }
+        
+        </ElSelect>
+    }
+
 }
 
 let TextAreaArray = {
@@ -34,6 +44,6 @@ let TextAreaArray = {
 export default {
     TextSpan,
     NumberInput,
-    TypeSelector,
+    ElSelectC,
     TextAreaArray,
 }

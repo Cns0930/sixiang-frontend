@@ -45,20 +45,16 @@
                     <el-table-column fixed prop="fieldNo" label="fieldNo" width="150"></el-table-column>
                     <el-table-column prop="label" label="label"></el-table-column>
                     <el-table-column prop="type" label="组件名" width="120"></el-table-column>
-                    <el-table-column prop="fieldType" label="类型" :formatter="formatFieldType" width="120"></el-table-column>
-                    <el-table-column fixed="right" label="操作" width="150">
+                    <el-table-column prop="fieldType" label="类型" :formatter="formatFieldType" width="120">
+                    </el-table-column>
+                    <el-table-column fixed="right" label="操作" width="250">
                         <template slot-scope="scope">
-                            <el-button @click="handleClickField(scope.row);handleEditField()" type="text" size="small">编辑</el-button>
-                            <!-- <el-button
-                                @click="handleSaveField(scope.row, scope.row.fieldType)"
-                                type="text"
-                                size="small"
-                            >保存</el-button> -->
-                            <el-button
-                                @click="handleDeleteField(scope.row)"
-                                type="text"
-                                size="small"
-                            >删除</el-button>
+                            <el-button @click="handleClickField(scope.row);handleEditField()" type="text" size="small">
+                                编辑</el-button>
+                            <el-button @click="handleClickChangeType(scope);" type="text" size="small">更改组件类型
+                            </el-button>
+
+                            <el-button @click="handleDeleteField(scope.row)" type="text" size="small">删除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -66,12 +62,7 @@
         </div>
 
         <!-- 字段组件属性填写 -->
-        <el-dialog
-            title="字段组件属性填写"
-            :visible.sync="editDialogVisible"
-            width="80%"
-            :close-on-click-modal="false"
-        >
+        <el-dialog title="字段组件属性填写" :visible.sync="editDialogVisible" width="80%" :close-on-click-modal="false">
             <div class="attribute-content">
                 <div class="attribute" v-if="temp_fieldObj">
                     fieldNo
@@ -80,27 +71,20 @@
                     <el-input v-model="temp_fieldObj.label"></el-input>
                     <div class="attribute" v-for="(v,i) in temp_fieldObj.componentDefs" :key="i">
                         {{i}}
-                        <component
-                            :is="v.renderTemplateName"
-                            v-model="v.value"
-                            v-bind="v.attributes"
-                        ></component>
+                        <component :is="v.renderTemplateName" v-model="v.value" v-bind="v.attributes"></component>
                     </div>
                 </div>
             </div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editDialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="handleSaveField(temp_fieldObj, temp_fieldObj.fieldType);editDialogVisible = false">确 定</el-button>
+                <el-button type="primary"
+                    @click="handleSaveField(temp_fieldObj, temp_fieldObj.fieldType);editDialogVisible = false">确 定
+                </el-button>
             </span>
         </el-dialog>
 
         <!-- 创建基本字段 -->
-        <el-dialog
-            title="创建基本字段"
-            :visible.sync="dialogVisible"
-            width="80%"
-            :close-on-click-modal="false"
-        >
+        <el-dialog title="创建基本字段" :visible.sync="dialogVisible" width="80%" :close-on-click-modal="false">
             <div>
                 fieldNo:
                 <el-input v-model="temp_fieldNo"></el-input>
@@ -111,12 +95,7 @@
             </div>
             <div>
                 <el-select v-model="temp_type">
-                    <el-option
-                        v-for="(v,i) in typeOptions"
-                        :key="i"
-                        :label="v.label"
-                        :value="v.value"
-                    ></el-option>
+                    <el-option v-for="(v,i) in typeOptions" :key="i" :label="v.label" :value="v.value"></el-option>
                 </el-select>
             </div>
             <span slot="footer" class="dialog-footer">
@@ -125,12 +104,7 @@
             </span>
         </el-dialog>
         <!-- 创建合成字段 -->
-        <el-dialog
-            title="创建合成字段"
-            :visible.sync="dialogComputedVisible"
-            width="50%"
-            :close-on-click-modal="false"
-        >
+        <el-dialog title="创建合成字段" :visible.sync="dialogComputedVisible" width="50%" :close-on-click-modal="false">
             <div>
                 fieldNo:
                 <el-input v-model="temp_computed_fieldNo"></el-input>
@@ -142,6 +116,17 @@
             <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogComputedVisible = false">取 消</el-button>
                 <el-button type="primary" @click="addComputedFieldConfirm">确 定</el-button>
+            </span>
+        </el-dialog>
+        <!-- 更改组件类型 -->
+        <el-dialog title="更改组件类型" :visible.sync="dialogChangeTypeVisible" width="50%" :close-on-click-modal="false">
+
+            <el-select v-model="temp_change_type">
+                <el-option v-for="(v,i) in typeOptions" :key="i" :label="v.label" :value="v.value"></el-option>
+            </el-select>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogChangeTypeVisible = false">取 消</el-button>
+                <el-button type="primary" @click="changeTypeConfirm">确 定</el-button>
             </span>
         </el-dialog>
     </div>
@@ -168,7 +153,7 @@ export default {
             // 添加 fieldNo 的dialog 用
             dialogVisible: false,
             editDialogVisible: false,
-            typeOptions: Object.keys(defs).map(v => ({ value: v, label: v })),
+            typeOptions: defs.map(v => ({ value: v.value, label: v.label })),
             temp_fieldNo: "",
             temp_type: "",
             temp_label: "",
@@ -177,10 +162,10 @@ export default {
             temp_computed_fieldNo: "",
             temp_computed_label: "",
             // 属性填写用
-            temp_fieldObj: null
-            //    baseFields:[],
-            //    computedFields:[],
-            // tableData: []
+            temp_fieldObj: null,
+            // 更改组件类型
+            temp_change_type: "",
+            dialogChangeTypeVisible: false,
         };
     },
     computed: {
@@ -204,24 +189,48 @@ export default {
         handleEditField() {
             this.editDialogVisible = true;
         },
+        // 改变类型
+        handleClickChangeType(scope) {
+
+            this.temp_change_type = scope.row.type
+            this.temp_fieldObj = scope.row;
+            this.dialogChangeTypeVisible = true;
+        },
+        //  确定 改变类型
+        async changeTypeConfirm() {
+            let ComponentDefClass = defs.find(v => v.value == this.temp_change_type)?.componentDef
+            this.temp_fieldObj =
+                this.temp_change_type == "computed" ?
+                    {
+                        id: this.temp_fieldObj.id,
+                        fieldNo: this.temp_fieldObj.fieldNo,
+                        type: this.temp_change_type,
+                        label: this.temp_fieldObj.label,
+                        fieldType: 2,
+                        componentDefs: new ComponentDefClass()
+                    } : {
+                        id: this.temp_fieldObj.id,
+                        fieldNo: this.temp_fieldObj.fieldNo,
+                        type: this.temp_change_type,
+                        label: this.temp_fieldObj.label,
+                        fieldComponentName: this.temp_change_type,
+                        fieldType: 1,
+                        componentDefs: new ComponentDefClass()
+                    }
+
+            await this.handleSaveField(this.temp_fieldObj, this.temp_fieldObj.fieldType)
+        },
         // 确定添加字段
         async addFieldConfirm() {
-            // this.$store.commit("pushBaseField", {
-            //     fieldNo: this.temp_fieldNo,
-            //     type: this.temp_type,
-            //     label: this.temp_label,
-            //     fieldType: 1,
-            //     componentDefs: new defs[this.temp_type]()
-            // });
-            // 改成直接保存到数据库 而不是直接操作state
+            let ComponentDefClass = defs.find(v => v.value == this.temp_type)?.componentDef
 
             let v = {
-                fieldNo:this.temp_fieldNo,
+                fieldNo: this.temp_fieldNo,
                 type: this.temp_type,
                 label: this.temp_label,
                 fieldComponentName: this.temp_type,
                 fieldType: 1,
-                componentDefs: new defs[this.temp_type]()
+                componentDefs: new ComponentDefClass()
             };
             let param = {
                 fieldNo: v.fieldNo,
@@ -237,7 +246,7 @@ export default {
             let result = await saveOne(param);
 
             if (!result.success) return;
-        
+
             this.$message({ type: "success", message: "保存成功" });
             this.load();
 
@@ -245,19 +254,14 @@ export default {
         },
         // 确定添加计算字段
         async addComputedFieldConfirm() {
-            // this.$store.commit("pushComputedField", {
-            //     fieldNo: this.temp_computed_fieldNo,
-            //     label: this.temp_computed_label,
-            //     fieldType: 2,
-            //     componentDefs: new defs["computed"]()
-            // });
+            let ComponentDefClass = defs.find(v => v.value == "computed")?.componentDef
 
             let v = {
-                fieldNo:this.temp_computed_fieldNo,
+                fieldNo: this.temp_computed_fieldNo,
                 type: this.temp_type,
                 label: this.temp_computed_label,
                 fieldType: 2,
-                componentDefs: new defs["computed"]()
+                componentDefs: new ComponentDefClass()
             };
             let param = {
                 fieldNo: v.fieldNo,
@@ -273,7 +277,7 @@ export default {
             let result = await saveOne(param);
 
             if (!result.success) return;
-        
+
             this.$message({ type: "success", message: "保存成功" });
             this.load();
 
@@ -382,12 +386,12 @@ export default {
                 result.data.filter(v => v.fieldType == 2 || v.fieldType == 1).map(v => ({ id: v.id, fieldType: v.fieldType, ...v.object })).map(deserializeTableData)
             )
         },
-        formatFieldType(row, column, cellValue, index){
-            if(cellValue == 1){
+        formatFieldType(row, column, cellValue, index) {
+            if (cellValue == 1) {
                 return "基本字段"
             }
-            if(cellValue == 2){
-            return "合成字段"
+            if (cellValue == 2) {
+                return "合成字段"
             }
             return "其他"
         }

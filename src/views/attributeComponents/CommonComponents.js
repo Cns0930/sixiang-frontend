@@ -9,12 +9,13 @@ class CommonComponents {
         
         this.span = new Renderer('NumberInput', 24,{vModel:24})
         // 组件类型
-
-        const typeOptions = Object.keys(getMapping()).map(v => ({ value: v, label: v }))
+        let mapping = getMapping()
+        const typeOptions = Object.keys(mapping)
         
-        // this.type = new Renderer("TypeSelector", type,  { value: type, options: typeOptions })
+        this.type = new Renderer("ElSelectC", type,  { value: type, options: typeOptions,onChange:(e)=>{this.$emit("changeType",e)} })
+   
+        // this.type =rendererBuilder("text",type) 
 
-        this.type =rendererBuilder("text",type) 
         // 样例 值
         this.sample = new Renderer('ElInput', '')
         // 验证 文字说明

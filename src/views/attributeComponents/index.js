@@ -5,16 +5,27 @@ import QingxingCheckboxDef from "./QingxingCheckboxDef"
 import DatePickerDef from "./DatePickerDef"
 import RadioDef from "./RadioDef"
 import defs from "@/views/attributeComponents/index"
-let mapping = {
 
-    "input": InputDef,
-    "select": SelectDef,
-    "qingxingCheckbox": QingxingCheckboxDef,
-    "radio": RadioDef,
-    "datePicker": DatePickerDef,
-    "computed": ComputedDef
 
-}
+// {
+
+//     "input": InputDef,
+//     "select": SelectDef,
+//     "qingxingCheckbox": QingxingCheckboxDef,
+//     "radio": RadioDef,
+//     "datePicker": DatePickerDef,
+//     "computed": ComputedDef
+
+// }
+let mapping = [
+    {label:"输入框",value:"input",componentDef:InputDef},
+    {label:"下拉选择",value:"select",componentDef:SelectDef},
+    {label:"情形多选",value:"qingxingCheckbox",componentDef:QingxingCheckboxDef},
+    {label:"单选",value:"radio",componentDef:RadioDef},
+    {label:"日期选择",value:"datePicker",componentDef:DatePickerDef},
+    {label:"合成属性",value:"computed",componentDef:ComputedDef},
+]
+
 export function getMapping() {
     return mapping
 }
@@ -26,9 +37,11 @@ export function deserializeBaseField(fieldJSON) {
     // console.log(fieldJSON)
 
     let componentDefs = fieldJSON.componentDefs
-    let actualComponentDefs = new defs[fieldJSON.type]();
+    let ComponentDefClass = defs.find(v=>v.value == fieldJSON.type)?.componentDef
+    let actualComponentDefs = new ComponentDefClass();
     Object.keys(actualComponentDefs).forEach(key => {
-        actualComponentDefs[key].value = componentDefs[key].value
+        console.log(key,componentDefs[key])
+        actualComponentDefs[key].value = componentDefs[key]?.value 
     })
     
 
@@ -50,9 +63,10 @@ export function deserializeBaseField(fieldJSON) {
 export function deserializeComputedField(fieldJSON){
     
     let componentDefs = fieldJSON.componentDefs
-    let actualComponentDefs = new defs["computed"]();
+    let actualComponentDefs = new ComputedDef();
     Object.keys(actualComponentDefs).forEach(key => {
-        actualComponentDefs[key].value = componentDefs[key].value
+        console.log(key,actualComponentDefs[key])
+        actualComponentDefs[key].value = componentDefs[key]?.value
     })
 
 
