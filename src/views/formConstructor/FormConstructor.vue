@@ -41,7 +41,8 @@
 
             <!-- 字段表格 -->
             <div class="fields-table" style="width: 100%;padding:10px 60px">
-                <el-table :data="tableData" border style="width: 100%">
+                <el-table :data="tableData" border style="width: 100%"
+                row-key="id" :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
                     <el-table-column fixed prop="fieldNo" label="fieldNo" width="150"></el-table-column>
                     <el-table-column prop="label" label="label"></el-table-column>
                     <el-table-column prop="type" label="组件名" width="120"></el-table-column>
@@ -49,11 +50,12 @@
                     </el-table-column>
                     <el-table-column fixed="right" label="操作" width="250">
                         <template slot-scope="scope">
-                            <el-button @click="handleClickField(scope.row);handleEditField()" type="text" size="small">
+                            <el-button @click="handleClickField(scope.row);" type="text" size="small">
                                 编辑</el-button>
                             <el-button @click="handleClickChangeType(scope);" type="text" size="small">更改组件类型
                             </el-button>
-
+                            <el-button @click="handleClickAddChild(scope.row);" type="text" size="small" :disabled="scope.row.fieldType != 1">添加子项
+                            </el-button>
                             <el-button @click="handleDeleteField(scope.row)" type="text" size="small">删除</el-button>
                         </template>
                     </el-table-column>
@@ -78,7 +80,7 @@
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editDialogVisible = false">取 消</el-button>
                 <el-button type="primary"
-                    @click="handleSaveField(temp_fieldObj, temp_fieldObj.fieldType);editDialogVisible = false">确 定
+                    @click="handleSaveField(temp_fieldObj);editDialogVisible = false">确 定
                 </el-button>
             </span>
         </el-dialog>
@@ -101,6 +103,26 @@
             <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogVisible = false">取 消</el-button>
                 <el-button type="primary" @click="addFieldConfirm">确 定</el-button>
+            </span>
+        </el-dialog>
+        <!-- 创建子项字段 -->
+        <el-dialog title="创建子项字段" :visible.sync="dialogChildVisible" width="80%" :close-on-click-modal="false">
+            <div>
+                fieldNo:
+                <el-input v-model="temp_fieldNo"></el-input>
+            </div>
+            <div>
+                名称（中文）:
+                <el-input v-model="temp_label"></el-input>
+            </div>
+            <div>
+                <el-select v-model="temp_type">
+                    <el-option v-for="(v,i) in typeOptions" :key="i" :label="v.label" :value="v.value"></el-option>
+                </el-select>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogChildVisible = false">取 消</el-button>
+                <el-button type="primary" @click="addChildFieldConfirm">确 定</el-button>
             </span>
         </el-dialog>
         <!-- 创建合成字段 -->
@@ -166,6 +188,9 @@ export default {
             // 更改组件类型
             temp_change_type: "",
             dialogChangeTypeVisible: false,
+            // 子项属性填写用
+            dialogChildVisible: false,
+            temp_parentId: null
         };
     },
     computed: {
@@ -186,9 +211,6 @@ export default {
         handleAddComputedField() {
             this.dialogComputedVisible = true;
         },
-        handleEditField() {
-            this.editDialogVisible = true;
-        },
         // 改变类型
         handleClickChangeType(scope) {
 
@@ -196,9 +218,53 @@ export default {
             this.temp_fieldObj = scope.row;
             this.dialogChangeTypeVisible = true;
         },
+        // 添加子项
+        handleClickAddChild(row) {
+            this.temp_parentId = row.id;
+            this.dialogChildVisible = true;
+        },
+        // 确定添加子项
+        async addChildFieldConfirm(){
+            let ComponentDefClass = defs.find(v => v.value == this.temp_type)?.componentDef
+            let v = {
+                fieldNo: this.temp_fieldNo,
+                type: this.temp_type,
+                label: this.temp_label,
+                fieldComponentName: this.temp_type,
+                fieldType: 3,
+                componentDefs: new ComponentDefClass()
+            };
+            let param = {
+                fieldNo: v.fieldNo,
+                label: v.label,
+                fieldComponentName: v.componentDefs?.type?.value,
+                itemName: this.itemName,
+                fieldType: 3,
+                object: v,
+                parentId: this.temp_parentId
+            }
+            console.log("===param===")
+            console.log(param)
+
+            let result = await saveOne(param);
+
+            if (!result.success) return;
+
+            this.$message({ type: "success", message: "保存成功" });
+            this.load();
+
+            this.dialogChildVisible = false;
+        },
         //  确定 改变类型
         async changeTypeConfirm() {
             let ComponentDefClass = defs.find(v => v.value == this.temp_change_type)?.componentDef
+            // 不可修改类型时给出提示
+            if(this.temp_change_type == "computed"){
+                if(this.temp_fieldObj.children != null || this.temp_fieldObj.fieldType == 3){
+                    this.$message({ type: "warning", message: "父项/子项不可修改为合成类型" });
+                    return
+                }
+            }
             this.temp_fieldObj =
                 this.temp_change_type == "computed" ?
                     {
@@ -214,11 +280,12 @@ export default {
                         type: this.temp_change_type,
                         label: this.temp_fieldObj.label,
                         fieldComponentName: this.temp_change_type,
-                        fieldType: 1,
+                        fieldType: this.temp_fieldObj.fieldType == 3 ? 3: 1,
                         componentDefs: new ComponentDefClass()
                     }
 
-            await this.handleSaveField(this.temp_fieldObj, this.temp_fieldObj.fieldType)
+            await this.handleSaveField(this.temp_fieldObj)
+            this.dialogChangeTypeVisible = false;
         },
         // 确定添加字段
         async addFieldConfirm() {
@@ -285,8 +352,8 @@ export default {
         },
         // 点击 fieldNo
         handleClickField(fieldObj) {
-            console.log(fieldObj);
             this.temp_fieldObj = fieldObj;
+            this.editDialogVisible = true;
         },
         // 删除 fieldNo
         async handleDeleteBaseField(v, i) {
@@ -345,14 +412,14 @@ export default {
             this.$router.push("/preview");
         },
         // 单个保存
-        async handleSaveField(v, type) {
+        async handleSaveField(v) {
             let param = {
                 id: v.id,
                 fieldNo: v.fieldNo,
                 label: v.label,
                 fieldComponentName: v.componentDefs?.type?.value,
                 itemName: this.itemName,
-                fieldType: type,
+                fieldType: v.fieldType,
                 object: v
             };
             let result = await saveOne(param);
@@ -383,7 +450,7 @@ export default {
             );
             this.$store.commit(
                 "putTableData",
-                result.data.filter(v => v.fieldType == 2 || v.fieldType == 1).map(v => ({ id: v.id, fieldType: v.fieldType, ...v.object })).map(deserializeTableData)
+                result.data.filter(v => v.fieldType == 2 || v.fieldType == 1).map(v => ({ id: v.id, fieldType: v.fieldType, children: v.children, ...v.object })).map(deserializeTableData)
             )
         },
         formatFieldType(row, column, cellValue, index) {

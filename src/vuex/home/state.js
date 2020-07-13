@@ -10,6 +10,10 @@ const state = {
         {
             name: '测试',
             sid:"test"
+        },
+        {
+            name: 'new',
+            sid:"0000"
         }
     ],
     //  事项名
