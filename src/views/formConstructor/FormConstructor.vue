@@ -42,11 +42,11 @@
             <!-- 字段表格 -->
             <div class="fields-table" style="width: 100%;padding:10px 60px">
                 <el-table :data="tableData" border style="width: 100%">
-                    <el-table-column fixed prop="fieldNo" label="fieldNo" ></el-table-column>
-                    <el-table-column prop="label" label="label" ></el-table-column>
-                    <el-table-column prop="type" label="组件名"></el-table-column>
-                    <el-table-column prop="fieldType" label="类型" :formatter="formatFieldType" ></el-table-column>
-                    <el-table-column fixed="right" label="操作" >
+                    <el-table-column fixed prop="fieldNo" label="fieldNo" width="150"></el-table-column>
+                    <el-table-column prop="label" label="label"></el-table-column>
+                    <el-table-column prop="type" label="组件名" width="120"></el-table-column>
+                    <el-table-column prop="fieldType" label="类型" :formatter="formatFieldType" width="120"></el-table-column>
+                    <el-table-column fixed="right" label="操作" width="150">
                         <template slot-scope="scope">
                             <el-button @click="handleClickField(scope.row);handleEditField()" type="text" size="small">编辑</el-button>
                             <!-- <el-button
@@ -367,26 +367,29 @@ export default {
                 "putBaseFields",
                 result.data
                     .filter(v => v.fieldType == 1)
-                    .map(v => ({ id: v.id, ...v.object }))
+                    .map(v => ({ id: v.id, fieldType: v.fieldType, ...v.object }))
                     .map(deserializeBaseField)
             );
             this.$store.commit(
                 "putComputedFields",
                 result.data
                     .filter(v => v.fieldType == 2)
-                    .map(v => ({ id: v.id, ...v.object }))
+                    .map(v => ({ id: v.id, fieldType: v.fieldType, ...v.object }))
                     .map(deserializeComputedField)
             );
             this.$store.commit(
                 "putTableData",
-                result.data.filter(v => v.fieldType == 2 || v.fieldType == 1).map(v => ({ id: v.id, ...v.object })).map(deserializeTableData)
+                result.data.filter(v => v.fieldType == 2 || v.fieldType == 1).map(v => ({ id: v.id, fieldType: v.fieldType, ...v.object })).map(deserializeTableData)
             )
         },
         formatFieldType(row, column, cellValue, index){
             if(cellValue == 1){
                 return "基本字段"
             }
+            if(cellValue == 2){
             return "合成字段"
+            }
+            return "其他"
         }
     }
 };
