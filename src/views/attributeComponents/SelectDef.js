@@ -8,6 +8,11 @@ class SelectDef extends CommonComponents{
 
         this.component = rendererBuilder("text","ElSelectC")
     }
+    getAttributes(){
+        return {
+            options:this.options.value
+        }
+    }
 }
 
 export default SelectDef

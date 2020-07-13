@@ -6,6 +6,11 @@ class RadioDef extends CommonComponents{
         this.options = new Renderer("TextAreaArray",[],{})
         this.component = rendererBuilder("text","ElRadioC")
     }
+    getAttributes(){
+        return {
+            options:this.options.value
+        }
+    }
 }
 
 export default RadioDef

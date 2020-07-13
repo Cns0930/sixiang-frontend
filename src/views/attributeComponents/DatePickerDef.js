@@ -13,8 +13,8 @@ class DatePickerDef extends CommonComponents{
     }
     getAttributes(){
         return {
-            type:this.$type,
-            format:this.$format,
+            type:this.$type.value,
+            format:this.$format.value,
         }
     }
 }

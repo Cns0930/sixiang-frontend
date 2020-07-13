@@ -144,8 +144,9 @@ export default {
                 getters: {}
             }
             module.state = this.temp_page.fields.reduce((result, item) => {
+               
                 let attrObj = _.mapValues(item.componentDefs, (o) => o.value);
-                let mergeObj = _.merge({ label: item.label, fieldNo: item.fieldNo }, attrObj)
+                let mergeObj = _.merge({ label: item.label, fieldNo: item.fieldNo },attrObj, {attributes:item.componentDefs.getAttributes() || {}})
                 result[item.fieldNo] = mergeObj;
                 return result;
             }, {})

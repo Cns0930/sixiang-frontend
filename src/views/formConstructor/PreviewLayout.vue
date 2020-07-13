@@ -6,7 +6,7 @@
                 <el-col v-for="(v,i) in previewFields" :span="v.span || 12" v-if="!v.hidden" :key="i">
                     <el-form-item :label="v.label" :required="v.required !== false"
                         :prop="v.ruleKey ? v.ruleKey : v.required !== false ? 'required' : ''" :obj="v">
-                        <component :is="v.component" v-model="v.value" v-bind="v"></component>
+                        <component :is="v.component" v-model="v.value" v-bind="v.attributes"></component>
                     </el-form-item>
                 </el-col>
 

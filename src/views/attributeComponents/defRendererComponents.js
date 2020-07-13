@@ -13,7 +13,7 @@ let NumberInput =  {
 // 选择器组件
 let ElSelectC = {
     name:"ElSelectC",
-    props: ['options',"value","onChange"],
+    props: ['options',"value"],
     
     render() {
         let realOption 
@@ -23,7 +23,7 @@ let ElSelectC = {
             realOption = this.options
         }
  
-        return <ElSelect value={this.value} onInput={(e)=>this.$emit("input",e)} onChange={(e)=>{this.onChange(e)}}>
+        return <ElSelect value={this.value} onInput={(e)=>this.$emit("input",e)} >
             {
                 realOption.map(option=> <ElOption lable={option.label} value={option.value} ></ElOption>)
             }

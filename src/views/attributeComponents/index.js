@@ -40,7 +40,7 @@ export function deserializeBaseField(fieldJSON) {
     let ComponentDefClass = defs.find(v=>v.value == fieldJSON.type)?.componentDef
     let actualComponentDefs = new ComponentDefClass();
     Object.keys(actualComponentDefs).forEach(key => {
-        console.log(key,componentDefs[key])
+        
         actualComponentDefs[key].value = componentDefs[key]?.value 
     })
     
@@ -65,7 +65,7 @@ export function deserializeComputedField(fieldJSON){
     let componentDefs = fieldJSON.componentDefs
     let actualComponentDefs = new ComputedDef();
     Object.keys(actualComponentDefs).forEach(key => {
-        console.log(key,actualComponentDefs[key])
+        
         actualComponentDefs[key].value = componentDefs[key]?.value
     })
 
