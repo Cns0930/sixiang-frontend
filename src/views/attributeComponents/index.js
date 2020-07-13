@@ -35,7 +35,7 @@ export function deserializeBaseField(fieldJSON) {
         fieldNo: fieldJSON.fieldNo,
         type: fieldJSON.type,
         fieldType: 1,
-        fieldTypeCn: "基础字段",
+        // fieldTypeCn: "基础字段",
         label: fieldJSON.label,
         componentDefs: actualComponentDefs
     }
@@ -59,7 +59,7 @@ export function deserializeComputedField(fieldJSON){
         fieldNo: fieldJSON.fieldNo,
         type: fieldJSON.type,
         fieldType: 2,
-        fieldTypeCn: "合成字段",
+        // fieldTypeCn: "合成字段",
         label: fieldJSON.label,
         componentDefs:actualComponentDefs
     }

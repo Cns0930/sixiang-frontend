@@ -46,7 +46,7 @@
                     <el-table-column fixed prop="fieldNo" label="fieldNo"></el-table-column>
                     <el-table-column prop="label" label="label"></el-table-column>
                     <el-table-column prop="type" label="组件名" ></el-table-column>
-                    <el-table-column prop="fieldTypeCn" label="类型"></el-table-column>
+                    <el-table-column prop="fieldType" label="类型" :formatter="formatFieldType"></el-table-column>
                     <el-table-column fixed="right" label="操作">
                         <template slot-scope="scope">
                             <el-button @click="handleClickField(scope.row);handleEditField()" type="text" size="small">编辑</el-button>
@@ -403,6 +403,12 @@ export default {
                     .map(v => ({ id: v.id, ...v.object }))
                     .map(deserializeComputedField)
             );
+        },
+        formatFieldType(row, column, cellValue, index){
+            if(cellValue == 1){
+                return "基本字段"
+            }
+            return "合成字段"
         }
     }
 };
