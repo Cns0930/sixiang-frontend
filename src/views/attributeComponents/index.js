@@ -69,7 +69,13 @@ export function deserializeComputedField(fieldJSON){
 }
 
 export function deserializeTableData(fieldJSON){
-
+    // type为1或2时分别调用其他方法
+    if(fieldJSON.fieldType == 1){
+        return deserializeBaseField(fieldJSON)
+    }
+    if(fieldJSON.fieldType == 2){
+        return deserializeComputedField(fieldJSON)
+    }
 }
 
 export default mapping

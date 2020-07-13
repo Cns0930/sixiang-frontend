@@ -37,6 +37,9 @@ const mutations = {
     },
     deleteTemplate(state,data){
         state.templates.splice(data,1)
+    },
+    putTableData(state,data){
+        state.tableData = data;
     }
 }
 
