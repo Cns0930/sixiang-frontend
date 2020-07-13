@@ -10,6 +10,7 @@ let mapping = {
     "select": SelectDef,
     "qingxingCheckbox": QingxingCheckboxDef,
     "radio": RadioDef,
+    "datePicker": DatePickerDef,
     "computed": ComputedDef
 
 }
