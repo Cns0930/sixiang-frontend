@@ -45,7 +45,7 @@
                     <el-table-column fixed prop="fieldNo" label="fieldNo" width="150"></el-table-column>
                     <el-table-column prop="label" label="label" width="120"></el-table-column>
                     <el-table-column prop="type" label="组件名" width="120"></el-table-column>
-                    <el-table-column prop="fieldTypeCn" label="类型" width="120"></el-table-column>
+                    <el-table-column prop="fieldType" label="类型" :formatter="formatFieldType" width="120"></el-table-column>
                     <el-table-column fixed="right" label="操作" width="150">
                         <template slot-scope="scope">
                             <el-button @click="handleClickField(scope.row);handleEditField()" type="text" size="small">编辑</el-button>
