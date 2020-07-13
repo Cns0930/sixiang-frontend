@@ -4,7 +4,7 @@ import SelectDef from "./SelectDef"
 import QingxingCheckboxDef from "./QingxingCheckboxDef"
 import DatePickerDef from "./DatePickerDef"
 import RadioDef from "./RadioDef"
-import defs from "@/views/attributeComponents/index"
+import ConstantDef from "./ConstantDef"
 
 
 // {
@@ -24,6 +24,7 @@ let mapping = [
     {label:"单选",value:"radio",componentDef:RadioDef},
     {label:"日期选择",value:"datePicker",componentDef:DatePickerDef},
     {label:"合成属性",value:"computed",componentDef:ComputedDef},
+    {label:"常量",value:"constant",componentDef:ConstantDef},
 ]
 
 export function getMapping() {
@@ -37,10 +38,10 @@ export function deserializeBaseField(fieldJSON) {
     console.log(fieldJSON)
 
     let componentDefs = fieldJSON.componentDefs
-    let ComponentDefClass = defs.find(v=>v.value == fieldJSON.type)?.componentDef
+    let ComponentDefClass = mapping.find(v=>v.value == fieldJSON.type)?.componentDef
     let actualComponentDefs = new ComponentDefClass();
     Object.keys(actualComponentDefs).forEach(key => {
-        console.log(key,componentDefs[key])
+        
         actualComponentDefs[key].value = componentDefs[key]?.value 
     })
     
@@ -65,7 +66,7 @@ export function deserializeComputedField(fieldJSON){
     let componentDefs = fieldJSON.componentDefs
     let actualComponentDefs = new ComputedDef();
     Object.keys(actualComponentDefs).forEach(key => {
-        console.log(key,actualComponentDefs[key])
+        
         actualComponentDefs[key].value = componentDefs[key]?.value
     })
 

@@ -54,6 +54,7 @@
             <el-table :data="baseFields">
                 <el-table-column prop="fieldNo" label="fieldNo"></el-table-column>
                 <el-table-column prop="label" label="字段名"></el-table-column>
+                <el-table-column prop="type" label="组件"></el-table-column>
                 <el-table-column label="操作">
                     <template slot-scope="scope">
                         <el-button type="text" @click="chooseFieldToTemp(scope)"
@@ -144,14 +145,16 @@ export default {
                 getters: {}
             }
             module.state = this.temp_page.fields.reduce((result, item) => {
+               
                 let attrObj = _.mapValues(item.componentDefs, (o) => o.value);
-                let mergeObj = _.merge({ label: item.label, fieldNo: item.fieldNo }, attrObj)
+                let mergeObj = _.merge({ label: item.label, fieldNo: item.fieldNo },attrObj, {attributes:item.componentDefs.getAttributes() || {}})
                 result[item.fieldNo] = mergeObj;
                 return result;
             }, {})
             if (this.$store.hasModule("preview")) {
                 this.$store.unregisterModule("preview")
             }
+            console.log(JSON.stringify(module.state,null,4))
             this.$store.registerModule("preview", module);
             this.$router.push("/preview")
         }

@@ -10,6 +10,11 @@ class QingxingCheckboxDef extends CommonComponents{
 
         this.value = rendererBuilder("text",[]) 
     }
+    getAttributes(){
+        return {
+            options:this.options.value
+        }
+    }
 }
 
 export default QingxingCheckboxDef
