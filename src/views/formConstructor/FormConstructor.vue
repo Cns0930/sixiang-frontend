@@ -284,13 +284,8 @@ export default {
                         componentDefs: new ComponentDefClass()
                     }
 
-<<<<<<< HEAD
             await this.handleSaveField(this.temp_fieldObj)
             this.dialogChangeTypeVisible = false;
-=======
-            await this.handleSaveField(this.temp_fieldObj, this.temp_fieldObj.fieldType)
-            this.dialogChangeTypeVisible= false;
->>>>>>> 8742e5aff5b2de1843282a310a136455d18a6a33
         },
         // 确定添加字段
         async addFieldConfirm() {
