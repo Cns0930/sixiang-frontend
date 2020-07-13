@@ -13,6 +13,6 @@ const state = {
         }
     ],
     //  事项名
-    itemName: '内资公司注销登记',
+    itemName: '测试',
 };
 export default state

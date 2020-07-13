@@ -407,7 +407,7 @@ export default {
         display: flex;
         height: calc(100vh - 40px);
     }
-    .el-input {
+    ::v-deep .el-input {
         width: 400px;
     }
     .el-textarea {

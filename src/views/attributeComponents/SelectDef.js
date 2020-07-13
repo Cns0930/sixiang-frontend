@@ -4,7 +4,7 @@ class SelectDef extends CommonComponents{
     constructor(){
         super({type:"select"})
 
-        this.options = new Renderer("TextAreaArray",[],{})
+        this.options = new Renderer("InputArray",[""],{})
 
         this.component = rendererBuilder("text","ElSelectC")
     }
