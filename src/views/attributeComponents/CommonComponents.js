@@ -16,6 +16,8 @@ class CommonComponents {
 
         // 样例 值
         this.sample = new Renderer('ElInput', '')
+        // 是否必填
+        this.required = new Renderer('ElCheckboxC', true,{options:[true]})
         // 验证 文字说明
         // this.validate = new Renderer('ElInput', '')
         // // 交互限制 文字说明
@@ -26,7 +28,9 @@ class CommonComponents {
         // this.onfocus = new Renderer('ElInput', '')
     }
     getAttributes(){
-        return {}
+        return {
+            placeholder:"请输入内容"
+        }
     }
 }
 

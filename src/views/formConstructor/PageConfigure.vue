@@ -22,11 +22,13 @@
             <div class="attribute-content">
                 <!-- 根据上个页面的值 -->
 
-                <div>始终存在</div>
+                <!-- <div>始终存在</div> -->
                 <el-button type="primary" @click="addFieldDialogVisible = true">添加</el-button>
                 <el-table :data="temp_page.fields">
                     <el-table-column prop="fieldNo" label="fieldNo"></el-table-column>
                     <el-table-column prop="label" label="字段"></el-table-column>
+                     <el-table-column prop="type" label="组件名" width="120"></el-table-column>
+                     
                     <el-table-column label="操作">
                         <template slot-scope="scope">
                             <el-button type="text" @click="deleteField(scope)"> 删除</el-button>
@@ -50,15 +52,17 @@
         </el-dialog>
         <!-- 添加field 页面 -->
         <el-dialog title="添加字段" :visible.sync="addFieldDialogVisible" width="50%" :close-on-click-modal="false">
-
+            
             <el-table :data="baseFields">
                 <el-table-column prop="fieldNo" label="fieldNo"></el-table-column>
                 <el-table-column prop="label" label="字段名"></el-table-column>
                 <el-table-column prop="type" label="组件"></el-table-column>
+                
+                
                 <el-table-column label="操作">
                     <template slot-scope="scope">
                         <el-button type="text" @click="chooseFieldToTemp(scope)"
-                            :disabled="temp_chosen_fields.find(v=>v.fieldNo==='scope.row.fieldNo')"> 选择</el-button>
+                            :disabled="!!temp_chosen_fields.find(v=>v.fieldNo===scope.row.fieldNo)"> 选择</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -145,9 +149,9 @@ export default {
                 getters: {}
             }
             module.state = this.temp_page.fields.reduce((result, item) => {
-               
+              
                 let attrObj = _.mapValues(item.componentDefs, (o) => o.value);
-                let mergeObj = _.merge({ label: item.label, fieldNo: item.fieldNo },attrObj, {attributes:item.componentDefs.getAttributes() || {}})
+                let mergeObj = _.merge({ label: item.label, fieldNo: item.fieldNo },attrObj, {attributes:item.componentDefs.getAttributes?item.componentDefs.getAttributes() || {}:{}})
                 result[item.fieldNo] = mergeObj;
                 return result;
             }, {})

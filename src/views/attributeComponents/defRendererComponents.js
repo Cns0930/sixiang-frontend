@@ -62,11 +62,28 @@ let InputArray = {
     }
 }
 
+let ElCheckboxC = {
+    name:"ElCheckboxC",
+    props:["options","value"],
+    render(){
+        return <el-checkbox-group value={this.value} onInput={(e)=>this.$emit("input",e)}>
+           
+                {
+                    this.options.map(option=> 
+                        <el-checkbox label={option}>{option}</el-checkbox>
+                    )
+                }
+           
+           
+        </el-checkbox-group>
+    }
+}
 
 export default {
     TextSpan,
     NumberInput,
     ElSelectC,
     TextAreaArray,
-    InputArray
+    InputArray,
+    ElCheckboxC
 }

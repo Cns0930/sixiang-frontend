@@ -10,7 +10,8 @@ class SelectDef extends CommonComponents{
     }
     getAttributes(){
         return {
-            options:this.options.value
+            options:this.options.value,
+            placeholder:"请输入内容"
         }
     }
 }
