@@ -1,3 +1,7 @@
+import IdentityCommon from "./IdentityCommon/IdentityCommon"
+
+
+
 // 选择器
 let ElSelectC = {
     name:"ElSelectC",
@@ -52,5 +56,6 @@ let ElCheckboxC = {
 export default {
     ElSelectC,
     ElCheckboxC,
-    ElRadioC
+    ElRadioC,
+    IdentityCommon
 }

@@ -52,7 +52,7 @@
         </el-dialog>
         <!-- 添加field 页面 -->
         <el-dialog title="添加字段" :visible.sync="addFieldDialogVisible" width="50%" :close-on-click-modal="false">
-            
+            <el-button type="text" @click="chooseAllFieldToTemp"> 全选</el-button>
             <el-table :data="baseFields">
                 <el-table-column prop="fieldNo" label="fieldNo"></el-table-column>
                 <el-table-column prop="label" label="字段名"></el-table-column>
@@ -125,6 +125,10 @@ export default {
         // 选择某个字段
         chooseFieldToTemp(scope) {
             this.temp_chosen_fields.push(scope.row);
+        },
+        //全选
+        chooseAllFieldToTemp(){
+            this.temp_chosen_fields = this.baseFields;
         },
         //删除 选中的字段
         handleDeleteFromTempChosenFields(i) {

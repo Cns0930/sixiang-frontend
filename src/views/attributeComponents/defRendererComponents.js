@@ -62,20 +62,19 @@ let InputArray = {
     }
 }
 
-let ElCheckboxC = {
-    name:"ElCheckboxC",
+let ElSingleCheckboxC = {
+    name:"ElSingleCheckboxC",
     props:["options","value"],
     render(){
-        return <el-checkbox-group value={this.value} onInput={(e)=>this.$emit("input",e)}>
-           
+        return <span>
                 {
                     this.options.map(option=> 
-                        <el-checkbox label={option}>{option}</el-checkbox>
+                        <el-checkbox  value={this.value} onInput={(e)=>this.$emit("input",e)} label={option}>必填</el-checkbox>
                     )
                 }
            
-           
-        </el-checkbox-group>
+           </span>
+        
     }
 }
 
@@ -85,5 +84,5 @@ export default {
     ElSelectC,
     TextAreaArray,
     InputArray,
-    ElCheckboxC
+    ElSingleCheckboxC
 }

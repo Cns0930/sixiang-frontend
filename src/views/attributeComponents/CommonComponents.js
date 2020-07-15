@@ -17,7 +17,7 @@ class CommonComponents {
         // 样例 值
         this.sample = new Renderer('ElInput', '')
         // 是否必填
-        this.required = new Renderer('ElCheckboxC', true,{options:[true]})
+        this.required = new Renderer('ElSingleCheckboxC', true,{options:[true]})
         // 验证 文字说明
         // this.validate = new Renderer('ElInput', '')
         // // 交互限制 文字说明
