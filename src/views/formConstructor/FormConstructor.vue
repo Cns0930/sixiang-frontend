@@ -450,7 +450,7 @@ export default {
             );
             this.$store.commit(
                 "putTableData",
-                result.data.filter(v => v.fieldType == 2 || v.fieldType == 1).map(v => ({ id: v.id, fieldType: v.fieldType, children: v.children, ...v.object })).map(deserializeTableData)
+                result.data.map(v => ({ id: v.id, fieldType: v.fieldType, children: v.children, ...v.object })).map(deserializeTableData)
             )
         },
         formatFieldType(row, column, cellValue, index) {
