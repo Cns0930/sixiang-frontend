@@ -10,11 +10,8 @@
             <!-- 页面 -->
             <div class="computed-field">
                 <div v-for="(v,i) in stepPages" :key="i">
-                    <el-button
-                        type="text"
-                        @click="handleClickPage(v,i)"
-                        style="width:150px;margin:0"
-                    >{{v.stepTitle}}</el-button>
+                    <el-button type="text" @click="handleClickPage(v,i)" style="width:150px;margin:0">{{v.stepTitle}}
+                    </el-button>
                     <el-button style="width:45px;margin:0" @click="handleDeleteStepPage(i)">删除</el-button>
                 </div>
             </div>
@@ -22,68 +19,78 @@
             <!-- 页面属性填写 -->
             <!-- 注意和temp_page关联 -->
             <div class="attribute-content" v-if="temp_page.id">
-                <!-- 根据上个页面的值 -->
-
-                <!-- config 配置 字段 或者 材料 -->
-                <div v-if="temp_page.stepPageType == 'field'">
-                    <el-button type="primary" @click="addFieldDialogVisible = true">添加字段</el-button>
-                    <!-- <el-button type="primary" @click="saveTempFields">保存修改</el-button> -->
-                    <el-table :data="temp_fields">
-                        <el-table-column prop="fieldNo" label="fieldNo"></el-table-column>
-                        <el-table-column prop="label" label="字段"></el-table-column>
-                        <el-table-column prop="type" label="组件名" width="120"></el-table-column>
-                        
-                        <el-table-column label="操作">
-                            <template slot-scope="scope">
-                                <el-button type="text" @click="deleteField(scope)">删除</el-button>
-                            </template>
-                        </el-table-column>
-                    </el-table>
+                 <el-button @click="save">保存</el-button>
+                <div>
+                    <h3>
+                        设置步骤序号
+                    </h3>
+                    <el-input v-model="temp_page.stepPagenum"></el-input>
                 </div>
-                <div v-else> 
-                    <el-button type="primary" @click="addMaterialDialogVisible = true">添加材料</el-button>
-                    <!-- <el-button type="primary" @click="saveTempFields">保存修改</el-button> -->
-                    <el-table :data="temp_materials">
-                        <el-table-column prop="fieldNo" label="fieldNo"></el-table-column>
-                        <el-table-column prop="label" label="材料filename"></el-table-column>
-                        <el-table-column prop="type" label="材料名" width="120"></el-table-column>
-                        
-                        <el-table-column label="操作">
-                            <template slot-scope="scope">
-                                <el-button type="text" @click="deleteField(scope)">删除</el-button>
-                            </template>
-                        </el-table-column>
-                    </el-table>
+                <div style="padding:10px">
+                    <h3>
+                        配置config（材料名 或 fieldNo）
+                    </h3>
+                    <div>
+                        <el-radio v-model="temp_page.stepObject.configType" :label="1" @change="handleSwitchConfigType">
+                            表格添加</el-radio>
+                        <el-radio v-model="temp_page.stepObject.configType" :label="2" @change="handleSwitchConfigType">
+                            逻辑添加</el-radio>
+                    </div>
+                    <div v-if="temp_page.stepObject.configType ==1">
+                        <!-- config 配置 字段 或者 材料 -->
+                        <div v-if="temp_page.stepPageType == 'field'">
+                            <el-button type="primary" @click="addFieldDialogVisible = true">添加字段</el-button>
+                            <!-- <el-button type="primary" @click="saveTempFields">保存修改</el-button> -->
+                            <el-table :data="temp_fields">
+                                <el-table-column prop="fieldNo" label="fieldNo"></el-table-column>
+                                <el-table-column prop="label" label="字段"></el-table-column>
+                                <el-table-column prop="type" label="组件名" width="120"></el-table-column>
+
+                                <el-table-column label="操作">
+                                    <template slot-scope="scope">
+                                        <el-button type="text" @click="deleteConfig(scope)">删除</el-button>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </div>
+                        <div v-else>
+                            <el-button type="primary" @click="addMaterialDialogVisible = true">添加材料</el-button>
+                            <!-- <el-button type="primary" @click="saveTempFields">保存修改</el-button> -->
+                            <el-table :data="temp_materials">
+
+                                <el-table-column prop="templateName" label="材料filename"></el-table-column>
+
+                                <el-table-column label="操作">
+                                    <template slot-scope="scope">
+                                        <el-button type="text" @click="deleteConfig(scope)">删除</el-button>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </div>
+                    </div>
+                    <div v-else>
+                       
+                        <div ref="configEdit" style="width:100%;height:300px"></div>
+                    </div>
                 </div>
                 <el-divider></el-divider>
                 <!-- TODO:代码框 -->
 
                 <div>beforeLeave: </div>
                 <!-- 代码框 -->
-                <div id="ace1"
-                    class="ace-container"
-                    style="flex:1;height:500px;top:10px;position:relative;margin-top:30px"
-    
-                ></div>
+                <div id="ace1" class="ace-container"
+                    style="flex:1;height:500px;top:10px;position:relative;margin-top:30px"></div>
 
                 <div>beforeEnter: </div>
                 <!-- 代码框 -->
-                <div id="ace2"
-                    class="ace-container"
-                    style="flex:1;height:500px;top:10px;position:relative;margin-top:30px"
-                    
-                ></div>
+                <div id="ace2" class="ace-container"
+                    style="flex:1;height:500px;top:10px;position:relative;margin-top:30px"></div>
 
             </div>
         </div>
 
         <!-- 创建步骤页面 -->
-        <el-dialog
-            title="创建步骤页面"
-            :visible.sync="stepPageCreateVisible"
-            width="50%"
-            :close-on-click-modal="false"
-        >
+        <el-dialog title="创建步骤页面" :visible.sync="stepPageCreateVisible" width="50%" :close-on-click-modal="false">
             <div>
                 页面名称:
                 <el-input v-model="temp_page_name"></el-input>
@@ -94,7 +101,6 @@
                     <el-option v-for="(v,i) in componentOptions" :key="i" :label="v.label" :value="v"></el-option>
                 </el-select>
             </div>
-           
 
             <span slot="footer" class="dialog-footer">
                 <el-button @click="stepPageCreateVisible = false">取 消</el-button>
@@ -108,52 +114,43 @@
                 <el-table-column prop="fieldNo" label="fieldNo"></el-table-column>
                 <el-table-column prop="label" label="字段名"></el-table-column>
                 <el-table-column prop="type" label="组件"></el-table-column>
-                
-                
+
                 <el-table-column label="操作">
                     <template slot-scope="scope">
                         <el-button type="text" @click="chooseFieldToTemp(scope,'fieldNo')"
-                            :disabled="!!temp_page.stepObject.config && !!temp_page.stepObject.config.includes(scope.row.fieldNo)"> 选择</el-button>
+                            :disabled="!!temp_page.stepObject.config && !!temp_page.stepObject.config.includes(scope.row.fieldNo)">
+                            选择</el-button>
                     </template>
                 </el-table-column>
             </el-table>
 
-            <el-tag
-                size="mini"
-                closable
-                v-for="(v,i) in temp_page.stepObject.config"
-                :key="i"
-                @close="handleDeleteFromTempChosenFields(i)"
-            >{{v}}</el-tag>
+            <el-tag size="mini" closable v-for="(v,i) in temp_page.stepObject.config" :key="i"
+                @close="handleDeleteFromTempChosenFields(i)">{{v}}</el-tag>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="addFieldDialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="addFields">添 加</el-button>
+                <el-button type="primary" @click="save">添 加</el-button>
             </span>
         </el-dialog>
         <!-- 添加material 页面 -->
         <el-dialog title="添加材料" :visible.sync="addMaterialDialogVisible" width="50%" :close-on-click-modal="false">
             <!-- <el-button type="text" @click="chooseAllFieldToTemp"> 全选</el-button> -->
             <el-table :data="materials.map(v=>v.template)">
-                
+
                 <el-table-column prop="templateName" label="材料名"></el-table-column>
                 <el-table-column label="操作">
                     <template slot-scope="scope">
                         <el-button type="text" @click="chooseFieldToTemp(scope,'templateName')"
-                            :disabled="!!temp_page.stepObject.config && !!temp_page.stepObject.config.includes(scope.row.templateName)"> 选择</el-button>
+                            :disabled="!!temp_page.stepObject.config && !!temp_page.stepObject.config.includes(scope.row.templateName)">
+                            选择</el-button>
                     </template>
                 </el-table-column>
             </el-table>
 
-            <el-tag
-                size="mini"
-                closable
-                v-for="(v,i) in temp_page.stepObject.config"
-                :key="i"
-                @close="handleDeleteFromTempChosenFields(i)"
-            >{{v}}</el-tag>
+            <el-tag size="mini" closable v-for="(v,i) in temp_page.stepObject.config" :key="i"
+                @close="handleDeleteFromTempChosenFields(i)">{{v}}</el-tag>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="addMaterialDialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="addFields">添 加</el-button>
+                <el-button type="primary" @click="save">添 加</el-button>
             </span>
         </el-dialog>
     </div>
@@ -177,23 +174,29 @@ export default {
             // 创建页面用
             stepPageCreateVisible: false,
             temp_page_name: "",
-            temp_page: {stepObject:{config:[]}},
+            temp_page: { stepObject: { config: [] } },
             //  添加字段dialog用
             addFieldDialogVisible: false,
             temp_chosen_fields: [],
             componentOptions: pageComponents,
             temp_page_component: null,
             temp_configType: "",
-            
+
             stepPages: [],
             // 代码框
             aceEditor: null,
             // 事项下所有的字段
-            fields:[],
+            fields: [],
             // 事项下所有的材料
-            materials:[],
+            materials: [],
             // 添加材料dialog用
-            addMaterialDialogVisible:false,
+            addMaterialDialogVisible: false,
+            // config 的ace 编辑器
+            aceForConfig: null,
+            defaultFn: `function config(state,getters) {
+                return []
+            }`
+
         };
     },
     computed: {
@@ -203,14 +206,17 @@ export default {
             // stepPages: state => state.fieldModel.stepPages,
             itemName: state => state.home.itemName
         }),
-        temp_fields(){
-            if(this.temp_page.stepPageType !='field') return [];
+        temp_fields() {
+            if (this.temp_page.stepPageType != 'field') return [];
             let fieldNos = this.temp_page.stepObject.config;
-           
-            return this.fields.filter(field=>fieldNos.includes(field.fieldNo))
-        },
-        temp_materials(){
 
+            return this.fields.filter(field => fieldNos.includes(field.fieldNo))
+        },
+        temp_materials() {
+            if (this.temp_page.stepPageType != 'material') return [];
+            let materials = this.temp_page.stepObject.config;
+        
+            return this.materials.map(v => v.template).filter(material => materials.includes(material.templateName))
         }
 
     },
@@ -228,8 +234,8 @@ export default {
                 stepComponent: this.temp_page_component.name,
                 itemName: this.itemName,
                 // 类型，字段 或者 材料
-                stepPageType:this.temp_page_component.type,
-                stepObject:{},
+                stepPageType: this.temp_page_component.type,
+                stepObject: {},
             };
             let result = await saveStep(data);
             if (!result.success) return;
@@ -240,64 +246,44 @@ export default {
             this.loadStep();
         },
         // 保存添加字段的修改
-        async saveTempFields() {
-            let param = this.temp_page;
-            let ids = this.temp_chosen_fields.map(v => v.id);
-            param.stepConfig = "[" + ids.join(",") + "]";
-            console.log(param);
-            // TODO: 保存config
-            let beforeLeave = this.aceEditor1.getSession().getValue();
-            let beforeEnter = this.aceEditor2.getSession().getValue();
-
-            let result = await saveStep(param);
-            if (!result.success) return;
-            this.$message({ type: "success", message: "保存成功" });
-        },
         handleDeleteStepPage(i) {
             this.$store.commit("deleteStepPage", i);
         },
         // 选中 某个页面
-        handleClickPage(page) {
+        async handleClickPage(page) {
+            if(this.aceForConfig){
+                this.aceForConfig.destroy();
+            }
+             
             this.temp_page = page;
-            
-            // 从baseFields中筛选
-            // let ids = JSON.parse(
-            //     this.temp_page.stepConfig ? this.temp_page.stepConfig : "[]"
-            // );
-            // this.temp_chosen_fields = this.temp_page.stepObject.config;
-            // this.temp_page.fields = this.temp_chosen_fields;
-            // this.temp_chosen_fields = page.fields ? page.fields : [];
-
-            // TODO:加载代码编辑框
-            // this.aceEditor1 = ace.edit("ace1", {
-            //     maxLines: 20, // 最大行数，超过会自动出现滚动条
-            //     minLines: 2, // 最小行数，还未到最大行数时，编辑器会自动伸缩大小
-            //     fontSize: 14, // 编辑器内字体大小
-            //     theme: "ace/theme/monokai",
-            //     mode: 'ace/mode/javascript',
-            //     tabSize: 4 // 制表符设置为 4 个空格大小
-            // });
-            // this.aceEditor1.setOption("wrap", "free");
-            // this.aceEditor2 = ace.edit("ace2", {
-            //     maxLines: 20, // 最大行数，超过会自动出现滚动条
-            //     minLines: 2, // 最小行数，还未到最大行数时，编辑器会自动伸缩大小
-            //     fontSize: 14, // 编辑器内字体大小
-            //     theme: "ace/theme/monokai",
-            //     mode: 'ace/mode/javascript',
-            //     tabSize: 4 // 制表符设置为 4 个空格大小
-            // });
-            // this.aceEditor2.setOption("wrap", "free");
-
+            // if(this.temp_page.stepObject.configType == 2){
+                 await this.$nextTick();
+                this.initEditForConfig();
+            // }
         },
+        async handleSwitchConfigType(data) {
+            if (data != 2) return;
+            await this.$nextTick();
+           this.initEditForConfig();
+        },
+        initEditForConfig(){
+             this.aceForConfig = ace.edit(this.$refs.configEdit);
+            this.aceForConfig.setTheme("ace/theme/monokai");
+            this.aceForConfig.session.setMode("ace/mode/javascript");
+            this.aceForConfig.setOption("wrap", "free")
+            this.aceForConfig.setValue(this.temp_page.stepObject.configFn)
+            beautify.beautify(this.aceForConfig.session)
+        },
+       
         // 选择某个字段
-        chooseFieldToTemp(scope,keyname) {
+        chooseFieldToTemp(scope, keyname) {
             this.temp_page.stepObject.config.push(scope.row[keyname])
 
             // this.temp_chosen_fields.push(scope.row);
         },
         //全选
-        chooseAllFieldToTemp(){
-            this.temp_page.stepObject.config = this.fields.map(v=>v.fieldNO);
+        chooseAllFieldToTemp() {
+            this.temp_page.stepObject.config = this.fields.map(v => v.fieldNO);
         },
         //删除 选中的字段
         handleDeleteFromTempChosenFields(i) {
@@ -305,29 +291,24 @@ export default {
             this.temp_page.stepObject.config.splice(i, 1);
         },
         // 将选中字段添加到页面中
-        async addFields() {
-            // this.$set(this.temp_page.stepObject, "config", this.temp_chosen_fields.map(v=>v.fieldNo));
-            
-             let data = {
-                id:this.temp_page.id,
-                stepObject:{
-                    title:this.temp_page.stepTitle,
-                    component:this.temp_page.stepComponent,
-                    config:this.temp_page.stepObject.config
-                }
-                
-                
+        async save() {
+            this.temp_page.stepObject.configFn = this.aceForConfig.getValue();
+            let data = {
+                id: this.temp_page.id,
+                stepObject: this.temp_page.stepObject
             };
             let result = await saveStep(data);
-            if(!result.success) return;
-            this.$message({type:"success",message:"保存成功"})
+            if (!result.success) return;
+            this.$message({ type: "success", message: "保存成功" })
 
             this.addFieldDialogVisible = false;
         },
-        deleteField(scope) {
+        
+        async deleteConfig(scope) {
             console.log(scope);
             let index = scope.$index;
-            this.temp_page.fields.splice(index, 1);
+            this.temp_page.stepObject.config.splice(index, 1);
+            let result = await saveStep(this.temp_page);
         },
         //  预览
         handlePreview() {
@@ -337,9 +318,9 @@ export default {
             };
             console.log(this.temp_page.fields);
             module.state = this.temp_page.fields.reduce((result, item) => {
-              
+
                 let attrObj = _.mapValues(item.componentDefs, (o) => o.value);
-                let mergeObj = _.merge({ label: item.label, fieldNo: item.fieldNo },attrObj, {attributes:item.componentDefs.getAttributes?item.componentDefs.getAttributes() || {}:{}})
+                let mergeObj = _.merge({ label: item.label, fieldNo: item.fieldNo }, attrObj, { attributes: item.componentDefs.getAttributes ? item.componentDefs.getAttributes() || {} : {} })
                 result[item.fieldNo] = mergeObj;
                 return result;
             }, {});
@@ -350,36 +331,43 @@ export default {
             this.$store.registerModule("preview", module);
             this.$router.push("/preview");
         },
-        async loadStep(){
-             let result = await getStep({ itemName: this.itemName });
+        async loadStep() {
+            let result = await getStep({ itemName: this.itemName });
             if (!result.success) return;
             this.stepPages = result.data;
         },
         // 重新加载步骤列表
         async loadAll() {
-            let result=await Promise.all([
+            let result = await Promise.all([
                 getStep({ itemName: this.itemName }),
                 getField({ itemName: this.itemName }),
                 getTemplate({ itemName: this.itemName })
             ])
-             if (result.some(v=>!v.success)) return;
+            if (result.some(v => !v.success)) return;
 
-            let stepRes =result[0]
+            let stepRes = result[0]
             let fieldRes = result[1]
             let tplRes = result[2]
 
-           
+
 
             this.stepPages = this.initStapPagesData(stepRes.data);
-           
+
             this.fields = fieldRes.data.map(v => ({ id: v.id, fieldType: v.fieldType, children: v.children, ...v.object })).map(deserializeTableData)
             this.materials = tplRes.data;
         },
-        initStapPagesData(data){
-            return data.map(v=>{
-                v.stepObject || (v.stepObject ={});
-                v.stepObject.config || (v.stepObject.config=[]);
-               return v;
+        initStapPagesData(data) {
+            return data.map(v => {
+                v.stepObject || (v.stepObject = {});
+                v.stepObject.title || ( v.stepObject.title = v.stepTitle);
+                v.stepObject.component || (v.stepObject.component = v.stepComponent);
+                v.stepObject.config || (v.stepObject.config = []);
+                v.stepObject.configType || (v.stepObject.configType = 1);
+                v.stepObject.configFn || (v.stepObject.configFn = `function config(state,getters) {
+                return []
+            }`);
+
+                return v;
             })
         }
     }
