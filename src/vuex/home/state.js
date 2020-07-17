@@ -12,8 +12,8 @@ const state = {
             sid:"test"
         },
         {
-            name: 'new',
-            sid:"0000"
+            name:'个人独资企业注销登记',
+            sid:"310115-420-03"
         }
     ],
     //  事项名
