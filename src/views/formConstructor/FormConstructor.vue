@@ -3,42 +3,12 @@
         <div class="op-bar">
             <el-button @click="handleAddBaseField">创建字段模型</el-button>
             <el-button @click="handleAddComputedField">创建合成字段模型</el-button>
-            <el-button @click="$router.push('/pageconfigure')">-> 步骤页面管理</el-button>
+           
             <!-- <el-button @click="$router.push('/templatemanager')"> -> 模板管理</el-button> -->
-            <el-button @click="$router.push('/materialmanager')">-> 材料管理</el-button>
+            
             <el-button @click="load">载入字段</el-button>
         </div>
         <div class="main">
-            <!-- 基本字段 -->
-            <!-- 
-            <div class="base-field-list">
-                <div v-for="(v,i) in baseFields" :key="i">
-                    <el-button
-                        type="text"
-                        @click="handleClickField(v)"
-                        style="width:100px;margin:0"
-                    >({{v.fieldNo}}){{v.label}}</el-button>
-                    <el-button style="width:45px;margin:0" @click="handleSaveField(v,1)">保存</el-button>
-                    <el-button style="width:45px;margin:0" @click="handleDeleteBaseField(v,i)">删除</el-button>
-                </div>
-            </div>-->
-
-            <!-- 计算字段 -->
-            <!-- <div class="computed-field">
-                <div v-for="(v,i) in computedFields" :key="i">
-                    <el-button
-                        type="text"
-                        @click="handleClickField(v)"
-                        style="width:100px;margin:0"
-                    >({{v.fieldNo}}){{v.label}}</el-button>
-                    <el-button style="width:45px;margin:0" @click="handleSaveField(v,2)">保存</el-button>
-                    <el-button
-                        style="width:45px;margin:0"
-                        @click="handleDeleteComputedField(v,i)"
-                    >删除</el-button>
-                </div>
-            </div>-->
-
             <!-- 字段表格 -->
             <div class="fields-table" style="width: 100%;padding:10px 60px">
                 <el-table :data="tableData" border style="width: 100%"

@@ -17,6 +17,6 @@ const state = {
         }
     ],
     //  事项名
-    itemName: '测试',
+    itemName: 'new',
 };
 export default state

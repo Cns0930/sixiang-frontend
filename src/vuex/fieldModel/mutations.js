@@ -40,6 +40,9 @@ const mutations = {
     },
     putTableData(state,data){
         state.tableData = data;
+    },
+    putTemplateList(state,data){
+        state.templateList = data;
     }
 }
 

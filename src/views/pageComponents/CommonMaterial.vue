@@ -1,7 +1,7 @@
 <template>
     <div class="common-material material">
 
-        <div class="ckeditor" >
+        <div class="ckeditor">
             <div class="main">
                 <div class="toolbar " style="margin:0 auto;">
                     <div ref="toolbar" style="width:21cm;margin-left:-12px;" v-show="!collapse"></div>
@@ -16,10 +16,15 @@
 
                 <div style="height: 100%; overflow-y: auto;" class="mini-scroll container">
                     <div style="width:30cm;margin: 0 auto;color: black;">
-                        <div class="row-editor" v-for="(page,index) in doc" :key="index">
+                        <div class="row-editor" v-for="(page,index) in doc.templatePagesList" :key="index">
                             <div class="x mini-scroll"
-                                :class="{'direction-row':page.orientFront === 'row','text-padding':!!page.padding,'table-padding':!page.padding} "
-                                :key="doc[0].name+index">
+                                :class="{
+                                    'page-portrait': page.templateOrientation=='portrait',
+                                    'page-landscape': page.templateOrientation=='landscape',
+                                    'table-padding': page.templatePadding=='table',
+                                    'text-padding': page.templatePadding=='text'
+                                    } "
+                                :key="index">
 
                             </div>
 
@@ -37,9 +42,10 @@
 
         <div class="operate-btn">
             <el-button type="primary" class="big-btn btn-default" @click="goPrev">
-                {{showDocIndex === 0 ? '返回上一步' : '上一个文档'}}
+                {{index === 0 ? '返回上一步' : '上一个文档'}}
             </el-button>
-            <el-button type="warning" class="big-btn btn-warn" @click="goNext">{{ last ? '下一步' : '下一个文档' }}</el-button>
+            <el-button type="warning" class="big-btn btn-warn" @click="goNext">
+                {{ isLast ? '下一步' : '下一个文档' }}</el-button>
         </div>
 
     </div>
@@ -48,33 +54,55 @@
 <script>
 
 import CKEditor from '@/assets/js/ckeditor';
+import Handlebars from "@/utils/handlebarsHelper"
 import _ from "lodash";
+import Common from "./Common"
 export default {
     name: 'CommonMaterial',
-    components: { ContentCard },
-    props: {
-        showDocIndex: {
-            type: Number
-        },
-        last: Boolean,
-        doc: {
-            default() {
-                return []
-            }
-        },
-    },
+    mixins: [Common],
+    props: ["config"],
     data() {
         return {
             editor: null,
-            content: '',
-            docData: {
-                name: '',
-                fileName: '',
-                pages: []
-            },
             collapse: true,
-
+            index: 0,
         }
+    },
+    computed: {
+        doc() {
+            if(this.docList.length<1) return {templatePagesList:[]}
+
+
+            this.docList[this.index].templatePagesList.forEach(page => {
+
+
+                let template = Handlebars.compile(page.templateContent)
+
+                try {
+                    page.templateContent = template(this.templateObj)
+                } catch (e) {
+                    console.warn(`模板编译错误：${page.templatePagenum}`, e);
+                    page.html = "模板错误"
+                }
+
+                
+            });
+            return this.docList[this.index]
+        },
+        docList() {
+            
+            let templateList = this.$store.state.fieldModel.templateList;
+            return templateList.filter(temp => this.config.includes(temp.template.templateName))
+        },
+        templateObj() {
+            return _.mapValues(this.itemState, "value")
+        },
+        isLast(){
+            return this.index == this.docList.length-1
+        }
+    },
+    mounted() {
+        this.init();
     },
     watch: {
         doc(newVal, oldVal) {
@@ -83,6 +111,7 @@ export default {
         }
     },
     methods: {
+
         async initCKEdit() {
             if (this.editor) {
                 await this.editor.destroy();
@@ -196,22 +225,12 @@ export default {
                         }
                     });
 
-                    // editor.data.set({ "0": this.doc[0].html })
-
-                    // document.querySelector(".material-mask").style.display = "none";
-
-                    // await new Promise(resolve => {
-                    //     setTimeout(() => { resolve() }, 0)
-                    // })
-
-                    // this.doc.slice(1).forEach((v, i) => {
-                    //     editor.data.set({ [i + 1]: v.html })
-                    // })
 
 
 
-                    this.doc.forEach((v, i) => {
-                        editor.data.set({ [i]: v.html })
+                    this.doc.templatePagesList.forEach((v, i) => {
+
+                        editor.data.set({ [i]: v.templateContent })
                     })
                     document.querySelector(".material-mask").style.display = "none";
 
@@ -260,6 +279,10 @@ export default {
             this.initCKEdit()
         },
         goNext() {
+            if(!this.isLast){
+                this.index++;
+                return;
+            }
             this.$emit('goNext')
         },
         goPrev() {
@@ -270,12 +293,32 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.page-portrait {
+    width: 21cm;
+    height: 29.7cm;
+    margin-top: 10px;
+    &.table-padding{
+        padding: 2.54cm 1.5cm;
+    }
+    &.text-padding {
+        padding: 2.54cm 3.18cm;
+    }
+}
+ 
+.page-landscape{
+    width: 29.7cm;
+    height:21cm;
+    margin-top: 10px;
+    padding: 2.54cm 1.17cm
+}
+
 .content {
     position: relative;
 
     color: #000 !important;
     overflow: hidden;
     height: 100%;
+
     .material-mask {
         position: absolute;
         top: 0;

@@ -4,6 +4,7 @@ const state = {
    computedFields:[],
    stepPages:[],
    templates:[],
-   tableData:[]
+   tableData:[],
+   templateList:[]
 };
 export default state

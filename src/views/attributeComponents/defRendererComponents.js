@@ -65,6 +65,7 @@ let InputArray = {
 let ElSingleCheckboxC = {
     name:"ElSingleCheckboxC",
     props:["options","value"],
+    
     render(){
         return <span>
                 {

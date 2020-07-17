@@ -2,9 +2,10 @@
     <div class="page-configure">
         <div class="op-bar">
             <el-button @click="createStepPage">创建步骤页面</el-button>
-            <el-button @click="$router.push('/')">-> 字段管理</el-button>
+
             <el-button @click="handlePreview">预览页面</el-button>
             <el-button @click="loadAll">载入页面</el-button>
+            <el-button @click="$router.push({path:'/run',query:{itemName}})">运行页面</el-button>
         </div>
         <div class="main">
             <!-- 页面 -->
@@ -12,21 +13,31 @@
                 <div v-for="(v,i) in stepPages" :key="i">
                     <el-button type="text" @click="handleClickPage(v,i)" style="width:150px;margin:0">{{v.stepTitle}}
                     </el-button>
-                    <el-button style="width:45px;margin:0" @click="handleDeleteStepPage(i)">删除</el-button>
+                    <el-button style="width:45px;margin:0" @click="handleDeleteStepPage(v)">删除</el-button>
                 </div>
             </div>
 
             <!-- 页面属性填写 -->
             <!-- 注意和temp_page关联 -->
-            <div class="attribute-content" v-if="temp_page.id">
-                 <el-button @click="save">保存</el-button>
+            <div class="attribute-content" v-if="temp_page.id" style="padding:10px">
+                <el-button @click="save">保存</el-button>
                 <div>
-                    <h3>
-                        设置步骤序号
-                    </h3>
+                    <h3>编辑页面名</h3>
+                    <el-input v-model="temp_page.stepTitle"></el-input>
+                </div>
+                <div>
+                    <h3>设置步骤序号</h3>
                     <el-input v-model="temp_page.stepPagenum"></el-input>
                 </div>
-                <div style="padding:10px">
+                <div>
+                    <h3>设置页面类型</h3>
+                    <el-select v-model="temp_page.stepPageType">
+                        <el-option label="表单" value="field"></el-option>
+                        <el-option label="材料" value="material"></el-option>
+                    </el-select>
+
+                </div>
+                <div>
                     <h3>
                         配置config（材料名 或 fieldNo）
                     </h3>
@@ -69,7 +80,7 @@
                         </div>
                     </div>
                     <div v-else>
-                       
+
                         <div ref="configEdit" style="width:100%;height:300px"></div>
                     </div>
                 </div>
@@ -215,7 +226,7 @@ export default {
         temp_materials() {
             if (this.temp_page.stepPageType != 'material') return [];
             let materials = this.temp_page.stepObject.config;
-        
+
             return this.materials.map(v => v.template).filter(material => materials.includes(material.templateName))
         }
 
@@ -237,6 +248,10 @@ export default {
                 stepPageType: this.temp_page_component.type,
                 stepObject: {},
             };
+
+
+            data=this.initStepObject(data)
+
             let result = await saveStep(data);
             if (!result.success) return;
             this.$message({ type: "success", message: "保存成功" });
@@ -246,35 +261,38 @@ export default {
             this.loadStep();
         },
         // 保存添加字段的修改
-        handleDeleteStepPage(i) {
-            this.$store.commit("deleteStepPage", i);
+        async handleDeleteStepPage(step) {
+            let result = await deleteStep({ stepId: step.id })
+            if (!result.success) return;
+            this.$message({ type: "success", message: "删除成功" })
+            this.loadStep();
         },
         // 选中 某个页面
         async handleClickPage(page) {
-            if(this.aceForConfig){
+            if (this.aceForConfig) {
                 this.aceForConfig.destroy();
             }
-             
+
             this.temp_page = page;
             // if(this.temp_page.stepObject.configType == 2){
-                 await this.$nextTick();
-                this.initEditForConfig();
+            await this.$nextTick();
+            this.initEditForConfig();
             // }
         },
         async handleSwitchConfigType(data) {
             if (data != 2) return;
             await this.$nextTick();
-           this.initEditForConfig();
+            this.initEditForConfig();
         },
-        initEditForConfig(){
-             this.aceForConfig = ace.edit(this.$refs.configEdit);
+        initEditForConfig() {
+            this.aceForConfig = ace.edit(this.$refs.configEdit);
             this.aceForConfig.setTheme("ace/theme/monokai");
             this.aceForConfig.session.setMode("ace/mode/javascript");
             this.aceForConfig.setOption("wrap", "free")
             this.aceForConfig.setValue(this.temp_page.stepObject.configFn)
             beautify.beautify(this.aceForConfig.session)
         },
-       
+
         // 选择某个字段
         chooseFieldToTemp(scope, keyname) {
             this.temp_page.stepObject.config.push(scope.row[keyname])
@@ -295,6 +313,10 @@ export default {
             this.temp_page.stepObject.configFn = this.aceForConfig.getValue();
             let data = {
                 id: this.temp_page.id,
+                stepTitle: this.temp_page.stepTitle,
+                stepPagenum: this.temp_page.stepPagenum,
+                stepPageType: this.temp_page.stepPageType,
+
                 stepObject: this.temp_page.stepObject
             };
             let result = await saveStep(data);
@@ -303,7 +325,7 @@ export default {
 
             this.addFieldDialogVisible = false;
         },
-        
+
         async deleteConfig(scope) {
             console.log(scope);
             let index = scope.$index;
@@ -334,7 +356,7 @@ export default {
         async loadStep() {
             let result = await getStep({ itemName: this.itemName });
             if (!result.success) return;
-            this.stepPages = result.data;
+            this.stepPages = this.initStepPagesData(result.data);
         },
         // 重新加载步骤列表
         async loadAll() {
@@ -351,24 +373,24 @@ export default {
 
 
 
-            this.stepPages = this.initStapPagesData(stepRes.data);
+            this.stepPages = this.initStepPagesData(stepRes.data);
 
             this.fields = fieldRes.data.map(v => ({ id: v.id, fieldType: v.fieldType, children: v.children, ...v.object })).map(deserializeTableData)
             this.materials = tplRes.data;
         },
-        initStapPagesData(data) {
-            return data.map(v => {
-                v.stepObject || (v.stepObject = {});
-                v.stepObject.title || ( v.stepObject.title = v.stepTitle);
-                v.stepObject.component || (v.stepObject.component = v.stepComponent);
-                v.stepObject.config || (v.stepObject.config = []);
-                v.stepObject.configType || (v.stepObject.configType = 1);
-                v.stepObject.configFn || (v.stepObject.configFn = `function config(state,getters) {
+        initStepPagesData(data) {
+            return data.map(this.initStepObject)
+        },
+        initStepObject(v) {
+            v.stepObject || (v.stepObject = {});
+            v.stepObject.title || (v.stepObject.title = v.stepTitle);
+            v.stepObject.component || (v.stepObject.component = v.stepComponent);
+            v.stepObject.config || (v.stepObject.config = []);
+            v.stepObject.configType || (v.stepObject.configType = 1);
+            v.stepObject.configFn || (v.stepObject.configFn = `function config(state,getters) {
                 return []
             }`);
-
-                return v;
-            })
+            return v;
         }
     }
 };

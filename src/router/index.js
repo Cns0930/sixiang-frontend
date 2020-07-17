@@ -8,6 +8,7 @@ import Preview from "@/views/formConstructor/PreviewLayout"
 import PageConfigure from "@/views/formConstructor/PageConfigure"
 import TemplateManager from "@/views/formConstructor/TemplateManager"
 import MaterialManager from "@/views/formConstructor/MaterialManager"
+import Run from "@/views/formConstructor/Run"
 Vue.use(VueRouter)
 
 const routes = [
@@ -51,6 +52,11 @@ const routes = [
                 name:"materialManager",
                 component:MaterialManager
             },
+            {
+                path:"/run",
+                name:"run",
+                component:Run
+            }
 
         ]
     },

@@ -19,7 +19,7 @@
 <script>
 import { mapState } from "vuex"
 import { CheckSocialCreditCode, IdentityCodeValid } from '@/utils/function.js'
-import TestFormItem from './component/TestFormItem'
+import TestFormItem from '@/components/TestFormItem'
 import layoutComponent from "@/views/layoutComponents/index"
 
 export default {

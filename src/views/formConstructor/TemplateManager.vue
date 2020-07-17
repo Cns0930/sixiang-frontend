@@ -199,11 +199,12 @@ export default {
             this.currentPagenum = length;
         },
         async savePage(page, pageIndex) {
+            let res
             if (this.temp_page && this.temp_page.id === page.id) {
-                const res = await this.$refs.inlineEditor.savePage();
+                 res = await this.$refs.inlineEditor.savePage();
             } else {
 
-                const res = await addEditPage(page);
+                res = await addEditPage(page);
 
 
             }

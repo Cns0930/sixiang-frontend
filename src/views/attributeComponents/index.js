@@ -40,6 +40,10 @@ export function deserializeBaseField(fieldJSON) {
 
     let componentDefs = fieldJSON.componentDefs
     let ComponentDefClass = mapping.find(v=>v.value == fieldJSON.type)?.componentDef
+   
+    if(!ComponentDefClass){
+        console.log(fieldJSON)
+    }
     let actualComponentDefs = new ComponentDefClass();
     Object.keys(actualComponentDefs).forEach(key => {
         if(componentDefs[key]){

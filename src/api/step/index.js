@@ -7,4 +7,4 @@ export const getStep = params => axios.post('/superform/steps/list', params).the
 export const saveStep = params => axios.post('/superform/steps/save', params).then(res => res.data);
 
 // 删除单个步骤
-export const deleteStep = params => axios.post('/superform/steps/delete', params).then(res => res.data);
+export const deleteStep = params => axios.get('/superform/steps/delete', {params}).then(res => res.data);

@@ -3,7 +3,9 @@
         <el-select placeholder="请选择" :value="$store.state.home.itemName" @input="$store.commit('changeItemName', $event)">
             <el-option v-for="(item, index) in $store.state.home.itemOptions" :key="index" :label="item.name" :value="item.name"></el-option>
         </el-select>
-
+        <el-button @click="$router.push('/')">字段管理</el-button>
+        <el-button @click="$router.push('/materialmanager')">材料管理</el-button>
+        <el-button @click="$router.push('/pageconfigure')">步骤页面管理</el-button>
         <el-divider></el-divider>
         
         <router-view></router-view>
