@@ -17,7 +17,7 @@ export default {
            
             this.$emit('goNext');
         },
-        goPrev() {
+        async goPrev() {
             this.$emit('goPrev');
         },
     }

@@ -109,7 +109,7 @@
             <div>
                 页面组件:
                 <el-select v-model="temp_page_component">
-                    <el-option v-for="(v,i) in componentOptions" :key="i" :label="v.label" :value="v"></el-option>
+                    <el-option v-for="(v,i) in componentOptions" :key="i" :label="v.label" :value="v.label"></el-option>
                 </el-select>
             </div>
 
@@ -240,12 +240,13 @@ export default {
         },
         // 确认添加步骤页面
         async addStepPage() {
+            let component = this.componentOptions.find(v=>v.label==this.temp_page_component)
             let data = {
                 stepTitle: this.temp_page_name,
-                stepComponent: this.temp_page_component.name,
+                stepComponent: component.name,
                 itemName: this.itemName,
                 // 类型，字段 或者 材料
-                stepPageType: this.temp_page_component.type,
+                stepPageType: component.type,
                 stepObject: {},
             };
 
