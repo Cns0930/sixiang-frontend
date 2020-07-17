@@ -43,10 +43,10 @@ export default {
                 v.stepObject.configFn = eval(`(${v.stepObject.configFn})`)
             }
             return {...v.stepObject,stepPagenum:v.stepPagenum}
-            }).sort((a,b)=>b.stepPagenum-a.stepPagenum)
+            }).sort((a,b)=>a.stepPagenum-b.stepPagenum)
 
         let allFields = result[1].data.map(v => ({ id: v.id, fieldType: v.fieldType, children: v.children, ...v.object })).map(deserializeTableData);
-        console.log(allFields)
+        
         let itemState = allFields.filter(v => v.fieldType == 1).reduce((result, item) => {
 
             let attrObj = _.mapValues(item.componentDefs, (o) => o.value);
@@ -57,23 +57,21 @@ export default {
 
 
 
-        this.itemGetters = allFields.filter(v => v.fieldType == 2).reduce((result, item) => {
-
-            let attrObj = _.mapValues(item.componentDefs, (o) => o.value);
-            let mergeObj = _.merge({ label: item.label, fieldNo: item.fieldNo }, attrObj, { attributes: item.componentDefs.getAttributes ? item.componentDefs.getAttributes() || {} : {} })
-            result[item.fieldNo] = mergeObj;
+        let itemGetters = allFields.filter(v => v.fieldType == 2).reduce((result, item) => {
+            // let attrObj = _.mapValues(item.componentDefs, (o) => this.parseFunction(o.value));
+            
+            result[item.fieldNo] = this.parseFunction(item.componentDefs.getter.value);
+            
             return result;
         }, {});
+        console.log(itemGetters)
         // 注册模块
         let module = {
-            namespace:true,
-            state: {},
-            getters: {}
+            namespaced:true,
+            state: itemState,
+            getters: itemGetters
         };
 
-        module.state = itemState;
-        
-        
         if (this.$store.hasModule("run")) {
             this.$store.unregisterModule("run");
         }
@@ -100,7 +98,19 @@ export default {
             this.active++;
         },
         goPrev() {
-
+            this.active--
+        },
+        parseFunction(data){
+              if(typeof data =="string" && data.indexOf('function')>-1){
+                  try{
+                       data = eval(`(${data})`)
+                       return data;
+                  }catch(e){
+                      return data;
+                  }
+               
+            }
+             return data;
         }
     }
 

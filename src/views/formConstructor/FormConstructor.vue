@@ -33,7 +33,7 @@
             </div>
         </div>
 
-        <!-- 字段组件属性填写 -->
+        <!-- 编辑 -->
         <el-dialog title="字段组件属性填写" :visible.sync="editDialogVisible" width="80%" :close-on-click-modal="false">
             <div class="attribute-content">
                 <div class="attribute" v-if="temp_fieldObj">
@@ -42,8 +42,8 @@
                     <br />label
                     <el-input v-model="temp_fieldObj.label"></el-input>
                     <div class="attribute" v-for="(v,i) in temp_fieldObj.componentDefs" :key="i">
-                        {{i}}
-                        <component :is="v.renderTemplateName" v-model="v.value" v-bind="v.attributes"></component>
+                        {{i}} 
+                        <component :is="v.renderTemplateName" v-model="v.value" v-bind="v.attributes" :key="temp_fieldObj.fieldNo+v.renderTemplateName"></component>
                     </div>
                 </div>
             </div>

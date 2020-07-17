@@ -1,3 +1,7 @@
+import ace from "ace-builds";
+import beautify from "ace-builds/src-noconflict/ext-beautify";
+
+
 // text 组件
 let TextSpan = ({ props }) => <span>{props.value}</span>
 
@@ -46,7 +50,7 @@ let InputArray = {
     name: "InputArray",
     props: ["value"],
     render() {
-        if(this.value.length ==0){
+        if (this.value.length == 0) {
             this.value.splice(0, 0, "")
         }
         return <div>
@@ -54,7 +58,7 @@ let InputArray = {
                 <ElInput value={v} onInput={(e) => { this.$set(this.value, i, e) }}></ElInput>
                 <el-button-group>
                     <el-button type="primary" icon="el-icon-plus" onClick={() => { this.value.splice(i + 1, 0, "") }}></el-button>
-                    <el-button type="primary" icon="el-icon-minus" onClick={() => { this.value.splice(i , 1) }}></el-button>
+                    <el-button type="primary" icon="el-icon-minus" onClick={() => { this.value.splice(i, 1) }}></el-button>
                 </el-button-group>
             </div>)}
         </div>
@@ -63,19 +67,67 @@ let InputArray = {
 }
 
 let ElSingleCheckboxC = {
-    name:"ElSingleCheckboxC",
-    props:["options","value"],
-    
-    render(){
+    name: "ElSingleCheckboxC",
+    props: ["options", "value"],
+
+    render() {
         return <span>
-                {
-                    this.options.map(option=> 
-                        <el-checkbox  value={this.value} onInput={(e)=>this.$emit("input",e)} label={option}>必填</el-checkbox>
-                    )
-                }
-           
-           </span>
-        
+            {
+                this.options.map(option =>
+                    <el-checkbox value={this.value} onInput={(e) => this.$emit("input", e)} label={option}>必填</el-checkbox>
+                )
+            }
+
+        </span>
+
+    }
+}
+
+
+let CodeEditor = {
+    name: "CodeEditor",
+    props: ["value"],
+    data() {
+        return {
+            open: false,
+            editor: null,
+        }
+    },
+    methods: {
+        async initEditor() {
+            this.open = !this.open;
+            if (this.open) {
+                await this.$nextTick();
+                this.editor = ace.edit(this.$refs.editor);
+                this.editor.setTheme("ace/theme/monokai");
+                this.editor.session.setMode("ace/mode/javascript");
+                this.editor.setOption("wrap", "free")
+                this.editor.setValue(this.value)
+                beautify.beautify(this.editor.session)
+                this.editor.on('change', (e)=> {
+                
+                   this.emitEvent(this.editor.getValue())
+            
+                });
+            }else{
+                this.editor.destroy();
+            }
+        },
+        emitEvent:_.debounce(function(value){
+            this.$emit("input",value)
+        },300)
+    },
+    render() {
+        return <span>
+            <el-button icon="el-icon-edit" type="primary" onClick={this.initEditor}></el-button>
+
+            
+                <div vShow={this.open} style="height:300px;width:80%" ref="editor"></div>
+            
+
+
+        </span>
+
     }
 }
 
@@ -85,5 +137,6 @@ export default {
     ElSelectC,
     TextAreaArray,
     InputArray,
-    ElSingleCheckboxC
+    ElSingleCheckboxC,
+    CodeEditor
 }
