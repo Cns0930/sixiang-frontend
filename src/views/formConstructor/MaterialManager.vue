@@ -3,7 +3,7 @@
         
         <div class="op-bar">
             <el-button @click="templateCreateVisible = true"> 新建材料</el-button>
-            <el-button @click="$router.push('/')">-> 字段管理</el-button>
+            <el-button @click="getTemplate">载入材料</el-button>
         </div>
 
         <!-- 模板列表 -->
