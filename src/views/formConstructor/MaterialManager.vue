@@ -9,7 +9,7 @@
         <!-- 模板列表 -->
         <div class="material-list">
             <div v-for="(v,i) in templates" :key="i" class="material-item">
-                <el-button type="text" style="color: orange;" @click="goTemplatemanager(v.template.id)">{{ v.template.templateName }}</el-button>
+                <el-button type="text" style="color: orange;" @click="goTemplatemanager(v.template.id)">{{ v.template.docxTemplateName }}</el-button>
                 <el-button @click="deleteTemplate(v.template.id)">删除</el-button>
             </div>
         </div>
@@ -60,7 +60,7 @@ export default {
 
             const res = await addTemplate({
                 itemName: this.$store.state.home.itemName,
-                templateName: this.temp_template_name,
+                docxTemplateName: this.temp_template_name,
             });
 
             if (!res.success) return;

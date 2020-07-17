@@ -31,10 +31,10 @@
                 <div class="row-editor">
                     <div class="x"
                         :class="{
-                            'page-portrait': temp_page.templateOrientation=='portrait',
-                            'page-landscape': temp_page.templateOrientation=='landscape',
-                            'table-padding': temp_page.templatePadding=='table',
-                            'text-padding': temp_page.templatePadding=='text'
+                            'page-portrait': temp_page.orient=='row',
+                            'page-landscape': temp_page.orient=='column',
+                            'table-padding': temp_page.isTable==1,
+                            'text-padding': temp_page.isTable==0
                         }"
                     ></div>
                 </div>
@@ -248,7 +248,7 @@ export default {
 
                 });
 
-                this.ace.setValue(this.temp_page.templateContent);
+                this.ace.setValue(this.temp_page.htmlContent);
                 beautify.beautify(this.ace.session);
                 this.setHtmlToEditor();
             })
@@ -448,13 +448,13 @@ export default {
                 id: this.temp_page.id,
                 itemId: this.temp_page.itemId,
                 itemName: this.temp_page.itemName,
-                templateContent: html,
+                htmlContent: html,
                 templateId: this.temp_page.templateId,
-                templateOrientation: this.temp_page.templateOrientation,
-                templatePadding: this.temp_page.templatePadding,
-                templatePagenum: this.currentPagenum,
+                orient: this.temp_page.orient,
+                isTable: this.temp_page.isTable,
+                pageNum: this.currentPagenum,
                 templateType: this.temp_page.templateType,
-                templateWordCss: this.temp_page.templateWordCss,
+                contentCss: this.temp_page.contentCss,
             })
 
             if (!res.success) return;

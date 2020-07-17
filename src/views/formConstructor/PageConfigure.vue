@@ -69,7 +69,7 @@
                             <!-- <el-button type="primary" @click="saveTempFields">保存修改</el-button> -->
                             <el-table :data="temp_materials">
 
-                                <el-table-column prop="templateName" label="材料filename"></el-table-column>
+                                <el-table-column prop="docxTemplateName" label="材料filename"></el-table-column>
 
                                 <el-table-column label="操作">
                                     <template slot-scope="scope">
@@ -147,10 +147,10 @@
             <!-- <el-button type="text" @click="chooseAllFieldToTemp"> 全选</el-button> -->
             <el-table :data="materials.map(v=>v.template)">
 
-                <el-table-column prop="templateName" label="材料名"></el-table-column>
+                <el-table-column prop="docxTemplateName" label="材料名"></el-table-column>
                 <el-table-column label="操作">
                     <template slot-scope="scope">
-                        <el-button type="text" @click="chooseFieldToTemp(scope,'templateName')"
+                        <el-button type="text" @click="chooseFieldToTemp(scope,'docxTemplateName')"
                             :disabled="!!temp_page.stepObject.config && !!temp_page.stepObject.config.includes(scope.row.templateName)">
                             选择</el-button>
                     </template>
@@ -227,7 +227,7 @@ export default {
             if (this.temp_page.stepPageType != 'material') return [];
             let materials = this.temp_page.stepObject.config;
 
-            return this.materials.map(v => v.template).filter(material => materials.includes(material.templateName))
+            return this.materials.map(v => v.template).filter(material => materials.includes(material.docxTemplateName))
         }
 
     },

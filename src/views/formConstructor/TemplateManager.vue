@@ -14,7 +14,7 @@
                 <div style="margin-top: 10px;">
                     <el-button type="text" @click="handleClickTemplate(templates)"
                         style="width:100px;margin:0;color:orange">
-                        {{templates.template.templateName}}
+                        {{templates.template.docxTemplateName}}
                     </el-button>
                     <el-button-group>
                         <el-button style="width:45px;" @click="addPage(templates)" icon="el-icon-plus"></el-button>
@@ -23,7 +23,7 @@
                     <div style="margin-left:40px;">
                         <div v-for="(page,pageIndex) in templates.templatePagesList" style="margin-top: 2px;">
                             - <el-button type="text" style="width:50px;margin:0"
-                                @click="handleClickPage(page,pageIndex)">{{page.templatePagenum}} 页
+                                @click="handleClickPage(page,pageIndex)">{{page.pageNum}} 页
                             </el-button>
                             <el-button-group>
                                 <el-button style="width:45px;" @click="savePage(page,pageIndex)" icon="el-icon-upload2">
@@ -52,13 +52,13 @@
             </div>
             <div class="computed-field computed-field-direction">
                 <div v-if="temp_page">
-                    <el-select v-model="temp_page.templateOrientation" placeholder="">
-                        <el-option label="横向" value="landscape" :key=""></el-option>
-                        <el-option label="纵向" value="portrait" :key=""></el-option>
+                    <el-select v-model="temp_page.orient" placeholder="">
+                        <el-option label="横向" value="row" ></el-option>
+                        <el-option label="纵向" value="column" ></el-option>
                     </el-select>
-                    <el-select v-model="temp_page.templatePadding" placeholder="">
-                        <el-option label="表格" value="table" :key=""></el-option>
-                        <el-option label="纯文本" value="text" :key=""></el-option>
+                    <el-select v-model="temp_page.isTable" placeholder="">
+                        <el-option label="表格" :value="1" ></el-option>
+                        <el-option label="纯文本" :value="0" ></el-option>
                     </el-select>
                     <el-input v-model="currentPagenum" placeholder="请输入页码"></el-input>
                 </div>
@@ -163,7 +163,7 @@ export default {
 
             const res = await addTemplate({
                 itemName: this.$store.state.home.itemName,
-                templateName: this.temp_template_name,
+                docxTemplateName: this.temp_template_name,
             })
 
             if (!res.success) return;
@@ -181,20 +181,20 @@ export default {
 
             let length = 1;
             if (template.templatePagesList.length > 0) {
-                const pageNumArr = template.templatePagesList.map(item => { return item.templatePagenum });
+                const pageNumArr = template.templatePagesList.map(item => { return item.pageNum });
                 length = Math.max(...pageNumArr) + 1;
             }
             template.templatePagesList.push({
                 id: null, // 当前页面的id
                 itemId: template.template.itemId, // 事项id
                 itemName: template.template.itemName, // 事项名称
-                templateContent: "<p>等待编辑</p>", // html的内容
+                htmlContent: "<p>等待编辑</p>", // html的内容
                 templateId: template.template.id, // 所属的父模板的id
-                templateOrientation: "portrait", // 方向
-                templatePadding: "text", // 边距
-                templatePagenum: length, // 第几页
+                orient: "row", // 方向
+                isTable: 0, // 是否表格
+                pageNum: length, // 第几页
                 templateType: "",
-                templateWordCss: "",
+                contentCss: "",
             })
             this.currentPagenum = length;
         },
@@ -223,7 +223,7 @@ export default {
         },
         handleClickPage(page) {
             this.temp_page = page;
-            this.currentPagenum = page.templatePagenum;
+            this.currentPagenum = page.pageNum;
         },
         // handleDelete(i) {
         //     this.$store.commit("deleteTemplate", i)

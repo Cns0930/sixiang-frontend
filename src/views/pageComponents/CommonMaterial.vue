@@ -19,10 +19,10 @@
                         <div class="row-editor" v-for="(page,index) in doc.templatePagesList" :key="index">
                             <div class="x mini-scroll"
                                 :class="{
-                                    'page-portrait': page.templateOrientation=='portrait',
-                                    'page-landscape': page.templateOrientation=='landscape',
-                                    'table-padding': page.templatePadding=='table',
-                                    'text-padding': page.templatePadding=='text'
+                                    'page-portrait': page.orient=='row',
+                                    'page-landscape': page.orient=='column',
+                                    'table-padding': page.isTable==1,
+                                    'text-padding': page.isTable==0
                                     } "
                                 :key="index">
 
@@ -76,12 +76,12 @@ export default {
             this.docList[this.index].templatePagesList.forEach(page => {
 
 
-                let template = Handlebars.compile(page.templateContent)
+                let template = Handlebars.compile(page.htmlContent)
 
                 try {
-                    page.templateContent = template(this.templateObj)
+                    page.htmlContent = template(this.templateObj)
                 } catch (e) {
-                    console.warn(`模板编译错误：${page.templatePagenum}`, e);
+                    console.warn(`模板编译错误：${page.pageNum}`, e);
                     page.html = "模板错误"
                 }
 
@@ -230,7 +230,7 @@ export default {
 
                     this.doc.templatePagesList.forEach((v, i) => {
 
-                        editor.data.set({ [i]: v.templateContent })
+                        editor.data.set({ [i]: v.htmlContent })
                     })
                     document.querySelector(".material-mask").style.display = "none";
 
