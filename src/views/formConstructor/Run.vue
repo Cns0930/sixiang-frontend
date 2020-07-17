@@ -17,7 +17,7 @@ import { components } from "@/views/pageComponents/index"
 
 import { deserializeTableData } from "../attributeComponents/index";
 import _ from "lodash"
-
+import dayjs from "dayjs"
 export default {
     name: "Run",
     components: { ...components },
@@ -38,15 +38,15 @@ export default {
     async created() {
         let result = await this.loadAll();
         this.stepsData = result[0].data.map(v => {
-            
-            if(typeof v.stepObject.configFn =="string" && v.stepObject.configFn.indexOf('function')>-1){
+
+            if (typeof v.stepObject.configFn == "string" && v.stepObject.configFn.indexOf('function') > -1) {
                 v.stepObject.configFn = eval(`(${v.stepObject.configFn})`)
             }
-            return {...v.stepObject,stepPagenum:v.stepPagenum}
-            }).sort((a,b)=>a.stepPagenum-b.stepPagenum)
+            return { ...v.stepObject, stepPagenum: v.stepPagenum }
+        }).sort((a, b) => a.stepPagenum - b.stepPagenum)
 
         let allFields = result[1].data.map(v => ({ id: v.id, fieldType: v.fieldType, children: v.children, ...v.object })).map(deserializeTableData);
-        
+
         let itemState = allFields.filter(v => v.fieldType == 1).reduce((result, item) => {
 
             let attrObj = _.mapValues(item.componentDefs, (o) => o.value);
@@ -59,15 +59,15 @@ export default {
 
         let itemGetters = allFields.filter(v => v.fieldType == 2).reduce((result, item) => {
             // let attrObj = _.mapValues(item.componentDefs, (o) => this.parseFunction(o.value));
-            
+
             result[item.fieldNo] = this.parseFunction(item.componentDefs.getter.value);
-            
+
             return result;
         }, {});
         console.log(itemGetters)
         // 注册模块
         let module = {
-            namespaced:true,
+            namespaced: true,
             state: itemState,
             getters: itemGetters
         };
@@ -78,9 +78,9 @@ export default {
         // console.log(JSON.stringify(module.state, null, 4));
         this.$store.registerModule("run", module);
 
-        
-      
-        this.$store.commit("putTemplateList",result[2].data)
+
+
+        this.$store.commit("putTemplateList", result[2].data)
     },
     methods: {
         async loadAll() {
@@ -100,17 +100,32 @@ export default {
         goPrev() {
             this.active--
         },
-        parseFunction(data){
-              if(typeof data =="string" && data.indexOf('function')>-1){
-                  try{
-                       data = eval(`(${data})`)
-                       return data;
-                  }catch(e){
-                      return data;
-                  }
-               
+        parseFunction(data) {
+            if (typeof data == "string" && data.indexOf('function') > -1) {
+                try {
+                    data = eval(`(${data})`)
+                    console.log(12121212)
+                    console.log(111 + data())
+                    return data;
+                } catch (e) {
+                    console.log(e)
+                    return data;
+                }
+
             }
-             return data;
+            return data;
+        },
+        functionReviver( value) {
+            if (typeof value === 'string') {
+                var rfunc = /function[^\(]*\(([^\)]*)\)[^\{]*{([^\}]*)\}/,
+                    match = value.match(rfunc);
+
+                if (match) {
+                    var args = match[1].split(',').map(function (arg) { return arg.replace(/\s+/, ''); });
+                    return new Function(args, match[2]);
+                }
+            }
+            return value;
         }
     }
 
@@ -119,6 +134,5 @@ export default {
 
 <style scoped lang="scss">
 .run {
-   
 }
 </style>

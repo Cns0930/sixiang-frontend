@@ -53,9 +53,32 @@ let ElCheckboxC = {
         </el-checkbox-group>
     }
 }
+
+// input添加类 的数组
+let InputList = {
+    name: "InputArray",
+    props: ["value"],
+    render() {
+        if (this.value.length == 0) {
+            this.value.splice(0, 0, "")
+        }
+        return <div>
+            {this.value.map((v, i) => <div>
+                <ElInput value={v} onInput={(e) => { this.$set(this.value, i, e) }}></ElInput>
+                <el-button-group>
+                    <el-button type="primary" icon="el-icon-plus" onClick={() => { this.value.splice(i + 1, 0, "") }}></el-button>
+                    <el-button type="primary" icon="el-icon-minus" onClick={() => { this.value.splice(i, 1) }}></el-button>
+                </el-button-group>
+            </div>)}
+        </div>
+
+    }
+}
+
 export default {
     ElSelectC,
     ElCheckboxC,
     ElRadioC,
-    IdentityCommon
+    IdentityCommon,
+    InputList
 }

@@ -7,6 +7,8 @@
             <!-- <el-button @click="$router.push('/templatemanager')"> -> 模板管理</el-button> -->
             
             <el-button @click="load">载入字段</el-button>
+            <el-button @click="handlePreview">预览全字段</el-button>
+            
         </div>
         <div class="main">
             <!-- 字段表格 -->

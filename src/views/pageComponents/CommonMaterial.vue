@@ -92,7 +92,7 @@ export default {
         docList() {
             
             let templateList = this.$store.state.fieldModel.templateList;
-            return templateList.filter(temp => this.config.includes(temp.template.templateName))
+            return templateList.filter(temp => this.config.includes(temp.template.docxTemplateName))
         },
         templateObj() {
             return _.mapValues(this.itemState, "value")

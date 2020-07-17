@@ -65,7 +65,7 @@ let InputArray = {
 
     }
 }
-
+// 单个checkbox
 let ElSingleCheckboxC = {
     name: "ElSingleCheckboxC",
     props: ["options", "value"],
@@ -83,7 +83,7 @@ let ElSingleCheckboxC = {
     }
 }
 
-
+// 代码框
 let CodeEditor = {
     name: "CodeEditor",
     props: ["value"],

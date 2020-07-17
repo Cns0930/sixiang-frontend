@@ -6,6 +6,7 @@ import DatePickerDef from "./DatePickerDef"
 import RadioDef from "./RadioDef"
 import ConstantDef from "./ConstantDef"
 import IdentityCommonDef from "./IdentityCommonDef.js"
+import InputListDef from "./InputListDef"
 
 // {
 
@@ -19,6 +20,7 @@ import IdentityCommonDef from "./IdentityCommonDef.js"
 // }
 let mapping = [
     {label:"输入框",value:"input",componentDef:InputDef},
+    {label:"输入框组",value:"inputList",componentDef:InputListDef},
     {label:"下拉选择",value:"select",componentDef:SelectDef},
     {label:"情形多选",value:"qingxingCheckbox",componentDef:QingxingCheckboxDef},
     {label:"单选",value:"radio",componentDef:RadioDef},
