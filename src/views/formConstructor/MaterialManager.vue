@@ -6,14 +6,29 @@
             <el-button @click="getTemplate">载入材料</el-button>
         </div>
 
+        <div class="main">
         <!-- 模板列表 -->
         <div class="material-list">
             <div v-for="(v,i) in templates" :key="i" class="material-item">
                 <el-button type="text" style="color: orange;" @click="goTemplatemanager(v.template.id)">{{ v.template.docxTemplateName }}</el-button>
+                <el-button @click="openDetail(v)">编辑</el-button>
                 <el-button @click="deleteTemplate(v.template.id)">删除</el-button>
             </div>
         </div>
 
+        <!-- 模板编辑 -->
+        <div class="material-detail" v-if="temp_template">
+            <div>
+            <el-button type="primary" @click="saveTemplate">保存修改</el-button>
+            </div>
+            模板名称<el-input v-model="temp_template.docxTemplateName"></el-input>
+            材料中文名<el-input v-model="temp_template.documentName"></el-input>
+            材料序号<el-input v-model="temp_template.documentSeq"></el-input>
+            备注<el-input v-model="temp_template.notes"></el-input>
+            
+
+        </div>
+        </div>
         <!-- 创建模板弹窗 -->
         <el-dialog title="创建模板" :visible.sync="templateCreateVisible" width="50%" :close-on-click-modal="false">
             <div>
@@ -41,6 +56,8 @@ export default {
             templateCreateVisible: false,
 
             temp_template_name: '',
+
+            temp_template: null,
         }
     },
     mounted() {
@@ -91,6 +108,15 @@ export default {
                 },
             });
         },
+        openDetail(v){
+            this.temp_template = v.template;
+        },
+        async saveTemplate(){
+            let result = await addTemplate(temp_template);
+            if (!res.success) return;
+
+            this.$message.success('保存模板成功');
+        }
     }
 }
 </script>
@@ -101,7 +127,11 @@ export default {
     .op-bar{
         padding-left: 20px;
     }
+    .main{
+        display: flex;
+    flex-direction: row;
     .material-list{
+        width: 300px;
         margin-top: 10px;
         padding: 20px;
         border: 1px solid green;
@@ -109,5 +139,12 @@ export default {
             margin-bottom: 10px;
         }
     }
+    .material-detail{
+        border: 1px solid blue;
+        width: 600px;
+        margin-top: 10px;
+    }
+    }
+    
 }
 </style>
