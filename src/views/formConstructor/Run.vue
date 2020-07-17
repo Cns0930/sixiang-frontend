@@ -42,8 +42,8 @@ export default {
             if(typeof v.stepObject.configFn =="string" && v.stepObject.configFn.indexOf('function')>-1){
                 v.stepObject.configFn = eval(`(${v.stepObject.configFn})`)
             }
-            return v.stepObject
-            });
+            return {...v.stepObject,stepPagenum:v.stepPagenum}
+            }).sort((a,b)=>b.stepPagenum-a.stepPagenum)
 
         let allFields = result[1].data.map(v => ({ id: v.id, fieldType: v.fieldType, children: v.children, ...v.object })).map(deserializeTableData);
         console.log(allFields)
