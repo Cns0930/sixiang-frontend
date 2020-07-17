@@ -60,7 +60,7 @@ export default {
         let itemGetters = allFields.filter(v => v.fieldType == 2).reduce((result, item) => {
             // let attrObj = _.mapValues(item.componentDefs, (o) => this.parseFunction(o.value));
 
-            result[item.fieldNo] = this.parseFunction(item.componentDefs.getter.value);
+            result[item.fieldNo] = this.functionReviver(item.componentDefs.getter.value);
 
             return result;
         }, {});
@@ -104,11 +104,10 @@ export default {
             if (typeof data == "string" && data.indexOf('function') > -1) {
                 try {
                     data = eval(`(${data})`)
-                    console.log(12121212)
-                    console.log(111 + data())
+                   
                     return data;
                 } catch (e) {
-                    console.log(e)
+                   
                     return data;
                 }
 
@@ -122,7 +121,7 @@ export default {
 
                 if (match) {
                     var args = match[1].split(',').map(function (arg) { return arg.replace(/\s+/, ''); });
-                    return new Function(args, match[2]);
+                    return new Function(args, `with(this){${match[2]}}`).bind({_,dayjs});
                 }
             }
             return value;
