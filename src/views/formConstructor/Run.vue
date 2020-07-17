@@ -60,7 +60,7 @@ export default {
         let itemGetters = allFields.filter(v => v.fieldType == 2).reduce((result, item) => {
             // let attrObj = _.mapValues(item.componentDefs, (o) => this.parseFunction(o.value));
 
-            result[item.fieldNo] = this.functionReviver(item.componentDefs.getter.value);
+            result[item.fieldNo] = this.reviver(item.componentDefs.getter.value);
 
             return result;
         }, {});
@@ -104,28 +104,30 @@ export default {
             if (typeof data == "string" && data.indexOf('function') > -1) {
                 try {
                     data = eval(`(${data})`)
-                   
+
                     return data;
                 } catch (e) {
-                   
+
                     return data;
                 }
 
             }
             return data;
         },
-        functionReviver( value) {
+        functionReviver(value) {
             if (typeof value === 'string') {
-                var rfunc = /function[^\(]*\(([^\)]*)\)[^\{]*{([^\}]*)\}/,
+                var rfunc = /function\s*\w*\s*\([\w\s,]*\)\s*{([\w\W]*?)}/,
                     match = value.match(rfunc);
 
                 if (match) {
                     var args = match[1].split(',').map(function (arg) { return arg.replace(/\s+/, ''); });
-                    return new Function(args, `with(this){${match[2]}}`).bind({_,dayjs});
+                    
+                    return new Function(args, `with(this){${match[2]}}`).bind({ _, dayjs });
                 }
             }
             return value;
-        }
+        },
+      
     }
 
 }
