@@ -81,9 +81,10 @@ export default {
 
                 try {
                     let getters= this.gettersList.reduce((result,fieldNo)=>{
-                        result[fieldNo] = this.itemGetters[fieldNo]
+                        result[fieldNo] = this.itemGetters["run/"+fieldNo]
                         return result
                     },{})
+                 
                     page.htmlContent = template({...this.templateObj,...getters})
                 } catch (e) {
                     console.warn(`模板编译错误：${page.pageNum}`, e);
