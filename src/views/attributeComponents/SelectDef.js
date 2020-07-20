@@ -7,6 +7,7 @@ class SelectDef extends CommonComponents{
         this.options = new Renderer("InputArray",[""],{})
 
         this.component = rendererBuilder("text","ElSelectC")
+        this.value = new Renderer("ElInput","")
     }
     getAttributes(){
         return {
