@@ -20,14 +20,21 @@ class CommonComponents {
         this.sample = new Renderer('ElInput', '')
         // 是否必填
         this.required = new Renderer('ElSingleCheckboxC', true,{options:[true]})
+        // 是否隐藏
+        this.hidden = new Renderer('ElSingleCheckboxC', false,{options:[true]})
         // 验证 文字说明
         // this.validate = new Renderer('ElInput', '')
         // // 交互限制 文字说明
         // this.limitation = new Renderer('ElInput', '')
         // // 事件
-        // this.onchange = new Renderer('ElInput', '')
+        this.onchange = new Renderer("CodeEditor",`
+        // value是组件改变后的值
+        function(value,state,getters){
+            
+        }`);
         // // 事件
         // this.onfocus = new Renderer('ElInput', '')
+        this.remark = new Renderer('ElInput', '这里写备注')
     }
     getAttributes(){
         return {

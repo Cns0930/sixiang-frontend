@@ -6,7 +6,8 @@
                 <el-col v-for="(v,i) in previewFields" :span="v.span || 12" v-if="!v.hidden" :key="i">
                     <el-form-item :label="v.label" :required="v.required !== false"
                         :prop="v.ruleKey ? v.ruleKey : v.required !== false ? 'required' : ''" :obj="v">
-                        <component :is="v.component" v-model="v.value" v-bind="v.attributes"></component>
+                    
+                        <component :is="v.component" v-model="v.value" v-bind="v.attributes" @change="v.onchange($event,previewFields)" @input="v.oninput($event,previewFields)"></component>
                     </el-form-item>
                 </el-col>
 
@@ -103,7 +104,15 @@ export default {
         previewFields(){
             
             return this.$store.state.preview
-        }
+        },
+        
+    },
+    methods:{
+       eventFnProxy(fn, ...args) {
+            if (!fn) return;
+            
+            fn.call(...args,previewFields,null);
+        },
     }
 }
 </script>

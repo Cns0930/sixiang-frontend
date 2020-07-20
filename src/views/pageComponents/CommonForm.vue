@@ -3,11 +3,11 @@
         <el-form label-position="right" label-suffix="：" label-width="200px" hide-required-asterisk class="form-detail"
             :rules="rules" ref="form" :validate-on-rule-change="false" @submit.native.prevent>
             <el-row>
-                <el-col v-for="(v,i) in fields" :span="v.span || 12" :key="i">
+                <el-col v-for="(v,i) in fields" :span="v.span || 12" v-if="!v.hidden" :key="i">
 
                     <el-form-item :key="i" :label="v.label"
                         :prop="v.ruleKey ? v.ruleKey : v.required !== false ? 'required' : ''" :obj="v">
-                        <component :is="v.component" v-model="v.value" v-bind="v.attributes"></component>
+                        <component :is="v.component" v-model="v.value" v-bind="v.attributes" @input="v.onchange($event,itemState,itemGetters)"></component>
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -21,6 +21,7 @@
 import TestFormItem from "@/components/TestFormItem"
 import rules from "@/utils/ruleConfig"
 import Common from "./Common"
+
 export default {
     name: "CommonForm",
 

@@ -136,6 +136,7 @@ import { mapState } from "vuex";
 import _ from "lodash";
 import defRenderers from "../attributeComponents/defRendererComponents";
 import { save, getField, saveOne, deleteOne } from "@/api/superForm/index";
+import {functionReviverEventRuntime} from "./util"
 export default {
     name: "FormConstructor",
     components: {
@@ -376,7 +377,8 @@ export default {
                 getters: {}
             };
             module.state = this.baseFields.reduce((result, item) => {
-                let attrObj = _.mapValues(item.componentDefs, o => o.value);
+                 let attrObj = _.mapValues(item.componentDefs, function (o) { return functionReviverEventRuntime(o.value)});
+                console.log(item.fieldNo,attrObj.onchange && attrObj.onchange.toString())
                 let mergeObj = _.merge(
                     { label: item.label, fieldNo: item.fieldNo },
                     attrObj ,{ attributes: item.componentDefs.getAttributes ? item.componentDefs.getAttributes() || {} : {} }
