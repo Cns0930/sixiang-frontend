@@ -7,7 +7,7 @@
 
                     <el-form-item :key="i" :label="v.label"
                         :prop="v.ruleKey ? v.ruleKey : v.required !== false ? 'required' : ''" :obj="v">
-                        <component :is="v.component" v-model="v.value" v-bind="v.attributes" @input="v.onchange($event,itemState,itemGetters)"></component>
+                        <component :is="v.component" v-model="v.value" v-bind="v.attributes"  @change="v.onchange && v.onchange($event,itemState,itemGetters)" @input="v.oninput && v.oninput($event,itemState,itemGetters)"></component>
                     </el-form-item>
                 </el-col>
             </el-row>
