@@ -66,7 +66,7 @@ export default {
     methods: {
         async getTemplate() {
             const res = await getTemplate({
-                itemName: this.$store.state.home.itemName,
+                itemName: this.$store.state.home.item.name,
             });
             if (!res.success) return;
             this.templates = res.data;
@@ -76,7 +76,9 @@ export default {
             if (!this.temp_template_name) return;
 
             const res = await addTemplate({
-                itemName: this.$store.state.home.itemName,
+                itemName: this.$store.state.home.item.name,
+                sid: this.$store.state.home.item.sid,
+                itemId: this.$store.state.home.item.id,
                 docxTemplateName: this.temp_template_name,
             });
 

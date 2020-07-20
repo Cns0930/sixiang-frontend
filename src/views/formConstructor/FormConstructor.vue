@@ -169,10 +169,14 @@ export default {
         ...mapState({
             baseFields: state => state.fieldModel.baseFields,
             computedFields: state => state.fieldModel.computedFields,
-            itemName: state => state.home.itemName,
+            itemName: state => state.home.item.name,
+            itemId: state => state.home.item.id,
             tableData: state =>
                 state.fieldModel.tableData
         })
+    },
+    mounted(){
+        this.load();
     },
     methods: {
         // 创建 基本字段
@@ -211,6 +215,7 @@ export default {
                 label: v.label,
                 fieldComponentName: v.componentDefs?.type?.value,
                 itemName: this.itemName,
+                itemId: this.itemId,
                 fieldType: 3,
                 object: v,
                 parentId: this.temp_parentId
@@ -276,6 +281,7 @@ export default {
                 label: v.label,
                 fieldComponentName: v.componentDefs?.type?.value,
                 itemName: this.itemName,
+                itemId: this.itemId,
                 fieldType: 1,
                 object: v
             }
@@ -307,6 +313,7 @@ export default {
                 label: v.label,
                 fieldComponentName: v.componentDefs?.type?.value,
                 itemName: this.itemName,
+                itemId: this.itemId,
                 fieldType: 2,
                 object: v
             }
@@ -391,6 +398,7 @@ export default {
                 label: v.label,
                 fieldComponentName: v.componentDefs?.type?.value,
                 itemName: this.itemName,
+                itemId: this.itemId,
                 fieldType: v.fieldType,
                 object: v
             };
