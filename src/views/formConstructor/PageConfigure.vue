@@ -499,7 +499,19 @@ export default {
 
                 if (match) {
 
-                    return new Function("state", "getters", `${match[1]}`);
+                    return new Function("state", "getters", `
+
+                     try{
+                            
+                            
+                            ${match[1]}
+                        }catch(e){
+                            console.warn("错误",'${tag}')
+                            console.warn(e)
+                            return null;
+                        }
+
+                    `);
                 }
             }
             return value;

@@ -34,7 +34,7 @@ class CommonComponents {
         }`);
         // // 事件
         // this.onfocus = new Renderer('ElInput', '')
-        this.remark = new Renderer('ElInput', '这里写备注')
+        this.remark = new Renderer('ElInput', '')
     }
     getAttributes(){
         return {

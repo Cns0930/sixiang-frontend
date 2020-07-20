@@ -8,7 +8,7 @@ class ComputedDef{
         this.getter = new Renderer("CodeEditor",`function(state,getters){
             return ""
         }`);
-        this.remark = new Renderer('ElInput', '这里写备注')
+        this.remark = new Renderer('ElInput', '')
     }
 }
 
