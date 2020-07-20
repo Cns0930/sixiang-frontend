@@ -234,7 +234,8 @@ export default {
             baseFields: state => state.fieldModel.baseFields,
             computedFields: state => state.fieldModel.computedFields,
             // stepPages: state => state.fieldModel.stepPages,
-            itemName: state => state.home.itemName
+            itemName: state => state.home.item.name,
+            itemId: state => state.home.item.id,
         }),
         temp_fields() {
             if (this.temp_page.stepPageType != 'field') return [];
@@ -264,6 +265,7 @@ export default {
                 stepTitle: this.temp_page_name,
                 stepComponent: component.name,
                 itemName: this.itemName,
+                itemId: this.itemId,
                 // 类型，字段 或者 材料
                 stepPageType: component.type,
                 stepObject: {},

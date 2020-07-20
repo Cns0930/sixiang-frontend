@@ -162,7 +162,7 @@ export default {
             if (!this.temp_template_name) return;
 
             const res = await addTemplate({
-                itemName: this.$store.state.home.itemName,
+                itemName: this.$store.state.home.item.name,
                 docxTemplateName: this.temp_template_name,
             })
 
@@ -234,7 +234,7 @@ export default {
         async loadAllField() {
 
             const result = await getField({
-                itemName: this.$store.state.home.itemName,
+                itemName: this.$store.state.home.item.name,
             })
             if (!result.success) return;
             this.$store.commit("putBaseFields", result.data.filter(v => v.fieldType == 1).map(v => v.object).map(deserializeBaseField))

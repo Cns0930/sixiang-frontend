@@ -9,6 +9,7 @@ import PageConfigure from "@/views/formConstructor/PageConfigure"
 import TemplateManager from "@/views/formConstructor/TemplateManager"
 import MaterialManager from "@/views/formConstructor/MaterialManager"
 import Run from "@/views/formConstructor/Run"
+import ItemManager from "@/views/formConstructor/ItemManager"
 Vue.use(VueRouter)
 
 const routes = [
@@ -18,7 +19,7 @@ const routes = [
         component: Home,
         children: [
             {
-                path:"/",
+                path:"/formconstructor",
                 name:"FormConstructor",
                 component:FormConstructor
             },
@@ -56,6 +57,11 @@ const routes = [
                 path:"/run",
                 name:"run",
                 component:Run
+            },
+            {
+                path:"/",
+                name:"itemManeger",
+                component:ItemManager
             }
 
         ]
