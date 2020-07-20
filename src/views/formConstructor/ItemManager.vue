@@ -129,7 +129,7 @@ export default {
         },
         handleClickItem(item) {
             this.$store.commit("changeItem", item);
-            this.$router.push("/formconstructor");
+            this.$router.push({path:'/formconstructor', query:{'itemId':item.id}});
         },
         handleEditItem(item) {
             this.tempItem = item;

@@ -187,6 +187,7 @@ import { mapState } from "vuex";
 import { getStep, saveStep, deleteStep } from "@/api/step/index";
 import { getField } from "@/api/superForm/index";
 import { getTemplate } from '@/api/template/index'
+import { getById } from "@/api/item/index";
 import ace from "ace-builds";
 import beautify from "ace-builds/src-noconflict/ext-beautify";
 import pageComponents from "../pageComponents/index"
@@ -252,9 +253,21 @@ export default {
 
     },
     mounted() {
-        this.loadAll();
+        this.init();
     },
     methods: {
+        async init(){
+            if(this.itemId == null){
+                let itemId = this.$route.query.itemId;
+                let result = await getById({id: itemId});
+                if (!result.success) {
+                this.$message({ type: "warning", message: "获取初始事项信息失败" });
+                return;
+                }
+                this.$store.commit("changeItem", result.data);
+            }
+            this.loadAll();
+        },
         createStepPage() {
             this.stepPageCreateVisible = true;
         },

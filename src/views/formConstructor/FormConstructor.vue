@@ -132,11 +132,13 @@ import defs, {
     deserializeBaseField,
     deserializeTableData
 } from "../attributeComponents/index";
+import { getById } from "@/api/item/index";
 import { mapState } from "vuex";
 import _ from "lodash";
 import defRenderers from "../attributeComponents/defRendererComponents";
 import { save, getField, saveOne, deleteOne } from "@/api/superForm/index";
 import {functionReviverEventRuntime} from "./util"
+import { log } from 'handlebars';
 export default {
     name: "FormConstructor",
     components: {
@@ -177,9 +179,21 @@ export default {
         })
     },
     mounted(){
-        this.load();
+        this.init();
     },
     methods: {
+        async init(){
+            if(this.itemId == null){
+                let itemId = this.$route.query.itemId;
+                let result = await getById({id: itemId});
+                if (!result.success) {
+                this.$message({ type: "warning", message: "获取初始事项信息失败" });
+                return;
+                }
+                this.$store.commit("changeItem", result.data);
+            }
+            this.load()
+        },
         // 创建 基本字段
         handleAddBaseField() {
             this.dialogVisible = true;
@@ -414,6 +428,7 @@ export default {
         // 载入
         async load() {
             let result = await getField({ itemName: this.itemName });
+            console.log(result)
             if (!result.success) return;
             
             this.$store.commit(
