@@ -18,8 +18,12 @@
                     <el-table-column fixed prop="fieldNo" label="fieldNo" width="150"></el-table-column>
                     <el-table-column prop="label" label="label"></el-table-column>
                     <el-table-column prop="type" label="组件名" width="120"></el-table-column>
-                    <el-table-column prop="fieldType" label="类型" :formatter="formatFieldType" width="120">
-                    </el-table-column>
+                    <el-table-column prop="fieldType" label="类型" :formatter="formatFieldType" width="120"></el-table-column>
+                     <el-table-column  label="备注"  width="120">
+                         <template slot-scope="scope">
+                             {{scope.row.componentDefs.remark?scope.row.componentDefs.remark.value:""}}
+                         </template>
+                     </el-table-column>
                     <el-table-column fixed="right" label="操作" width="250">
                         <template slot-scope="scope">
                             <el-button @click="handleClickField(scope.row);" type="text" size="small">
