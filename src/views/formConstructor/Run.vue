@@ -40,6 +40,8 @@ import { deserializeTableData } from "../attributeComponents/index";
 import _ from "lodash"
 import dayjs from "dayjs"
 import {functionReviverGettersRuntime,functionReviverEventRuntime} from "./util"
+import {mapState, createNamespacedHelpers } from 'vuex'
+const {  mapGetters } = createNamespacedHelpers('run')
 export default {
     name: "Run",
     components: { ...components },

@@ -6,8 +6,9 @@ class ComputedDef{
         this.sample = new Renderer('ElInput', '')
         this.source = new Renderer('ElInput', '')
         this.getter = new Renderer("CodeEditor",`function(state,getters){
-            return state['fieldNo']
+            return ""
         }`);
+        this.remark = new Renderer('ElInput', '这里写备注')
     }
 }
 

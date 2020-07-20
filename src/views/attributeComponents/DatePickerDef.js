@@ -7,6 +7,7 @@ class DatePickerDef extends CommonComponents{
         this.$format = new Renderer("ElInput","yyyy年MM月DD日")
         this.$type = new Renderer("ElSelectC","",{options:["year","month","date","dates","week","datetime","datetimerange","daterange","monthrange"]})
         this.$rangeSeparator = new Renderer("ElInput","至")
+        this.$valueFormat = new Renderer("ElInput","yyyy年MM月DD日")
         this.component = rendererBuilder("text","ElDatePicker")
 
         this.value = rendererBuilder("text",[]) 
@@ -16,6 +17,7 @@ class DatePickerDef extends CommonComponents{
             type:this.$type.value,
             format:this.$format.value,
             rangeSeparator:this.$rangeSeparator.value,
+            valueFormat:this.$valueFormat.value,
             placeholder:"请输入内容"
         }
     }
