@@ -81,7 +81,7 @@ export default {
 
                 try {
                     let getters= this.gettersList.reduce((result,fieldNo)=>{
-                        result[fieldNo] = this.itemGetters[`run/${fieldNo}`]
+                        result[fieldNo] = this.itemGetters[fieldNo]
                         return result
                     },{})
                     page.htmlContent = template({...this.templateObj,...getters})
@@ -318,12 +318,8 @@ export default {
     padding: 2.54cm 1.17cm
 }
 
-.content {
-    position: relative;
 
-    color: #000 !important;
-    overflow: hidden;
-    height: 100%;
+   
 
     .material-mask {
         position: absolute;
@@ -390,7 +386,7 @@ export default {
             align-items: center;
         }
     }
-}
+
 
 .content-block {
     max-height: calc(100% - 20px);

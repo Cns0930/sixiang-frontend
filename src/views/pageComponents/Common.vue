@@ -6,6 +6,10 @@
 import layoutComponent from "@/views/layoutComponents/index"
 import {mapState, createNamespacedHelpers } from 'vuex'
 const {  mapGetters } = createNamespacedHelpers('run')
+import store from "@/vuex/store"
+
+
+
 export default {
     name: "Common",
     components: { ...layoutComponent },
@@ -16,13 +20,12 @@ export default {
         ...mapState({
             gettersList:state=>state.fieldModel.gettersList
         }),
-        // itemGetters(){
-        //     return mapGetters(this.gettersList)
-        // }
-        itemGetters() {
+        // ...generatorGetters(),
+        itemGetters:(vm)=>mapGetters(vm.gettersList),
+        // itemGetters() {
             
-            return this.$store.getters
-        }
+        //     return this.$store.getters
+        // }
        
       
     },
@@ -34,6 +37,11 @@ export default {
         async goPrev() {
             this.$emit('goPrev');
         },
+        // eventFnProxy(fn, ...args) {
+        //     if (!fn) return;
+
+        //     fn.call(this, ...args);
+        // },
     }
 }
 </script>

@@ -39,6 +39,7 @@ import { components } from "@/views/pageComponents/index"
 import { deserializeTableData } from "../attributeComponents/index";
 import _ from "lodash"
 import dayjs from "dayjs"
+import {functionReviverGettersRuntime,functionReviverEventRuntime} from "./util"
 export default {
     name: "Run",
     components: { ...components },
@@ -76,8 +77,10 @@ export default {
 
         let itemState = this.allFields.filter(v => v.fieldType == 1).reduce((result, item) => {
 
-            let attrObj = _.mapValues(item.componentDefs, (o) => o.value);
+            let attrObj = _.mapValues(item.componentDefs, function (o) { return functionReviverEventRuntime(o.value,item.fieldNo)});
+   
             let mergeObj = _.merge({ label: item.label, fieldNo: item.fieldNo }, attrObj, { attributes: item.componentDefs.getAttributes ? item.componentDefs.getAttributes() || {} : {} })
+            
             result[item.fieldNo] = mergeObj;
             return result;
         }, {});
@@ -87,7 +90,7 @@ export default {
         let itemGetters = this.allFields.filter(v => v.fieldType == 2).reduce((result, item) => {
             // let attrObj = _.mapValues(item.componentDefs, (o) => this.parseFunction(o.value));
 
-            result[item.fieldNo] = this.functionReviver(item.componentDefs.getter.value,item.fieldNo);
+            result[item.fieldNo] = functionReviverGettersRuntime(item.componentDefs.getter.value,item.fieldNo);
 
             return result;
         }, {});
@@ -142,33 +145,33 @@ export default {
             }
             return data;
         },
-        functionReviver(value,tag) {
+        // functionReviver(value,tag) {
           
-            if (typeof value === 'string') {
-                var rfunc = /function\s*\w*\s*\([\w\s,]*\)\s*{([\w\W]*)}/,
-                    match = value.match(rfunc);
+        //     if (typeof value === 'string') {
+        //         var rfunc = /function\s*\w*\s*\([\w\s,]*\)\s*{([\w\W]*)}/,
+        //             match = value.match(rfunc);
 
-                if (match) {
+        //         if (match) {
                    
-                    return new Function("state","getters" ,`
+        //             return new Function("state","getters" ,`
                    
-                    with(this){
-                        try{
+        //             with(this){
+        //                 try{
                             
                             
-                            ${match[1]}
-                        }catch(e){
-                            console.warn("错误",'${tag}')
-                            console.warn(e)
-                            return null;
-                        }
+        //                     ${match[1]}
+        //                 }catch(e){
+        //                     console.warn("错误",'${tag}')
+        //                     console.warn(e)
+        //                     return null;
+        //                 }
                         
-                        }`).bind({ _, dayjs });
-                }
-            }
-            return value;
-        },
-
+        //                 }`).bind({ _, dayjs });
+        //         }
+        //     }
+        //     return value;
+        // },
+        
     }
 
 }

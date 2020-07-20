@@ -62,8 +62,8 @@
                                 <el-table-column label="操作">
                                     <template slot-scope="scope">
                                         <el-button type="text" @click="deleteConfig(scope)">删除</el-button>
-                                        <el-button type="text" @click="swapUp(scope)">向上</el-button>
-                                        <el-button type="text" @click="swapDown(scope)">向下</el-button>
+                                        <el-button type="text" @click="swapUp(scope)" v-if="scope.$index != 0">向上</el-button>
+                                        <el-button type="text" @click="swapDown(scope)" v-if="scope.$index != temp_fields.length-1">向下</el-button>
                                     </template>
                                 </el-table-column>
                             </el-table>
@@ -373,7 +373,8 @@ export default {
             console.log(this.temp_page.fields);
             module.state = this.temp_page.fields.reduce((result, item) => {
 
-                let attrObj = _.mapValues(item.componentDefs, (o) => o.value);
+                let attrObj = _.mapValues(item.componentDefs, (o) => this.functionReviver(o.value));
+                console.log(attrObj)
                 let mergeObj = _.merge({ label: item.label, fieldNo: item.fieldNo }, attrObj, { attributes: item.componentDefs.getAttributes ? item.componentDefs.getAttributes() || {} : {} })
                 result[item.fieldNo] = mergeObj;
                 return result;
@@ -478,7 +479,7 @@ export default {
             let itemGetters =allFields.filter(v => v.fieldType == 2).reduce((result, item) => {
                 // let attrObj = _.mapValues(item.componentDefs, (o) => this.parseFunction(o.value));
 
-                result[item.fieldNo] = this.functionReviver(item.componentDefs.getter.value, item.fieldNo);
+                result[item.fieldNo] = this.functionReviverBundle(item.componentDefs.getter.value, item.fieldNo);
 
                 return result;
             }, {});
@@ -488,7 +489,7 @@ export default {
             export default getters`)
             beautify.beautify(this.outputEditor.session)
         },
-        functionReviver(value, tag) {
+        functionReviverBundle(value, tag) {
 
             if (typeof value === 'string') {
                 var rfunc = /function\s*\w*\s*\([\w\s,]*\)\s*{([\w\W]*)}/,
@@ -497,6 +498,32 @@ export default {
                 if (match) {
 
                     return new Function("state", "getters", `${match[1]}`);
+                }
+            }
+            return value;
+        },
+        functionReviver(value,tag) {
+          
+            if (typeof value === 'string') {
+                var rfunc = /function\s*\w*\s*\([\w\s,]*\)\s*{([\w\W]*)}/,
+                    match = value.match(rfunc);
+
+                if (match) {
+                   
+                    return new Function("state","getters" ,`
+                   
+                    with(this){
+                        try{
+                            
+                            
+                            ${match[1]}
+                        }catch(e){
+                            console.warn("错误",'${tag}')
+                            console.warn(e)
+                            return null;
+                        }
+                        
+                        }`).bind({ _, dayjs });
                 }
             }
             return value;
