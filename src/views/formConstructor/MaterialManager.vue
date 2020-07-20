@@ -46,6 +46,7 @@
 
 <script>
 import { getTemplate, addTemplate, deleteTemplate } from '@/api/template/index'
+import { getById } from "@/api/item/index";
 
 export default {
     name: "MaterialManager",
@@ -61,9 +62,21 @@ export default {
         }
     },
     mounted() {
-        this.getTemplate();
+        this.init();
     },
     methods: {
+        async init(){
+            if(this.$store.state.home.item.id == null){
+                let itemId = this.$route.query.itemId;
+                let result = await getById({id: itemId});
+                if (!result.success) {
+                this.$message({ type: "warning", message: "获取初始事项信息失败" });
+                return;
+                }
+                this.$store.commit("changeItem", result.data);
+            }
+            this.getTemplate();
+        },
         async getTemplate() {
             const res = await getTemplate({
                 itemName: this.$store.state.home.item.name,
