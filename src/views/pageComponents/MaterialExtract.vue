@@ -1,5 +1,6 @@
 <template>
   <div>
+       <el-button @click="goPrev">上一步</el-button>
       <el-button @click="goNext">下一步</el-button>
   </div>
   

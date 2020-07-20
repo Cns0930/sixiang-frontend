@@ -5,6 +5,7 @@ const state = {
    stepPages:[],
    templates:[],
    tableData:[],
-   templateList:[]
+   templateList:[],
+   gettersList:[],
 };
 export default state

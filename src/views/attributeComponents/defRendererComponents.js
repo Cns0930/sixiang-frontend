@@ -74,7 +74,7 @@ let ElSingleCheckboxC = {
         return <span>
             {
                 this.options.map(option =>
-                    <el-checkbox value={this.value} onInput={(e) => this.$emit("input", e)} label={option}>必填</el-checkbox>
+                    <el-checkbox value={this.value} onInput={(e) => this.$emit("input", e)} label={option}>是</el-checkbox>
                 )
             }
 

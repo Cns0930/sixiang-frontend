@@ -57,6 +57,7 @@ import CKEditor from '@/assets/js/ckeditor';
 import Handlebars from "@/utils/handlebarsHelper"
 import _ from "lodash";
 import Common from "./Common"
+
 export default {
     name: 'CommonMaterial',
     mixins: [Common],
@@ -79,7 +80,11 @@ export default {
                 let template = Handlebars.compile(page.htmlContent)
 
                 try {
-                    page.htmlContent = template(this.templateObj)
+                    let getters= this.gettersList.reduce((result,fieldNo)=>{
+                        result[fieldNo] = this.itemGetters[`run/${fieldNo}`]
+                        return result
+                    },{})
+                    page.htmlContent = template({...this.templateObj,...getters})
                 } catch (e) {
                     console.warn(`模板编译错误：${page.pageNum}`, e);
                     page.html = "模板错误"
@@ -102,6 +107,7 @@ export default {
         }
     },
     mounted() {
+        
         this.init();
     },
     watch: {

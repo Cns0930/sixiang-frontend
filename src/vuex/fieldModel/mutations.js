@@ -43,6 +43,9 @@ const mutations = {
     },
     putTemplateList(state,data){
         state.templateList = data;
+    },
+    putGettersList(state,data){
+        state.gettersList = data;
     }
 }
 

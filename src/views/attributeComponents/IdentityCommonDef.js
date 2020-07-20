@@ -1,15 +1,17 @@
 import CommonComponents from "./CommonComponents"
-import {rendererBuilder} from "./Renderer"
+import Renderer,{rendererBuilder} from "./Renderer"
 class IdentityCommonDef extends CommonComponents{
     constructor(){
         super({type:"identityCommon"})
-        this.component = rendererBuilder("text","IdentityCommonDef")
-        this.$isShowRecognise = new Renderer('isShowRecognise', true,{options:[true]})
+        this.component = rendererBuilder("text","IdentityCommon")
+        this.$isShowRecognise = new Renderer('ElSingleCheckboxC', true,{options:[true]})
         this.span = rendererBuilder("text",24)
+        this.value = rendererBuilder("text",{idPositive:"",idNagetive:""})
+        this.labelWidth =  new Renderer('ElInput', '0')
     }
     getAttributes(){
         return {
-            isShowRecognise:this.$isShowRecognise
+            isShowRecognise:this.$isShowRecognise.value,
         }
     }
 }

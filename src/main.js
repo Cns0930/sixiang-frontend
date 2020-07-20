@@ -13,7 +13,7 @@ import '@/api/config'
 Vue.config.productionTip = false
 Vue.use(ElementUI ,{ size: 'mini'})
 Vue.config.errorHandler=function(err,vm,info){
-    console.error(err,info)
+    console.error(err,vm,info)
 }
 new Vue({
   router,

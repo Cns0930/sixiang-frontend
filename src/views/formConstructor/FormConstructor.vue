@@ -372,7 +372,7 @@ export default {
                 let attrObj = _.mapValues(item.componentDefs, o => o.value);
                 let mergeObj = _.merge(
                     { label: item.label, fieldNo: item.fieldNo },
-                    attrObj
+                    attrObj ,{ attributes: item.componentDefs.getAttributes ? item.componentDefs.getAttributes() || {} : {} }
                 );
                 result[item.fieldNo] = mergeObj;
                 return result;
@@ -405,7 +405,7 @@ export default {
         async load() {
             let result = await getField({ itemName: this.itemName });
             if (!result.success) return;
-            console.log(result.data);
+            
             this.$store.commit(
                 "putBaseFields",
                 result.data

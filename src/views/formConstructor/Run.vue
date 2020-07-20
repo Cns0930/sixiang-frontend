@@ -1,11 +1,32 @@
 <template>
     <div class="run">
-        <template v-for="(step,index) in stepsData">
-            <component v-if="index == active" :is="step.component"
-                :config="step.configType ==2? step.configFn(itemState,itemGetters):step.config" @goNext="goNext"
-                @goPrev="goPrev" :stepData="step" ref="components">
-            </component>
-        </template>
+        <div class="left">
+             <h2 style="text-align:center;margin-bottom:30px">{{stepsData[active]?stepsData[active].title :""}}</h2>
+            <template v-for="(step,index) in stepsData">
+                <component v-if="index == active" :is="step.component"
+                    :config="step.configType ==2? step.configFn(itemState,itemGetters):step.config" @goNext="goNext"
+                    @goPrev="goPrev" :stepData="step" ref="components">
+                </component>
+            </template>
+        </div>
+        <div class="right">
+            <h3>基本字段</h3>
+            <div v-for="(v,i) in itemState" style="border-bottom:1px solid #b3a4a4;padding:2px 0">
+                <p style="display:inline-block;width:100px;word-break:break-all">{{i}}</p>
+                <span style="display:inline-block;width:200px;word-break:break-all">{{v.label}}</span>
+                <span style="display:inline-block;width:100px;">{{v.value}}</span>
+
+            </div>
+            
+            <h3>合成字段</h3>
+            <div  v-for="(v,i) in $store.getters" style="border-bottom:1px solid #b3a4a4;padding:2px 0">
+                <span style="display:inline-block;width:100px;">{{i}}</span>
+                
+                <span v-if="allFields.find(v=>'run/'+v.fieldNo == i)" style="display:inline-block;width:200px;word-break:break-all">{{allFields.find(v=>'run/'+v.fieldNo == i).label}}</span>
+                <span style="display:inline-block;width:100px;">{{v}}</span>
+
+            </div>
+        </div>
     </div>
 </template>
 
@@ -27,15 +48,21 @@ export default {
             itemName: this.$route.query.itemName,
             stepsData: [],
             // itemState: {},
-            itemGetters: {}
+            // itemGetters: {}
+            allFields:[],
         }
     },
     computed: {
         itemState() {
             return this.$store.state["run"]
+        },
+        itemGetters() {
+            console.log(this.$store.getters)
+            return this.$store.getters
         }
     },
     async created() {
+        console.log(this.$store)
         let result = await this.loadAll();
         this.stepsData = result[0].data.map(v => {
 
@@ -45,9 +72,9 @@ export default {
             return { ...v.stepObject, stepPagenum: v.stepPagenum }
         }).sort((a, b) => a.stepPagenum - b.stepPagenum)
 
-        let allFields = result[1].data.map(v => ({ id: v.id, fieldType: v.fieldType, children: v.children, ...v.object })).map(deserializeTableData);
+        this.allFields = result[1].data.map(v => ({ id: v.id, fieldType: v.fieldType, children: v.children, ...v.object })).map(deserializeTableData);
 
-        let itemState = allFields.filter(v => v.fieldType == 1).reduce((result, item) => {
+        let itemState = this.allFields.filter(v => v.fieldType == 1).reduce((result, item) => {
 
             let attrObj = _.mapValues(item.componentDefs, (o) => o.value);
             let mergeObj = _.merge({ label: item.label, fieldNo: item.fieldNo }, attrObj, { attributes: item.componentDefs.getAttributes ? item.componentDefs.getAttributes() || {} : {} })
@@ -57,13 +84,15 @@ export default {
 
 
 
-        let itemGetters = allFields.filter(v => v.fieldType == 2).reduce((result, item) => {
+        let itemGetters = this.allFields.filter(v => v.fieldType == 2).reduce((result, item) => {
             // let attrObj = _.mapValues(item.componentDefs, (o) => this.parseFunction(o.value));
 
-            result[item.fieldNo] = this.reviver(item.componentDefs.getter.value);
+            result[item.fieldNo] = this.functionReviver(item.componentDefs.getter.value,item.fieldNo);
 
             return result;
         }, {});
+        let gettersList = Object.keys(itemGetters)
+        this.$store.commit("putGettersList",gettersList)
         console.log(itemGetters)
         // 注册模块
         let module = {
@@ -77,7 +106,6 @@ export default {
         }
         // console.log(JSON.stringify(module.state, null, 4));
         this.$store.registerModule("run", module);
-
 
 
         this.$store.commit("putTemplateList", result[2].data)
@@ -114,20 +142,33 @@ export default {
             }
             return data;
         },
-        functionReviver(value) {
+        functionReviver(value,tag) {
+          
             if (typeof value === 'string') {
-                var rfunc = /function\s*\w*\s*\([\w\s,]*\)\s*{([\w\W]*?)}/,
+                var rfunc = /function\s*\w*\s*\([\w\s,]*\)\s*{([\w\W]*)}/,
                     match = value.match(rfunc);
 
                 if (match) {
-                    var args = match[1].split(',').map(function (arg) { return arg.replace(/\s+/, ''); });
-                    
-                    return new Function(args, `with(this){${match[2]}}`).bind({ _, dayjs });
+                   
+                    return new Function("state","getters" ,`
+                   
+                    with(this){
+                        try{
+                            
+                            
+                            ${match[1]}
+                        }catch(e){
+                            console.warn("错误",'${tag}')
+                            console.warn(e)
+                            return null;
+                        }
+                        
+                        }`).bind({ _, dayjs });
                 }
             }
             return value;
         },
-      
+
     }
 
 }
@@ -135,5 +176,12 @@ export default {
 
 <style scoped lang="scss">
 .run {
+    display: flex;
+    .left {
+        width: 30cm;
+    }
+    .right {
+        overflow: auto;
+    }
 }
 </style>

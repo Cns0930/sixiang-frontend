@@ -13,7 +13,7 @@
         </template>
         <div class="idendity">
             <div class="-center id-img ">
-                <img v-if="idPositive" :src="idPositive"  />
+                <img v-if="idPositive" :src="idPositive" />
                 <img v-else :src="defaultPostive" />
                 <span>身份证人像面</span>
                 <div class="choose-way">
@@ -29,8 +29,8 @@
                 </div>
             </div>
             <div class="-center id-img">
-                <img v-if="idNagetive" :src="idNagetive"  />
-                <img v-else :src="defaultNagetive"  />
+                <img v-if="idNagetive" :src="idNagetive" />
+                <img v-else :src="defaultNagetive" />
                 <span>身份证国徽面</span>
                 <div class="choose-way">
                     <div>
@@ -97,7 +97,7 @@ import _ from "lodash"
 
 export default {
     name: 'IdentityCommon',
-    props:["cardP","cardN","isShowRecognise","value"],
+    props: ["isShowRecognise", "value"],
     components: {
         Processing
     },
@@ -105,9 +105,10 @@ export default {
         return {
             env: process.env.NODE_ENV,
             loading: false,
-            defaultPostive:idPositive,
-            defaultNagetive:idNagetive,
-          
+            defaultPostive: idPositive,
+            defaultNagetive: idNagetive,
+            idPositive:"",
+            idNagetive:"",
             msg: '',
             showSuiShenBanScanModal: false,
             suiShenBanSearching: false,
@@ -122,23 +123,17 @@ export default {
             imgList: [],
             DWObject: undefined,
             //临时的识别类型
-            recogType:0,
+            recogType: 0,
         }
     },
-    computed:{
-        idPositive(){
-            return this.value.idPositive
-        },
-        idNagetive(){
-            return this.value.idNagetive
-        }
+    computed: {
+     
     },
-    created(){
-        
+    created() {
+        this.idPositive= this.value.idPositive;
+        this.idNagetive = this.value.idNagetive
     },
-    destroyed() {
-        this.$barcodeScanner.destroy()
-    },
+   
     methods: {
         async takePhotoThenRecognise(type) {
             this.loading = true
@@ -195,18 +190,18 @@ export default {
             //this.idNagetive = this.imgList[1].replace(/"/g, '');
             let params
             let apiFn
-            if(this.recogType ==1){
+            if (this.recogType == 1) {
                 params = {
                     frontImg: this.imgList[0].replace(/"/g, ''),
                     backImg: this.imgList[1].replace(/"/g, '')
                 }
-                apiFn=IdCrodTakePhotoApi
+                apiFn = IdCrodTakePhotoApi
 
-            }else{
-                 params = {
+            } else {
+                params = {
                     a4Img: this.imgList[0].replace(/"/g, ''),
                 }
-                apiFn=idCardCopyRecogApi
+                apiFn = idCardCopyRecogApi
             }
 
 
@@ -315,17 +310,23 @@ export default {
             }
         },
         getTestIdCard() {
-            TestIdCard().then(res => {
-                const { code, message, data } = res;
-                if (code === 200 && data) {
-                    this.idPositive = data[0];
-                    this.idNagetive = data[1];
-                    this.recogniseName = '姚冯鑫'
-                    this.recogniseIdNum = '339011197811035035'
-                    this.address = "西安市碑林区南二环西段69号"
-                    this.$emit("change", { name: this.recogniseName, code: this.recogniseIdNum, address: this.address, idPositive: this.idPositive, idNagetive: this.idNagetive })
-                }
-            });
+            // TestIdCard().then(res => {
+            let res = {
+                "code": 200,
+                "message": "SUCCESS",
+                "data": ["http://192.168.2.195/sjtu_image/202005/19/88c7caba1750481b9491082cfcfc84f7.jpg", "http://192.168.2.195/sjtu_image/202005/19/70c38b5102a64da5b3f67ce069e2deb3.jpg"]
+            }
+            const { code, message, data } = res;
+            if (code === 200 && data) {
+                this.idPositive = data[0];
+                this.idNagetive = data[1];
+                
+                this.recogniseName = '姚冯鑫'
+                this.recogniseIdNum = '339011197811035035'
+                this.address = "西安市碑林区南二环西段69号"
+                this.emitEvent();
+            }
+            // });
         },
         getTestIdCardInfo() {
             const params = {
@@ -344,8 +345,8 @@ export default {
                 }
             });
         },
-         getTestIdCardCopyInfo(){
-            let items=[
+        getTestIdCardCopyInfo() {
+            let items = [
                 // "http://192.168.2.195/sjtu_image/202006/24/221a80048fb247638ce2885da99d023e.jpg",
                 // "http://192.168.2.195/sjtu_image/202006/24/cf59d283870d4558880c09ec0e268562.jpg",
                 // "http://192.168.2.195/sjtu_image/202006/24/6ad3949e6669473494dd087156f2682b.jpg",
@@ -356,9 +357,9 @@ export default {
                 "http://202.120.58.120:28077/ajax/bucket/file/qingpu/qp_scan/2020-07-03/143054791.jpg"
             ]
             let img = items[Math.floor(Math.random() * items.length)]
-             const params = {
-                a4Img:img,
-                
+            const params = {
+                a4Img: img,
+
             }
             idCardCopyRecogApi(params).then(res => {
                 const { code, data, message } = res;
@@ -372,10 +373,10 @@ export default {
                 }
             });
         },
-        emitEvent(){
-            let data ={ name: this.recogniseName, code: this.recogniseIdNum, address: this.address, idPositive: this.idPositive, idNagetive: this.idNagetive }
-            this.$emit("input",data);
-            this.$emit("change",data);
+        emitEvent() {
+            let data = { name: this.recogniseName, code: this.recogniseIdNum, address: this.address, idPositive: this.idPositive, idNagetive: this.idNagetive }
+            this.$emit("input", data);
+            this.$emit("change", data);
         }
     }
 }
@@ -461,8 +462,6 @@ export default {
                 .label {
                     margin-right: 15px;
                 }
-
-                
             }
         }
     }

@@ -6,6 +6,8 @@
             <el-button @click="handlePreview">预览页面</el-button>
             <el-button @click="loadAll">载入页面</el-button>
             <el-button @click="$router.push({path:'/run',query:{itemName}})">运行页面</el-button>
+            <el-button @click="output">输出</el-button>
+
         </div>
         <div class="main">
             <!-- 页面 -->
@@ -60,6 +62,8 @@
                                 <el-table-column label="操作">
                                     <template slot-scope="scope">
                                         <el-button type="text" @click="deleteConfig(scope)">删除</el-button>
+                                        <el-button type="text" @click="swapUp(scope)">向上</el-button>
+                                        <el-button type="text" @click="swapDown(scope)">向下</el-button>
                                     </template>
                                 </el-table-column>
                             </el-table>
@@ -164,6 +168,17 @@
                 <el-button type="primary" @click="save">添 加</el-button>
             </span>
         </el-dialog>
+        <!-- 输出 -->
+        <el-dialog title="输出" :visible.sync="outputDialog" width="50%" :close-on-click-modal="false">
+            <el-button @click="getState">获取state</el-button>
+            <el-button @click="getGetters">获取getter</el-button>
+            <pre ref="outputEditor" style="height:500px"></pre>
+
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="outputDialog = false">取 消</el-button>
+
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -175,6 +190,7 @@ import { getTemplate } from '@/api/template/index'
 import ace from "ace-builds";
 import beautify from "ace-builds/src-noconflict/ext-beautify";
 import pageComponents from "../pageComponents/index"
+import serialize from 'serialize-javascript';
 import {
     deserializeTableData
 } from "../attributeComponents/index";
@@ -206,8 +222,11 @@ export default {
             aceForConfig: null,
             defaultFn: `function config(state,getters) {
                 return []
-            }`
-
+            }`,
+            //  output 
+            outputDialog: false,
+            outputEditor: null,
+            outputContent: ""
         };
     },
     computed: {
@@ -220,8 +239,8 @@ export default {
         temp_fields() {
             if (this.temp_page.stepPageType != 'field') return [];
             let fieldNos = this.temp_page.stepObject.config;
-
-            return this.fields.filter(field => fieldNos.includes(field.fieldNo))
+            return fieldNos.map(fieldNo => this.fields.find(field => field.fieldNo == fieldNo))
+            // return this.fields.filter(field => fieldNos.includes(field.fieldNo))
         },
         temp_materials() {
             if (this.temp_page.stepPageType != 'material') return [];
@@ -240,7 +259,7 @@ export default {
         },
         // 确认添加步骤页面
         async addStepPage() {
-            let component = this.componentOptions.find(v=>v.label==this.temp_page_component)
+            let component = this.componentOptions.find(v => v.label == this.temp_page_component)
             let data = {
                 stepTitle: this.temp_page_name,
                 stepComponent: component.name,
@@ -251,7 +270,7 @@ export default {
             };
 
 
-            data=this.initStepObject(data)
+            data = this.initStepObject(data)
 
             let result = await saveStep(data);
             if (!result.success) return;
@@ -333,6 +352,18 @@ export default {
             this.temp_page.stepObject.config.splice(index, 1);
             let result = await saveStep(this.temp_page);
         },
+        swapUp(scope) {
+
+            let originIndex = scope.$index;
+            let targetIndex = originIndex - 1;
+
+            let temp = this.temp_page.stepObject.config[targetIndex];
+            // this.temp_page.stepObject.config[targetIndex]=this.temp_page.stepObject.config[originIndex];
+            // this.temp_page.stepObject.config[originIndex]=temp;
+            this.$set(this.temp_page.stepObject.config, targetIndex, this.temp_page.stepObject.config[originIndex]);
+            this.$set(this.temp_page.stepObject.config, originIndex, temp);
+            console.log(this.temp_page.stepObject.config)
+        },
         //  预览
         handlePreview() {
             let module = {
@@ -392,7 +423,84 @@ export default {
                 return []
             }`);
             return v;
-        }
+        },
+        // 输出 首页
+        async output() {
+
+            let result = await getStep({ itemName: this.itemName })
+
+
+            let stepsData = result.data.map(v => {
+
+                if (typeof v.stepObject.configFn == "string" && v.stepObject.configFn.indexOf('function') > -1) {
+                    v.stepObject.configFn = eval(`(${v.stepObject.configFn})`)
+                }
+                return { ...v.stepObject, stepPagenum: v.stepPagenum }
+            }).sort((a, b) => a.stepPagenum - b.stepPagenum)
+
+            this.outputDialog = true;
+            await this.$nextTick();
+            let test = {                a: function () {
+                    return 1;
+                }, b: 2            }
+
+
+            this.outputEditor = ace.edit(this.$refs.outputEditor);
+            this.outputEditor.setTheme("ace/theme/monokai");
+            this.outputEditor.session.setMode("ace/mode/javascript");
+            this.outputEditor.setOption("wrap", "free")
+            this.outputEditor.setValue(serialize(stepsData))
+            beautify.beautify(this.outputEditor.session)
+
+        },
+        // 输出 state
+        async getState() {
+            let result = await getField({ itemName: this.itemName })
+            let allFields = result.data.map(v => ({ id: v.id, fieldType: v.fieldType, children: v.children, ...v.object })).map(deserializeTableData);
+
+            let itemState = allFields.filter(v => v.fieldType == 1).reduce((result, item) => {
+
+                let attrObj = _.mapValues(item.componentDefs, (o) => o.value);
+                let mergeObj = _.merge({ label: item.label, fieldNo: item.fieldNo }, attrObj, { attributes: item.componentDefs.getAttributes ? item.componentDefs.getAttributes() || {} : {} })
+                result[item.fieldNo] = mergeObj;
+                return result;
+            }, {});
+            this.outputEditor.setValue(`let state = ${serialize(itemState)} 
+            export default state`)
+            beautify.beautify(this.outputEditor.session)
+
+        },
+        //输出 getter
+        async getGetters() {
+            let result = await getField({ itemName: this.itemName })
+            let allFields = result.data.map(v => ({ id: v.id, fieldType: v.fieldType, children: v.children, ...v.object })).map(deserializeTableData);
+            
+            let itemGetters =allFields.filter(v => v.fieldType == 2).reduce((result, item) => {
+                // let attrObj = _.mapValues(item.componentDefs, (o) => this.parseFunction(o.value));
+
+                result[item.fieldNo] = this.functionReviver(item.componentDefs.getter.value, item.fieldNo);
+
+                return result;
+            }, {});
+            this.outputEditor.setValue(`import _ from "lodash" 
+            import dayjs from "dayjs"
+            let getters = ${serialize(itemGetters)} 
+            export default getters`)
+            beautify.beautify(this.outputEditor.session)
+        },
+        functionReviver(value, tag) {
+
+            if (typeof value === 'string') {
+                var rfunc = /function\s*\w*\s*\([\w\s,]*\)\s*{([\w\W]*)}/,
+                    match = value.match(rfunc);
+
+                if (match) {
+
+                    return new Function("state", "getters", `${match[1]}`);
+                }
+            }
+            return value;
+        },
     }
 };
 </script>
