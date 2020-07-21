@@ -104,11 +104,14 @@ import { getField } from '@/api/superForm/index'
 import defs, { deserializeComputedField, deserializeBaseField } from "../attributeComponents/index"
 import inlineEditor from "@/views/inlineEditorComponent/InlineEditor"
 
+import {mixin} from "@/mixin/mixin"
+
 export default {
     name: "TemplateManager",
     components: {
         inlineEditor
     },
+    mixins:[mixin],
     data() {
         return {
             templates: {
@@ -147,6 +150,7 @@ export default {
         })
     },
     mounted() {
+        this.init()
         this.getTemplate()
     },
     methods: {
@@ -285,7 +289,7 @@ export default {
     flex: none;
 }
 .attribute-content {
-    width: 1700px;
+    width: 2000px;
     flex: none;
     border: blue 1px solid;
     // overflow:auto;

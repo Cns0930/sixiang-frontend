@@ -47,9 +47,11 @@
 <script>
 import { getTemplate, addTemplate, deleteTemplate } from '@/api/template/index'
 import { getById } from "@/api/item/index";
+import {mixin} from "@/mixin/mixin"
 
 export default {
     name: "MaterialManager",
+    mixins:[mixin],
     data() {
         return {
             templates: [],
@@ -61,22 +63,11 @@ export default {
             temp_template: null,
         }
     },
-    mounted() {
-        this.init();
+    async mounted() {
+        await this.init();
+        await this.getTemplate();
     },
     methods: {
-        async init(){
-            if(this.$store.state.home.item.id == null){
-                let itemId = this.$route.query.itemId;
-                let result = await getById({id: itemId});
-                if (!result.success) {
-                this.$message({ type: "warning", message: "获取初始事项信息失败" });
-                return;
-                }
-                this.$store.commit("changeItem", result.data);
-            }
-            this.getTemplate();
-        },
         async getTemplate() {
             const res = await getTemplate({
                 itemName: this.$store.state.home.item.name,
@@ -119,6 +110,7 @@ export default {
             this.$router.push({
                 path: '/templatemanager',
                 query: {
+                    itemId: this.$store.state.home.item.id,
                     id: id,
                 },
             });
