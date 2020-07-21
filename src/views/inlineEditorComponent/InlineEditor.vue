@@ -46,7 +46,7 @@
 
             </div>
         </div>
-        <div id="ace" style="flex:1;height:500px;top:30px;position:relative;margin-top:58px"></div>
+        <div id="ace" style="flex:1 21cm;height:29.7cm;top:30px;position:relative;margin-top:58px"></div>
 
         </div>
         <!-- <iframe id="print-data-container" tabindex="-1" :class="ifShow?'iframe-show':'iframe-off'"></iframe> -->
@@ -520,6 +520,7 @@ export default {
 .ckeditor {
     padding: 10px;
     background-color: #f2f2f2;
+    width: 2000px
 }
 .main{
     display:flex;

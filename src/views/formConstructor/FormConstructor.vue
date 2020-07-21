@@ -143,11 +143,13 @@ import defRenderers from "../attributeComponents/defRendererComponents";
 import { save, getField, saveOne, deleteOne } from "@/api/superForm/index";
 import {functionReviverEventRuntime} from "./util"
 import { log } from 'handlebars';
+import {mixin} from "@/mixin/mixin"
 export default {
     name: "FormConstructor",
     components: {
         ...defRenderers
     },
+    mixins:[mixin],
     data() {
         return {
             defRenderers,
@@ -182,22 +184,11 @@ export default {
                 state.fieldModel.tableData
         })
     },
-    mounted(){
-        this.init();
+    async mounted(){
+        await this.init();
+        await this.load();
     },
     methods: {
-        async init(){
-            if(this.itemId == null){
-                let itemId = this.$route.query.itemId;
-                let result = await getById({id: itemId});
-                if (!result.success) {
-                this.$message({ type: "warning", message: "获取初始事项信息失败" });
-                return;
-                }
-                this.$store.commit("changeItem", result.data);
-            }
-            this.load()
-        },
         // 创建 基本字段
         handleAddBaseField() {
             this.dialogVisible = true;
