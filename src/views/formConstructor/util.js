@@ -65,3 +65,24 @@ export function   functionReviverEventRuntime(value,tag) {
     }
     return value;
 }
+
+export function   functionReviverEventBundle(value,tag) {
+          
+    if (typeof value === 'string') {
+        var rfunc = /function\s*\w*\s*\([\w\s,]*\)\s*{([\w\W]*)}/,
+            match = value.match(rfunc);
+
+        if (match) {
+           
+            return new Function("value","state","getters" ,`
+            try{
+                    ${match[1]}
+                }catch(e){
+                    console.warn("错误",'${tag}')
+                    console.warn(e)
+                    return null;
+                }`);
+        }
+    }
+    return value;
+}

@@ -34,21 +34,24 @@
 import { getStep, } from "@/api/step/index";
 import { getField } from "@/api/superForm/index";
 import { getTemplate } from '@/api/template/index'
+import {getById}  from '@/api/item/index'
 import { components } from "@/views/pageComponents/index"
 
 import { deserializeTableData } from "../attributeComponents/index";
 import _ from "lodash"
 import dayjs from "dayjs"
+import customParseFormat from 'dayjs/plugin/customParseFormat'
 import {functionReviverGettersRuntime,functionReviverEventRuntime} from "./util"
 import {mapState, createNamespacedHelpers } from 'vuex'
 const {  mapGetters } = createNamespacedHelpers('run')
+dayjs.extend(customParseFormat)
 export default {
     name: "Run",
     components: { ...components },
     data() {
         return {
             active: 0,
-            itemName: this.$route.query.itemName,
+            // itemName: this.$route.query.itemName,
             stepsData: [],
             // itemState: {},
             // itemGetters: {}
@@ -62,9 +65,13 @@ export default {
         itemGetters() {
             console.log(this.$store.getters)
             return this.$store.getters
+        },
+        itemName(){
+            return this.$store.state.home.item.name
         }
     },
     async created() {
+        await this.init();
         console.log(this.$store)
         let result = await this.loadAll();
         this.stepsData = result[0].data.map(v => {
@@ -116,6 +123,18 @@ export default {
         this.$store.commit("putTemplateList", result[2].data)
     },
     methods: {
+         async init(){
+            if(this.itemId == null){
+                let itemId = this.$route.query.itemId;
+                let result = await getById({id: itemId});
+                if (!result.success) {
+                this.$message({ type: "warning", message: "获取初始事项信息失败" });
+                return;
+                }
+                this.$store.commit("changeItem", result.data);
+            }
+            
+        },
         async loadAll() {
             let result = await Promise.all([
                 getStep({ itemName: this.itemName }),

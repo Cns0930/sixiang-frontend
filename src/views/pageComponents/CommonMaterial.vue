@@ -16,7 +16,7 @@
 
                 <div style="height: 100%; overflow-y: auto;" class="mini-scroll container">
                     <div style="width:30cm;margin: 0 auto;color: black;">
-                        <div class="row-editor" v-for="(page,index) in doc.templatePagesList" :key="index">
+                        <div class="row-editor" v-for="(page,index) in doc" :key="index">
                             <div class="x mini-scroll"
                                 :class="{
                                     'page-portrait': page.orient=='row',
@@ -57,7 +57,7 @@ import CKEditor from '@/assets/js/ckeditor';
 import Handlebars from "@/utils/handlebarsHelper"
 import _ from "lodash";
 import Common from "./Common"
-
+import {GetDocHtmlTempApi} from "@/api/template/index"
 export default {
     name: 'CommonMaterial',
     mixins: [Common],
@@ -67,39 +67,18 @@ export default {
             editor: null,
             collapse: true,
             index: 0,
+            docList:[],
         }
     },
     computed: {
         doc() {
-            if(this.docList.length<1) return {templatePagesList:[]}
-
-
-            this.docList[this.index].templatePagesList.forEach(page => {
-
-
-                let template = Handlebars.compile(page.htmlContent)
-
-                try {
-                    let getters= this.gettersList.reduce((result,fieldNo)=>{
-                        result[fieldNo] = this.itemGetters["run/"+fieldNo]
-                        return result
-                    },{})
-                 
-                    page.htmlContent = template({...this.templateObj,...getters})
-                } catch (e) {
-                    console.warn(`模板编译错误：${page.pageNum}`, e);
-                    page.html = "模板错误"
-                }
-
-                
-            });
             return this.docList[this.index]
         },
-        docList() {
+        // docList() {
             
-            let templateList = this.$store.state.fieldModel.templateList;
-            return templateList.filter(temp => this.config.includes(temp.template.docxTemplateName))
-        },
+        //     let templateList = this.$store.state.fieldModel.templateList;
+        //     return templateList.filter(temp => this.config.includes(temp.template.docxTemplateName))
+        // },
         templateObj() {
             return _.mapValues(this.itemState, "value")
         },
@@ -107,9 +86,39 @@ export default {
             return this.index == this.docList.length-1
         }
     },
+    async created() {
+        let result = await Promise.all(this.config.map(fileName => GetDocHtmlTempApi({ sid: this.$store.state.home.item.sid, docxTemplateName:fileName, pageNum: 0 })));
+        this.docList = result.map(v => v.data);
+        let getterFiledNos = Object.keys(this.itemGetters).filter(fieldNo=>fieldNo.startsWith(`${this.item_code}/`))
+        let getters= this.gettersList.reduce((result,fieldNo)=>{
+                        result[fieldNo] = this.itemGetters["run/"+fieldNo]
+                        return result
+                    },{})
+                    
+        this.docList.forEach(doc => {
+            doc.forEach(page => {
+                
+
+                let template = Handlebars.compile(page.htmlContent)
+
+                try {
+                    console.log({...this.templateObj,...getters})
+                    page.htmlContent = template({...this.templateObj,...getters})
+                    if(page.id==28){
+                         console.log(page.htmlContent)
+                    }
+
+                   
+                } catch (e) {
+                    console.warn(`模板编译错误：${page.pageNum}`, e);
+                    page.htmlContent = "模板错误"
+                }
+            })
+        });
+    },
     mounted() {
         
-        this.init();
+        // this.init();
     },
     watch: {
         doc(newVal, oldVal) {
@@ -235,7 +244,7 @@ export default {
 
 
 
-                    this.doc.templatePagesList.forEach((v, i) => {
+                    this.doc.forEach((v, i) => {
 
                         editor.data.set({ [i]: v.htmlContent })
                     })

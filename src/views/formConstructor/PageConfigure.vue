@@ -5,7 +5,7 @@
 
             <el-button @click="handlePreview">预览页面</el-button>
             <el-button @click="loadAll">载入页面</el-button>
-            <el-button @click="$router.push({path:'/run',query:{itemName}})">运行页面</el-button>
+            <el-button @click="$router.push({path:'/run',query:{itemId}})">运行页面</el-button>
             <el-button @click="output">输出</el-button>
 
         </div>
@@ -195,6 +195,7 @@ import serialize from 'serialize-javascript';
 import {
     deserializeTableData
 } from "../attributeComponents/index";
+import {functionReviverGettersRuntime,functionReviverEventRuntime,functionReviverEventBundle} from "./util"
 export default {
     name: "PageConfigure",
     data() {
@@ -476,12 +477,17 @@ export default {
 
             let itemState = allFields.filter(v => v.fieldType == 1).reduce((result, item) => {
 
-                let attrObj = _.mapValues(item.componentDefs, (o) => o.value);
+                let attrObj = _.mapValues(item.componentDefs, function (o) { return functionReviverEventBundle(o.value,item.fieldNo)});
                 let mergeObj = _.merge({ label: item.label, fieldNo: item.fieldNo }, attrObj, { attributes: item.componentDefs.getAttributes ? item.componentDefs.getAttributes() || {} : {} })
                 result[item.fieldNo] = mergeObj;
                 return result;
             }, {});
-            this.outputEditor.setValue(`let state = ${serialize(itemState)} 
+            this.outputEditor.setValue(`
+            import _ from "lodash" 
+            import dayjs from "dayjs"
+            import customParseFormat from 'dayjs/plugin/customParseFormat'
+            dayjs.extend(customParseFormat)
+            let state = ${serialize(itemState)} 
             export default state`)
             beautify.beautify(this.outputEditor.session)
 
@@ -500,6 +506,8 @@ export default {
             }, {});
             this.outputEditor.setValue(`import _ from "lodash" 
             import dayjs from "dayjs"
+            import customParseFormat from 'dayjs/plugin/customParseFormat'
+            dayjs.extend(customParseFormat)
             let getters = ${serialize(itemGetters)} 
             export default getters`)
             beautify.beautify(this.outputEditor.session)

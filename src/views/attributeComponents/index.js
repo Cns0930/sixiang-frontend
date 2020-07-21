@@ -7,7 +7,7 @@ import RadioDef from "./RadioDef"
 import ConstantDef from "./ConstantDef"
 import IdentityCommonDef from "./IdentityCommonDef.js"
 import InputListDef from "./InputListDef"
-
+import DateRangePickerDef from "./DateRangePickerDef"
 // {
 
 //     "input": InputDef,
@@ -25,6 +25,7 @@ let mapping = [
     {label:"情形多选",value:"qingxingCheckbox",componentDef:QingxingCheckboxDef},
     {label:"单选",value:"radio",componentDef:RadioDef},
     {label:"日期选择",value:"datePicker",componentDef:DatePickerDef},
+    {label:"日期范围选择",value:"dateRangePicker",componentDef:DateRangePickerDef},
     {label:"身份证扫描组件",value:"identityCommon",componentDef:IdentityCommonDef},
     {label:"合成属性",value:"computed",componentDef:ComputedDef},
     {label:"常量",value:"constant",componentDef:ConstantDef},
