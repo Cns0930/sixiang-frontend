@@ -47,6 +47,8 @@
                 <el-input v-model="tempItem.sid"></el-input>
                 审批事项名称
                 <el-input v-model="tempItem.name"></el-input>
+                审批事项英文代号(拼音)
+                <el-input v-model="tempItem.itemCode"></el-input>
                 审批事项大类
                 <el-input v-model="tempItem.category"></el-input>
                 属性
