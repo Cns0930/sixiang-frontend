@@ -4,10 +4,10 @@ class DatePickerDef extends CommonComponents{
     constructor(){
         super({type:"datePicker"})
 
-        this.$format = new Renderer("ElInput","yyyy年MM月DD日")
+        this.$format = new Renderer("ElInput","yyyy年MM月dd日")
         this.$type = new Renderer("ElSelectC","",{options:["year","month","date","dates","week","datetime"]})
       
-        this.$valueFormat = new Renderer("ElInput","yyyy年MM月DD日")
+        this.$valueFormat = new Renderer("ElInput","yyyy年MM月dd日")
         this.component = rendererBuilder("text","ElDatePicker")
 
         this.value = rendererBuilder("text","") 
