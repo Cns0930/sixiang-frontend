@@ -477,7 +477,7 @@ export default {
 
             let itemState = allFields.filter(v => v.fieldType == 1).reduce((result, item) => {
 
-                let attrObj = _.mapValues(item.componentDefs, function (o) { return functionReviverEventBundle(o.value,item.fieldNo)});
+                let attrObj = _.mapValues(item.componentDefs, function (o,k) { return functionReviverEventBundle(o.value,item.fieldNo,k)});
                 let mergeObj = _.merge({ label: item.label, fieldNo: item.fieldNo }, attrObj, { attributes: item.componentDefs.getAttributes ? item.componentDefs.getAttributes() || {} : {} })
                 result[item.fieldNo] = mergeObj;
                 return result;

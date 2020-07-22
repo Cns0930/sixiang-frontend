@@ -27,6 +27,7 @@ const validateCardNum = (rule, value, callback)=>{
     }
 }
 export default  {
+    "none":[{}],
     'required': [{
         required: true,
         message: '请填写完整信息',

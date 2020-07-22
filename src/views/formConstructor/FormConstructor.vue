@@ -3,34 +3,36 @@
         <div class="op-bar">
             <el-button @click="handleAddBaseField">创建字段模型</el-button>
             <el-button @click="handleAddComputedField">创建合成字段模型</el-button>
-           
+
             <!-- <el-button @click="$router.push('/templatemanager')"> -> 模板管理</el-button> -->
-            
+
             <el-button @click="load">载入字段</el-button>
             <el-button @click="handlePreview">预览全字段</el-button>
-            
+
         </div>
         <div class="main">
             <!-- 字段表格 -->
             <div class="fields-table" style="width: 100%;padding:10px 60px">
-                <el-table :data="tableData" border style="width: 100%"
-                row-key="id" :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
+                <el-table :data="tableData" border style="width: 100%" row-key="id"
+                    :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
                     <el-table-column fixed prop="fieldNo" label="fieldNo" width="150"></el-table-column>
                     <el-table-column prop="label" label="label" width="180"></el-table-column>
                     <el-table-column prop="type" label="组件名" width="120"></el-table-column>
-                    <el-table-column prop="fieldType" label="类型" :formatter="formatFieldType" width="120"></el-table-column>
-                     <el-table-column  label="备注"  >
-                         <template slot-scope="scope">
-                             {{scope.row.componentDefs.remark?scope.row.componentDefs.remark.value:""}}
-                         </template>
-                     </el-table-column>
+                    <el-table-column prop="fieldType" label="类型" :formatter="formatFieldType" width="120">
+                    </el-table-column>
+                    <el-table-column label="备注">
+                        <template slot-scope="scope">
+                            {{scope.row.componentDefs.remark?scope.row.componentDefs.remark.value:""}}
+                        </template>
+                    </el-table-column>
                     <el-table-column fixed="right" label="操作" width="250">
                         <template slot-scope="scope">
                             <el-button @click="handleClickField(scope.row);" type="text" size="small">
                                 编辑</el-button>
                             <el-button @click="handleClickChangeType(scope);" type="text" size="small">更改组件类型
                             </el-button>
-                            <el-button @click="handleClickAddChild(scope.row);" type="text" size="small" :disabled="scope.row.fieldType != 1">添加子项
+                            <el-button @click="handleClickAddChild(scope.row);" type="text" size="small"
+                                :disabled="scope.row.fieldType != 1">添加子项
                             </el-button>
                             <el-button @click="handleDeleteField(scope.row)" type="text" size="small">删除</el-button>
                         </template>
@@ -42,21 +44,26 @@
         <!-- 编辑 -->
         <el-dialog title="字段组件属性填写" :visible.sync="editDialogVisible" width="80%" :close-on-click-modal="false">
             <div class="attribute-content">
-                <div class="attribute" v-if="temp_fieldObj">
-                    fieldNo
-                    <el-input v-model="temp_fieldObj.fieldNo"></el-input>
-                    <br />label
-                    <el-input v-model="temp_fieldObj.label"></el-input>
+                <div  v-if="temp_fieldObj">
+                    <div class="attribute">
+                        <span class="attribute-key">fieldNo</span>
+                        <el-input v-model="temp_fieldObj.fieldNo"></el-input>
+                    </div>
+
+                    <div class="attribute">
+                        <span class="attribute-key">label</span>
+                        <el-input v-model="temp_fieldObj.label"></el-input>
+                    </div>
                     <div class="attribute" v-for="(v,i) in temp_fieldObj.componentDefs" :key="i">
-                        {{i}} 
-                        <component :is="v.renderTemplateName" v-model="v.value" v-bind="v.attributes" :key="temp_fieldObj.fieldNo+v.renderTemplateName"></component>
+                        <span  class="attribute-key">{{i}} </span>
+                        <component :is="v.renderTemplateName" v-model="v.value" v-bind="v.attributes"
+                            :key="temp_fieldObj.fieldNo+v.renderTemplateName"></component>
                     </div>
                 </div>
             </div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editDialogVisible = false">取 消</el-button>
-                <el-button type="primary"
-                    @click="handleSaveField(temp_fieldObj);editDialogVisible = false">确 定
+                <el-button type="primary" @click="handleSaveField(temp_fieldObj);editDialogVisible = false">确 定
                 </el-button>
             </span>
         </el-dialog>
@@ -141,15 +148,15 @@ import { mapState } from "vuex";
 import _ from "lodash";
 import defRenderers from "../attributeComponents/defRendererComponents";
 import { save, getField, saveOne, deleteOne } from "@/api/superForm/index";
-import {functionReviverEventRuntime} from "./util"
+import { functionReviverEventRuntime } from "./util"
 import { log } from 'handlebars';
-import {mixin} from "@/mixin/mixin"
+import { mixin } from "@/mixin/mixin"
 export default {
     name: "FormConstructor",
     components: {
         ...defRenderers
     },
-    mixins:[mixin],
+    mixins: [mixin],
     data() {
         return {
             defRenderers,
@@ -184,7 +191,7 @@ export default {
                 state.fieldModel.tableData
         })
     },
-    async mounted(){
+    async mounted() {
         await this.init();
         await this.load();
     },
@@ -210,7 +217,7 @@ export default {
             this.dialogChildVisible = true;
         },
         // 确定添加子项
-        async addChildFieldConfirm(){
+        async addChildFieldConfirm() {
             let ComponentDefClass = defs.find(v => v.value == this.temp_type)?.componentDef
             let v = {
                 fieldNo: this.temp_fieldNo,
@@ -246,8 +253,8 @@ export default {
         async changeTypeConfirm() {
             let ComponentDefClass = defs.find(v => v.value == this.temp_change_type)?.componentDef
             // 不可修改类型时给出提示
-            if(this.temp_change_type == "computed"){
-                if(this.temp_fieldObj.children != null || this.temp_fieldObj.fieldType == 3){
+            if (this.temp_change_type == "computed") {
+                if (this.temp_fieldObj.children != null || this.temp_fieldObj.fieldType == 3) {
                     this.$message({ type: "warning", message: "父项/子项不可修改为合成类型" });
                     return
                 }
@@ -267,7 +274,7 @@ export default {
                         type: this.temp_change_type,
                         label: this.temp_fieldObj.label,
                         fieldComponentName: this.temp_change_type,
-                        fieldType: this.temp_fieldObj.fieldType == 3 ? 3: 1,
+                        fieldType: this.temp_fieldObj.fieldType == 3 ? 3 : 1,
                         componentDefs: new ComponentDefClass()
                     }
 
@@ -386,11 +393,11 @@ export default {
                 getters: {}
             };
             module.state = this.baseFields.reduce((result, item) => {
-                 let attrObj = _.mapValues(item.componentDefs, function (o) { return functionReviverEventRuntime(o.value)});
-                console.log(item.fieldNo,attrObj.onchange && attrObj.onchange.toString())
+                let attrObj = _.mapValues(item.componentDefs, function (o) { return functionReviverEventRuntime(o.value) });
+                console.log(item.fieldNo, attrObj.onchange && attrObj.onchange.toString())
                 let mergeObj = _.merge(
                     { label: item.label, fieldNo: item.fieldNo },
-                    attrObj ,{ attributes: item.componentDefs.getAttributes ? item.componentDefs.getAttributes() || {} : {} }
+                    attrObj, { attributes: item.componentDefs.getAttributes ? item.componentDefs.getAttributes() || {} : {} }
                 );
                 result[item.fieldNo] = mergeObj;
                 return result;
@@ -425,7 +432,7 @@ export default {
             let result = await getField({ itemName: this.itemName });
             console.log(result)
             if (!result.success) return;
-            
+
             this.$store.commit(
                 "putBaseFields",
                 result.data
@@ -487,12 +494,16 @@ export default {
     border: green 1px solid;
     height: 100%;
 }
-// .attribute-content {
-//     flex: 1;
-//     border: blue 1px solid;
-//     height: 100%;
-//     .attribute {
-//         margin: 4px 0;
-//     }
-// }
+.attribute-content {
+    
+    .attribute {
+        margin: 4px 0;
+        display:flex;
+        
+        .attribute-key{
+            display:inline-block;
+            width:100px;
+        }
+    }
+}
 </style>
