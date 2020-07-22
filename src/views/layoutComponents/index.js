@@ -56,7 +56,7 @@ let ElCheckboxC = {
     }
 }
 
-// input添加类 的数组
+
 
 
 export default {

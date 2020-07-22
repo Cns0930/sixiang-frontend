@@ -56,7 +56,7 @@
                     </div>
                     <div class="attribute" v-for="(v,i) in temp_fieldObj.componentDefs" :key="i">
                         <span  class="attribute-key">{{i}} </span>
-                        <component :is="v.renderTemplateName" v-model="v.value" v-bind="v.attributes"
+                        <component class="attribute-value" :is="v.renderTemplateName" v-model="v.value" v-bind="v.attributes"
                             :key="temp_fieldObj.fieldNo+v.renderTemplateName"></component>
                     </div>
                 </div>
@@ -283,14 +283,19 @@ export default {
         },
         // 确定添加字段
         async addFieldConfirm() {
-            let ComponentDefClass = defs.find(v => v.value == this.temp_type)?.componentDef
+            let def =defs.find(v => v.value == this.temp_type);
+
+            let ComponentDefClass =def.componentDef
+            let fieldType = this.temp_type=="computed"?2:1;
+            let isList = !!def.isList;
 
             let v = {
                 fieldNo: this.temp_fieldNo,
                 type: this.temp_type,
                 label: this.temp_label,
                 fieldComponentName: this.temp_type,
-                fieldType: 1,
+                fieldType,
+                isList,
                 componentDefs: new ComponentDefClass()
             };
             let param = {
@@ -299,8 +304,9 @@ export default {
                 fieldComponentName: v.componentDefs?.type?.value,
                 itemName: this.itemName,
                 itemId: this.itemId,
-                fieldType: 1,
-                object: v
+                fieldType,
+                object: v,
+                
             }
             console.log("===param===")
             console.log(param)
@@ -503,6 +509,10 @@ export default {
         .attribute-key{
             display:inline-block;
             width:100px;
+        }
+        .attribute-value{
+            
+             flex:1
         }
     }
 }
