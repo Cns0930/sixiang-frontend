@@ -10,6 +10,7 @@ import TemplateManager from "@/views/formConstructor/TemplateManager"
 import MaterialManager from "@/views/formConstructor/MaterialManager"
 import Run from "@/views/formConstructor/Run"
 import ItemManager from "@/views/formConstructor/ItemManager"
+import Login from "@/views/login/Login"
 Vue.use(VueRouter)
 
 const routes = [
@@ -65,6 +66,10 @@ const routes = [
             }
 
         ]
+    },{
+        path: '/login',
+        name: 'login',
+        component: Login
     },
 
 ]

@@ -354,7 +354,7 @@ export default {
         },
         // 点击 fieldNo
         handleClickField(fieldObj) {
-            this.temp_fieldObj = fieldObj;
+            this.temp_fieldObj = _.cloneDeep(fieldObj);
             this.editDialogVisible = true;
         },
         // 删除 fieldNo
