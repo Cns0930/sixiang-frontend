@@ -1,7 +1,7 @@
 
 import Renderer,{rendererBuilder} from "./Renderer"
 import { getMapping } from "./index"
-
+import rules from "@/utils/ruleConfig"
 
 class CommonComponents {
     constructor({ type }) {
@@ -19,7 +19,7 @@ class CommonComponents {
         // 样例 值
         this.sample = new Renderer('ElInput', '')
         // 是否必填
-        this.required = new Renderer('ElSingleCheckboxC', true,{options:[true]})
+        // this.required = new Renderer('ElSingleCheckboxC', true,{options:[true]})
         // 是否隐藏
         this.hidden = new Renderer('ElSingleCheckboxC', false,{options:[true]})
         // 验证 文字说明
@@ -35,10 +35,18 @@ class CommonComponents {
         // // 事件
         // this.onfocus = new Renderer('ElInput', '')
         this.remark = new Renderer('ElInput', '')
+        this.placeholder = new Renderer('ElInput', '请输入内容')
+        this.ruleKey = new Renderer("ElSelectC","required",{options:Object.keys(rules)})
+        this.validateFn = new Renderer("CodeEditor",`
+        // value 是组件当前的值
+
+        function(value,state){
+            // return {success:false,msg:"验证错误提示"}
+        }`);
     }
     getAttributes(){
         return {
-            placeholder:"请输入内容"
+            placeholder:this.placeholder.value
         }
     }
 }

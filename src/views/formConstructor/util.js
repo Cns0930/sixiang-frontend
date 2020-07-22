@@ -66,7 +66,7 @@ export function   functionReviverEventRuntime(value,tag) {
     return value;
 }
 
-export function   functionReviverEventBundle(value,tag) {
+export function   functionReviverEventBundle(value,tag,key) {
           
     if (typeof value === 'string') {
         var rfunc = /function\s*\w*\s*\([\w\s,]*\)\s*{([\w\W]*)}/,
@@ -78,7 +78,7 @@ export function   functionReviverEventBundle(value,tag) {
             try{
                     ${match[1]}
                 }catch(e){
-                    console.warn("错误",'${tag}')
+                    console.warn("错误",'${tag}','${key}')
                     console.warn(e)
                     return null;
                 }`);
