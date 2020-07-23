@@ -16,7 +16,7 @@
 import TestFormItem from '@/components/TestFormItem'
 
 import CommonMixin from "@/views/pageComponents/CommonMixin"
-import layoutComponent from "./index"
+
 export default {
     name:"PureComponents",
     props:["fields"],

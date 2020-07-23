@@ -32,12 +32,11 @@
 import TestFormItem from "@/components/TestFormItem"
 import rules from "@/utils/ruleConfig"
 import CommonMixin from "./CommonMixin"
-import layoutComponent from "@/views/layoutComponents/index"
 
 export default {
     name: "CommonForm",
     mixins: [CommonMixin],
-    components: { ElFormItem: TestFormItem, ...layoutComponent },
+    components: { ElFormItem: TestFormItem,  },
     props: ['config',],
 
     data() {
