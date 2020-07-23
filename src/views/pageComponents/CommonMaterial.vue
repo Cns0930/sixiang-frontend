@@ -56,11 +56,11 @@
 import CKEditor from '@/assets/js/ckeditor';
 import Handlebars from "@/utils/handlebarsHelper"
 import _ from "lodash";
-import Common from "./Common"
+import CommonMixin from "./CommonMixin"
 import {GetDocHtmlTempApi} from "@/api/template/index"
 export default {
     name: 'CommonMaterial',
-    mixins: [Common],
+    mixins: [CommonMixin],
     props: ["config"],
     data() {
         return {

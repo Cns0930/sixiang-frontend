@@ -1,11 +1,23 @@
 import CommonComponents from "./CommonComponents"
 import Renderer,{rendererBuilder} from "./Renderer"
-class Collection extends CommonComponents{
+class Collection {
     constructor(){
-        super({type:"collection"})
-        this.component = rendererBuilder("text","ElInput")
-        this.value = new Renderer("text",[])
-        this.children=new Renderer("text",[])
+        
+        this.type = rendererBuilder("text","collection") 
+        this.component = rendererBuilder("text","Collection")
+        // this.value = new Renderer("text",[])
+        this.meta=new Renderer("text",[])
+        this.addBtnStyle=new Renderer('ElInput', '')
+        this.removeBtnStyle = new Renderer('ElInput', '')
+    }
+    getAttributes(meta){
+        
+        return {
+            children:[meta],
+            meta,
+            addBtnStyle:this.addBtnStyle.value,
+            removeBtnStyle:this.removeBtnStyle.value
+        }
     }
 }
 

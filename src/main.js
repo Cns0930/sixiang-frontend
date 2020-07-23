@@ -15,6 +15,14 @@ Vue.use(ElementUI ,{ size: 'mini'})
 Vue.config.errorHandler=function(err,vm,info){
     console.error(err,vm,info)
 }
+
+//  全局组件
+import CustomComponents from "@/views/layoutComponents/index"
+Object.keys(CustomComponents).forEach(name=>{
+    Vue.component(name,CustomComponents[name])
+})
+
+
 //所有未登录会话重定向到 /login
 router.beforeEach((to, from, next) => {
   const ticket = localStorage.getItem('ticket')

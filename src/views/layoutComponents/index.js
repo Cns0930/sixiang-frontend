@@ -1,7 +1,7 @@
 import IdentityCommon from "./IdentityCommon/IdentityCommon"
 
 import InputList from "./InputList/InputList"
-
+import Collection from "./Collection/Collection"
 
 
 // 选择器
@@ -64,5 +64,6 @@ export default {
     ElCheckboxC,
     ElRadioC,
     IdentityCommon,
-    InputList
+    InputList,
+    Collection
 }

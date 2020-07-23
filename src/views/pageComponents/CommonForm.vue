@@ -3,13 +3,24 @@
         <el-form label-position="right" label-suffix="：" label-width="200px" hide-required-asterisk class="form-detail"
             :rules="rules" ref="form" :validate-on-rule-change="false" @submit.native.prevent>
             <el-row>
-                <el-col v-for="(v,i) in fields" :span="v.span || 12" v-if="!v.hidden" :key="i">
 
-                    <el-form-item :key="i" :label="v.label"
-                        :prop="v.ruleKey || ''" :obj="v">
-                        <component :is="v.component" v-model="v.value" v-bind="v.attributes"  @change="v.onchange && v.onchange($event,itemState,itemGetters)" @input="v.oninput && v.oninput($event,itemState,itemGetters)"></component>
-                    </el-form-item>
-                </el-col>
+                <template v-for="(v,i) in fields">
+                    <template v-if="v.hidden"></template>
+                    <component v-else-if="v.isList" :is="v.component" v-bind="v.attributes"
+                        @change="v.onchange && v.onchange($event,itemState)"
+                        @input="v.oninput && v.oninput($event,itemState)"></component>
+
+                    <el-col v-else :span="v.span || 12" :key="i">
+
+                        <el-form-item :key="i" :label="v.label" :prop="v.ruleKey || ''" :obj="v">
+                            <component :is="v.component" v-model="v.value" v-bind="v.attributes"
+                                @change="v.onchange && v.onchange($event,itemState,itemGetters)"
+                                @input="v.oninput && v.oninput($event,itemState,itemGetters)"></component>
+                        </el-form-item>
+                    </el-col>
+
+                </template>
+
             </el-row>
         </el-form>
         <el-button @click="goPrev">上一步</el-button>
@@ -20,14 +31,15 @@
 <script>
 import TestFormItem from "@/components/TestFormItem"
 import rules from "@/utils/ruleConfig"
-import Common from "./Common"
+import CommonMixin from "./CommonMixin"
+import layoutComponent from "@/views/layoutComponents/index"
 
 export default {
     name: "CommonForm",
-
-    components: { ElFormItem: TestFormItem },
+    mixins: [CommonMixin],
+    components: { ElFormItem: TestFormItem, ...layoutComponent },
     props: ['config',],
-    mixins: [Common],
+
     data() {
         return {
             rules

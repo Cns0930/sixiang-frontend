@@ -7,10 +7,10 @@
 </template>
 
 <script>
-import Common from "./Common"
+import CommonMixin from "./CommonMixin"
 export default {
     name:"MaterialExtract",
-    mixins: [Common],
+    mixins: [CommonMixin],
 }
 </script>
 

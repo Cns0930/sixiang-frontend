@@ -3,7 +3,8 @@
     
 </template>
 <script>
-import layoutComponent from "@/views/layoutComponents/index"
+
+
 import {mapState, createNamespacedHelpers } from 'vuex'
 const {  mapGetters } = createNamespacedHelpers('run')
 
@@ -11,8 +12,8 @@ const {  mapGetters } = createNamespacedHelpers('run')
 
 
 export default {
-    name: "Common",
-    components: { ...layoutComponent },
+    name: "CommonMixin",
+    
     computed: {
         itemState() {
             return this.$store.state["run"]

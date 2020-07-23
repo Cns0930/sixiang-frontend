@@ -14,7 +14,7 @@
             <!-- 字段表格 -->
             <div class="fields-table" style="width: 100%;padding:10px 60px">
                 <el-table :data="tableData" border style="width: 100%" row-key="id"
-                    :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
+                    :tree-props="{children: 'children', hasChildren: 'hasChildren'}" default-expand-all>
                     <el-table-column fixed prop="fieldNo" label="fieldNo" width="150"></el-table-column>
                     <el-table-column prop="label" label="label" width="180"></el-table-column>
                     <el-table-column prop="type" label="组件名" width="120"></el-table-column>
@@ -32,7 +32,7 @@
                             <el-button @click="handleClickChangeType(scope);" type="text" size="small">更改组件类型
                             </el-button>
                             <el-button @click="handleClickAddChild(scope.row);" type="text" size="small"
-                                :disabled="scope.row.fieldType != 1">添加子项
+                                :disabled="!scope.row.isList">添加子项
                             </el-button>
                             <el-button @click="handleDeleteField(scope.row)" type="text" size="small">删除</el-button>
                         </template>
@@ -148,7 +148,7 @@ import { mapState } from "vuex";
 import _ from "lodash";
 import defRenderers from "../attributeComponents/defRendererComponents";
 import { save, getField, saveOne, deleteOne } from "@/api/superForm/index";
-import { functionReviverEventRuntime } from "./util"
+import { functionReviverEventRuntime ,convertDefToConfigEventRuntime } from "./util"
 import { log } from 'handlebars';
 import { mixin } from "@/mixin/mixin"
 export default {
@@ -178,7 +178,7 @@ export default {
             dialogChangeTypeVisible: false,
             // 子项属性填写用
             dialogChildVisible: false,
-            temp_parentId: null
+            temp_parent: null
         };
     },
     computed: {
@@ -213,7 +213,7 @@ export default {
         },
         // 添加子项
         handleClickAddChild(row) {
-            this.temp_parentId = row.id;
+            this.temp_parent = row;
             this.dialogChildVisible = true;
         },
         // 确定添加子项
@@ -235,23 +235,31 @@ export default {
                 itemId: this.itemId,
                 fieldType: 3,
                 object: v,
-                parentId: this.temp_parentId
+                parentId: this.temp_parent.id
             }
-            console.log("===param===")
-            console.log(param)
+            
+
+
+
 
             let result = await saveOne(param);
 
             if (!result.success) return;
 
             this.$message({ type: "success", message: "保存成功" });
+
+
+
             this.load();
 
             this.dialogChildVisible = false;
         },
         //  确定 改变类型
         async changeTypeConfirm() {
-            let ComponentDefClass = defs.find(v => v.value == this.temp_change_type)?.componentDef
+             let def =defs.find(v => v.value == this.temp_change_type);
+           let ComponentDefClass =def.componentDef
+            let isList = !!def.isList;
+           
             // 不可修改类型时给出提示
             if (this.temp_change_type == "computed") {
                 if (this.temp_fieldObj.children != null || this.temp_fieldObj.fieldType == 3) {
@@ -259,6 +267,8 @@ export default {
                     return
                 }
             }
+
+
             this.temp_fieldObj =
                 this.temp_change_type == "computed" ?
                     {
@@ -275,6 +285,7 @@ export default {
                         label: this.temp_fieldObj.label,
                         fieldComponentName: this.temp_change_type,
                         fieldType: this.temp_fieldObj.fieldType == 3 ? 3 : 1,
+                        isList,
                         componentDefs: new ComponentDefClass()
                     }
 
@@ -398,20 +409,11 @@ export default {
                 state: {},
                 getters: {}
             };
-            module.state = this.baseFields.reduce((result, item) => {
-                let attrObj = _.mapValues(item.componentDefs, function (o) { return functionReviverEventRuntime(o.value) });
-                console.log(item.fieldNo, attrObj.onchange && attrObj.onchange.toString())
-                let mergeObj = _.merge(
-                    { label: item.label, fieldNo: item.fieldNo },
-                    attrObj, { attributes: item.componentDefs.getAttributes ? item.componentDefs.getAttributes() || {} : {} }
-                );
-                result[item.fieldNo] = mergeObj;
-                return result;
-            }, {});
-            if (this.$store.hasModule("preview")) {
-                this.$store.unregisterModule("preview");
+            module.state =convertDefToConfigEventRuntime(this.baseFields,"meta") ;
+            if (this.$store.hasModule("run")) {
+                this.$store.unregisterModule("run");
             }
-            this.$store.registerModule("preview", module);
+            this.$store.registerModule("run", module);
             this.$router.push("/preview");
         },
         // 单个保存
@@ -439,24 +441,25 @@ export default {
             console.log(result)
             if (!result.success) return;
 
+           
+          
+
+            let tableData = result.data.map(v => ({ id: v.id, fieldType: v.fieldType, children: v.children, ...v.object })).map(deserializeTableData);
+         
+            this.$store.commit(
+                "putTableData",
+                tableData
+            )
             this.$store.commit(
                 "putBaseFields",
-                result.data
-                    .filter(v => v.fieldType == 1)
-                    .map(v => ({ id: v.id, fieldType: v.fieldType, ...v.object }))
-                    .map(deserializeBaseField)
+                tableData.filter(v => v.fieldType == 1)
+                    
             );
             this.$store.commit(
                 "putComputedFields",
-                result.data
-                    .filter(v => v.fieldType == 2)
-                    .map(v => ({ id: v.id, fieldType: v.fieldType, ...v.object }))
-                    .map(deserializeComputedField)
+                tableData.filter(v => v.fieldType == 2)
+                    
             );
-            this.$store.commit(
-                "putTableData",
-                result.data.map(v => ({ id: v.id, fieldType: v.fieldType, children: v.children, ...v.object })).map(deserializeTableData)
-            )
         },
         formatFieldType(row, column, cellValue, index) {
             if (cellValue == 1) {

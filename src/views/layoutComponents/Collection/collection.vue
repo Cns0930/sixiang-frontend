@@ -1,19 +1,37 @@
 <template>
-    <el-col v-for="(v,i) in children" :span="v.span || 12" v-if="!v.hidden" :key="i">
-
-        <el-form-item :key="i" :label="v.label" :prop="v.ruleKey || ''" :obj="v">
-            <component :is="v.component" v-model="v.value" v-bind="v.attributes"
-                @change="v.onchange && v.onchange($event,itemState,itemGetters)"
-                @input="v.oninput && v.oninput($event,itemState,itemGetters)"></component>
-        </el-form-item>
-    </el-col>
+<div>
+    <el-button @click="handleAdd" icon="el-icon-plus" :style="addBtnStyle">添加</el-button>
+    <el-row v-for="(list,index) in children" :key="index">
+        <div :style="removeBtnStyle"><el-button @click="handleRemove(index)" style="clear:both" icon="el-icon-minus" >删除</el-button></div>
+       <PureComponents :fields="list"></PureComponents>
+    </el-row>
+    </div>
 </template>
 
 <script>
+
+import _ from "lodash"
+import PureComponents from "../PureComponents"
+import CommonMixin from "@/views/pageComponents/CommonMixin"
+
 export default {
     name: "Collection",
-    props: ['value', 'children'],
-
+    mixins:[CommonMixin],
+    components:{PureComponents,},
+    props: ['value', 'children','meta',"removeBtnStyle","addBtnStyle"],
+    data(){
+        return {
+            
+        }
+    },
+    methods:{
+        handleAdd(){
+            this.children.push(_.cloneDeep(this.meta))
+        },
+        handleRemove(i){
+            this.children.splice(i,1)
+        }
+    }
 }
 </script>
 

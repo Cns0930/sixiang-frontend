@@ -11,7 +11,7 @@ export const utils={
     _,
     dayjs
 }
-
+// getter方法 string -> function  ——预览
 export function   functionReviverGettersRuntime(value,tag) {
           
     if (typeof value === 'string') {
@@ -38,7 +38,7 @@ export function   functionReviverGettersRuntime(value,tag) {
     }
     return value;
 }
-
+// 事件方法 string -> function  ——预览
 export function   functionReviverEventRuntime(value,tag) {
           
     if (typeof value === 'string') {
@@ -65,7 +65,7 @@ export function   functionReviverEventRuntime(value,tag) {
     }
     return value;
 }
-
+// 事件方法 string -> function  ——输出
 export function   functionReviverEventBundle(value,tag,key) {
           
     if (typeof value === 'string') {
@@ -85,4 +85,39 @@ export function   functionReviverEventBundle(value,tag,key) {
         }
     }
     return value;
+}
+
+// 将 定义def对象转为配置对象
+export function convertDefToConfigEventRuntime(fields,metaName="meta",childrenName="children"){
+    return fields.reduce((result, item) => {
+                
+        let attrObj = _.mapValues(item.componentDefs, function (o,key) { 
+            if(key == metaName){
+                let convertResult = convertDefToConfigEventRuntime(o.value)
+
+                return convertResult
+            }
+            return functionReviverEventRuntime(o.value) 
+        });
+        
+        let mergeObj = _.merge(
+            { label: item.label, fieldNo: item.fieldNo,isList:item.isList },
+            attrObj, { attributes: item.componentDefs.getAttributes ? item.componentDefs.getAttributes(attrObj[metaName]) || {} : {} }
+        );
+
+        if(mergeObj.meta){
+      
+            Object.defineProperty(mergeObj,"value",{
+                get: function () {
+                  
+                    return mergeObj.attributes.children.map(v=>_.mapValues(v,o=>o.value))
+                  },
+            })
+        }
+
+
+        result[item.fieldNo] = mergeObj;
+        return result;
+    }, {});
+    
 }

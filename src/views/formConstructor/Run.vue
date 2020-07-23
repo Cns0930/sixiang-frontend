@@ -41,7 +41,7 @@ import { deserializeTableData } from "../attributeComponents/index";
 import _ from "lodash"
 import dayjs from "dayjs"
 import customParseFormat from 'dayjs/plugin/customParseFormat'
-import {functionReviverGettersRuntime,functionReviverEventRuntime} from "./util"
+import {functionReviverGettersRuntime,functionReviverEventRuntime,convertDefToConfigEventRuntime} from "./util"
 import {mapState, createNamespacedHelpers } from 'vuex'
 const {  mapGetters } = createNamespacedHelpers('run')
 dayjs.extend(customParseFormat)
@@ -83,18 +83,10 @@ export default {
         }).sort((a, b) => a.stepPagenum - b.stepPagenum)
 
         this.allFields = result[1].data.map(v => ({ id: v.id, fieldType: v.fieldType, children: v.children, ...v.object })).map(deserializeTableData);
-
-        let itemState = this.allFields.filter(v => v.fieldType == 1).reduce((result, item) => {
-
-            let attrObj = _.mapValues(item.componentDefs, function (o) { return functionReviverEventRuntime(o.value,item.fieldNo)});
-   
-            let mergeObj = _.merge({ label: item.label, fieldNo: item.fieldNo }, attrObj, { attributes: item.componentDefs.getAttributes ? item.componentDefs.getAttributes() || {} : {} })
-            
-            result[item.fieldNo] = mergeObj;
-            return result;
-        }, {});
-
-
+        let baseFields = this.allFields.filter(v => v.fieldType == 1)
+      
+        let itemState =convertDefToConfigEventRuntime(baseFields);
+     
 
         let itemGetters = this.allFields.filter(v => v.fieldType == 2).reduce((result, item) => {
             // let attrObj = _.mapValues(item.componentDefs, (o) => this.parseFunction(o.value));

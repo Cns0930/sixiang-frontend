@@ -20,17 +20,17 @@ import CollectionDef from "./CollectionDef"
 
 // }
 let mapping = [
-    {label:"输入框",value:"input",componentDef:InputDef},
-    {label:"输入框组",value:"inputList",componentDef:InputListDef},
-    {label:"下拉选择",value:"select",componentDef:SelectDef},
-    {label:"情形多选",value:"qingxingCheckbox",componentDef:QingxingCheckboxDef},
-    {label:"单选",value:"radio",componentDef:RadioDef},
-    {label:"日期选择",value:"datePicker",componentDef:DatePickerDef},
-    {label:"日期范围选择",value:"dateRangePicker",componentDef:DateRangePickerDef},
+    {label:"输入框",value:"input",componentDef:InputDef,isList:false},
+    {label:"输入框组",value:"inputList",componentDef:InputListDef,isList:false},
+    {label:"下拉选择",value:"select",componentDef:SelectDef,isList:false},
+    {label:"情形多选",value:"qingxingCheckbox",componentDef:QingxingCheckboxDef,isList:false},
+    {label:"单选",value:"radio",componentDef:RadioDef,isList:false},
+    {label:"日期选择",value:"datePicker",componentDef:DatePickerDef,isList:false},
+    {label:"日期范围选择",value:"dateRangePicker",componentDef:DateRangePickerDef,isList:false},
     {label:"集合",value:"collection",componentDef:CollectionDef,isList:true},
-    {label:"身份证扫描组件",value:"identityCommon",componentDef:IdentityCommonDef},
-    {label:"合成属性",value:"computed",componentDef:ComputedDef},
-    {label:"常量",value:"constant",componentDef:ConstantDef},
+    {label:"身份证扫描组件",value:"identityCommon",componentDef:IdentityCommonDef,isList:false},
+    {label:"合成属性",value:"computed",componentDef:ComputedDef,isList:false},
+    {label:"常量",value:"constant",componentDef:ConstantDef,isList:false},
 ]
 
 export function getMapping() {
@@ -63,7 +63,7 @@ export function deserializeBaseField(fieldJSON) {
         fieldNo: fieldJSON.fieldNo,
         type: fieldJSON.type,
         fieldType: fieldJSON.fieldType,
-        // fieldTypeCn: "基础字段",
+        isList:fieldJSON.isList,
         label: fieldJSON.label,
         componentDefs: actualComponentDefs
     }
@@ -105,7 +105,9 @@ export function deserializeTableData(fieldJSON){
         let output = deserializeBaseField(fieldJSON)
         // 处理子项
         if(fieldJSON.children != null){
-            output.children = fieldJSON.children.map(v => ({ id: v.id, fieldType: v.fieldType, ...v.object })).map(deserializeBaseField)
+            let children = fieldJSON.children.map(v => ({ id: v.id, fieldType: v.fieldType, ...v.object })).map(deserializeBaseField)
+            output.componentDefs.meta.value = children
+            output.children =children;
         }
        
         return output
