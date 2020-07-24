@@ -5,7 +5,7 @@
             <el-row>
                 <template v-for="(v,i) in itemState">
                     <template v-if="v.hidden"></template>
-                    <component v-else-if="v.isList" :is="v.component"  v-bind="v.attributes"
+                    <component v-else-if="v.isList" :is="v.component" :value="v.value"  v-bind="v.attributes"
                         @change="v.onchange && v.onchange($event,itemState)"
                         @input="v.oninput && v.oninput($event,itemState)"></component>
 

@@ -2,7 +2,7 @@ import IdentityCommon from "./IdentityCommon/IdentityCommon"
 
 import InputList from "./InputList/InputList"
 import Collection from "./Collection/Collection"
-
+import GudongCommon from "./gudongCommon/GudongCommon"
 
 // 选择器
 let ElSelectC = {
@@ -65,5 +65,6 @@ export default {
     ElRadioC,
     IdentityCommon,
     InputList,
-    Collection
+    Collection,
+    GudongCommon
 }

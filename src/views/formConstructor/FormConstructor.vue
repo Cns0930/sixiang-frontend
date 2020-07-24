@@ -14,7 +14,7 @@
             <!-- 字段表格 -->
             <div class="fields-table" style="width: 100%;padding:10px 60px">
                 <el-table :data="tableData" border style="width: 100%" row-key="id"
-                    :tree-props="{children: 'children', hasChildren: 'hasChildren'}" default-expand-all>
+                    :tree-props="{children: 'list', hasChildren: 'hasChildren'}" default-expand-all>
                     <el-table-column fixed prop="fieldNo" label="fieldNo" width="150"></el-table-column>
                     <el-table-column prop="label" label="label" width="180"></el-table-column>
                     <el-table-column prop="type" label="组件名" width="120"></el-table-column>
@@ -27,10 +27,8 @@
                     </el-table-column>
                     <el-table-column fixed="right" label="操作" width="250">
                         <template slot-scope="scope">
-                            <el-button @click="handleClickField(scope.row);" type="text" size="small">
-                                编辑</el-button>
-                            <el-button @click="handleClickChangeType(scope);" type="text" size="small">更改组件类型
-                            </el-button>
+                            <el-button @click="handleClickField(scope.row);" type="text" size="small"> 编辑</el-button>
+                            <el-button @click="handleClickChangeType(scope);" type="text" size="small">更改组件类型</el-button>
                             <el-button @click="handleClickAddChild(scope.row);" type="text" size="small"
                                 :disabled="!scope.row.isList">添加子项
                             </el-button>
@@ -227,6 +225,7 @@ export default {
                 fieldType: 3,
                 componentDefs: new ComponentDefClass()
             };
+            
             let param = {
                 fieldNo: v.fieldNo,
                 label: v.label,
@@ -366,6 +365,7 @@ export default {
         // 点击 fieldNo
         handleClickField(fieldObj) {
             this.temp_fieldObj = _.cloneDeep(fieldObj);
+            delete this.temp_fieldObj.list;
             this.editDialogVisible = true;
         },
         // 删除 fieldNo

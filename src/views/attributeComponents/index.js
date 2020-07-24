@@ -9,6 +9,7 @@ import IdentityCommonDef from "./IdentityCommonDef.js"
 import InputListDef from "./InputListDef"
 import DateRangePickerDef from "./DateRangePickerDef"
 import CollectionDef from "./CollectionDef"
+import GudongCommonDef from "./GudongCommonDef"
 // {
 
 //     "input": InputDef,
@@ -29,6 +30,7 @@ let mapping = [
     {label:"日期范围选择",value:"dateRangePicker",componentDef:DateRangePickerDef,isList:false},
     {label:"集合",value:"collection",componentDef:CollectionDef,isList:true},
     {label:"身份证扫描组件",value:"identityCommon",componentDef:IdentityCommonDef,isList:false},
+    {label:"股东集合",value:"gudongCommon",componentDef:GudongCommonDef,isList:true},
     {label:"合成属性",value:"computed",componentDef:ComputedDef,isList:false},
     {label:"常量",value:"constant",componentDef:ConstantDef,isList:false},
 ]
@@ -45,7 +47,7 @@ export function deserializeBaseField(fieldJSON) {
 
     let componentDefs = fieldJSON.componentDefs
     let ComponentDefClass = mapping.find(v=>v.value == fieldJSON.type)?.componentDef
-   
+    console.log(  fieldJSON)
     if(!ComponentDefClass){
         console.log(fieldJSON)
     }
@@ -102,12 +104,16 @@ export function deserializeTableData(fieldJSON){
     // console.log(fieldJSON)
     // type为1或2时分别调用其他方法
     if(fieldJSON.fieldType == 1){
+      
+        
         let output = deserializeBaseField(fieldJSON)
+        
         // 处理子项
         if(fieldJSON.children != null){
+           
             let children = fieldJSON.children.map(v => ({ id: v.id, fieldType: v.fieldType, ...v.object })).map(deserializeBaseField)
             output.componentDefs.meta.value = children
-            output.children =children;
+            output.list =children;
         }
        
         return output

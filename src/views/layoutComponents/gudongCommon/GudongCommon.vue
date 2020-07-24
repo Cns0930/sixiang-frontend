@@ -12,34 +12,25 @@
                 <div class="tab-list">
                     <!-- tab item -->
                     <div class="tab-list-item " v-for="(gudong ,gudongIndex) in children" :key="gudongIndex"
-                        :class="{active:gudong.isActive,unactive:!gudong.isActive,'warning-border':!gudong.validated}"
-                        @click="eventFnProxy(gudong.clickHandler,gudongBase.group,gudong)">
+                        :class="{active:active==gudongIndex,unactive:active!=gudongIndex,'warning-border':!gudong.validated}"
+                        @click="active = gudongIndex">
 
                         <img src="./p.png"></img>
                         <div class="tab-list-info">
-                            <div class="tab-list-name">{{gudong.label}}</div>
+                            <div class="tab-list-name">{{value[gudongIndex][labelFieldNo]}}</div>
                             <!-- <div class="tab-list-type">{{gudong.type}}</div> -->
 
                         </div>
 
-                        <el-tooltip v-if="gudong.removeable" class="remove-btn remove-on-tab" effect="dark" content="删除"
+                        <el-tooltip  class="remove-btn remove-on-tab" effect="dark" content="删除"
                             placement="right-start">
-                            <!-- <div  v-if="gudong.removeable"
-                                @click.stop="eventFnProxy(gudong.onremoveclick,gudong,gudongIndex,gudongBase)"
-                                style="z-index:30">
-                                <span class="minus"></span>
-                            </div> -->
-                            <!-- <el-button class="delete-btn" size="mini" icon="el-icon-delete"
-                                @click.stop="eventFnProxy(gudong.onremoveclick,gudong,gudongIndex,gudongBase)" >
-
-                            </el-button> -->
-                            <i class="delete-btn el-icon-close" @click.stop="eventFnProxy(gudong.onremoveclick,gudong,gudongIndex,gudongBase)"></i>
+                            <i class="delete-btn el-icon-close" @click.stop="handelRemove(gudongIndex)"></i>
                         </el-tooltip>
                        
                     </div>
                   
                     <!-- tab 添加按钮 -->
-                    <el-button v-if="gudongBase.addMore" type="primary" size="small" icon="el-icon-plus"
+                    <el-button  type="primary" size="small" icon="el-icon-plus"
                         style="width:100px" @click="addGudongDialog">添加
                     </el-button>
                 </div>
@@ -47,21 +38,17 @@
             </div>
             <!--  股东基本信息 -->
             <div v-if="gudongActive">
-                <div class="sub-title" v-if="gudongBase.subTitle">
-                    <span>{{gudongBase.subTitle}}</span>
-
-                </div>
+               
                 <!-- form 渲染 -->
                 <div style="position:relative">
                     <!-- 移除按钮 -->
 
-                    <CommonFormRenderer :list="gudongActive.list" @showLawNotice="$emit('showLawNotice',$event)"
+                    <PureComponents :list="gudongActive.list" @showLawNotice="$emit('showLawNotice',$event)"
                         key="active" @itemValidated="handleItemValidated($event,gudongActive)">
-                    </CommonFormRenderer>
+                    </PureComponents>
                     <template v-for="(gudongPassive,gudongPassiveIndex) in gudongPassiveList">
-                            <CommonFormRenderer v-show="false" :list="gudongPassive.list"
-                            @showLawNotice="$emit('showLawNotice',$event)" :key="gudongPassiveIndex" @itemValidated="handleItemValidated($event,gudongPassive)">
-                        </CommonFormRenderer>
+                            <PureComponents v-show="false" :list="gudongPassive.list" :key="gudongPassiveIndex" @itemValidated="handleItemValidated($event,gudongPassive)">
+                        </PureComponents>
                     </template>
                 
 
@@ -76,12 +63,12 @@
             class="message-dialog">
             <el-form ref="form" :model="form" label-width="250px" @submit.native.prevent>
                 <el-form-item label="股东名称 ">
-                    <el-autocomplete  :debounce='0' :fetch-suggestions="querySearchAsync" v-model="item._temp._tempGudongName"  @select="handleSelect"></el-autocomplete>
+                    <el-autocomplete  :debounce='0' :fetch-suggestions="querySearchAsync" v-model="temp_GudongName"  ></el-autocomplete>
                 </el-form-item>
             </el-form>
             <div class="dialog-footer">
                 <el-button class="dialog-warn-btn" @click="dialogVisible = false">取消</el-button>
-                <el-button class="dialog-warn-btn" type="primary" @click="onSubmit(item)">确定
+                <el-button class="dialog-warn-btn" type="primary" @click="onSubmit">确定
                 </el-button>
             </div>
         </el-dialog>
@@ -93,16 +80,17 @@
 
 
 // import {getEnterpriseInfo,getEnterpriseInfoLike} from "@/api/common/index"
-
+import PureComponents from "../PureComponents"
 export default {
     name: "GudongCommon",
-    props: ['value', 'children','meta',],
-    components: {},
+    props: ['value', 'children','meta','labelFieldNo',"gudongNameFieldNo","gudongCodeFieldNo"],
+    components: {PureComponents},
     data() {
         return {
             active:0,
             dialogVisible: false,
             form: {},
+            temp_GudongName:""
         };
     },
     computed: {
@@ -111,38 +99,30 @@ export default {
             return this.item;
         },
         gudongActive() {
-            return this.gudongBase.group.find(v => v.isActive === true)
+            return this.children[this.active]
         },
         gudongPassiveList() {
-            let gudongPassiveList = this.gudongBase.group.filter(v => v.isActive === false)
-            return gudongPassiveList 
+            return this.children.filter((v,i)=>i!= this.active)
         },
         
-        isBaseInfo(){
-            return !!this.item.isBaseInfo
-        },
     },
     methods: {
         addGudongDialog() {
-            this.$set(this.item._temp, '_tempGudongName', '');
-            this.$set(this.item._temp, '_tmpGudongContribution', '');
-            this.$set(this.item._temp, '_tmpGudongContributionTime', '');
-            this.$set(this.item._temp, '_tmpGudongIdCardNum', '');
-            this.$set(this.item._temp, '_tmpGudongStockType', '自然人股东');
-            this.$set(this.item._temp, '_tmpGudongIsNew', '否');
+            this.temp_GudongName=""
+            
             this.dialogVisible = true;
         },
-        async onSubmit(item) {
-            let res = await getEnterpriseInfo({value:item._temp._tempGudongName});
-            if(res.message==="SUCCESS" && res.data){
-                this.$set(this.item._temp, '_tmpGudongIdCardNum', res.data.unifiedSocialCreditCode);
-            }
-            
-            let result = item._temp.pushGroup(item);
+        async onSubmit() {
+            // let res = await getEnterpriseInfo({value:item._temp.temp_GudongName});
+            // if(res.message==="SUCCESS" && res.data){
+            //     this.$set(this.item._temp, '_tmpGudongIdCardNum', res.data.unifiedSocialCreditCode);
+            // }
+            let child = _.cloneDeep(this.meta);
+            child[this.gudongNameFieldNo].value = this.temp_GudongName;
 
-            if (result) {
-                this.dialogVisible = false;
-            }
+            this.children.push(child)
+
+            // let result = item._temp.pushGroup(item);
         },
         handleItemValidated({success=true,context={}},gudong,){
            
@@ -154,16 +134,10 @@ export default {
            
         },
         async querySearchAsync(queryString, cb){
-             let res = await getEnterpriseInfoLike({value:queryString});
-             if(res.message==="SUCCESS" && res.data.length>0){
-                
-                cb(res.data.map(v=>({value:v.corporateName})))
-            }else{
-                cb([])
-            }
+             return []
         },
-        handleSelect(){
-            
+         handelRemove(i){
+            this.children.splice(i,1)
         }
     }
 
