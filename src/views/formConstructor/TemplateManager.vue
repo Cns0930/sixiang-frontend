@@ -26,7 +26,8 @@
                                 @click="handleClickPage(page,pageIndex)">{{page.pageNum}} 页
                             </el-button>
                             <el-button-group>
-                                <el-button style="width:45px;" @click="savePage(page,pageIndex)" icon="el-icon-upload2">
+                                <el-button style="width:45px;" @click="savePage(page,pageIndex)" icon="el-icon-upload2"
+                                :disabled="!temp_page || page.id != temp_page.id">
                                 </el-button>
                                 <el-button style="width:45px;" @click="deletePage(page)">删除</el-button>
                             </el-button-group>
@@ -76,7 +77,7 @@
                 </div> -->
 
                 <inlineEditor ref="inlineEditor" v-if="temp_page" :temp_page="temp_page"
-                    :currentPagenum="currentPagenum" @updateTemplate="getTemplate" />
+                    :currentPagenum="currentPagenum" @saveTemplate="saveTemplate"/>
             </div>
 
         </div>
@@ -213,6 +214,27 @@ export default {
 
             }
             if (!res.success) return;
+
+            this.$message.success('保存页面成功');
+            this.getTemplate();
+        },
+        async saveTemplate(html){
+            const res = await addEditPage({
+                id: this.temp_page.id,
+                itemId: this.temp_page.itemId,
+                itemName: this.temp_page.itemName,
+                htmlContent: html,
+                templateId: this.temp_page.templateId,
+                orient: this.temp_page.orient,
+                isTable: this.temp_page.isTable,
+                pageNum: this.currentPagenum,
+                templateType: this.temp_page.templateType,
+                contentCss: this.temp_page.contentCss,
+            })
+
+            if (!res.success) return;
+            // 把返回的值放进去
+            this.temp_page = res.data;
 
             this.$message.success('保存页面成功');
             this.getTemplate();
