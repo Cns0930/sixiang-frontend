@@ -53,7 +53,7 @@
                         <el-input v-model="temp_fieldObj.label"></el-input>
                     </div>
                     <div class="attribute" v-for="(v,i) in temp_fieldObj.componentDefs" :key="i">
-                        <span  class="attribute-key">{{i}} </span>
+                        <span  class="attribute-key">{{v.label || i}} </span>
                         <component class="attribute-value" :is="v.renderTemplateName" v-model="v.value" v-bind="v.attributes"
                             :key="temp_fieldObj.fieldNo+v.renderTemplateName"></component>
                     </div>
@@ -508,10 +508,13 @@ export default {
     .attribute {
         margin: 4px 0;
         display:flex;
-        
+        align-items:center;
         .attribute-key{
-            display:inline-block;
-            width:100px;
+           
+            width:200px;
+            text-align:right;
+            padding-right:30px;
+
         }
         .attribute-value{
             

@@ -18,5 +18,6 @@ export const addEditPage = params => axios.post('/superform/template/savePage', 
 // 删除页面
 export const deletePage = params => axios.post('/superform/template/deletePage', params).then(res => res.data);
 
+
 // 获取template
 export const GetDocHtmlTempApi = params => axios.get('/superform/template-pages/getDocHtmlTemplate', {params}).then(res => res.data);

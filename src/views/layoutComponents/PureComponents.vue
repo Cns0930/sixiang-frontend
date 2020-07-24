@@ -2,7 +2,7 @@
   <div>
       <el-col  v-for="(v,i) in fields" :span="v.span || 12" v-if="!v.hidden" :key="i">
 
-            <el-form-item :key="i" :label="v.label" :prop="v.ruleKey || ''" :obj="v">
+            <el-form-item :key="i" :label="v.label" :prop="v.ruleKey || ''" :obj="v" @itemValidated="handleItemValidated($event,v)">
                 <component :is="v.component" v-model="v.value" v-bind="v.attributes"
                     @change="v.onchange && v.onchange($event,itemState,itemGetters)"
                     @input="v.oninput && v.oninput($event,itemState,itemGetters)">
@@ -22,6 +22,12 @@ export default {
     props:["fields"],
     mixins:[CommonMixin],
     components: { ElFormItem: TestFormItem, },
+    methods:{
+        handleItemValidated(event,context){
+      
+            this.$emit("itemValidated",{...event,context})
+        },
+    },
 }
 </script>
 

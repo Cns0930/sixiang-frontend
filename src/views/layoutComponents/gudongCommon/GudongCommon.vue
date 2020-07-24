@@ -1,69 +1,64 @@
 <template>
-    <div>
-        <div class=" tab-type">
+    <el-row>
+        <el-col :span="24" class=" tab-type">
             <!-- 股东 名称 tab -->
             <div class="tab-block">
 
                 <!-- tab 标题 -->
-                <div class="tab-list-title">
+                <div class="tab-list-title" style="color:black">
                     股东列表
                 </div>
                 <!-- tab -->
                 <div class="tab-list">
                     <!-- tab item -->
+                    
                     <div class="tab-list-item " v-for="(gudong ,gudongIndex) in children" :key="gudongIndex"
-                        :class="{active:active==gudongIndex,unactive:active!=gudongIndex,'warning-border':!gudong.validated}"
+                        :class="{active:active==gudongIndex,unactive:active!=gudongIndex,'warning-border':!validatedStatus[gudongIndex]}"
                         @click="active = gudongIndex">
-
                         <img src="./p.png"></img>
                         <div class="tab-list-info">
-                            <div class="tab-list-name">{{value[gudongIndex][labelFieldNo]}}</div>
+                            <div class="tab-list-name">{{children[gudongIndex][labelFieldNo].value}}</div>
                             <!-- <div class="tab-list-type">{{gudong.type}}</div> -->
 
                         </div>
 
-                        <el-tooltip  class="remove-btn remove-on-tab" effect="dark" content="删除"
-                            placement="right-start">
+                        <el-tooltip class="remove-btn remove-on-tab" effect="dark" content="删除" placement="right-start">
                             <i class="delete-btn el-icon-close" @click.stop="handelRemove(gudongIndex)"></i>
                         </el-tooltip>
-                       
+
                     </div>
-                  
+
                     <!-- tab 添加按钮 -->
-                    <el-button  type="primary" size="small" icon="el-icon-plus"
-                        style="width:100px" @click="addGudongDialog">添加
+                    <el-button type="primary" size="small" icon="el-icon-plus" style="width:100px"
+                        @click="addGudongDialog">添加
                     </el-button>
                 </div>
 
             </div>
             <!--  股东基本信息 -->
             <div v-if="gudongActive">
-               
+
                 <!-- form 渲染 -->
                 <div style="position:relative">
                     <!-- 移除按钮 -->
 
-                    <PureComponents :list="gudongActive.list" @showLawNotice="$emit('showLawNotice',$event)"
-                        key="active" @itemValidated="handleItemValidated($event,gudongActive)">
-                    </PureComponents>
+                    <PureComponents :fields="gudongActive"  key="active"  @itemValidated="handleItemValidated($event,gudongActive)"> </PureComponents>
                     <template v-for="(gudongPassive,gudongPassiveIndex) in gudongPassiveList">
-                            <PureComponents v-show="false" :list="gudongPassive.list" :key="gudongPassiveIndex" @itemValidated="handleItemValidated($event,gudongPassive)">
-                        </PureComponents>
+                        <PureComponents v-show="false" :fields="gudongPassive" :key="gudongPassiveIndex" @itemValidated="handleItemValidated($event,gudongPassive)"></PureComponents>
                     </template>
-                
 
                 </div>
 
             </div>
 
-            
-        </div>
+        </el-col>
 
         <el-dialog title="系统提示" :visible.sync="dialogVisible" width="45%" append-to-body :close-on-click-modal="false"
             class="message-dialog">
             <el-form ref="form" :model="form" label-width="250px" @submit.native.prevent>
                 <el-form-item label="股东名称 ">
-                    <el-autocomplete  :debounce='0' :fetch-suggestions="querySearchAsync" v-model="temp_GudongName"  ></el-autocomplete>
+                    <el-autocomplete :debounce='0' :fetch-suggestions="querySearchAsync" v-model="temp_GudongName">
+                    </el-autocomplete>
                 </el-form-item>
             </el-form>
             <div class="dialog-footer">
@@ -73,7 +68,7 @@
             </div>
         </el-dialog>
 
-    </div>
+    </el-row>
 </template>
 
 <script>
@@ -83,33 +78,38 @@
 import PureComponents from "../PureComponents"
 export default {
     name: "GudongCommon",
-    props: ['value', 'children','meta','labelFieldNo',"gudongNameFieldNo","gudongCodeFieldNo"],
-    components: {PureComponents},
+    props: ['value', 'children', 'meta', 'labelFieldNo', "gudongNameFieldNo", "gudongCodeFieldNo"],
+    components: { PureComponents },
     data() {
         return {
-            active:0,
+            active: 0,
             dialogVisible: false,
             form: {},
-            temp_GudongName:""
+            temp_GudongName: ""
         };
     },
     computed: {
-     
-        gudongBase() {
-            return this.item;
-        },
+
+
         gudongActive() {
             return this.children[this.active]
         },
         gudongPassiveList() {
-            return this.children.filter((v,i)=>i!= this.active)
+            return this.children.filter((v, i) => i != this.active)
         },
-        
+        validatedStatus(){
+            return this.children.map(gudong=>{
+                console.log(Object.values(gudong).map(v=>v.validateStatus).every(Boolean))
+                return  Object.values(gudong).map(v=>v.validateStatus).every(Boolean)
+            })
+           
+        }
+
     },
     methods: {
         addGudongDialog() {
-            this.temp_GudongName=""
-            
+            this.temp_GudongName = ""
+
             this.dialogVisible = true;
         },
         async onSubmit() {
@@ -121,23 +121,21 @@ export default {
             child[this.gudongNameFieldNo].value = this.temp_GudongName;
 
             this.children.push(child)
-
+            this.dialogVisible = false
             // let result = item._temp.pushGroup(item);
         },
-        handleItemValidated({success=true,context={}},gudong,){
+        handleItemValidated({success=true,context={}}, gudong, ) {
            
-           let fieldNo = context.fieldNo;
-           gudong.validateStatus =gudong.validateStatus ||{};
-           gudong.validateStatus[fieldNo] = success;
-         
-            gudong.validated =Object.values( gudong.validateStatus).every(Boolean)? true:false;
-           
+            let fieldNo = context.fieldNo;
+            this.$set(gudong[fieldNo],"validateStatus",success)
+            
         },
-        async querySearchAsync(queryString, cb){
-             return []
+       
+        async querySearchAsync(queryString, cb) {
+            return []
         },
-         handelRemove(i){
-            this.children.splice(i,1)
+        handelRemove(i) {
+            this.children.splice(i, 1)
         }
     }
 
@@ -172,7 +170,7 @@ export default {
     min-height: 70px;
 
     flex-wrap: wrap;
-
+    color: #fff;
     .tab-list-item {
         position: relative;
         display: flex;
@@ -190,8 +188,8 @@ export default {
         &.unactive {
             background: rgba(8, 59, 145, 1);
         }
-        &.warning-border{
-            border: 1px solid #FF4949;
+        &.warning-border {
+            border: 1px solid #ff4949;
         }
         border: 1px solid rgba(212, 215, 224, 1);
         min-width: 150px;
@@ -208,7 +206,7 @@ export default {
             font-size: 16px;
             min-height: 20px;
             // max-width:120px;
-            margin-right:28px;
+            margin-right: 28px;
             // overflow:hidden;
             // text-overflow: ellipsis;
             // white-space: nowrap;
@@ -222,7 +220,6 @@ export default {
             right: 0px;
             top: 0px;
         }
-        
     }
 }
 .tab-type .form {
@@ -250,23 +247,21 @@ export default {
     }
 }
 .delete-btn {
-     display:none;
-    
+    display: none;
 }
-.tab-list-item:hover .delete-btn{
+.tab-list-item:hover .delete-btn {
     z-index: 30;
     color: #fff;
     margin: 0;
     width: 24px;
     height: 24px;
     font-size: 12px;
-    background: #881D39;
+    background: #881d39;
     border: 1px solid #fff;
-    display:flex;
+    display: flex;
     align-items: center;
     justify-content: center;
 }
 </style>
 <style lang="scss">
-
 </style>

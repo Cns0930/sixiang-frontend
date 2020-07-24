@@ -2,10 +2,12 @@
 
 
 class Renderer {
-    constructor(renderTemplateName, value,  attributes={}) {
+    constructor(renderTemplateName, value,  attributes={},label=null) {
         this.value = value;
         this.renderTemplateName = renderTemplateName;
-        this.attributes = attributes
+        this.attributes = attributes || {};
+        this.label=label
+
     }
 }
 
