@@ -438,29 +438,8 @@ export default {
             this.editor.data.set({ [this.page]: result })
         },
         async savePage(){
-            // let html=  this. editor.getData({ rootName: this.page });
-            // localStorage.setItem([this.page],html);
-            // alert("保存到localStorage");
-            
             const html= this.ace.getValue();
-
-            const res = await addEditPage({
-                id: this.temp_page.id,
-                itemId: this.temp_page.itemId,
-                itemName: this.temp_page.itemName,
-                htmlContent: html,
-                templateId: this.temp_page.templateId,
-                orient: this.temp_page.orient,
-                isTable: this.temp_page.isTable,
-                pageNum: this.currentPagenum,
-                templateType: this.temp_page.templateType,
-                contentCss: this.temp_page.contentCss,
-            })
-
-            if (!res.success) return;
-
-            this.$message.success('保存页面成功');
-            this.$emit('updateTemplate');
+            this.$emit("saveTemplate", html);
         },
         loadPage(){
             let html=localStorage.getItem([this.page]);
