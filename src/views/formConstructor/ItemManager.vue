@@ -18,6 +18,7 @@
                         </template>
                     </el-table-column>
                     <el-table-column prop="department" label="委办局" width="120"></el-table-column>
+                    <el-table-column prop="createTime" :formatter="dateFormat" label="创建时间" width="120"></el-table-column>
                     <el-table-column label="操作" width="120">
                         <template slot-scope="scope">
                             <el-button
@@ -91,6 +92,7 @@ import {
     deleteItem
 } from "@/api/item/index";
 import axios from "../../api/config";
+import dayjs from "dayjs";
 export default {
     name: "ItemManeger",
     data() {
@@ -136,6 +138,10 @@ export default {
         handleEditItem(item) {
             this.tempItem = item;
             this.dialogVisible = true;
+        },
+        dateFormat(row, column, cellValue, index){
+          const daterc = row[column.property]
+          return dayjs(daterc).format("YYYY-MM-DD");
         }
     }
 };

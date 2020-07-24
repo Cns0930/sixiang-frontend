@@ -58,7 +58,7 @@ export default {
         },
         getAuth(userName, password) {
             // FIXME: 之后修改
-            if (userName === "admin" && password === "abc123") {
+            if (userName === "admin" && password === "Hg9s$ixuVe*x4J2X") {
                 return { success: true, data: { authorization: "1234567890" } };
             } else {
                 return { success: false };
