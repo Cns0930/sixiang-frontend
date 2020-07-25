@@ -34,7 +34,9 @@ export default {
     .delete-btn {
         display: none;
     }
-
+    &:nth-child(1) .input{
+        margin-left:0;
+    }
 }
     .input-wrapper:hover .delete-btn {
          position: absolute;
@@ -53,7 +55,7 @@ export default {
         justify-content: center;
     }
 .input {
-    width: 100px;
+    width: 150px;
     margin: 6px 10px;
 }
 </style>

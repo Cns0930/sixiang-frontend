@@ -43,11 +43,13 @@ import dayjs from "dayjs"
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import {functionReviverGettersRuntime,functionReviverEventRuntime,convertDefToConfigEventRuntime} from "./util"
 import {mapState, createNamespacedHelpers } from 'vuex'
+import CommonMixin from "@/views/pageComponents/CommonMixin"
 const {  mapGetters } = createNamespacedHelpers('run')
 dayjs.extend(customParseFormat)
 export default {
     name: "Run",
     components: { ...components },
+    mixins:[CommonMixin],
     data() {
         return {
             active: 0,
@@ -56,17 +58,17 @@ export default {
             // itemState: {},
             // itemGetters: {}
             allFields:[],
-            itemGetters:{},
+            // itemGetters:{},
         }
     },
     computed: {
         itemState() {
             return this.$store.state["run"]
         },
-        getters() {
-            console.log(this.$store.getters)
-            return this.$store.getters
-        },
+        // getters() {
+        //     console.log(this.$store.getters)
+        //     return this.$store.getters
+        // },
         ...mapState({
             gettersList:state=>state.fieldModel.gettersList
         }),
@@ -74,22 +76,7 @@ export default {
             return this.$store.state.home.item.name
         }
     },
-    watch:{
-        gettersList(v){
-            let that = this
-            let props = v.reduce((result,item)=>{
-                result[item] = {
-                    get(){
-                        return that.getters["run/"+item]
-                    }
-                }
-                return result
-            },{})
-
-            Object.defineProperties(this.itemGetters,props)
-            console.log(this.itemGetters)
-        }
-    },
+  
     async created() {
 
 
