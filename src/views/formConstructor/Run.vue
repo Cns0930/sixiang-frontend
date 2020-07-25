@@ -56,23 +56,46 @@ export default {
             // itemState: {},
             // itemGetters: {}
             allFields:[],
+            itemGetters:{},
         }
     },
     computed: {
         itemState() {
             return this.$store.state["run"]
         },
-        itemGetters() {
+        getters() {
             console.log(this.$store.getters)
             return this.$store.getters
         },
+        ...mapState({
+            gettersList:state=>state.fieldModel.gettersList
+        }),
         itemName(){
             return this.$store.state.home.item.name
         }
     },
+    watch:{
+        gettersList(v){
+            let that = this
+            let props = v.reduce((result,item)=>{
+                result[item] = {
+                    get(){
+                        return that.getters["run/"+item]
+                    }
+                }
+                return result
+            },{})
+
+            Object.defineProperties(this.itemGetters,props)
+            console.log(this.itemGetters)
+        }
+    },
     async created() {
+
+
+
         await this.init();
-        console.log(this.$store)
+        
         let result = await this.loadAll();
         this.stepsData = result[0].data.map(v => {
 

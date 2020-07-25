@@ -58,6 +58,7 @@ let ElCheckboxC = {
 
 
 
+let TextInputLike = ({ props }) => <span class="el-input__inner-like">{props.value}</span>
 
 export default {
     ElSelectC,
@@ -66,5 +67,6 @@ export default {
     IdentityCommon,
     InputList,
     Collection,
-    GudongCommon
+    GudongCommon,
+    TextInputLike
 }

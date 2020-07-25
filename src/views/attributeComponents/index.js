@@ -10,6 +10,7 @@ import InputListDef from "./InputListDef"
 import DateRangePickerDef from "./DateRangePickerDef"
 import CollectionDef from "./CollectionDef"
 import GudongCommonDef from "./GudongCommonDef"
+import TextInputLikeDef from "./TextInputLikeDef"
 // {
 
 //     "input": InputDef,
@@ -21,6 +22,7 @@ import GudongCommonDef from "./GudongCommonDef"
 
 // }
 let mapping = [
+    {label:"文本",value:"text",componentDef:TextInputLikeDef,isList:false},
     {label:"输入框",value:"input",componentDef:InputDef,isList:false},
     {label:"输入框组",value:"inputList",componentDef:InputListDef,isList:false},
     {label:"下拉选择",value:"select",componentDef:SelectDef,isList:false},
@@ -47,10 +49,7 @@ export function deserializeBaseField(fieldJSON) {
 
     let componentDefs = fieldJSON.componentDefs
     let ComponentDefClass = mapping.find(v=>v.value == fieldJSON.type)?.componentDef
-    console.log(  fieldJSON)
-    if(!ComponentDefClass){
-        console.log(fieldJSON)
-    }
+   
     let actualComponentDefs = new ComponentDefClass();
     Object.keys(actualComponentDefs).forEach(key => {
         if(componentDefs[key]){

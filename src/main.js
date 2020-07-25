@@ -5,6 +5,8 @@ import store from '@/vuex/store'
 import "@/assets/css/editor.css"
 import "@/assets/css/editor_frame.css"
 import "@/assets/js/ckeditor.js"
+import "@/assets/css/global.scss"
+
 import 'element-ui/lib/theme-chalk/index.css'
 import ElementUI from 'element-ui'
 import "ace-builds/webpack-resolver";
