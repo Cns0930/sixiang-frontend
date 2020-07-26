@@ -4,9 +4,9 @@ class QingxingCheckboxDef extends CommonComponents{
     constructor(){
         super({type:"qingxingCheckbox"})
 
-        this.options = new Renderer("TextAreaArray",[],{})
+        this.options = new Renderer("InputArray",[""],{})
 
-        this.component = rendererBuilder("text","InputList")
+        this.component = rendererBuilder("text","ElCheckboxC")
 
         this.value = rendererBuilder("text",[]) 
     }

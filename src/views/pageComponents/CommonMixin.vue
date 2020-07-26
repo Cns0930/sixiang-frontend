@@ -7,14 +7,13 @@
 
 import { mapState, createNamespacedHelpers } from 'vuex'
 const { mapGetters } = createNamespacedHelpers('run')
-
-
-
+import Rules from "@/utils/ruleConfig"
 
 export default {
     name: "CommonMixin",
     data() {
         return {
+            rules:{},
             itemGetters: {}
         }
     },
@@ -52,6 +51,9 @@ export default {
             },
             immediate: true
         }
+    },
+    created(){
+        this.rules = new Rules(this.itemState,this.itemGetters).rules
     },
     methods: {
         async goNext() {

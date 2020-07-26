@@ -31,13 +31,14 @@ import { mapState } from "vuex"
 import { CheckSocialCreditCode, IdentityCodeValid } from '@/utils/function.js'
 import TestFormItem from '@/components/TestFormItem'
 import layoutComponent from "@/views/layoutComponents/index"
-import rules from "@/utils/ruleConfig"
+import CommonMinxin from "@/views/pageComponents/CommonMixin"
+// import rules from "@/utils/ruleConfig"
 export default {
     name: "PreviewLayout",
     components: { ElFormItem: TestFormItem, ...layoutComponent },
     data() {
         return {
-            rules
+            // rules
         }
 
     },

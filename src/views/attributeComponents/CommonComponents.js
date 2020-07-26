@@ -30,9 +30,9 @@ class CommonComponents {
         this.placeholder = new Renderer('ElInput', '请输入内容')
         this.ruleKey = new Renderer("ElSelectC","required",{options:Object.keys(rules)},"验证方式")
         this.validateFn = new Renderer("CodeEditor",`
-        // value 是组件当前的值
+        // field 是组件对象； field.value 是组件值
 
-        function(value,state){
+        function(field,state){
             // return {success:false,msg:"验证错误提示"}
         }`,null,"自定义验证方法");
     }

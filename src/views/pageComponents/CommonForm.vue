@@ -30,7 +30,7 @@
 
 <script>
 import TestFormItem from "@/components/TestFormItem"
-import rules from "@/utils/ruleConfig"
+// import rules from "@/utils/ruleConfig"
 import CommonMixin from "./CommonMixin"
 
 export default {
@@ -41,7 +41,7 @@ export default {
 
     data() {
         return {
-            rules
+            // rules
         }
     },
     computed: {
