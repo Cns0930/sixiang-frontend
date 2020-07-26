@@ -9,6 +9,13 @@ class InputDef extends CommonComponents{
         function(value,state,getters){
             
         }`);
+        this.$type = new Renderer("ElSelectC","text",{options:["text","textarea",]})
+    }
+    getAttributes(){
+        return {
+            type:this.$type.value,
+            placeholder:"请输入内容"
+        }
     }
 }
 

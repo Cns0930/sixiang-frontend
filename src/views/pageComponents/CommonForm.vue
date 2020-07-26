@@ -1,11 +1,14 @@
 <template>
     <div>
+        
         <el-form label-position="right" label-suffix="：" label-width="200px" hide-required-asterisk class="form-detail"
             :rules="rules" ref="form" :validate-on-rule-change="false" @submit.native.prevent>
             <el-row>
 
                 <template v-for="(v,i) in fields">
-                    <template v-if="v.hidden"></template>
+                   
+                    <div v-if="!v">没有找到{{config[i]}}</div>
+                    <template v-else-if="v.hidden"></template>
                     <component v-else-if="v.isList" :is="v.component" v-bind="v.attributes"
                         @change="v.onchange && v.onchange($event,itemState)"
                         @input="v.oninput && v.oninput($event,itemState)"></component>
@@ -32,7 +35,7 @@
 import TestFormItem from "@/components/TestFormItem"
 // import rules from "@/utils/ruleConfig"
 import CommonMixin from "./CommonMixin"
-
+import _ from "lodash"
 export default {
     name: "CommonForm",
     mixins: [CommonMixin],
@@ -42,12 +45,19 @@ export default {
     data() {
         return {
             // rules
+            test:""
         }
     },
     computed: {
 
         fields() {
-            return this.config.map(v => this.itemState[v])
+            if (this.config.every(v => _.isString(v))) {
+                return this.config.map(fieldNo => this.itemState[fieldNo])
+            }
+            return this.config.map(group => {
+
+                return group.fields.map(fieldNo => this.itemState[fieldNo])
+            }).flat()
 
         },
     },

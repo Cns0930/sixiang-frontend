@@ -1,5 +1,5 @@
 <template>
-    <el-row>
+    <div>
         <el-col :span="24" class=" tab-type">
             <!-- 股东 名称 tab -->
             <div class="tab-block">
@@ -68,7 +68,7 @@
             </div>
         </el-dialog>
 
-    </el-row>
+    </div>
 </template>
 
 <script>
