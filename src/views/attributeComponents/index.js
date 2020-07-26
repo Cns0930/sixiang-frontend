@@ -11,6 +11,7 @@ import DateRangePickerDef from "./DateRangePickerDef"
 import CollectionDef from "./CollectionDef"
 import GudongCommonDef from "./GudongCommonDef"
 import TextInputLikeDef from "./TextInputLikeDef"
+import ChuzifangshiDef from "./ChuzifangshiDef"
 // {
 
 //     "input": InputDef,
@@ -33,6 +34,7 @@ let mapping = [
     {label:"集合",value:"collection",componentDef:CollectionDef,isList:true},
     {label:"身份证扫描组件",value:"identityCommon",componentDef:IdentityCommonDef,isList:false},
     {label:"股东集合",value:"gudongCommon",componentDef:GudongCommonDef,isList:true},
+    {label:"出资方式",value:"chuzifangshi",componentDef:ChuzifangshiDef,isList:false},
     {label:"合成属性",value:"computed",componentDef:ComputedDef,isList:false},
     {label:"常量",value:"constant",componentDef:ConstantDef,isList:false},
 ]

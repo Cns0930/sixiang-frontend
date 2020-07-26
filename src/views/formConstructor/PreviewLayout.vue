@@ -36,20 +36,10 @@ import CommonMinxin from "@/views/pageComponents/CommonMixin"
 export default {
     name: "PreviewLayout",
     components: { ElFormItem: TestFormItem, ...layoutComponent },
+    mixins:[CommonMinxin],
     data() {
         return {
             // rules
-        }
-
-    },
-    computed: {
-        itemState() {
-
-            return this.$store.state.run
-        },
-        itemGetters() {
-
-            return this.$store.getters
         }
 
     },

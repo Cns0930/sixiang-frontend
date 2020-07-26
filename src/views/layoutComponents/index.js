@@ -3,7 +3,7 @@ import IdentityCommon from "./IdentityCommon/IdentityCommon"
 import InputList from "./InputList/InputList"
 import Collection from "./Collection/Collection"
 import GudongCommon from "./gudongCommon/GudongCommon"
-
+import Chuzifangshi from "./Chuzifangshi/Chuzifangshi"
 // 选择器
 let ElSelectC = {
     name:"ElSelectC",
@@ -58,6 +58,9 @@ let ElCheckboxC = {
 
 
 
+
+
+
 let TextInputLike = ({ props }) => <span class="el-input__inner-like">{props.value}</span>
 
 export default {
@@ -68,5 +71,6 @@ export default {
     InputList,
     Collection,
     GudongCommon,
-    TextInputLike
+    TextInputLike,
+    Chuzifangshi
 }
