@@ -48,7 +48,7 @@ export function   functionReviverEventRuntime(value,tag) {
         
         if (match) {
            
-            return new Function("value","state","getters" ,`
+            return new Function("value","state","getters","siblings", "parent" ,`
            
             with(this){
                 try{
@@ -75,7 +75,7 @@ export function   functionReviverEventBundle(value,tag,key) {
 
         if (match) {
            
-            return new Function("value","state","getters" ,`
+            return new Function("value","state","getters","siblings", "parent" ,`
             try{
                     ${match[1]}
                 }catch(e){

@@ -4,8 +4,8 @@
 
             <el-form-item :key="i" :label="v.label" :prop="v.ruleKey || ''" :obj="v" @itemValidated="handleItemValidated($event,v)">
                 <component :is="v.component" v-model="v.value" v-bind="v.attributes"
-                    @change="v.onchange && v.onchange($event,itemState,itemGetters)"
-                    @input="v.oninput && v.oninput($event,itemState,itemGetters)">
+                    @change="v.onchange && v.onchange($event,itemState,itemGetters,fields,parent)"
+                    @input="v.oninput && v.oninput($event,itemState,itemGetters,fields,parent)">
                 </component>
             </el-form-item>
         </el-col>
@@ -19,7 +19,7 @@ import CommonMixin from "@/views/pageComponents/CommonMixin"
 
 export default {
     name:"PureComponents",
-    props:["fields"],
+    props:["fields","parent"],
     mixins:[CommonMixin],
     components: { ElFormItem: TestFormItem, },
     methods:{
