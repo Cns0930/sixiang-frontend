@@ -16,3 +16,5 @@ export const listDepartment = params => axios.get("/superform/item/listDepartmen
 // 删除事项
 export const deleteItem = params => axios.get("/superform/item/deleteItem", {params}).then(res => res.data);
 
+// 通过创建时间筛选事项
+export const filterDateItem = params => axios.post("/superform/item/filterCreateTime", params).then(res => res.data);

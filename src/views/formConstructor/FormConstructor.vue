@@ -1,6 +1,7 @@
 <template>
     <div class="form-constructor">
         <div class="op-bar">
+            <div class="left-bar">
             <el-button @click="handleAddBaseField">创建字段模型</el-button>
             <el-button @click="handleAddComputedField">创建合成字段模型</el-button>
 
@@ -8,8 +9,16 @@
 
             <el-button @click="load">载入字段</el-button>
             <el-button @click="handlePreview">预览全字段</el-button>
+            </div>
+
+            <div class="right-bar">
+            <el-button @click="handleImportPublic">导入全部公共字段</el-button>
+            <el-button>管理公共字段</el-button>
+            </div>
 
         </div>
+        
+
         <div class="main">
             <!-- 字段表格 -->
             <div class="fields-table" style="width: 100%;padding:10px 60px">
@@ -469,6 +478,11 @@ export default {
                 return "合成字段"
             }
             return "其他"
+        },
+        handleImportPublic(){
+            let message = "确认导入吗？\n提示：\n1.已存在的字段不会被覆盖 \n2.导入后如公共字段有修改，不会自动更新";
+            if (confirm(message) == true) {
+            }
         }
     }
 };
@@ -478,6 +492,10 @@ export default {
 .form-constructor {
     display: flex;
     flex-direction: column;
+    .op-bar{
+        display: inline-flex;
+        justify-content: space-between;
+    }
     .main {
         display: flex;
         height: calc(100vh - 40px);
