@@ -94,7 +94,7 @@ export default {
         this.stepsData = result[0].data.map(v => {
 
             if (typeof v.stepObject.configFn == "string" && v.stepObject.configFn.indexOf('function') > -1) {
-                v.stepObject.configFn = eval(`(${v.stepObject.configFn})`)
+                v.stepObject.configFn =functionReviverGettersRuntime(v.stepObject.configFn,v.component); 
             }
             return { ...v.stepObject, stepPagenum: v.stepPagenum }
         }).sort((a, b) => a.stepPagenum - b.stepPagenum)
@@ -107,7 +107,9 @@ export default {
 
         let itemGetters = this.allFields.filter(v => v.fieldType == 2).reduce((result, item) => {
             // let attrObj = _.mapValues(item.componentDefs, (o) => this.parseFunction(o.value));
-
+            if(!item.componentDefs.getter){
+                console.log(item.componentDefs)
+            }
             result[item.fieldNo] = functionReviverGettersRuntime(item.componentDefs.getter.value, item.fieldNo);
 
             return result;

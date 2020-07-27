@@ -12,7 +12,7 @@ export const utils={
     _,
     dayjs
 }
-// getter方法 string -> function  ——预览
+// getter方法(或者其他不需要额外参数的方法) string -> function  ——预览
 export function   functionReviverGettersRuntime(value,tag) {
           
     if (typeof value === 'string') {

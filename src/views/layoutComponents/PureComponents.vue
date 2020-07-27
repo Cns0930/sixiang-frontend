@@ -3,7 +3,7 @@
       <el-col  v-for="(v,i) in fields" :span="v.span || 12" v-if="!v.hidden" :key="i">
 
             <el-form-item :key="i" :label="v.label" :prop="v.ruleKey || ''" :obj="v" @itemValidated="handleItemValidated($event,v)">
-                <component :is="v.component" v-model="v.value" v-bind="v.attributes"
+                <component :is="v.component" v-model="v.value" v-bind="v.attributes" :siblings="fields" :parent="parent"
                     @change="v.onchange && v.onchange($event,itemState,itemGetters,fields,parent)"
                     @input="v.oninput && v.oninput($event,itemState,itemGetters,fields,parent)">
                 </component>

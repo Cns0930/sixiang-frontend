@@ -94,7 +94,7 @@ export default {
                         result[fieldNo] = this.getters["run/"+fieldNo]
                         return result
                     },{})
-                    
+        console.log({...this.templateObj,...getters})
         this.docList.forEach(doc => {
             doc.forEach(page => {
                 
@@ -102,7 +102,7 @@ export default {
                 let template = Handlebars.compile(page.htmlContent)
 
                 try {
-                    console.log({...this.templateObj,...getters})
+                    
                     page.htmlContent = template({...this.templateObj,...getters})
                     if(page.id==28){
                          console.log(page.htmlContent)

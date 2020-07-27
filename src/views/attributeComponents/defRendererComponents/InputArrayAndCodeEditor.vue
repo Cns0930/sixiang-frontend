@@ -19,7 +19,7 @@ export default {
             valueCode: `
             // return array
 
-        function(state,getters){
+        function(state,getters,siblings,parent){
             // return []
         }`
         }

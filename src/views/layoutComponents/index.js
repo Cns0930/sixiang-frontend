@@ -10,11 +10,11 @@ import LayoutComponentMixin from "./LayoutComponentMixin"
 // 选择器
 let ElSelectC = {
     name:"ElSelectC",
-    props: ['options',"value"],
+    props: ['options',"value","siblings","parent"],
     mixins:[LayoutComponentMixin],
     render() {
         
-        let options =  Object.prototype.toString.call(this.options)  =="[object Function]"? this.options(this.itemState,this.itemGetters):this.options;
+        let options =  Object.prototype.toString.call(this.options)  =="[object Function]"? this.options(this.itemState,this.itemGetters,this.siblings,this.parent):this.options;
         return <ElSelect value={this.value} onInput={(e)=>this.$emit("input",e)} onChange={(e)=>{this.$emit("change",e)}}>
             {
                 options.map(option=> <ElOption lable={option} value={option} ></ElOption>)
