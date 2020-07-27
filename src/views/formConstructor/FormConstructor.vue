@@ -144,7 +144,7 @@ import defs, {
 import { getById } from "@/api/item/index";
 import { mapState } from "vuex";
 import _ from "lodash";
-import defRenderers from "../attributeComponents/defRendererComponents";
+import defRenderers from "@/views/attributeComponents/defRendererComponents/index";
 import { save, getField, saveOne, deleteOne } from "@/api/superForm/index";
 import { functionReviverEventRuntime ,convertDefToConfigEventRuntime } from "./util"
 import { log } from 'handlebars';

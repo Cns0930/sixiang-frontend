@@ -4,12 +4,13 @@ class SelectDef extends CommonComponents{
     constructor(){
         super({type:"select"})
 
-        this.options = new Renderer("InputArray",[""],{})
+        this.options = new Renderer("InputArrayAndCodeEditor",[""],{})
 
         this.component = rendererBuilder("text","ElSelectC")
         this.value = new Renderer("ElInput","")
     }
     getAttributes(){
+        
         return {
             options:this.options.value,
             placeholder:"请输入内容"

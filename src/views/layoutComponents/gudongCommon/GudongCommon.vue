@@ -1,57 +1,57 @@
 <template>
     <div>
-        <el-col :span="24" class=" tab-type">
-            <!-- 股东 名称 tab -->
-            <div class="tab-block">
 
-                <!-- tab 标题 -->
-                <div class="tab-list-title" style="color:black">
-                    股东列表
-                </div>
-                <!-- tab -->
-                <div class="tab-list">
-                    <!-- tab item -->
-                    
-                    <div class="tab-list-item " v-for="(gudong ,gudongIndex) in children" :key="gudongIndex"
-                        :class="{active:active==gudongIndex,unactive:active!=gudongIndex,'warning-border':!validatedStatus[gudongIndex]}"
-                        @click="active = gudongIndex">
-                        <img src="./p.png"></img>
-                        <div class="tab-list-info">
-                            <div class="tab-list-name">{{children[gudongIndex][labelFieldNo].value}}</div>
-                            <!-- <div class="tab-list-type">{{gudong.type}}</div> -->
+        <!-- 股东 名称 tab -->
+        <div class="tab-block">
 
-                        </div>
+            <!-- tab 标题 -->
+            <div class="tab-list-title" style="color:black">
+                股东列表
+            </div>
+            <!-- tab -->
+            <div class="tab-list">
+                <!-- tab item -->
 
-                        <el-tooltip class="remove-btn remove-on-tab" effect="dark" content="删除" placement="right-start">
-                            <i class="delete-btn el-icon-close" @click.stop="handelRemove(gudongIndex)"></i>
-                        </el-tooltip>
+                <div class="tab-list-item " v-for="(gudong ,gudongIndex) in children" :key="gudongIndex"
+                    :class="{active:active==gudongIndex,unactive:active!=gudongIndex,'warning-border':!validatedStatus[gudongIndex]}"
+                    @click="active = gudongIndex">
+                    <img src="./p.png"></img>
+                    <div class="tab-list-info">
+                        <div class="tab-list-name">{{children[gudongIndex][labelFieldNo].value}}</div>
+                        <!-- <div class="tab-list-type">{{gudong.type}}</div> -->
 
                     </div>
 
-                    <!-- tab 添加按钮 -->
-                    <el-button type="primary" size="small" icon="el-icon-plus" style="width:100px"
-                        @click="addGudongDialog">添加
-                    </el-button>
-                </div>
-
-            </div>
-            <!--  股东基本信息 -->
-            <div v-if="gudongActive">
-
-                <!-- form 渲染 -->
-                <div style="position:relative">
-                    <!-- 移除按钮 -->
-
-                    <PureComponents :fields="gudongActive"  key="active"  @itemValidated="handleItemValidated($event,gudongActive)"> </PureComponents>
-                    <template v-for="(gudongPassive,gudongPassiveIndex) in gudongPassiveList">
-                        <PureComponents v-show="false" :fields="gudongPassive" :key="gudongPassiveIndex" @itemValidated="handleItemValidated($event,gudongPassive)"></PureComponents>
-                    </template>
+                    <el-tooltip class="remove-btn remove-on-tab" effect="dark" content="删除" placement="right-start">
+                        <i class="delete-btn el-icon-close" @click.stop="handelRemove(gudongIndex)"></i>
+                    </el-tooltip>
 
                 </div>
 
+                <!-- tab 添加按钮 -->
+                <el-button type="primary" size="small" icon="el-icon-plus" style="width:100px" @click="addGudongDialog">
+                    添加
+                </el-button>
             </div>
 
-        </el-col>
+        </div>
+        <!--  股东基本信息 -->
+        <div v-if="gudongActive">
+
+            <!-- form 渲染 -->
+            <div style="position:relative">
+                <!-- 移除按钮 -->
+
+                <PureComponents :fields="gudongActive" key="active"
+                    @itemValidated="handleItemValidated($event,gudongActive)"> </PureComponents>
+                <template v-for="(gudongPassive,gudongPassiveIndex) in gudongPassiveList">
+                    <PureComponents v-show="false" :fields="gudongPassive" :key="gudongPassiveIndex"
+                        @itemValidated="handleItemValidated($event,gudongPassive)"></PureComponents>
+                </template>
+
+            </div>
+
+        </div>
 
         <el-dialog title="系统提示" :visible.sync="dialogVisible" width="45%" append-to-body :close-on-click-modal="false"
             class="message-dialog">
@@ -97,12 +97,12 @@ export default {
         gudongPassiveList() {
             return this.children.filter((v, i) => i != this.active)
         },
-        validatedStatus(){
-            return this.children.map(gudong=>{
-                console.log(Object.values(gudong).map(v=>v.validateStatus).every(Boolean))
-                return  Object.values(gudong).map(v=>v.validateStatus).every(Boolean)
+        validatedStatus() {
+            return this.children.map(gudong => {
+                console.log(Object.values(gudong).map(v => v.validateStatus).every(Boolean))
+                return Object.values(gudong).map(v => v.validateStatus).every(Boolean)
             })
-           
+
         }
 
     },
@@ -124,13 +124,13 @@ export default {
             this.dialogVisible = false
             // let result = item._temp.pushGroup(item);
         },
-        handleItemValidated({success=true,context={}}, gudong, ) {
-           
+        handleItemValidated({ success = true, context = {} }, gudong,) {
+
             let fieldNo = context.fieldNo;
-            this.$set(gudong[fieldNo],"validateStatus",success)
-            
+            this.$set(gudong[fieldNo], "validateStatus", success)
+
         },
-       
+
         async querySearchAsync(queryString, cb) {
             return []
         },

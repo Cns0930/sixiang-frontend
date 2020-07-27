@@ -46,7 +46,7 @@ let TextAreaArray = {
 }
 
 // input添加类 的数组
-let InputArray = {
+export let InputArray = {
     name: "InputArray",
     props: ["value"],
     render() {
@@ -84,7 +84,7 @@ let ElSingleCheckboxC = {
 }
 
 // 代码框
-let CodeEditor = {
+export let CodeEditor = {
     name: "CodeEditor",
     props: ["value"],
     data() {
@@ -141,5 +141,6 @@ export default {
     TextAreaArray,
     InputArray,
     ElSingleCheckboxC,
-    CodeEditor
+    CodeEditor,
+    
 }

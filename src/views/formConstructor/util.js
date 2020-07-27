@@ -1,5 +1,6 @@
 import _ from "lodash"
 import dayjs from "dayjs"
+
 export const  mergeFieldAttr = (result, item) => {
     let attrObj = _.mapValues(item.componentDefs, (o) => o.value);
     let mergeObj = _.merge({ label: item.label, fieldNo: item.fieldNo }, attrObj)
@@ -44,7 +45,7 @@ export function   functionReviverEventRuntime(value,tag) {
     if (typeof value === 'string') {
         var rfunc = /function\s*\w*\s*\([\w\s,]*\)\s*{([\w\W]*)}/,
             match = value.match(rfunc);
-
+        
         if (match) {
            
             return new Function("value","state","getters" ,`
@@ -97,12 +98,14 @@ export function convertDefToConfigEventRuntime(fields,metaName="meta",childrenNa
 
                 return convertResult
             }
-            return functionReviverEventRuntime(o.value) 
+            return functionReviverEventRuntime(o.value,item.fieldNo) 
         });
         
         let mergeObj = _.merge(
             { label: item.label, fieldNo: item.fieldNo,isList:item.isList },
-            attrObj, { attributes: item.componentDefs.getAttributes ? item.componentDefs.getAttributes(attrObj[metaName]) || {} : {} }
+            attrObj, { attributes: item.componentDefs.getAttributes ? _.mapValues(item.componentDefs.getAttributes(attrObj[metaName]),function(o,k){
+                return functionReviverEventRuntime(o,item.fieldNo) 
+            })  : {} }
         );
 
         if(mergeObj.meta){

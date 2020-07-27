@@ -10,9 +10,11 @@ let ElSelectC = {
     props: ['options',"value"],
     
     render() {
+        
+        let options =  Object.prototype.toString.call(this.options)  =="[object Function]"? this.options():this.options;
         return <ElSelect value={this.value} onInput={(e)=>this.$emit("input",e)} onChange={(e)=>{this.$emit("change",e)}}>
             {
-                this.options.map(option=> <ElOption lable={option} value={option} ></ElOption>)
+                options.map(option=> <ElOption lable={option} value={option} ></ElOption>)
             }
            
         </ElSelect>

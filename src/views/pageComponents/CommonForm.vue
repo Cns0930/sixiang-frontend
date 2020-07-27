@@ -9,13 +9,14 @@
                    
                     <div v-if="!v">没有找到{{config[i]}}</div>
                     <template v-else-if="v.hidden"></template>
-                    <component v-else-if="v.isList" :is="v.component" v-bind="v.attributes"
-                        @change="v.onchange && v.onchange($event,itemState)"
-                        @input="v.oninput && v.oninput($event,itemState)"></component>
+                    
 
                     <el-col v-else :span="v.span || 12" :key="i">
-
-                        <el-form-item :key="i" :label="v.label" :prop="v.ruleKey || ''" :obj="v">
+                        <component v-if="v.isList" :is="v.component" v-bind="v.attributes"
+                        @change="v.onchange && v.onchange($event,itemState)"
+                        @input="v.oninput && v.oninput($event,itemState)"></component>
+                        
+                        <el-form-item v-else :key="i" :label="v.label" :prop="v.ruleKey || ''" :obj="v">
                             <component :is="v.component" v-model="v.value" v-bind="v.attributes"
                                 @change="v.onchange && v.onchange($event,itemState,itemGetters)"
                                 @input="v.oninput && v.oninput($event,itemState,itemGetters)"></component>
