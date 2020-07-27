@@ -1,7 +1,7 @@
 <template>
     <div>
-        <el-radio v-model="type" label="array"></el-radio>
-        <el-radio v-model="type" label="function"></el-radio>
+        <el-radio v-model="type" label="array">固定值</el-radio>
+        <el-radio v-model="type" label="function">代码</el-radio>
         <InputArray v-model="valueInput" v-if="type=='array'" ></InputArray>
         <CodeEditor v-model="valueCode" v-if="type=='function'"></CodeEditor>
     </div>
@@ -16,7 +16,12 @@ export default {
         return {
             type:"array",
             valueInput: [],
-            valueCode: ""
+            valueCode: `
+            // return array
+
+        function(state,getters){
+            // return []
+        }`
         }
 
     },

@@ -6,8 +6,8 @@
                 <template v-for="(v,i) in itemState">
                     <template v-if="v.hidden"></template>
                     <component v-else-if="v.isList" :is="v.component" :value="v.value"  v-bind="v.attributes"
-                        @change="v.onchange && v.onchange($event,itemState)"
-                        @input="v.oninput && v.oninput($event,itemState)"></component>
+                        @change="v.onchange && v.onchange($event,itemState,itemGetters)"
+                        @input="v.oninput && v.oninput($event,itemState,itemGetters)"></component>
 
                     <el-col v-else="!v.isList" :span="v.span || 12" :key="i">
 
@@ -15,8 +15,8 @@
                             :prop="v.ruleKey ? v.ruleKey : v.required !== false ? 'required' : ''" :obj="v">
 
                             <component :is="v.component" v-model="v.value" v-bind="v.attributes"
-                                @change="v.onchange && v.onchange($event,itemState)"
-                                @input="v.oninput && v.oninput($event,itemState)"></component>
+                                @change="v.onchange && v.onchange($event,itemState,itemGetters)"
+                                @input="v.oninput && v.oninput($event,itemState,itemGetters)"></component>
                         </el-form-item>
                     </el-col>
                 </template>
@@ -37,6 +37,12 @@ export default {
     name: "PreviewLayout",
     components: { ElFormItem: TestFormItem, ...layoutComponent },
     mixins:[CommonMinxin],
+    provide() {
+        return {
+            $itemState:()=> this.itemState,
+            $itemGetters:()=> this.itemGetters,
+        }
+    },
     data() {
         return {
             // rules

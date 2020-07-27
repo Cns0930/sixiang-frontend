@@ -4,14 +4,17 @@ import InputList from "./InputList/InputList"
 import Collection from "./Collection/Collection"
 import GudongCommon from "./gudongCommon/GudongCommon"
 import Chuzifangshi from "./Chuzifangshi/Chuzifangshi"
+import LayoutComponentMixin from "./LayoutComponentMixin"
+
+
 // 选择器
 let ElSelectC = {
     name:"ElSelectC",
     props: ['options',"value"],
-    
+    mixins:[LayoutComponentMixin],
     render() {
         
-        let options =  Object.prototype.toString.call(this.options)  =="[object Function]"? this.options():this.options;
+        let options =  Object.prototype.toString.call(this.options)  =="[object Function]"? this.options(this.itemState,this.itemGetters):this.options;
         return <ElSelect value={this.value} onInput={(e)=>this.$emit("input",e)} onChange={(e)=>{this.$emit("change",e)}}>
             {
                 options.map(option=> <ElOption lable={option} value={option} ></ElOption>)
@@ -28,6 +31,7 @@ let ElSelectC = {
 let ElRadioC = {
     name:"ElRadioC",
     props:['options','value'],
+    mixins:[LayoutComponentMixin],
     render(){
         return <ElRadioGroup value={this.value} onInput={(e)=>this.$emit("input",e)} onChange={(e)=>{this.$emit("change",e)}}>
             {
@@ -42,6 +46,7 @@ let ElRadioC = {
 let ElCheckboxC = {
     name:"ElCheckboxC",
     props:["options","value"],
+    mixins:[LayoutComponentMixin],
     render(){
         return <el-checkbox-group value={this.value} onInput={(e)=>this.$emit("input",e)} onChange={(e)=>{this.$emit("change",e)}}>
             <el-row>

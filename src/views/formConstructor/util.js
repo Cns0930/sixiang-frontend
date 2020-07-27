@@ -104,7 +104,7 @@ export function convertDefToConfigEventRuntime(fields,metaName="meta",childrenNa
         let mergeObj = _.merge(
             { label: item.label, fieldNo: item.fieldNo,isList:item.isList },
             attrObj, { attributes: item.componentDefs.getAttributes ? _.mapValues(item.componentDefs.getAttributes(attrObj[metaName]),function(o,k){
-                return functionReviverEventRuntime(o,item.fieldNo) 
+                return functionReviverGettersRuntime(o,item.fieldNo) 
             })  : {} }
         );
 
