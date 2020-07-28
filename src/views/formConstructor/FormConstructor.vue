@@ -12,8 +12,8 @@
             </div>
 
             <div class="right-bar">
-            <el-button @click="handleImportPublic">导入全部公共字段</el-button>
-            <el-button>管理公共字段</el-button>
+            <el-button :disabled="itemId==-1" @click="handleImportPublic">导入全部公共字段</el-button>
+            <el-button :disabled="itemId==-1" @click="handleManagePublic">管理公共字段</el-button>
             </div>
 
         </div>
@@ -154,7 +154,7 @@ import { getById } from "@/api/item/index";
 import { mapState } from "vuex";
 import _ from "lodash";
 import defRenderers from "@/views/attributeComponents/defRendererComponents/index";
-import { save, getField, saveOne, deleteOne } from "@/api/superForm/index";
+import { save, getField, saveOne, deleteOne, forkPublicFields } from "@/api/superForm/index";
 import { functionReviverEventRuntime ,convertDefToConfigEventRuntime } from "./util"
 import { log } from 'handlebars';
 import { mixin } from "@/mixin/mixin"
@@ -476,10 +476,20 @@ export default {
             }
             return "其他"
         },
-        handleImportPublic(){
+        async handleImportPublic(){
             let message = "确认导入吗？\n提示：\n1.已存在的字段不会被覆盖 \n2.导入后如公共字段有修改，不会自动更新";
             if (confirm(message) == true) {
+                let result = await forkPublicFields({itemId: this.itemId, itemName: this.itemName})
+                if(result.success){
+                    this.$message({ type: "success", message: "导入成功！新增"+result.data+"条数据" });
+                    this.load();
+                }else{
+                    this.$message({ type: "warning", message: "导入失败，请查看错误信息或联系管理员" });
+                }
             }
+        },
+        handleManagePublic(){
+            window.open('#/formconstructor?itemId=-1', '_blank')
         }
     }
 };
