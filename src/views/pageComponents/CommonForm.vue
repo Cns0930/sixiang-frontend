@@ -53,12 +53,12 @@ export default {
 
         fields() {
             if (this.config.every(v => _.isString(v))) {
-                return this.config.map(fieldNo => this.itemState[fieldNo])
+                return this.config.map(fieldNo => this.itemState[fieldNo]).sort((a,b)=>a.sort-b.sort)
             }
             return this.config.map(group => {
 
                 return group.fields.map(fieldNo => this.itemState[fieldNo])
-            }).flat()
+            }).flat().sort((a,b)=>a.sort-b.sort)
 
         },
     },
