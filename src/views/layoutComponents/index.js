@@ -2,7 +2,7 @@ import IdentityCommon from "./IdentityCommon/IdentityCommon"
 
 import InputList from "./InputList/InputList"
 import Collection from "./Collection/Collection"
-import GudongCommon from "./gudongCommon/GudongCommon"
+import GudongCommon from "./GudongCommon/GudongCommon"
 import Chuzifangshi from "./Chuzifangshi/Chuzifangshi"
 import LayoutComponentMixin from "./LayoutComponentMixin"
 

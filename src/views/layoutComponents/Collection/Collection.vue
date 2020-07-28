@@ -1,13 +1,20 @@
 <template>
-    <div>
-        <el-button @click="handleAdd" icon="el-icon-plus" :style="addBtnStyle">添加</el-button>
+    <el-col :span="24" style="position:relative">
+        <el-button @click="handleAdd"  class="side" icon="el-icon-plus" :style="addBtnStyle">添加</el-button>
+        <el-divider></el-divider>
         <template v-for="(list,index) in children">
-            <div :style="removeBtnStyle">
-                <el-button @click="handleRemove(index)" style="clear:both" icon="el-icon-minus">删除</el-button>
-            </div>
+            <el-col :span="24"></el-col>
+            <el-col :style="removeBtnStyle" class="position">
+                <el-button @click="handleRemove(index)" class="side "  icon="el-icon-minus">删除</el-button>
+            </el-col>
             <PureComponents :fields="list" :parent="children"></PureComponents>
+            <el-col>
+                <el-divider></el-divider>
+            </el-col>
+            
         </template>
-    </div>
+        
+    </el-col>
 </template>
 
 <script>
@@ -37,5 +44,10 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+.position{
+    position:relative;
+    top:0px;
+    left:0px;
+}
 </style>

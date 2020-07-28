@@ -10,6 +10,8 @@ class CommonComponents {
         this.hasConfirmed = new Renderer('ElSingleCheckboxC', true,{options:[true]},"已确认")
         // 24 ： 一行一个，12：一行两个
         this.span = new Renderer('NumberInput', 12,{vModel:12},"占据(24为100%)")
+
+        this.sort = new Renderer('NumberInput', 0,null,"顺序号")
         // 组件类型
         this.type =rendererBuilder("text",type,null,"组件") 
         // 样例 值
@@ -31,10 +33,10 @@ class CommonComponents {
         this.placeholder = new Renderer('ElInput', '请输入内容')
         this.ruleKey = new Renderer("ElSelectC","required",{options:Object.keys(rules)},"验证方式")
         this.validateFn = new Renderer("CodeEditor",`
-        // field 是组件对象； field.value 是组件值
-
-        function(field,state){
-            // return {success:false,msg:"验证错误提示"}
+        // value 是组件对象； value.value 是组件值
+        // return {success:false,msg:"验证错误提示"}
+        function(value,state,getters){
+            
         }`,null,"自定义验证方法");
     }
     getAttributes(){
