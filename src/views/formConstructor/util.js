@@ -12,7 +12,7 @@ export const utils={
     _,
     dayjs
 }
-// getter方法 string -> function  ——预览
+// getter方法(或者其他不需要额外参数的方法) string -> function  ——预览
 export function   functionReviverGettersRuntime(value,tag) {
           
     if (typeof value === 'string') {
@@ -48,7 +48,7 @@ export function   functionReviverEventRuntime(value,tag) {
         
         if (match) {
            
-            return new Function("value","state","getters" ,`
+            return new Function("value","state","getters","siblings", "parent" ,`
            
             with(this){
                 try{
@@ -75,7 +75,7 @@ export function   functionReviverEventBundle(value,tag,key) {
 
         if (match) {
            
-            return new Function("value","state","getters" ,`
+            return new Function("value","state","getters","siblings", "parent" ,`
             try{
                     ${match[1]}
                 }catch(e){

@@ -5,7 +5,7 @@
             <div :style="removeBtnStyle">
                 <el-button @click="handleRemove(index)" style="clear:both" icon="el-icon-minus">删除</el-button>
             </div>
-            <PureComponents :fields="list"></PureComponents>
+            <PureComponents :fields="list" :parent="children"></PureComponents>
         </template>
     </div>
 </template>

@@ -47,7 +47,7 @@ export default {
                 }, {})
                 this.itemGetters = {}
                 Object.defineProperties(this.itemGetters, props)
-                console.log(this.itemGetters)
+               
             },
             immediate: true
         }

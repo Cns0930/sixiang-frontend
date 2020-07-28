@@ -450,9 +450,6 @@ export default {
             console.log(result)
             if (!result.success) return;
 
-           
-          
-
             let tableData = result.data.map(v => ({ id: v.id, fieldType: v.fieldType, children: v.children, ...v.object })).map(deserializeTableData);
          
             this.$store.commit(

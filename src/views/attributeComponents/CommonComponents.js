@@ -21,8 +21,9 @@ class CommonComponents {
        
         // // 事件
         this.onchange = new Renderer("CodeEditor",`
-        // value是组件改变后的值
-        function(value,state,getters){
+        // value是组件改变后的值 
+        // 当组件属于集合时 siblings 是集合中本元素， parent 是整个集合
+        function(value,state,getters,siblings,parent){
             
         }`,null,"change事件");
         // 备注
