@@ -1,5 +1,5 @@
 <template>
-    <div class="ckeditor" data-editor='DecoupledDocumentEditor'>
+    <div class="ckeditor" data-editor="DecoupledDocumentEditor">
         <div style="margin-bottom:10px">
             <button @click="exportHtml">从富文本编辑器导出html</button>
             <button @click="importHtml">导入html模板</button>
@@ -8,12 +8,13 @@
             <button @click="exportHtmlWithStyle">导出html带样式</button>
             <button @click="printPreview">打印预览</button>
             <button @click="renderTpl">模板渲染</button>
-            
-            <button @click="downloadDocx">生成word</button>|||
-            
+
+            <button @click="downloadDocx">生成word</button>
+            |||
             <button @click="getHtmlToAce">在线获取html</button>
             <button @click="setHtmlToEditor">在线html->富文本编辑器</button>|||
-            当前页<input v-model="page" style="width:30px"/>
+            当前页
+            <input v-model="page" style="width:30px" />
             <button @click="savePage">当前页保存</button>
             <button @click="loadPage">当前页加载</button>
             <button @click="exportHtmlFromAce">从code编辑器导出html</button>
@@ -21,67 +22,73 @@
 
         <!-- <button @click="convertToPdf">转pdf</button> -->
         <div class="main">
-        <div style="width:30cm">
-            <!-- <div ref="toolbar" style="position:fixed;top:32px;z-index:30"></div> -->
-            <div ref="toolbar" style="width: 100%;"></div>
+            <div style="width:30cm">
+                <!-- <div ref="toolbar" style="position:fixed;top:32px;z-index:30"></div> -->
+                <div ref="toolbar" style="width: 100%;"></div>
 
-            <div>
-                
-                <!-- 纵向 -->
-                <div class="row-editor">
-                    <div class="x"
-                        :class="{
+                <div>
+                    <!-- 纵向 -->
+                    <div class="row-editor">
+                        <div
+                            class="x"
+                            :class="{
                             'page-portrait': temp_page.orient=='row',
                             'page-landscape': temp_page.orient=='column',
                             'table-padding': temp_page.isTable==1,
                             'text-padding': temp_page.isTable==0
                         }"
-                    ></div>
-                </div>
+                        ></div>
+                    </div>
 
-                <!-- 横向 -->
-                <!-- <div class="row-editor">
+                    <!-- 横向 -->
+                    <!-- <div class="row-editor">
                     <div class="x" style="width: 29.7cm;height:21cm;padding: 2.54cm 1.17cm"></div>
-                </div> -->
-
+                    </div>-->
+                </div>
             </div>
-        </div>
-        <div id="ace" style="flex:1 21cm;height:29.7cm;top:30px;position:relative;margin-top:58px"></div>
+            <!-- <div id="ace" style="flex:1 21cm;height:29.7cm;top:30px;position:relative;margin-top:58px"></div> -->
 
+            <div
+                ref="container"
+                style="flex:1 25cm;height:29.7cm;top:30px;position:relative;margin-top:58px"
+            ></div>
         </div>
+
         <!-- <iframe id="print-data-container" tabindex="-1" :class="ifShow?'iframe-show':'iframe-off'"></iframe> -->
     </div>
 </template>
 
 <script>
-import CKEditor from '@/assets/js/ckeditor.js';
-import contentCss from "@/assets/js/contentStyle.js"
-import html2canvas from 'html2canvas'
-import jsPDF from 'jspdf'
+import CKEditor from "@/assets/js/ckeditor.js";
+import contentCss from "@/assets/js/contentStyle.js";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 // import renderjson from "@/assets/render.json"
-import Handlebars from "@/utils/handlebarsHelper"
+import Handlebars from "@/utils/handlebarsHelper";
 
-import axios from "axios"
+import axios from "axios";
 
-import { addEditPage } from '@/api/template/index';
+import { addEditPage } from "@/api/template/index";
 
-import renderedHtml from "@/assets/result"
-import ace from 'ace-builds'
-import beautify from "ace-builds/src-noconflict/ext-beautify"
-import { mergeFieldAttr } from "../formConstructor/util"
-import {mapState} from "vuex"
-import _ from "lodash"
+import renderedHtml from "@/assets/result";
+// import ace from 'ace-builds'
+// import beautify from "ace-builds/src-noconflict/ext-beautify"
+import { mergeFieldAttr } from "../formConstructor/util";
+import { mapState } from "vuex";
+import _ from "lodash";
+import * as monaco from "monaco-editor";
 export default {
     name: "InlineEditor",
-    props: ['temp_page', 'currentPagenum'],
+    props: ["temp_page", "currentPagenum"],
     data() {
         return {
             editor: null,
             ifShow: false,
             page: "0",
-            ace:null,
-            beautify:null,
-        }
+            // ace:null,
+            monacoEditor: null,
+            // beautify:null,
+        };
     },
     watch: {
         temp_page: {
@@ -92,180 +99,247 @@ export default {
                 this.initEditor();
             },
             deep: true,
-        }
+        },
     },
-    computed:{
+    computed: {
         ...mapState({
-            baseFields: state => state.fieldModel.baseFields,
-            computedFields: state => state.fieldModel.computedFields,
+            baseFields: (state) => state.fieldModel.baseFields,
+            computedFields: (state) => state.fieldModel.computedFields,
             // templates: state => state.fieldModel.templates,
         }),
-        renderjson(){
-             let baseJSON = this.baseFields.reduce(mergeFieldAttr, {})
-            let computedJSON = this.computedFields.reduce(mergeFieldAttr, {})
- 
-            return { ..._.mapValues(baseJSON,"sample"), ..._.mapValues(computedJSON,"sample") }
-        }
+        renderjson() {
+            let baseJSON = this.baseFields.reduce(mergeFieldAttr, {});
+            let computedJSON = this.computedFields.reduce(mergeFieldAttr, {});
+
+            return {
+                ..._.mapValues(baseJSON, "sample"),
+                ..._.mapValues(computedJSON, "sample"),
+            };
+        },
     },
     mounted() {
         // 渲染 ace
         // beautify = ace.require("ace/ext-beautify");
         // console.log( beautify)
-        this.ace = ace.edit("ace");
+        // this.ace = ace.edit("ace");
 
-        this.ace.setTheme("ace/theme/monokai");
-        this.ace.session.setMode("ace/mode/html");
-        this.ace.setOption("wrap", "free")
+        // this.ace.setTheme("ace/theme/monokai");
+        // this.ace.session.setMode("ace/mode/html");
+        // this.ace.setOption("wrap", "free")
+
+        // 初始化monaco
+        monaco.editor.defineTheme('myTheme', {
+        base: 'vs',
+        inherit: true,
+        rules: [{ background: 'EDF9FA' }],
+        // colors: { 'editor.lineHighlightBackground': '#0000FF20' }
+    });
+    monaco.editor.setTheme('myTheme');
+
+        this.monacoEditor = monaco.editor.create(this.$refs.container, {
+            value: ["<p>等待编辑</p>"].join("\n"),
+            language:  'html',
+            // features: [],
+            // minimap: {
+            //     enabled: true,
+            // },
+            selectOnLineNumbers: true,
+            roundedSelection: false,
+            cursorStyle: "line", // 光标样式
+            automaticLayout: true, // 自动布局
+            glyphMargin: true, // 字形边缘
+            useTabStops: false,
+            fontSize: 16, // 字体大小
+            autoIndent: true, //自动布局
+        });
 
         this.initEditor();
     },
     methods: {
         async initEditor() {
-
-           
-
             if (this.editor) {
                 await this.editor.destroy();
                 this.editor = null;
             }
 
-            let sourceEl = Array.from(document.querySelectorAll(".x")).reduce((result, item, i) => { result[i] = item; return result }, {})
-            CKEditor
-            .create(sourceEl, {
-
-                lineHeight: { // specify your otions in the lineHeight config object. Default values are [ 0, 0.5, 1, 1.5, 2 ]
-                    options: ["0.5", "1", "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7", "1.8", "1.9", "2.0", "2.1", "2.2", "2.3", "2.4", "2.5", "2.6",]
+            let sourceEl = Array.from(document.querySelectorAll(".x")).reduce(
+                (result, item, i) => {
+                    result[i] = item;
+                    return result;
+                },
+                {}
+            );
+            CKEditor.create(sourceEl, {
+                lineHeight: {
+                    // specify your otions in the lineHeight config object. Default values are [ 0, 0.5, 1, 1.5, 2 ]
+                    options: [
+                        "0.5",
+                        "1",
+                        "1.1",
+                        "1.2",
+                        "1.3",
+                        "1.4",
+                        "1.5",
+                        "1.6",
+                        "1.7",
+                        "1.8",
+                        "1.9",
+                        "2.0",
+                        "2.1",
+                        "2.2",
+                        "2.3",
+                        "2.4",
+                        "2.5",
+                        "2.6",
+                    ],
                 },
                 // removePlugins: [ 'PasteFromOffice' ],
                 toolbar: {
                     items: [
-                        'heading',
-                        '|',
-                        'fontSize',
-                        'fontColor',
-                        'fontFamily',
-                        'fontBackgroundColor',
-                        'lineHeight',
-                        '|',
-                        'bold',
-                        'italic',
-                        'underline',
-                        'strikethrough',
-                        'highlight',
-                        '|',
-                        'alignment',
-                        '|',
-                        'numberedList',
-                        'bulletedList',
-                        '|',
-                        'indent',
-                        'outdent',
-                        '|',
-                        'todoList',
-                        'link',
-                        'blockQuote',
-                        'imageUpload',
-                        'insertTable',
-                        'mediaEmbed',
-                        '|',
-                        'undo',
-                        'redo',
-                        'horizontalLine',
-                        'pageBreak',
-                        'specialCharacters',
-                        'removeFormat'
-                    ]
+                        "heading",
+                        "|",
+                        "fontSize",
+                        "fontColor",
+                        "fontFamily",
+                        "fontBackgroundColor",
+                        "lineHeight",
+                        "|",
+                        "bold",
+                        "italic",
+                        "underline",
+                        "strikethrough",
+                        "highlight",
+                        "|",
+                        "alignment",
+                        "|",
+                        "numberedList",
+                        "bulletedList",
+                        "|",
+                        "indent",
+                        "outdent",
+                        "|",
+                        "todoList",
+                        "link",
+                        "blockQuote",
+                        "imageUpload",
+                        "insertTable",
+                        "mediaEmbed",
+                        "|",
+                        "undo",
+                        "redo",
+                        "horizontalLine",
+                        "pageBreak",
+                        "specialCharacters",
+                        "removeFormat",
+                    ],
                 },
-                language: 'zh-cn',
+                language: "zh-cn",
                 image: {
                     toolbar: [
-                        'imageTextAlternative',
-                        'imageStyle:full',
-                        'imageStyle:side'
-                    ]
+                        "imageTextAlternative",
+                        "imageStyle:full",
+                        "imageStyle:side",
+                    ],
                 },
-                    indentBlock: {
+                indentBlock: {
                     classes: [
-                        
-                        'custom-block-indent-1', // First step - smallest indentation.
-                        'custom-block-indent-2',
-                        'custom-block-indent-3',
-                        'custom-block-indent-4', 
-                        'custom-block-indent-5',
-                        'custom-block-indent-6',
-                        'custom-block-indent-7',
-                        'custom-block-indent-8',
-                    ]
+                        "custom-block-indent-1", // First step - smallest indentation.
+                        "custom-block-indent-2",
+                        "custom-block-indent-3",
+                        "custom-block-indent-4",
+                        "custom-block-indent-5",
+                        "custom-block-indent-6",
+                        "custom-block-indent-7",
+                        "custom-block-indent-8",
+                    ],
                 },
                 fontFamily: {
                     options: [
-                        'default',
-                        '微软雅黑',
-                        '仿宋',
-                        '黑体',
-                        '宋体',
-                        "Wingdings 2"
+                        "default",
+                        "微软雅黑",
+                        "仿宋",
+                        "黑体",
+                        "宋体",
+                        "Wingdings 2",
                     ],
-                    supportAllValues: true
+                    supportAllValues: true,
                 },
                 fontSize: {
                     options: [
-                        10, 12, 14, 18.67, 16,16.5,17,17.2,17.5, "default", 18, 20, 22
+                        10,
+                        12,
+                        14,
+                        18.67,
+                        16,
+                        16.5,
+                        17,
+                        17.2,
+                        17.5,
+                        "default",
+                        18,
+                        20,
+                        22,
                     ],
-                    supportAllValues: true
+                    supportAllValues: true,
                 },
                 table: {
                     contentToolbar: [
-                        'tableColumn',
-                        'tableRow',
-                        'mergeTableCells',
-                        'tableCellProperties',
-                        'tableProperties'
-                    ]
+                        "tableColumn",
+                        "tableRow",
+                        "mergeTableCells",
+                        "tableCellProperties",
+                        "tableProperties",
+                    ],
                 },
-                licenseKey: '',
-
+                licenseKey: "",
             })
-            .then(editor => {
+                .then((editor) => {
+                    window.editor = editor;
+                    this.editor = editor;
+                    const toolbarContainer = this.$refs.toolbar;
 
-                window.editor = editor;
-                this.editor = editor;
-                const toolbarContainer = this.$refs.toolbar
+                    toolbarContainer.innerHTML = "";
 
-                toolbarContainer.innerHTML = ''
+                    toolbarContainer.appendChild(
+                        editor.ui.view.toolbar.element
+                    );
 
-                toolbarContainer.appendChild(editor.ui.view.toolbar.element);
+                    editor.editing.view.change((writer) => {
+                        let roots = writer.document.roots;
 
-                editor.editing.view.change(writer => {
+                        for (let root of roots) {
+                            writer.removeClass(
+                                "ck-editor__editable_inline",
+                                root
+                            );
+                            // writer.removeClass( 'ck-content', root );
+                        }
+                    });
 
-                    let roots = writer.document.roots
-
-
-                    for (let root of roots) {
-                        writer.removeClass('ck-editor__editable_inline', root);
-                        // writer.removeClass( 'ck-content', root );
-                    }
-
+                    this.monacoEditor.setValue(this.temp_page.htmlContent);
+                    // beautify.beautify(this.ace.session);
+                    this.setHtmlToEditor();
+                })
+                .catch((error) => {
+                    console.log(error);
                 });
-
-                this.ace.setValue(this.temp_page.htmlContent);
-                beautify.beautify(this.ace.session);
-                this.setHtmlToEditor();
-            })
-            .catch(error => {
-                console.log(error);
-            });
         },
         exportHtml() {
-            let html = this.editor.model.document.getRootNames().map(v => editor.getData({ rootName: v })).join("");
+            let html = this.editor.model.document
+                .getRootNames()
+                .map((v) => editor.getData({ rootName: v }))
+                .join("");
 
-            this.downloadFile(html, "模板.html")
+            this.downloadFile(html, "模板.html");
         },
         exportHtmlWithStyle() {
-            let html = this.editor.model.document.getRootNames().map(v => editor.getData({ rootName: v })).join("");
+            let html = this.editor.model.document
+                .getRootNames()
+                .map((v) => editor.getData({ rootName: v }))
+                .join("");
             let str = `<html>
                 <head>
-                    <title>${ document.title}</title>
+                    <title>${document.title}</title>
                     <style>@page{size:A4}</style>
                     ${contentCss}
                 </head>
@@ -274,14 +348,17 @@ export default {
                     ${html}
                 </div>
                 </body>
-            </html>`
-            this.downloadFile(str, "样式.html")
+            </html>`;
+            this.downloadFile(str, "样式.html");
         },
         getHtmlWithStyle() {
-            let html = this.editor.model.document.getRootNames().map(v => editor.getData({ rootName: v })).join("");
+            let html = this.editor.model.document
+                .getRootNames()
+                .map((v) => editor.getData({ rootName: v }))
+                .join("");
             let str = `<html>
                 <head>
-                    <title>${ document.title}</title>
+                    <title>${document.title}</title>
                     <style>@page{size:A4}</style>
                     ${contentCss}
                 </head>
@@ -290,7 +367,7 @@ export default {
                     ${html}
                 </div>
                 </body>
-            </html>`
+            </html>`;
             return str;
         },
         importHtml() {
@@ -298,9 +375,9 @@ export default {
             if (!page) return;
             let html = prompt("粘贴html", "");
             if (html != null && html != "") {
-                this.editor.data.set({ [page]: html })
+                this.editor.data.set({ [page]: html });
             } else {
-                alert("未输入")
+                alert("未输入");
             }
         },
         importHtmlThenRender() {
@@ -310,34 +387,36 @@ export default {
             if (html != null && html != "") {
                 let template = Handlebars.compile(html);
                 let result = template(this.renderjson);
-                this.editor.data.set({ [page]: result })
-
-
+                this.editor.data.set({ [page]: result });
             } else {
-                alert("未输入")
+                alert("未输入");
             }
         },
         downloadFile(string, filename) {
-            var a = document.createElement('a');
+            var a = document.createElement("a");
             a.download = filename;
-            a.style.display = 'none';
+            a.style.display = "none";
 
-            var blob = new Blob([string], { type: 'text/html' });
+            var blob = new Blob([string], { type: "text/html" });
             // var blob = new Blob(string);
             a.href = URL.createObjectURL(blob);
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-
         },
         /* eslint-disable*/
         printPreview() {
-            const iframeElement = document.querySelector('#print-data-container');
-            let html = this.editor.model.document.getRootNames().map(v => editor.getData({ rootName: v })).join(`<div style="page-break-before:always;"></div>`)
+            const iframeElement = document.querySelector(
+                "#print-data-container"
+            );
+            let html = this.editor.model.document
+                .getRootNames()
+                .map((v) => editor.getData({ rootName: v }))
+                .join(`<div style="page-break-before:always;"></div>`);
 
             iframeElement.srcdoc = `<html>
                 <head>
-                    <title>${ document.title}</title>
+                    <title>${document.title}</title>
                     ${contentCss}
                 </head>
                 <body style="margin:0">
@@ -348,112 +427,120 @@ export default {
                     <\/script>
                 </div>
                 </body>
-            </html>`
-
+            </html>`;
         },
         convertToPdf() {
-
-            html2canvas(document.querySelector('#editor'), {
+            html2canvas(document.querySelector("#editor"), {
                 scale: 2,
-
-            }).then(canvas => {
+            }).then((canvas) => {
                 //  document.body.appendChild(canvas);
-                console.log(canvas)
-                var contentWidth = canvas.width
-                var contentHeight = canvas.height
+                console.log(canvas);
+                var contentWidth = canvas.width;
+                var contentHeight = canvas.height;
                 // 一页pdf显示html页面生成的canvas高度;
-                var pageHeight = contentWidth / 592.28 * 841.89
+                var pageHeight = (contentWidth / 592.28) * 841.89;
                 // 未生成pdf的html页面高度
-                var leftHeight = contentHeight
+                var leftHeight = contentHeight;
                 // pdf页面偏移
-                var position = 0
+                var position = 0;
                 // a4纸的尺寸[595.28,841.89]，html页面生成的canvas在pdf中图片的宽高
-                var imgWidth = 595.28
-                var imgHeight = 592.28 / contentWidth * contentHeight
-                var pageData = canvas.toDataURL('image/jpeg', 1.0)
+                var imgWidth = 595.28;
+                var imgHeight = (592.28 / contentWidth) * contentHeight;
+                var pageData = canvas.toDataURL("image/jpeg", 1.0);
 
-                var pdf = new jsPDF('', 'pt', 'a4')
+                var pdf = new jsPDF("", "pt", "a4");
                 // 有两个高度需要区分，一个是html页面的实际高度，和生成pdf的页面高度(841.89)
                 // 当内容未超过pdf一页显示的范围，无需分页
                 if (leftHeight < pageHeight) {
-                    pdf.addImage(pageData, 'JPEG', 0, 0, imgWidth, imgHeight)
+                    pdf.addImage(pageData, "JPEG", 0, 0, imgWidth, imgHeight);
                 } else {
                     while (leftHeight > 0) {
-                        pdf.addImage(pageData, 'JPEG', 0, position, imgWidth, imgHeight)
-                        leftHeight -= pageHeight
-                        position -= 841.89
+                        pdf.addImage(
+                            pageData,
+                            "JPEG",
+                            0,
+                            position,
+                            imgWidth,
+                            imgHeight
+                        );
+                        leftHeight -= pageHeight;
+                        position -= 841.89;
                         // 避免添加空白页
                         if (leftHeight > 0) {
-                            pdf.addPage()
+                            pdf.addPage();
                         }
                     }
                 }
                 // 导出pdf文件命名
-                pdf.save('report_pdf_' + new Date().getTime() + '.pdf')
-
-            })
+                pdf.save("report_pdf_" + new Date().getTime() + ".pdf");
+            });
         },
         renderTpl() {
-            let template = Handlebars.compile(this.editor.getData({ rootName: this.page }));
+            let template = Handlebars.compile(
+                this.editor.getData({ rootName: this.page })
+            );
             Handlebars.registerHelper("addCIndex", function (index, options) {
-                let opt = ["零、", "一、", "二、", "三、"]
+                let opt = ["零、", "一、", "二、", "三、"];
                 return opt[parseInt(index) + 1];
             });
             let result = template(this.renderjson);
-            this.editor.data.set({ [this.page]: result })
+            this.editor.data.set({ [this.page]: result });
         },
 
         async downloadDocx() {
-            let result = await axios.post("http://127.0.0.1:8081/hw", {
-                name: "test",
-                fileName: "test.docx",
-                pages: [
-                    {
-                        html:this.getHtmlWithStyle(),
-                        "nextPageOrient" : "column",
-                        "strict" : false
-                    }
-                ]
-            }).then(res => res.data)
-            console.log(this.getHtmlWithStyle())
-            console.log(result)
+            let result = await axios
+                .post("http://127.0.0.1:8081/hw", {
+                    name: "test",
+                    fileName: "test.docx",
+                    pages: [
+                        {
+                            html: this.getHtmlWithStyle(),
+                            nextPageOrient: "column",
+                            strict: false,
+                        },
+                    ],
+                })
+                .then((res) => res.data);
+            console.log(this.getHtmlWithStyle());
+            console.log(result);
             // if (result.code == 200) {
 
             //     window.open(`http://192.168.3.88:5002/api/selfservice/getHtmlDoc?filePath=${result.data}`)
             // }
         },
-        getHtmlToAce(){
-            let html=  this.editor.model.document.getRootNames().map(v => editor.getData({ rootName: v })).join("");
-            this.ace.setValue(html)
-            beautify.beautify(this.ace.session);
+        getHtmlToAce() {
+            let html = this.editor.model.document
+                .getRootNames()
+                .map((v) => editor.getData({ rootName: v }))
+                .join("");
+            this.monacoEditor.setValue(html);
+            this.monacoEditor.trigger('',"editor.action.formatDocument");
         },
-        beautifyHtml(){
-            beautify.beautify(this.ace.session);
+        beautifyHtml() {
+            // beautify.beautify(this.ace.session);
         },
-        setHtmlToEditor(){
-            let html = this.ace.getValue();
+        setHtmlToEditor() {
+            let html = this.monacoEditor.getValue();
             let template = Handlebars.compile(html);
-            console.log(this.renderjson)
+            console.log(this.renderjson);
             let result = template(this.renderjson);
-            this.editor.data.set({ [this.page]: result })
+            this.editor.data.set({ [this.page]: result });
         },
-        async savePage(){
-            const html= this.ace.getValue();
+        async savePage() {
+            const html = this.monacoEditor.getValue();
             this.$emit("saveTemplate", html);
         },
-        loadPage(){
-            let html=localStorage.getItem([this.page]);
-            this. editor.data.set({  [this.page]:html });
+        loadPage() {
+            let html = localStorage.getItem([this.page]);
+            this.editor.data.set({ [this.page]: html });
         },
-        exportHtmlFromAce(){
-            let html = this.ace.getValue();
+        exportHtmlFromAce() {
+            let html = this.monacoEditor.getValue();
 
-            this.downloadFile(html, "code模板.html")
+            this.downloadFile(html, "code模板.html");
         },
-
-
-    }
-}
+    },
+};
 </script>
 
 <style scoped lang="scss">
@@ -466,19 +553,19 @@ export default {
     width: 21cm;
     height: 29.7cm;
     margin-top: 10px;
-    &.table-padding{
+    &.table-padding {
         padding: 2.54cm 1.5cm;
     }
     &.text-padding {
         padding: 2.54cm 3.18cm;
     }
 }
- 
-.page-landscape{
+
+.page-landscape {
     width: 29.7cm;
-    height:21cm;
+    height: 21cm;
     margin-top: 10px;
-    padding: 2.54cm 1.17cm
+    padding: 2.54cm 1.17cm;
 }
 .iframe-off {
     position: absolute;
@@ -499,9 +586,9 @@ export default {
 .ckeditor {
     padding: 10px;
     background-color: #f2f2f2;
-    width: 2000px
+    width: 2500px;
 }
-.main{
-    display:flex;
+.main {
+    display: flex;
 }
 </style>
