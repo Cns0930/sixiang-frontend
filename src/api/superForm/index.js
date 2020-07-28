@@ -11,3 +11,6 @@ export const saveOne = params => axios.post('/superform/fields/saveOne', params)
 
 // 删除单个字段
 export const deleteOne = params => axios.post('/superform/fields/deleteOne', params).then(res => res.data);
+
+// 导入公共字段
+export const forkPublicFields = params => axios.post('/superform/fields/forkPublicFields', params).then(res => res.data);
