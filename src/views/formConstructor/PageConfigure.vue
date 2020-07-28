@@ -483,6 +483,16 @@ export default {
             import customParseFormat from 'dayjs/plugin/customParseFormat'
             dayjs.extend(customParseFormat)
             let state = ${serialize(itemState)} 
+            _.forEach(state,function(value,key){
+                if(value.meta){
+                    Object.defineProperty(value, "value", {
+                        get: function () {
+                            return value.attributes.children.map(v => _.mapValues(v, o => o.value))
+                        },
+                    })
+                }
+                
+            })
             export default state`)
             beautify.beautify(this.outputEditor.session)
 
