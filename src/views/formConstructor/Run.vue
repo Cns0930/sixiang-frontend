@@ -42,7 +42,7 @@ import { deserializeTableData } from "../attributeComponents/index";
 import _ from "lodash"
 import dayjs from "dayjs"
 import customParseFormat from 'dayjs/plugin/customParseFormat'
-import { functionReviverGettersRuntime, functionReviverEventRuntime, convertDefToConfigEventRuntime } from "./util"
+import { functionReviverRuntime, functionReviverEventRuntime, convertDefToConfigEventRuntime } from "./util"
 import { mapState, createNamespacedHelpers } from 'vuex'
 import CommonMixin from "@/views/pageComponents/CommonMixin"
 const { mapGetters } = createNamespacedHelpers('run')
@@ -94,7 +94,7 @@ export default {
         this.stepsData = result[0].data.map(v => {
 
             if (typeof v.stepObject.configFn == "string" && v.stepObject.configFn.indexOf('function') > -1) {
-                v.stepObject.configFn =functionReviverGettersRuntime(v.stepObject.configFn,v.component); 
+                v.stepObject.configFn =functionReviverRuntime(v.stepObject.configFn,v.component); 
             }
             return { ...v.stepObject, stepPagenum: v.stepPagenum }
         }).sort((a, b) => a.stepPagenum - b.stepPagenum)
@@ -110,7 +110,7 @@ export default {
             if(!item.componentDefs.getter){
                 console.log(item.componentDefs)
             }
-            result[item.fieldNo] = functionReviverGettersRuntime(item.componentDefs.getter.value, item.fieldNo);
+            result[item.fieldNo] = functionReviverRuntime(item.componentDefs.getter.value, item.fieldNo);
 
             return result;
         }, {});

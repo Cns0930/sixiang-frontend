@@ -195,7 +195,7 @@ import serialize from 'serialize-javascript';
 import {
     deserializeTableData
 } from "../attributeComponents/index";
-import {functionReviverGettersRuntime,functionReviverEventRuntime,functionReviverEventBundle} from "./util"
+import {convertDefToConfigBundle,functionReviverBundle} from "./util"
 export default {
     name: "PageConfigure",
     data() {
@@ -474,14 +474,9 @@ export default {
         async getState() {
             let result = await getField({ itemName: this.itemName })
             let allFields = result.data.map(v => ({ id: v.id, fieldType: v.fieldType, children: v.children, ...v.object })).map(deserializeTableData);
+            let baseFields = allFields.filter(v => v.fieldType == 1)
 
-            let itemState = allFields.filter(v => v.fieldType == 1).reduce((result, item) => {
-
-                let attrObj = _.mapValues(item.componentDefs, function (o,k) { return functionReviverEventBundle(o.value,item.fieldNo,k)});
-                let mergeObj = _.merge({ label: item.label, fieldNo: item.fieldNo }, attrObj, { attributes: item.componentDefs.getAttributes ? item.componentDefs.getAttributes() || {} : {} })
-                result[item.fieldNo] = mergeObj;
-                return result;
-            }, {});
+            let itemState = convertDefToConfigBundle(baseFields);
             this.outputEditor.setValue(`
             import _ from "lodash" 
             import dayjs from "dayjs"
@@ -500,7 +495,7 @@ export default {
             let itemGetters =allFields.filter(v => v.fieldType == 2).reduce((result, item) => {
                 // let attrObj = _.mapValues(item.componentDefs, (o) => this.parseFunction(o.value));
 
-                result[item.fieldNo] = this.functionReviverBundle(item.componentDefs.getter.value, item.fieldNo);
+                result[item.fieldNo] = functionReviverBundle(item.componentDefs.getter.value, item.fieldNo);
 
                 return result;
             }, {});
@@ -512,57 +507,8 @@ export default {
             export default getters`)
             beautify.beautify(this.outputEditor.session)
         },
-        functionReviverBundle(value, tag) {
 
-            if (typeof value === 'string') {
-                var rfunc = /function\s*\w*\s*\([\w\s,]*\)\s*{([\w\W]*)}/,
-                    match = value.match(rfunc);
-
-                if (match) {
-
-                    return new Function("state", "getters", `
-
-                     try{
-                            
-                            
-                            ${match[1]}
-                        }catch(e){
-                            console.warn("错误",'${tag}')
-                            console.warn(e)
-                            return null;
-                        }
-
-                    `);
-                }
-            }
-            return value;
-        },
-        functionReviver(value,tag) {
-          
-            if (typeof value === 'string') {
-                var rfunc = /function\s*\w*\s*\([\w\s,]*\)\s*{([\w\W]*)}/,
-                    match = value.match(rfunc);
-
-                if (match) {
-                   
-                    return new Function("state","getters" ,`
-                   
-                    with(this){
-                        try{
-                            
-                            
-                            ${match[1]}
-                        }catch(e){
-                            console.warn("错误",'${tag}')
-                            console.warn(e)
-                            return null;
-                        }
-                        
-                        }`).bind({ _, dayjs });
-                }
-            }
-            return value;
-        },
+      
     }
 };
 </script>
