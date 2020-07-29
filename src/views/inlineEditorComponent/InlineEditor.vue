@@ -1,60 +1,57 @@
 <template>
-    <div class="ckeditor" data-editor="DecoupledDocumentEditor">
-        <div style="margin-bottom:10px">
-            <button @click="exportHtml">从富文本编辑器导出html</button>
-            <button @click="importHtml">导入html模板</button>
-            <button @click="importHtmlThenRender">模板导入-先渲染</button>
+    <div class="body">
+        <div class="ckeditor" data-editor="DecoupledDocumentEditor">
+            <div style="margin-bottom:10px">
+                <button @click="getHtmlToAce">在线获取html</button>
+                <el-divider direction="vertical" content-position="center"></el-divider>
+                <button @click="setHtmlToEditor">在线html->富文本编辑器</button>
+                <el-divider direction="vertical" content-position="center"></el-divider>
+                <!-- 当前页
+                <input v-model="page" style="width:30px" />-->
+                <button @click="savePage">当前页保存</button>
+                <!-- <button @click="loadPage">当前页加载</button>
+                <button @click="exportHtmlFromAce">从code编辑器导出html</button>-->
+                <el-divider direction="vertical" content-position="center"></el-divider>
+                <button @click="openEditor">全屏打开代码编辑器</button>
+            </div>
 
-            <button @click="exportHtmlWithStyle">导出html带样式</button>
-            <button @click="printPreview">打印预览</button>
-            <button @click="renderTpl">模板渲染</button>
+            <div class="main">
+                <div style="width:30cm">
+                    <!-- <div ref="toolbar" style="position:fixed;top:32px;z-index:30"></div> -->
+                    <div ref="toolbar" style="width: 100%;"></div>
 
-            <button @click="downloadDocx">生成word</button>
-            |||
-            <button @click="getHtmlToAce">在线获取html</button>
-            <button @click="setHtmlToEditor">在线html->富文本编辑器</button>|||
-            当前页
-            <input v-model="page" style="width:30px" />
-            <button @click="savePage">当前页保存</button>
-            <button @click="loadPage">当前页加载</button>
-            <button @click="exportHtmlFromAce">从code编辑器导出html</button>
-        </div>
-
-        <!-- <button @click="convertToPdf">转pdf</button> -->
-        <div class="main">
-            <div style="width:30cm">
-                <!-- <div ref="toolbar" style="position:fixed;top:32px;z-index:30"></div> -->
-                <div ref="toolbar" style="width: 100%;"></div>
-
-                <div>
-                    <!-- 纵向 -->
-                    <div class="row-editor">
-                        <div
-                            class="x"
-                            :class="{
+                    <div>
+                        <!-- 纵向 -->
+                        <div class="row-editor">
+                            <div
+                                class="x"
+                                :class="{
                             'page-portrait': temp_page.orient=='row',
                             'page-landscape': temp_page.orient=='column',
                             'table-padding': temp_page.isTable==1,
                             'text-padding': temp_page.isTable==0
                         }"
-                        ></div>
-                    </div>
+                            ></div>
+                        </div>
 
-                    <!-- 横向 -->
-                    <!-- <div class="row-editor">
+                        <!-- 横向 -->
+                        <!-- <div class="row-editor">
                     <div class="x" style="width: 29.7cm;height:21cm;padding: 2.54cm 1.17cm"></div>
-                    </div>-->
+                        </div>-->
+                    </div>
                 </div>
+
+                <div
+                    ref="container"
+                    style="flex:1 25cm;height:29.7cm;top:30px;position:relative;margin-top:58px"
+                ></div>
             </div>
-            <!-- <div id="ace" style="flex:1 21cm;height:29.7cm;top:30px;position:relative;margin-top:58px"></div> -->
 
-            <div
-                ref="container"
-                style="flex:1 25cm;height:29.7cm;top:30px;position:relative;margin-top:58px"
-            ></div>
+            <!-- <iframe id="print-data-container" tabindex="-1" :class="ifShow?'iframe-show':'iframe-off'"></iframe> -->
         </div>
-
-        <!-- <iframe id="print-data-container" tabindex="-1" :class="ifShow?'iframe-show':'iframe-off'"></iframe> -->
+        <el-dialog class="monaco" :fullscreen="true" :visible.sync="dialogVisible" :before-close="syncCode">
+            <div ref="dialog_container" style="width:100%;height:800px"></div>
+        </el-dialog>
     </div>
 </template>
 
@@ -71,8 +68,6 @@ import axios from "axios";
 import { addEditPage } from "@/api/template/index";
 
 import renderedHtml from "@/assets/result";
-// import ace from 'ace-builds'
-// import beautify from "ace-builds/src-noconflict/ext-beautify"
 import { mergeFieldAttr } from "../formConstructor/util";
 import { mapState } from "vuex";
 import _ from "lodash";
@@ -87,6 +82,8 @@ export default {
             page: "0",
             // ace:null,
             monacoEditor: null,
+            dialogVisible: false,
+            dialogEditor: null,
             // beautify:null,
         };
     },
@@ -118,27 +115,18 @@ export default {
         },
     },
     mounted() {
-        // 渲染 ace
-        // beautify = ace.require("ace/ext-beautify");
-        // console.log( beautify)
-        // this.ace = ace.edit("ace");
-
-        // this.ace.setTheme("ace/theme/monokai");
-        // this.ace.session.setMode("ace/mode/html");
-        // this.ace.setOption("wrap", "free")
-
         // 初始化monaco
-        monaco.editor.defineTheme('myTheme', {
-        base: 'vs',
-        inherit: true,
-        rules: [{ background: 'EDF9FA' }],
-        // colors: { 'editor.lineHighlightBackground': '#0000FF20' }
-    });
-    monaco.editor.setTheme('myTheme');
+        monaco.editor.defineTheme("myTheme", {
+            base: "vs",
+            inherit: true,
+            rules: [{ background: "EDF9FA" }],
+            // colors: { 'editor.lineHighlightBackground': '#0000FF20' }
+        });
+        monaco.editor.setTheme("myTheme");
 
         this.monacoEditor = monaco.editor.create(this.$refs.container, {
             value: ["<p>等待编辑</p>"].join("\n"),
-            language:  'html',
+            language: "html",
             // features: [],
             // minimap: {
             //     enabled: true,
@@ -156,6 +144,39 @@ export default {
         this.initEditor();
     },
     methods: {
+        async openEditor() {
+            this.dialogVisible = true;
+            // 初始化弹窗monaco
+            if (this.dialogEditor == null) {
+                await this.$nextTick(() => {
+                    this.dialogEditor = monaco.editor.create(
+                        this.$refs.dialog_container,
+                        {
+                            value: ["<p>等待编辑</p>"].join("\n"),
+                            language: "html",
+                            // features: [],
+                            // minimap: {
+                            //     enabled: true,
+                            // },
+                            selectOnLineNumbers: true,
+                            roundedSelection: false,
+                            cursorStyle: "line", // 光标样式
+                            automaticLayout: true, // 自动布局F
+                            glyphMargin: true, // 字形边缘
+                            useTabStops: false,
+                            fontSize: 14, // 字体大小
+                            autoIndent: true, //自动布局
+                        }
+                    );
+                });
+            }
+            // 数据同步过来
+            this.dialogEditor.setValue(this.monacoEditor.getValue()); 
+        },
+        syncCode(done){
+            this.monacoEditor.setValue(this.dialogEditor.getValue());
+            done();
+        },
         async initEditor() {
             if (this.editor) {
                 await this.editor.destroy();
@@ -404,121 +425,18 @@ export default {
             a.click();
             document.body.removeChild(a);
         },
-        /* eslint-disable*/
-        printPreview() {
-            const iframeElement = document.querySelector(
-                "#print-data-container"
-            );
-            let html = this.editor.model.document
-                .getRootNames()
-                .map((v) => editor.getData({ rootName: v }))
-                .join(`<div style="page-break-before:always;"></div>`);
 
-            iframeElement.srcdoc = `<html>
-                <head>
-                    <title>${document.title}</title>
-                    ${contentCss}
-                </head>
-                <body style="margin:0">
-                <div class="ck-content">
-                    ${html}
-                    <script>
-                        window.addEventListener( \'DOMContentLoaded\', () => { window.print(); } );
-                    <\/script>
-                </div>
-                </body>
-            </html>`;
-        },
-        convertToPdf() {
-            html2canvas(document.querySelector("#editor"), {
-                scale: 2,
-            }).then((canvas) => {
-                //  document.body.appendChild(canvas);
-                console.log(canvas);
-                var contentWidth = canvas.width;
-                var contentHeight = canvas.height;
-                // 一页pdf显示html页面生成的canvas高度;
-                var pageHeight = (contentWidth / 592.28) * 841.89;
-                // 未生成pdf的html页面高度
-                var leftHeight = contentHeight;
-                // pdf页面偏移
-                var position = 0;
-                // a4纸的尺寸[595.28,841.89]，html页面生成的canvas在pdf中图片的宽高
-                var imgWidth = 595.28;
-                var imgHeight = (592.28 / contentWidth) * contentHeight;
-                var pageData = canvas.toDataURL("image/jpeg", 1.0);
-
-                var pdf = new jsPDF("", "pt", "a4");
-                // 有两个高度需要区分，一个是html页面的实际高度，和生成pdf的页面高度(841.89)
-                // 当内容未超过pdf一页显示的范围，无需分页
-                if (leftHeight < pageHeight) {
-                    pdf.addImage(pageData, "JPEG", 0, 0, imgWidth, imgHeight);
-                } else {
-                    while (leftHeight > 0) {
-                        pdf.addImage(
-                            pageData,
-                            "JPEG",
-                            0,
-                            position,
-                            imgWidth,
-                            imgHeight
-                        );
-                        leftHeight -= pageHeight;
-                        position -= 841.89;
-                        // 避免添加空白页
-                        if (leftHeight > 0) {
-                            pdf.addPage();
-                        }
-                    }
-                }
-                // 导出pdf文件命名
-                pdf.save("report_pdf_" + new Date().getTime() + ".pdf");
-            });
-        },
-        renderTpl() {
-            let template = Handlebars.compile(
-                this.editor.getData({ rootName: this.page })
-            );
-            Handlebars.registerHelper("addCIndex", function (index, options) {
-                let opt = ["零、", "一、", "二、", "三、"];
-                return opt[parseInt(index) + 1];
-            });
-            let result = template(this.renderjson);
-            this.editor.data.set({ [this.page]: result });
-        },
-
-        async downloadDocx() {
-            let result = await axios
-                .post("http://127.0.0.1:8081/hw", {
-                    name: "test",
-                    fileName: "test.docx",
-                    pages: [
-                        {
-                            html: this.getHtmlWithStyle(),
-                            nextPageOrient: "column",
-                            strict: false,
-                        },
-                    ],
-                })
-                .then((res) => res.data);
-            console.log(this.getHtmlWithStyle());
-            console.log(result);
-            // if (result.code == 200) {
-
-            //     window.open(`http://192.168.3.88:5002/api/selfservice/getHtmlDoc?filePath=${result.data}`)
-            // }
-        },
         getHtmlToAce() {
             let html = this.editor.model.document
                 .getRootNames()
                 .map((v) => editor.getData({ rootName: v }))
                 .join("");
             this.monacoEditor.setValue(html);
-            this.monacoEditor.trigger('',"editor.action.formatDocument");
+            this.monacoEditor.trigger("", "editor.action.formatDocument");
         },
-        beautifyHtml() {
-            // beautify.beautify(this.ace.session);
-        },
+        // beautifyHtml() {
+        //     // beautify.beautify(this.ace.session);
+        // },
         setHtmlToEditor() {
             let html = this.monacoEditor.getValue();
             let template = Handlebars.compile(html);
