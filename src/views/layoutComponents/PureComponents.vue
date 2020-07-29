@@ -1,6 +1,6 @@
 <template>
   <div>
-      <el-col  v-for="(v,i) in fields" :span="v.span || 12" v-if="!v.hidden" :key="i">
+      <el-col  v-for="(v,i) in computedFields" :span="v.span || 12" v-if="!v.hidden" :key="i">
 
             <el-form-item :key="i" :label="v.label" :prop="v.ruleKey || ''" :obj="v" @itemValidated="handleItemValidated($event,v)">
                 <component :is="v.component" v-model="v.value" v-bind="v.attributes" :siblings="fields" :parent="parent"
@@ -22,6 +22,12 @@ export default {
     props:["fields","parent"],
     mixins:[CommonMixin],
     components: { ElFormItem: TestFormItem, },
+    computed:{
+        computedFields(){
+
+            return Object.values(this.fields).sort((a,b)=>a.sort-b.sort)
+        }
+    },
     methods:{
         handleItemValidated(event,context){
       
