@@ -1,7 +1,7 @@
 
 import Renderer,{rendererBuilder} from "./Renderer"
 import { getMapping } from "./index"
-import rules from "@/utils/ruleConfig"
+import {rulesList} from "@/utils/ruleConfig"
 
 class CommonComponents {
     constructor({ type }) {
@@ -31,7 +31,7 @@ class CommonComponents {
         // 备注
         this.remark = new Renderer('ElInput', '',null,"备注")
         this.placeholder = new Renderer('ElInput', '请输入内容')
-        this.ruleKey = new Renderer("ElSelectC","required",{options:Object.keys(rules)},"验证方式")
+        this.ruleKey = new Renderer("ElSelectC","required",{options:rulesList},"验证方式")
         this.validateFn = new Renderer("CodeEditor",`
         // value 是组件对象； value.value 是组件值
         // return {success:false,msg:"验证错误提示"}
