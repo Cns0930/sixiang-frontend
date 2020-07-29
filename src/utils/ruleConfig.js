@@ -47,7 +47,7 @@ const validateEmpty = (rule, value, callback)=>{
         callback();
     }
 }
-export const rulesList = ['required','phone','postCode','idCardNum','mail','cardNum',"custom"]
+export const rulesList = ["none",'required','phone','postCode','idCardNum','mail','cardNum',"custom"]
 export default class  {
     constructor(state,getters){
         
