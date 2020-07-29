@@ -61,7 +61,9 @@
                         <el-option label="表格" :value="1" ></el-option>
                         <el-option label="纯文本" :value="0" ></el-option>
                     </el-select>
+                    
                     <el-input v-model="currentPagenum" placeholder="请输入页码"></el-input>
+                    <CodeEditor v-model="temp_page.script"></CodeEditor>
                 </div>
 
             </div>
@@ -121,11 +123,12 @@ import defs, { deserializeComputedField, deserializeBaseField } from "../attribu
 import inlineEditor from "@/views/inlineEditorComponent/InlineEditor"
 
 import {mixin} from "@/mixin/mixin"
-
+import {CodeEditor} from "@/views/attributeComponents/defRendererComponents/defRendererComponents"
+console.log(CodeEditor)
 export default {
     name: "TemplateManager",
     components: {
-        inlineEditor
+        inlineEditor,CodeEditor
     },
     mixins:[mixin],
     data() {
@@ -247,6 +250,7 @@ export default {
                 pageNum: this.currentPagenum,
                 templateType: this.temp_page.templateType,
                 contentCss: this.temp_page.contentCss,
+                script:this.temp_page.script,
             })
 
             if (!res.success) return;
@@ -266,6 +270,12 @@ export default {
         },
         handleClickPage(page) {
             this.temp_page = page;
+            if(!this.temp_page.script){
+                
+                this.temp_page.script=`function(state,getters){
+                    return 1
+                }`
+            }
             this.currentPagenum = page.pageNum;
         },
         // handleDelete(i) {

@@ -94,19 +94,28 @@ export default {
                         result[fieldNo] = this.getters["run/"+fieldNo]
                         return result
                     },{})
-        console.log({...this.templateObj,...getters})
-        this.docList.forEach(doc => {
-            doc.forEach(page => {
-                
+       
 
+         console.log({...this.templateObj,...getters,})
+
+        this.docList.forEach(doc => {
+            doc.forEach((page,i) => {
+                let pageNum =1 
+                    try{
+                        let fn = eval(`(${page.script})`)
+                        pageNum = fn(this.itemState,this.itemGetters);
+
+                    }catch(e){
+                        console.log(e,"page.script",`第${i}页`)
+                    }
+                   
                 let template = Handlebars.compile(page.htmlContent)
 
                 try {
+                        
+                    page.pages = Array.from({length:pageNum}).map((v,i)=>template({...this.templateObj,...getters,_pageNo:i}))
+                    // page.htmlContent = template({...this.templateObj,...getters})
                     
-                    page.htmlContent = template({...this.templateObj,...getters})
-                    if(page.id==28){
-                         console.log(page.htmlContent)
-                    }
 
                    
                 } catch (e) {
@@ -115,6 +124,14 @@ export default {
                 }
             })
         });
+
+        this.docList.forEach((doc,i,docList)=>{
+            docList[i] = doc.flatMap(page=>{
+                return page.pages.flatMap(v=>({...page,htmlContent:v,}))
+            })
+        })
+    
+
     },
     mounted() {
         
