@@ -119,7 +119,7 @@ export default {
             this.temp_template = v.template;
         },
         async saveTemplate(){
-            let result = await addTemplate(temp_template);
+            let result = await addTemplate(this.temp_template);
             if (!res.success) return;
 
             this.$message.success('保存模板成功');

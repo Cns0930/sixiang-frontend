@@ -10,6 +10,7 @@ class InputDef extends CommonComponents{
             
         }`);
         this.$type = new Renderer("ElSelectC","text",{options:["text","textarea",]})
+        this.value = new Renderer("ElInput","",null,"默认值")
     }
     getAttributes(){
         return {

@@ -37,7 +37,7 @@
 
             </div>
             <!-- 渲染字段 -->
-            <div class="computed-field">
+            <!-- <div class="computed-field">
                 <div v-for="(v,i) in baseJSON" :key="i">
 
                     ({{v.fieldNo}}){{v.label}}：{{v.sample}}
@@ -50,7 +50,7 @@
 
                 </div>
 
-            </div>
+            </div> -->
             <div class="computed-field computed-field-direction">
                 <div v-if="temp_page">
                     <el-select v-model="temp_page.orient" placeholder="">
@@ -91,6 +91,21 @@
                 <el-button @click="templateCreateVisible = false">取 消</el-button>
                 <el-button type="primary" @click="addTemplate">确 定</el-button>
             </span>
+        </el-dialog>
+
+        <el-dialog title="载入字段" :visible.sync="fieldVisible" width="30" :close-on-click-modal="false" 
+        postition="fixed">
+            <div v-for="(v,i) in baseJSON" :key="i">    
+
+                    ({{v.fieldNo}}){{v.label}}：{{v.sample}}
+
+                </div>
+                <el-divider v-if="Object.keys(computedJSON).length > 0" />
+                <div v-for="(v,i) in computedJSON" :key="i">
+
+                    ({{v.fieldNo}}){{v.label}}:{{v.sample}}
+
+                </div>
         </el-dialog>
     </div>
 </template>
@@ -140,6 +155,8 @@ export default {
             renderJSON: {},
 
             currentPagenum: null,
+
+            fieldVisible: false,
 
         }
     },
@@ -258,7 +275,7 @@ export default {
             this.temp_template = template;
         },
         async loadAllField() {
-
+            this.fieldVisible = true
             const result = await getField({
                 itemName: this.$store.state.home.item.name,
             })
