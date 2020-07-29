@@ -2,7 +2,7 @@ import IdentityCommon from "./IdentityCommon/IdentityCommon"
 
 import InputList from "./InputList/InputList"
 import Collection from "./Collection/Collection"
-import GudongCommon from "./gudongCommon/GudongCommon"
+import GudongCommon from "./GudongCommon/GudongCommon"
 import Chuzifangshi from "./Chuzifangshi/Chuzifangshi"
 import LayoutComponentMixin from "./LayoutComponentMixin"
 
@@ -14,7 +14,7 @@ let ElSelectC = {
     mixins:[LayoutComponentMixin],
     render() {
         
-        let options =  Object.prototype.toString.call(this.options)  =="[object Function]"? this.options(this.itemState,this.itemGetters,this.siblings,this.parent):this.options;
+        let options =  Object.prototype.toString.call(this.options)  =="[object Function]"? this.options(this.itemState,this.itemGetters,this.siblings,this.parent):this.options || [];
         return <ElSelect value={this.value} onInput={(e)=>this.$emit("input",e)} onChange={(e)=>{this.$emit("change",e)}}>
             {
                 options.map(option=> <ElOption lable={option} value={option} ></ElOption>)
