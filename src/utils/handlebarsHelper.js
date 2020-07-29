@@ -227,4 +227,13 @@ Handlebars.registerHelper("removeSymbol", function(str)
  
 });
 
+/**
+ * 认缴日期添加   ***前
+ *
+ */
+Handlebars.registerHelper("addBeforeStr", function(obj)
+{	
+    if (obj) return (obj+'前')
+});
+
 export default Handlebars
