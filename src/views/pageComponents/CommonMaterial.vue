@@ -113,7 +113,7 @@ export default {
 
                 try {
                         
-                    page.pages = Array.from({length:pageNum}).map((v,i)=>template({...this.templateObj,...getters,_pageNo:i}))
+                    page.pages = Array.from({length:pageNum}).map((v,i)=>template({...this.templateObj,...getters,_repeatNo:i}))
                     // page.htmlContent = template({...this.templateObj,...getters})
                     
 
