@@ -111,6 +111,7 @@ export default {
             return {
                 ..._.mapValues(baseJSON, "sample"),
                 ..._.mapValues(computedJSON, "sample"),
+                _repeatNo:0,
             };
         },
     },

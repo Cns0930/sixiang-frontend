@@ -124,7 +124,7 @@ Handlebars.registerHelper("logicUn", function()
 	let args = [].slice.call(arguments, 0,arguments.length-1) 
 
 	let expression = args.join(" ")
-	
+	console.log("logicUn",expression)
 	return eval(expression)
 	
   
