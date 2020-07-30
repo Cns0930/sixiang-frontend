@@ -26,10 +26,13 @@
                                 @click="handleClickPage(page,pageIndex)">{{page.pageNum}} 页
                             </el-button>
                             <el-button-group>
-                                <el-button style="width:45px;" @click="savePage(page,pageIndex)" icon="el-icon-upload2"
+                                <el-button style="width:40px;" @click="savePage(page,pageIndex)" icon="el-icon-upload2"
                                 :disabled="!temp_page || page.id != temp_page.id">
                                 </el-button>
-                                <el-button style="width:45px;" @click="deletePage(page)">删除</el-button>
+                                <el-button style="width:40px;" @click="editPage(page,pageIndex)" icon="el-icon-edit"
+                                :disabled="!temp_page || page.id != temp_page.id">
+                                </el-button>
+                                <el-button style="width:40px;" @click="deletePage(page)" icon="el-icon-delete"></el-button>
                             </el-button-group>
                         </div>
                     </div>
@@ -51,7 +54,7 @@
                 </div>
 
             </div> -->
-            <div class="computed-field computed-field-direction">
+            <!-- <div class="computed-field computed-field-direction">
                 <div v-if="temp_page">
                     <el-select v-model="temp_page.orient" placeholder="">
                         <el-option label="横向" value="row" ></el-option>
@@ -66,7 +69,7 @@
                     <CodeEditor v-model="temp_page.script"></CodeEditor>
                 </div>
 
-            </div>
+            </div> -->
             <!-- 模板制作 -->
             <div class="attribute-content">
                 <!-- <div class="row-editor" v-if="temp_page">
@@ -107,6 +110,23 @@
 
                     ({{v.fieldNo}}){{v.label}}:{{v.sample}}
 
+                </div>
+        </el-dialog>
+
+        <!-- 编辑模板弹窗 -->
+        <el-dialog title="编辑详情" :visible.sync="templateEditVisible" width="50%" :close-on-click-modal="false">
+             <div v-if="temp_page">
+                    <el-select v-model="temp_page.orient" placeholder="">
+                        <el-option label="横向" value="row" ></el-option>
+                        <el-option label="纵向" value="column" ></el-option>
+                    </el-select>
+                    <el-select v-model="temp_page.isTable" placeholder="">
+                        <el-option label="表格" :value="1" ></el-option>
+                        <el-option label="纯文本" :value="0" ></el-option>
+                    </el-select>
+                    
+                    <el-input v-model="currentPagenum" placeholder="请输入页码"></el-input>
+                    <CodeEditor v-model="temp_page.script"></CodeEditor>
                 </div>
         </el-dialog>
     </div>
@@ -160,6 +180,8 @@ export default {
             currentPagenum: null,
 
             fieldVisible: false,
+
+            templateEditVisible:false,
 
         }
     },
@@ -296,7 +318,10 @@ export default {
             this.computedJSON = this.computedFields.reduce(mergeFieldAttr, {})
             // this.renderJSON = { ..._.mapValues(this.baseJSON), ..._.mapValues(this.computedJSON) }
 
-        }
+        },
+        editPage(){
+            this.templateEditVisible = true;
+        },
     }
 }
 </script>
@@ -332,6 +357,8 @@ export default {
     .el-input {
         width: 100%;
     }
+    overflow : hidden;
+    text-overflow : ellipsis;
 }
 .computed-field-direction {
     width: 120px;
