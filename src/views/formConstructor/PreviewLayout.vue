@@ -12,7 +12,8 @@
                     <el-col v-else="!v.isList" :span="v.span || 12" :key="i">
 
                         <el-form-item :label="v.label" :required="v.required !== false"
-                            :prop="v.ruleKey ? v.ruleKey : v.required !== false ? 'required' : ''" :obj="v">
+                            :prop="v.ruleKey ? v.ruleKey : v.required !== false ? 'required' : ''" :obj="v" 
+                            :label-width="v.label?_.isNil(v.labelWidth)? '200px':v.labelWidth:'50px'">
 
                             <component :is="v.component" v-model="v.value" v-bind="v.attributes"
                                 @change="v.onchange && v.onchange($event,itemState,itemGetters)"

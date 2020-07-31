@@ -12,6 +12,11 @@ import ElementUI from 'element-ui'
 import "ace-builds/webpack-resolver";
 
 import '@/api/config'
+
+import _ from 'lodash';    
+
+Vue.prototype._=_;
+
 Vue.config.productionTip = false
 Vue.use(ElementUI ,{ size: 'mini'})
 Vue.config.errorHandler=function(err,vm,info){

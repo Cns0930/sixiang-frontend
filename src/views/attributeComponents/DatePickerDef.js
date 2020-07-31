@@ -5,7 +5,7 @@ class DatePickerDef extends CommonComponents{
         super({type:"datePicker"})
 
         this.$format = new Renderer("ElInput","yyyy年MM月dd日")
-        this.$type = new Renderer("ElSelectC","",{options:["year","month","date","dates","week","datetime"]})
+        this.$type = new Renderer("ElSelectC","date",{options:["year","month","date","dates","week","datetime"]})
       
         this.$valueFormat = new Renderer("ElInput","yyyy年MM月dd日")
         this.component = rendererBuilder("text","ElDatePicker")

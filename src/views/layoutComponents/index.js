@@ -5,7 +5,7 @@ import Collection from "./Collection/Collection"
 import GudongCommon from "./GudongCommon/GudongCommon"
 import Chuzifangshi from "./Chuzifangshi/Chuzifangshi"
 import LayoutComponentMixin from "./LayoutComponentMixin"
-
+import Jingyingfanwei from "./Jingyingfanwei/Jingyingfanwei"
 
 // 选择器
 let ElSelectC = {
@@ -79,5 +79,6 @@ export default {
     Collection,
     GudongCommon,
     TextInputLike,
-    Chuzifangshi
+    Chuzifangshi,
+    Jingyingfanwei
 }
