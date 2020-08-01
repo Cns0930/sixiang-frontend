@@ -1,0 +1,26 @@
+.el-input__inner-like {
+    -webkit-appearance: none;
+    box-sizing: border-box;
+    // color: #FFF;
+    display: inline-block;
+    font-size: 20px;
+    height: 38px;
+    line-height: 38px;
+    outline: 0;
+    padding: 0 15px;
+    transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+    width: 100%;
+}
+.side.el-button {
+    color:#fff;
+    border-radius: 4px;
+    background-image: linear-gradient(180deg, #3397FF 0%, #013BD3 100%);
+    font-size: 16px;
+    margin: 0 7px;
+    border-color: #0665ab;
+    height: 30px;
+    width: 70px;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+}

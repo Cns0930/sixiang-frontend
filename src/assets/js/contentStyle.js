@@ -11,7 +11,8 @@ export default `
 	
 	height: 100%;
 
-	margin-left:-1.5cm;
+    margin-left:-1.5cm;
+    border: 1px solid black;
 }
 .ck-content .image{
 	display:inline-block !important;
