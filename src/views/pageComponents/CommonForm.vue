@@ -6,8 +6,9 @@
             <el-row>
 
                 <template v-for="(v,i) in fields">
-                   
+                    <el-col :span="24" v-if="v.wrapStart"></el-col>
                     <div v-if="!v">没有找到{{config[i]}}</div>
+                    
                     <template v-else-if="v.hidden"></template>
                     
 
@@ -29,7 +30,7 @@
                         </el-form-item>
                         
                     </el-col>
-                    <el-col :span="24" v-if="v.wrap"></el-col>
+                    <el-col :span="24" v-if="v.wrapEnd"></el-col>
                 </template>
 
             </el-row>

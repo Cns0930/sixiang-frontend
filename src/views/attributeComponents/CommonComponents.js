@@ -39,7 +39,8 @@ class CommonComponents {
             
         }`,null,"自定义验证方法");
 
-        this.wrap =  new Renderer('ElSingleCheckboxC', false,{options:[true]},"是否换行")
+        this.wrapStart =  new Renderer('ElSingleCheckboxC', false,{options:[true]},"起始换行")
+        this.wrapEnd =  new Renderer('ElSingleCheckboxC', false,{options:[true]},"末端换行")
     }
     getAttributes(){
         return {

@@ -4,6 +4,7 @@
             ref="form" :validate-on-rule-change="false" @submit.native.prevent>
             <el-row>
                 <template v-for="(v,i) in itemState">
+                    <el-col :span="24" v-if="v.wrapStart"></el-col>
                     <template v-if="v.hidden"></template>
                     <component v-else-if="v.isList" :is="v.component" :value="v.value"  v-bind="v.attributes"
                         @change="v.onchange && v.onchange($event,itemState,itemGetters)"
@@ -21,7 +22,7 @@
                         </el-form-item>
                         
                     </el-col>
-                    <el-col :span="24" v-if="v.wrap"></el-col>
+                    <el-col :span="24" v-if="v.wrapEnd"></el-col>
                 </template>
             </el-row>
         </el-form>
