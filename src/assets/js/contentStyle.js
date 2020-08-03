@@ -14,6 +14,10 @@ export default `
     margin-left:-1.5cm;
     border: 1px solid black;
 }
+.ck-content .image{
+	display:inline-block !important;
+	padding:10px;
+ }
 
 .ck-content .table table td,
 .ck-content .table table th {
