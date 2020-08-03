@@ -48,12 +48,14 @@ let ElCheckboxC = {
     props:["options","value"],
     mixins:[LayoutComponentMixin],
     render(){
+        if(this.options.length<1) return;
+        let options = Object.prototype.toString.call(this.options[0])  =="[object Object]"?this.options:this.options.map(v=>({value:v,label:v,disabled:false}))
         return <el-checkbox-group value={this.value} onInput={(e)=>this.$emit("input",e)} onChange={(e)=>{this.$emit("change",e)}}>
             <el-row>
                 {
-                    this.options.map(option=> 
+                    options.map(option=> 
                     <el-col span={12} >
-                        <el-checkbox label={option}>{option}</el-checkbox>
+                        <el-checkbox label={option.label} value={option.value} disabled={option.disabled}>{option.label}</el-checkbox>
                     </el-col>
                     )
                 }

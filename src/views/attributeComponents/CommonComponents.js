@@ -38,6 +38,8 @@ class CommonComponents {
         function(value,state,getters){
             
         }`,null,"自定义验证方法");
+
+        this.wrap =  new Renderer('ElSingleCheckboxC', false,{options:[true]},"是否换行")
     }
     getAttributes(){
         return {

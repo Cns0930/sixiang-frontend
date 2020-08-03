@@ -27,8 +27,9 @@
                                 @change="v.onchange && v.onchange($event,itemState,itemGetters)"
                                 @input="v.oninput && v.oninput($event,itemState,itemGetters)"></component>
                         </el-form-item>
+                        
                     </el-col>
-
+                    <el-col :span="24" v-if="v.wrap"></el-col>
                 </template>
 
             </el-row>
