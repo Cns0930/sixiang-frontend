@@ -7,13 +7,13 @@
                 <el-button @click="handleRemove(v,i)" class="side" icon="el-icon-minus" style="float:left">删除
                 </el-button>
                 <el-form-item :key="i" label="新增" prop="required" :obj="v.fanwei">
-                    <el-select v-model="v.fanwei.value" filterable placeholder="请输入内容" style="width:calc(100% - 130px)"
+                    <el-select v-model="v.fanwei.value" filterable placeholder="请输入内容" style="width:calc(100% - 140px)"
                         @change="handleChangeFanwei($event,v)">
                         <el-option v-for="(o,q) in ops" :key="q" :label="o.label" :value="o.value">
                         </el-option>
                     </el-select>
                     <el-button class="btn" icon="el-icon-check"
-                        style="background: linear-gradient(180deg, #3397FF 0%, #013BD3 100%);border-radius: 4px;color:#fff;float:right" @click="handleCopy(v)">
+                        style="background: linear-gradient(180deg, #3397FF 0%, #013BD3 100%);border-radius: 4px;color:#fff;float:right;font-weight:bold;font-size:20px;padding:7px 10px" @click="handleCopy(v)">
                     </el-button>
                 </el-form-item>
 
@@ -149,5 +149,6 @@ export default {
     border: 1px solid #dcdfe6;
     border-radius: 4px;
     padding: 5px 15px;
+    min-height:100px;
 }
 </style>
