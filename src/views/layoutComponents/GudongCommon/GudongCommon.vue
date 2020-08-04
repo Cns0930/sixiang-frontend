@@ -42,7 +42,7 @@
             <div style="position:relative">
                 <!-- 移除按钮 -->
 
-                <PureComponents :fields="gudongActive" key="active"
+                <PureComponents :fields="gudongActive" :key="'active'+active"
                     @itemValidated="handleItemValidated($event,gudongActive)"> </PureComponents>
                 <template v-for="(gudongPassive,gudongPassiveIndex) in gudongPassiveList">
                     <PureComponents v-show="false" :fields="gudongPassive" :key="gudongPassiveIndex"

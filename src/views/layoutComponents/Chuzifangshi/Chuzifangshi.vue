@@ -20,7 +20,17 @@ export default {
 
         }
     },
-   
+    created(){
+        
+        if(!this.value){
+            this.emitEvent("货币")
+        }else if(this.options.includes(this.value)){
+            this.radioValue = this.value
+        }else{
+            this.inputValue = this.value;
+            this.radioValue = "其他"
+        }
+    },
     computed: {
         inputShow() {
             if (this.radioValue == "其他") {

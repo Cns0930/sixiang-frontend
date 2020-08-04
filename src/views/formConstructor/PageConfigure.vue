@@ -22,7 +22,7 @@
             <!-- 页面属性填写 -->
             <!-- 注意和temp_page关联 -->
             <div class="attribute-content" v-if="temp_page.id" style="padding:10px">
-                <el-button @click="save">保存</el-button>
+                <el-button @click="save" type="primary">保存</el-button>
                 <div>
                     <h3>编辑页面名</h3>
                     <el-input v-model="temp_page.stepTitle"></el-input>
@@ -89,16 +89,17 @@
                     </div>
                 </div>
                 <el-divider></el-divider>
-                <!-- TODO:代码框 -->
 
+                <h3>beforeEnter: </h3>
+                <el-checkbox label="启用" v-model="temp_page.stepObject.useBeforeEnter" @change="handleUseBeforeEnter"></el-checkbox>
+                <!-- 代码框 -->
+                <div v-show="!!temp_page.stepObject.useBeforeEnter" class="ace-container" ref="beforeEnterEdit"
+                    style="width:100%;height:500px"></div>
+
+                    
                 <div>beforeLeave: </div>
                 <!-- 代码框 -->
                 <div id="ace1" class="ace-container"
-                    style="flex:1;height:500px;top:10px;position:relative;margin-top:30px"></div>
-
-                <div>beforeEnter: </div>
-                <!-- 代码框 -->
-                <div id="ace2" class="ace-container"
                     style="flex:1;height:500px;top:10px;position:relative;margin-top:30px"></div>
 
             </div>
@@ -222,8 +223,14 @@ export default {
             addMaterialDialogVisible: false,
             // config 的ace 编辑器
             aceForConfig: null,
+            
             defaultFn: `function config(state,getters) {
                 return []
+            }`,
+            // beforeEnter 的ace 编辑器
+            aceForBeforeEnter:null,
+            defaultBeforeEnter:`function beforeEnter(state,getters){
+
             }`,
             //  output 
             outputDialog: false,
@@ -308,18 +315,28 @@ export default {
             if (this.aceForConfig) {
                 this.aceForConfig.destroy();
             }
-
+            if(this.aceForBeforeEnter){
+                this.aceForBeforeEnter.destroy();
+                this.aceForBeforeEnter=null;
+            }
             this.temp_page = page;
+            console.log(this.temp_page.stepObject.useBeforeEnter)
             // if(this.temp_page.stepObject.configType == 2){
             await this.$nextTick();
             this.initEditForConfig();
+            if(this.temp_page.stepObject.useBeforeEnter){
+                this.initEditForBeforeEnter();
+            }
             // }
         },
+        //切换配置类型
         async handleSwitchConfigType(data) {
             if (data != 2) return;
             await this.$nextTick();
             this.initEditForConfig();
+            
         },
+        // 初始化 配置 编辑器
         initEditForConfig() {
             this.aceForConfig = ace.edit(this.$refs.configEdit);
             this.aceForConfig.setTheme("ace/theme/monokai");
@@ -328,7 +345,28 @@ export default {
             this.aceForConfig.setValue(this.temp_page.stepObject.configFn)
             beautify.beautify(this.aceForConfig.session)
         },
+        async handleUseBeforeEnter(v){
+            if(v){
+                console.log(this.temp_page.stepObject.useBeforeEnter)
+                await this.$nextTick();
+                this.initEditForBeforeEnter();
+            }else{
+                this.aceForBeforeEnter.destroy();
+                this.aceForBeforeEnter=null;
+            }
 
+        },
+        // 初始化 beforeEnter编辑器
+        async initEditForBeforeEnter(){
+            
+             this.aceForBeforeEnter =  ace.edit(this.$refs.beforeEnterEdit);
+                this.aceForBeforeEnter.setTheme("ace/theme/monokai");
+                this.aceForBeforeEnter.session.setMode("ace/mode/javascript");
+                this.aceForBeforeEnter.setOption("wrap", "free")
+                this.aceForBeforeEnter.setValue(this.temp_page.stepObject.beforeEnterFn)
+                beautify.beautify(this.aceForBeforeEnter.session)
+
+        },
         // 选择某个字段
         chooseFieldToTemp(scope, keyname) {
             this.temp_page.stepObject.config.push(scope.row[keyname])
@@ -347,13 +385,16 @@ export default {
         // 将选中字段添加到页面中
         async save() {
             this.temp_page.stepObject.configFn = this.aceForConfig.getValue();
+            this.temp_page.stepObject.beforeEnterFn = this.aceForBeforeEnter && this.aceForBeforeEnter.getValue();
             let data = {
                 id: this.temp_page.id,
                 stepTitle: this.temp_page.stepTitle,
                 stepPagenum: this.temp_page.stepPagenum,
                 stepPageType: this.temp_page.stepPageType,
 
-                stepObject: this.temp_page.stepObject
+                stepObject: this.temp_page.stepObject,
+                beforeEnterFn:this.temp_page.stepObject.beforeEnterFn,
+                useBeforeEnter:!!this.temp_page.stepObject.useBeforeEnter
             };
             let result = await saveStep(data);
             if (!result.success) return;
@@ -483,15 +524,26 @@ export default {
             import customParseFormat from 'dayjs/plugin/customParseFormat'
             dayjs.extend(customParseFormat)
             let state = ${serialize(itemState)} 
-            _.forEach(state,function(value,key){
-                if(value.meta){
+            _.forEach(state, function(value, key) {
+                if (value.meta) {
                     Object.defineProperty(value, "value", {
+                        set:function(list){
+                            console.log(list)
+                            value.attributes.children=[];
+                            list.forEach(obj=>{
+                                let child = _.cloneDeep(value.meta);
+                                Object.keys(obj).forEach(key=>{
+                                    child[key].value = obj[key]
+                                })
+                                value.attributes.children.push(child)
+                            })
+                        },
                         get: function () {
                             return value.attributes.children.map(v => _.mapValues(v, o => o.value))
                         },
                     })
                 }
-                
+
             })
             export default state`)
             beautify.beautify(this.outputEditor.session)
