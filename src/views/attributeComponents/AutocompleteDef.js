@@ -18,14 +18,14 @@ class AutocompleteDef extends CommonComponents{
         let options = this.options.value.map(v=>({value:v}))
        
         return {
-    
+            
             placeholder:"请输入内容",
-            fetchSuggestions:function(queryString, cb){
-                
+            fetchSuggestions:eval(`(function(queryString, cb){
+                let options=${JSON.stringify(options)}
                 var results = queryString ? options.filter(v=>v.value.includes(queryString)) : options;
                 // 调用 callback 返回建议列表的数据
                 cb(results);
-            }
+            })`)
         }
     }
 }
