@@ -96,6 +96,10 @@ export default {
             if (typeof v.stepObject.configFn == "string" && v.stepObject.configFn.indexOf('function') > -1) {
                 v.stepObject.configFn =functionReviverRuntime(v.stepObject.configFn,v.component); 
             }
+             if(v.stepObject.useBeforeEnter){
+                    v.stepObject.beforeEnterFn = eval(`(${v.stepObject.beforeEnterFn})`)
+                }
+               
             return { ...v.stepObject, stepPagenum: v.stepPagenum }
         }).sort((a, b) => a.stepPagenum - b.stepPagenum)
 
@@ -158,6 +162,13 @@ export default {
 
         },
         goNext() {
+            let nextActive = this.active+1;
+            let nextStep = this.stepsData[nextActive]
+            let beforeEnterFn = nextStep.beforeEnterFn;
+            if(beforeEnterFn){
+                beforeEnterFn(this.itemState,this.itemGetters)
+            }
+            
             this.active++;
         },
         goPrev() {

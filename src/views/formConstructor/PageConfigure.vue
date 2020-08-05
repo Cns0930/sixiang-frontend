@@ -97,10 +97,7 @@
                     style="width:100%;height:500px"></div>
 
                     
-                <div>beforeLeave: </div>
-                <!-- 代码框 -->
-                <div id="ace1" class="ace-container"
-                    style="flex:1;height:500px;top:10px;position:relative;margin-top:30px"></div>
+                
 
             </div>
         </div>
@@ -305,6 +302,18 @@ export default {
         },
         // 保存添加字段的修改
         async handleDeleteStepPage(step) {
+         
+            try{
+                await this.$confirm('此操作将永久删除该, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+                })
+            }catch(e){
+                return;
+            }
+             
+           
             let result = await deleteStep({ stepId: step.id })
             if (!result.success) return;
             this.$message({ type: "success", message: "删除成功" })
@@ -345,9 +354,10 @@ export default {
             this.aceForConfig.setValue(this.temp_page.stepObject.configFn)
             beautify.beautify(this.aceForConfig.session)
         },
+        //  启用 beforeEnter
         async handleUseBeforeEnter(v){
             if(v){
-                console.log(this.temp_page.stepObject.useBeforeEnter)
+                
                 await this.$nextTick();
                 this.initEditForBeforeEnter();
             }else{
@@ -358,12 +368,12 @@ export default {
         },
         // 初始化 beforeEnter编辑器
         async initEditForBeforeEnter(){
-            
+           
              this.aceForBeforeEnter =  ace.edit(this.$refs.beforeEnterEdit);
                 this.aceForBeforeEnter.setTheme("ace/theme/monokai");
                 this.aceForBeforeEnter.session.setMode("ace/mode/javascript");
                 this.aceForBeforeEnter.setOption("wrap", "free")
-                this.aceForBeforeEnter.setValue(this.temp_page.stepObject.beforeEnterFn)
+                this.aceForBeforeEnter.setValue(this.temp_page.stepObject.beforeEnterFn || this.defaultBeforeEnter)
                 beautify.beautify(this.aceForBeforeEnter.session)
 
         },
@@ -493,6 +503,9 @@ export default {
                 if (typeof v.stepObject.configFn == "string" && v.stepObject.configFn.indexOf('function') > -1) {
                     v.stepObject.configFn = eval(`(${v.stepObject.configFn})`)
                 }
+                if(v.stepObject.useBeforeEnter){
+                    v.stepObject.beforeEnterFn = eval(`(${v.stepObject.beforeEnterFn})`)
+                }
                 return { ...v.stepObject, stepPagenum: v.stepPagenum }
             }).sort((a, b) => a.stepPagenum - b.stepPagenum)
 
@@ -528,7 +541,7 @@ export default {
                 if (value.meta) {
                     Object.defineProperty(value, "value", {
                         set:function(list){
-                            console.log(list)
+                            
                             value.attributes.children=[];
                             list.forEach(obj=>{
                                 let child = _.cloneDeep(value.meta);
