@@ -22,7 +22,7 @@ export default [
         type:"material"
     },
     {
-        name:"CommonForm",
+        name:"ApprovalSelectContent",
         label:"事项选择",
         type:"field"
     },
@@ -32,17 +32,17 @@ export default [
         type:"field"
     },
     {
-        name:"CommonForm",
+        name:"BaseFormPage",
         label:"基本信息确认",
         type:"field"
     },
     {
-        name:"CommonForm",
+        name:"BusinessFormPage",
         label:"业务信息录入",
         type:"field"
     },
     {
-        name:"CommonForm",
+        name:"IdCardInfo",
         label:"经办人信息验证",
         type:"field"
     },
@@ -51,5 +51,9 @@ export default [
         label:"材料预览",
         type:"material"
     },
-    
+    {
+        name:"LastStep",
+        label:"材料打印",
+        type:"field"
+    },
 ]
