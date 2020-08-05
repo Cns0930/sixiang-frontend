@@ -14,6 +14,7 @@ import TextInputLikeDef from "./TextInputLikeDef"
 import ChuzifangshiDef from "./ChuzifangshiDef"
 import JingyingfanweiDef from "./JingyingfanweiDef"
 import JingyingqixianDef from "./JingyingqixianDef"
+import AutocompleteDef from "./AutocompleteDef"
 // {
 
 //     "input": InputDef,
@@ -27,6 +28,7 @@ import JingyingqixianDef from "./JingyingqixianDef"
 let mapping = [
     {label:"文本",value:"text",componentDef:TextInputLikeDef,isList:false},
     {label:"输入框",value:"input",componentDef:InputDef,isList:false},
+    {label:"输入框带建议",value:"autocomplete",componentDef:AutocompleteDef,isList:false},
     {label:"输入框组",value:"inputList",componentDef:InputListDef,isList:false},
     {label:"下拉选择",value:"select",componentDef:SelectDef,isList:false},
     {label:"情形多选",value:"qingxingCheckbox",componentDef:QingxingCheckboxDef,isList:false},

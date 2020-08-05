@@ -8,6 +8,7 @@ class Collection {
         // this.value = new Renderer("text",[])
         this.span = rendererBuilder("text",24)
         this.meta=new Renderer("text",[])
+        this.title = new Renderer('ElInput', '')
         this.addBtnStyle=new Renderer('ElInput', '')
         this.removeBtnStyle = new Renderer('ElInput', '')
     }
@@ -17,7 +18,8 @@ class Collection {
             children:[meta],
             meta,
             addBtnStyle:this.addBtnStyle.value,
-            removeBtnStyle:this.removeBtnStyle.value
+            removeBtnStyle:this.removeBtnStyle.value,
+            title:this.title.value,
         }
     }
 }
