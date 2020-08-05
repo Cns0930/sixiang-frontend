@@ -96,6 +96,8 @@ export default {
         },
         
         async deleteTemplate(id) {
+            let message = "确定要删除吗";
+            if (confirm(message) == true) {
             const res = await deleteTemplate({
                 templateId: id,
             });
@@ -104,6 +106,7 @@ export default {
 
             this.$message.success('删除模板成功');
             this.getTemplate();
+            }
         },
 
         goTemplatemanager(id) {

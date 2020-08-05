@@ -283,12 +283,15 @@ export default {
             this.getTemplate();
         },
         async deletePage(page) {
+            let message = "确定要删除吗";
+            if (confirm(message) == true) {
             const res = await deletePage({
                 templatePageId: page.id,
             })
             if (!res.success) return;
             this.$message.success('删除页面成功');
             this.getTemplate();
+            }
         },
         handleClickPage(page) {
             this.temp_page = page;
