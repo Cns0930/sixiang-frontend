@@ -511,16 +511,19 @@ export default {
 
             this.outputDialog = true;
             await this.$nextTick();
-            let test = {                a: function () {
-                    return 1;
-                }, b: 2            }
+           
 
 
             this.outputEditor = ace.edit(this.$refs.outputEditor);
             this.outputEditor.setTheme("ace/theme/monokai");
             this.outputEditor.session.setMode("ace/mode/javascript");
             this.outputEditor.setOption("wrap", "free")
-            this.outputEditor.setValue(serialize(stepsData))
+            this.outputEditor.setValue(`
+            import _ from "lodash" 
+            import dayjs from "dayjs"
+            import customParseFormat from 'dayjs/plugin/customParseFormat'
+            let stepData = ${serialize(stepsData)}
+            export default stepData`)
             beautify.beautify(this.outputEditor.session)
 
         },
