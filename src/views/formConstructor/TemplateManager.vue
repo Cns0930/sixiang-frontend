@@ -5,12 +5,14 @@
             <!-- <el-button @click="templateCreateVisible = true"> 新建材料</el-button> -->
             <el-button @click="loadAllField"> 载入字段</el-button>
             <el-button @click="$router.push('/')"> -> 字段管理</el-button>
+            <el-button @click="isListShown=false" v-show="isListShown">收起侧栏</el-button>
+            <el-button @click="isListShown=true" v-show="!isListShown">展开侧栏</el-button>
 
         </div>
         <div class="main">
 
             <!-- template -->
-            <div class="computed-field">
+            <div class="computed-field" v-show="isListShown">
                 <div style="margin-top: 10px;">
                     <el-button type="text" @click="handleClickTemplate(templates)"
                         style="width:100px;margin:0;color:orange">
@@ -182,6 +184,8 @@ export default {
             fieldVisible: false,
 
             templateEditVisible:false,
+
+            isListShown:true,
 
         }
     },
@@ -368,7 +372,7 @@ export default {
     flex: none;
 }
 .attribute-content {
-    width: 2000px;
+    width: 1800px;
     flex: none;
     border: blue 1px solid;
     // overflow:auto;

@@ -26,8 +26,8 @@
                             <div
                                 class="x"
                                 :class="{
-                            'page-portrait': temp_page.orient=='row',
-                            'page-landscape': temp_page.orient=='column',
+                            'page-portrait': temp_page.orient=='column',
+                            'page-landscape': temp_page.orient=='row',
                             'table-padding': temp_page.isTable==1,
                             'text-padding': temp_page.isTable==0
                         }"
@@ -43,7 +43,7 @@
 
                 <div
                     ref="container"
-                    style="flex:1 25cm;height:29.7cm;top:30px;position:relative;margin-top:58px"
+                    style="width:100%;height:720px;top:0px;position:relative;margin-top:0px"
                 ></div>
             </div>
 
@@ -505,7 +505,7 @@ export default {
 .ckeditor {
     padding: 10px;
     background-color: #f2f2f2;
-    width: 2500px;
+    width: 1800px;
 }
 .main {
     display: flex;
