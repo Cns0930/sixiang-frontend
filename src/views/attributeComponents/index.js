@@ -15,6 +15,8 @@ import ChuzifangshiDef from "./ChuzifangshiDef"
 import JingyingfanweiDef from "./JingyingfanweiDef"
 import JingyingqixianDef from "./JingyingqixianDef"
 import AutocompleteDef from "./AutocompleteDef"
+import CascaderDef from "./CascaderDef"
+import RegionCascaderDef from "./RegionCascaderDef"
 // {
 
 //     "input": InputDef,
@@ -31,6 +33,8 @@ let mapping = [
     {label:"输入框带建议",value:"autocomplete",componentDef:AutocompleteDef,isList:false},
     {label:"输入框组",value:"inputList",componentDef:InputListDef,isList:false},
     {label:"下拉选择",value:"select",componentDef:SelectDef,isList:false},
+    {label:"级联选择",value:"cascader",componentDef:CascaderDef,isList:false},
+    {label:"行政区划级联选择",value:"regionCascader",componentDef:RegionCascaderDef,isList:false},
     {label:"情形多选",value:"qingxingCheckbox",componentDef:QingxingCheckboxDef,isList:false},
     {label:"单选",value:"radio",componentDef:RadioDef,isList:false},
     {label:"日期选择",value:"datePicker",componentDef:DatePickerDef,isList:false},
