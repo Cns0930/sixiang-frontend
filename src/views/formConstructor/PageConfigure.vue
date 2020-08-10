@@ -1,12 +1,13 @@
 <template>
     <div class="page-configure">
         <div class="op-bar">
+            <el-button @click="importDefault">导入默认步骤</el-button>
             <el-button @click="createStepPage">创建步骤页面</el-button>
-
             <el-button @click="handlePreview">预览页面</el-button>
             <el-button @click="loadAll">载入页面</el-button>
             <el-button @click="$router.push({path:'/run',query:{itemId}})">运行页面</el-button>
             <el-button @click="output">输出</el-button>
+            
 
         </div>
         <div class="main">
@@ -182,7 +183,7 @@
 
 <script>
 import { mapState } from "vuex";
-import { getStep, saveStep, deleteStep } from "@/api/step/index";
+import { getStep, saveStep, deleteStep, saveStepBatch } from "@/api/step/index";
 import { getField } from "@/api/superForm/index";
 import { getTemplate } from '@/api/template/index'
 import { getById } from "@/api/item/index";
@@ -585,8 +586,31 @@ export default {
             export default getters`)
             beautify.beautify(this.outputEditor.session)
         },
-
-      
+        async importDefault(){
+            let message = "确认导入7个初始步骤页面吗";
+            if (confirm(message) == true) {
+            // 默认输入
+            const input = [{p_name: "情形选择", c_name:"ApprovalSelectContent"},{p_name: "智能提取材料", c_name:"MaterialExtract"},
+            {p_name: "基本信息确认", c_name:"BaseFormPage"},{p_name: "变更信息录入", c_name:"BusinessFormPage"},{p_name: "经办人信息录入", c_name:"IdCardInfo"},
+            {p_name: "材料预览", c_name:"CommonMaterial"},{p_name: "材料打印", c_name:"LastStep"}];
+            // 默认参数
+            let params = input.map( each => { 
+                let component = this.componentOptions.find(v => v.name == each.c_name)
+                return this.initStepObject({
+                stepTitle: each.p_name,
+                stepComponent: each.c_name,
+                itemName: this.itemName,
+                itemId: this.itemId,
+                stepPageType: component.type,
+                stepObject: {},
+            })
+            })
+            let result = await saveStepBatch(params);
+            if (!result.success) return;
+            this.$message({ type: "success", message: "默认步骤导入成功" });
+            this.loadStep();
+            }
+        },
     }
 };
 </script>

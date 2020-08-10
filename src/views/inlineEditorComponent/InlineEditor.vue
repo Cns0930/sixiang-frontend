@@ -172,10 +172,12 @@ export default {
                 });
             }
             // 数据同步过来
-            this.dialogEditor.setValue(this.monacoEditor.getValue()); 
+            this.dialogEditor.setModel(this.monacoEditor.getModel());
+            // this.dialogEditor.setValue(this.monacoEditor.getValue()); 
         },
         syncCode(done){
-            this.monacoEditor.setValue(this.dialogEditor.getValue());
+            this.monacoEditor.setModel(this.dialogEditor.getModel());
+            // this.monacoEditor.setValue(this.dialogEditor.getValue());
             done();
         },
         async initEditor() {
