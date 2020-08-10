@@ -7,6 +7,7 @@ import Chuzifangshi from "./Chuzifangshi/Chuzifangshi"
 import LayoutComponentMixin from "./LayoutComponentMixin"
 import Jingyingfanwei from "./Jingyingfanwei/Jingyingfanwei"
 import Jingyingqixian from "./Jingyingqixian/Jingyingqixian"
+import QingxingComment from "./QingxingComment/QingxingComment"
 // 选择器
 let ElSelectC = {
     name:"ElSelectC",
@@ -83,5 +84,6 @@ export default {
     TextInputLike,
     Chuzifangshi,
     Jingyingfanwei,
-    Jingyingqixian
+    Jingyingqixian,
+    QingxingComment
 }

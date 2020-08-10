@@ -131,7 +131,53 @@ export let CodeEditor = {
     }
 }
 
-//
+// html代码框
+export let HTMLEditor = {
+    name: "HTMLEditor",
+    props: ["value"],
+    data() {
+        return {
+            open: false,
+            editor: null,
+        }
+    },
+    methods: {
+        async initEditor() {
+            this.open = !this.open;
+            if (this.open) {
+                await this.$nextTick();
+                this.editor = ace.edit(this.$refs.editor);
+                this.editor.setTheme("ace/theme/monokai");
+                this.editor.session.setMode("ace/mode/html");
+                this.editor.setOption("wrap", "free")
+                this.editor.setValue(this.value)
+                beautify.beautify(this.editor.session)
+                this.editor.on('change', (e)=> {
+                
+                   this.emitEvent(this.editor.getValue())
+            
+                });
+            }else{
+                this.editor.destroy();
+            }
+        },
+        emitEvent:_.debounce(function(value){
+            this.$emit("input",value)
+        },300)
+    },
+    render() {
+        return <span>
+            <el-button icon="el-icon-edit" type="primary" onClick={this.initEditor}></el-button>
+
+            
+                <div vShow={this.open} style="height:300px;width:80%" ref="editor"></div>
+            
+
+
+        </span>
+
+    }
+}
 
 
 export default {
@@ -142,5 +188,5 @@ export default {
     InputArray,
     ElSingleCheckboxC,
     CodeEditor,
-    
+    HTMLEditor,
 }
