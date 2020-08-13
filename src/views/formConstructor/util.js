@@ -152,6 +152,18 @@ export function convertDefToConfigEventRuntime(fields, metaName = "meta", childr
         if (mergeObj.meta) {
 
             Object.defineProperty(mergeObj, "value", {
+                set:function(list){
+                    
+                    mergeObj.attributes.children=[];
+                    list.forEach(obj=>{
+                        let child = _.cloneDeep(mergeObj.meta);
+                        Object.keys(obj).forEach(key=>{
+                            
+                            child[key].value = obj[key]
+                        })
+                        mergeObj.attributes.children.push(child)
+                    })
+                },
                 get: function () {
 
                     return mergeObj.attributes.children.map(v => _.mapValues(v, o => o.value))
