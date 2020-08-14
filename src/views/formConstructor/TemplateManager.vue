@@ -241,13 +241,13 @@ export default {
                 itemName: template.template.itemName, // 事项名称
                 htmlContent: "<p>等待编辑</p>", // html的内容
                 templateId: template.template.id, // 所属的父模板的id
-                orient: "row", // 方向
+                orient: "column", // 方向
                 isTable: 0, // 是否表格
                 pageNum: length, // 第几页
                 templateType: "",
                 contentCss: "",
             })
-            this.currentPagenum = length;
+            // this.currentPagenum = length;
         },
         async savePage(page, pageIndex) {
             let res
