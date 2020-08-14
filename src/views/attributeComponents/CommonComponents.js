@@ -35,7 +35,7 @@ class CommonComponents {
         this.validateFn = new Renderer("CodeEditor",`
         // value 是组件对象； value.value 是组件值
         // return {success:false,msg:"验证错误提示"}
-        function(value,state,getters){
+        function(value,state,getters,siblings,parent){
             
         }`,null,"自定义验证方法");
 
