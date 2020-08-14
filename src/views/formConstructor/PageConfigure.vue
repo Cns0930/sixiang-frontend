@@ -7,7 +7,7 @@
             <el-button @click="loadAll">载入页面</el-button>
             <el-button @click="$router.push({path:'/run',query:{itemId}})">运行页面</el-button>
             <el-button @click="output">输出</el-button>
-            
+            <el-button @click="$router.push({path:'/bangbanruning',query:{itemId,barcode}})">超级帮办模拟运行</el-button>barcode<el-input v-model="barcode" style="width:100px"></el-input>
 
         </div>
         <div class="main">
@@ -233,7 +233,8 @@ export default {
             //  output 
             outputDialog: false,
             outputEditor: null,
-            outputContent: ""
+            outputContent: "",
+            barcode:"test",
         };
     },
     computed: {

@@ -8,26 +8,38 @@ import AsyncValidator from 'async-validator';
 export default {
     name: "TestFormItem",
     mixins: [FormItem],
-    props:{
-        obj:{
-            type:Object,
-            default(){
+    props: {
+        obj: {
+            type: Object,
+            default() {
                 return null;
             }
         },
-        valueName:{
-            type:String,
-            default:"value"
+        siblings: {
+            type: Object,
+            default() {
+                return null;
+            }
+        },
+        parent: {
+            type: Array,
+            default() {
+                return null;
+            }
+        },
+        valueName: {
+            type: String,
+            default: "value"
         }
     },
 
     created() {
-     
+
     },
     methods: {
         onFieldBlur(v) {
-            
-            this.validate('blur',v);
+
+            this.validate('blur', v);
         },
         onFieldChange(v) {
             if (this.validateDisabled) {
@@ -35,13 +47,13 @@ export default {
                 return;
             }
 
-            this.validate('change',v);
+            this.validate('change', v);
         },
         validate(trigger, value, callback = () => { }) {
 
             this.validateDisabled = false;
             const rules = this.getFilteredRule(trigger);
-            
+
             if ((!rules || rules.length === 0) && this.required === undefined) {
                 callback();
                 return true;
@@ -60,15 +72,15 @@ export default {
             const validator = new AsyncValidator(descriptor);
             const model = {};
 
-            model[this.prop] =this.obj.ruleKey==="custom"?this.obj:this.obj && this.obj[this.valueName];
-           
+            model[this.prop] = this.obj.ruleKey === "custom" ? {self:this.obj,siblings:this.siblings,parent:this.parent} : this.obj && this.obj[this.valueName];
+
             validator.validate(model, { firstFields: true }, (errors, invalidFields) => {
-                
+
                 this.validateState = !errors ? 'success' : 'error';
                 this.validateMessage = errors ? errors[0].message : '';
-                
+
                 callback(this.validateMessage, invalidFields);
-                this.$emit("itemValidated",{success:!errors})
+                this.$emit("itemValidated", { success: !errors })
                 this.elForm && this.elForm.$emit('validate', this.prop, !errors, this.validateMessage || null);
             });
         },

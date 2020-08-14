@@ -10,9 +10,9 @@
             <!-- <template v-for="(step,index) in stepsData" >
                 <component  v-if="index == active" :is="step.component" :config="step.configType ==1 ? step.config:step.configFn(itemState,itemGetters)" @goNext="goNext" @goPrev="goPrevious" :stepData="step" ref="components"></component>
             </template> -->
-            <component :is="step.component"
+            <component v-if="step" :is="step.component"
                 :config="step.configType ==1 ? step.config:step.configFn(itemState,itemGetters)" @goNext="goNext"
-                @goPrev="goPrevious" :stepData="step" ref="components"></component>
+                @goPrev="goPrevious" :stepData="step" ref="components" :isLastStep="active==stepsData.length-1"></component>
         </div>
         <processing v-if="msg" :msg="msg" />
         <el-dialog :show-close="false" class="message-dialog" title="系统提示" :visible.sync="showValidation" append-to-body
@@ -62,19 +62,26 @@ import IdCardInfo from "./stepPages/IdCardInfo"
 import CommonMaterial from "./stepPages/CommonMaterial"
 import Rules from "@/views/ANew/config/ruleConfig"
 import AsyncValidator from 'async-validator';
-import { CommitSelfRecord } from '@/api/common/index'
+import { CommitSelfRecord,QueryBarcodeApi } from '@/api/ANew/index'
+
 import CommonMixin from "@/views/ANew/CommonMixin"
 import BaseFormPage from "./stepPages/BaseFormPage"
 import BusinessFormPage from "./stepPages/BusinessFormPage"
 import _ from "lodash"
 import store from "@/vuex/store"
+
 export default {
     name: "Home",
     mixins: [HomeParent, CommonMixin],
     provide() {
         return {
-            itemState: this.itemState,
-            itemGetters: this.itemGetters,
+            $itemState: ()=>{
+                return this.itemState
+            },
+
+            $itemGetters:()=>{
+                return this.itemGetters
+            },
 
         }
     },
@@ -84,12 +91,12 @@ export default {
             stepPagesMap,
         }
     },
-    beforeRouteEnter(to, from, next) {
-        console.log(_,store)
-        if (_.isEmpty(store.state.home.barcodeInfo)) {
-            console.log(1212)
-            next("/")
+    async beforeRouteEnter(to, from, next) {
+        let result = await QueryBarcodeApi({ barcode: to.query.barcode.trim() })
+        console.log(result)
 
+        if (_.isEmpty(store.state.home.barcodeInfo)) {
+            next("/home")
         }
         next()
 
@@ -115,6 +122,7 @@ export default {
             return stepPagesMap[this.sid] || [];
         },
         step() {
+            
             return this.stepsData[this.active]
         },
         globalState() {
@@ -137,6 +145,13 @@ export default {
 
             //     await this.$refs.components[nextActive].beforeEnter();
             // }
+          
+            let nextStep = this.stepsData[nextActive]
+            let beforeEnterFn = nextStep.beforeEnterFn;
+            if(beforeEnterFn){
+                beforeEnterFn(this.itemState,this.itemGetters)
+            }
+
             if (this.stepsData[this.active + 1].component == "LastStep") {
 
                 let result = await this.msgBox("是否确认生成文档");
@@ -150,8 +165,8 @@ export default {
         async commitDataConfirm() {
             this.showCommitDialog = false
 
-            let sub = this.itemState.fact1.value
-            sub = typeof sub != "array" ? [sub] : sub
+            let sub = this.itemState.fact1?this.itemState.fact1.value:""
+            sub =Object.prototype.toString.call(sub) != "[object Array]"? [sub] : sub
 
             let selfServiceRecordId = this.$store.state.home.currentSelfServiceRecordId;
 

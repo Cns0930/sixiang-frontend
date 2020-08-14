@@ -11,6 +11,7 @@ import MaterialManager from "@/views/formConstructor/MaterialManager"
 import Run from "@/views/formConstructor/Run"
 import ItemManager from "@/views/formConstructor/ItemManager"
 import Login from "@/views/login/Login"
+import BangbanRuning from "@/views/ANew/Home"
 Vue.use(VueRouter)
 
 const routes = [
@@ -63,6 +64,11 @@ const routes = [
                 path:"/",
                 name:"itemManeger",
                 component:ItemManager
+            },
+            {
+                path:"bangbanruning",
+                name:"bangbanRuning",
+                component:BangbanRuning
             }
 
         ]

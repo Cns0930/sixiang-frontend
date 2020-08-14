@@ -17,7 +17,7 @@
 </template>
 
 <script>
-    import defaultImg from '../assets/png/card-icon.png'
+    import defaultImg from '@/assets/png/card-icon.png'
 
     export default {
         name: 'ContentCard',
@@ -40,7 +40,7 @@
     .content-card-home {
         height: calc(100% - 96px);
         z-index: -100;
-        background: rgba(2,83,141,0.68);
+        background:rgba(6,59 ,152 , 0.7);
         border: 2px solid #00CC9E;
         border-radius: 20px;
         overflow: hidden;
@@ -85,7 +85,7 @@
             align-items: center;
 
             .text {
-                background-image: url("../assets/svg/txt.svg");
+                background-image: url("~@/assets/svg/txt.svg");
                 background-repeat: no-repeat;
                 background-size: contain;
                 padding-left: 25px;

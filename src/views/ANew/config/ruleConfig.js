@@ -47,14 +47,12 @@ const validateEmpty = (rule, value, callback)=>{
         callback();
     }
 }
-export const rulesList = ["none",'required','phone','postCode','idCardNum','mail','cardNum',"custom"]
 export default class  {
     constructor(state,getters){
         
-         const validateCustom = (rule, customParams, callback)=>{
-             
-             let {self,siblings,parent} = customParams;
-            let result = self.validateFn(self,state,getters,siblings,parent)
+         const validateCustom = (rule, value, callback)=>{
+            
+            let result = value.validateFn(value,state,getters)
             if(result.success){
                 callback();
             }else{
