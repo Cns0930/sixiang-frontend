@@ -1,15 +1,15 @@
 <template>
     <el-col :span="24" style="position:relative">
-        <div class="sub-title-n">
+        <div class="sub-title-n" v-if="title">
             <div class="tag"></div>
-            <span class="text" v-if="title">{{title}}</span>
-            <el-button @click="handleAdd" class="side" icon="el-icon-plus" :style="addBtnStyle">添加</el-button>
+            <span class="text" >{{title}}</span>
+            <el-button @click="handleAdd" class="side" icon="el-icon-plus" :style="addBtnStyle" v-if="!isLengthFixed">添加</el-button>
         </div>
 
-        <el-divider></el-divider>
+        <!-- <el-divider></el-divider> -->
         <template v-for="(list,index) in children">
             <el-col :span="24"></el-col>
-            <el-col :style="removeBtnStyle" class="position">
+            <el-col :style="removeBtnStyle" class="position" v-if="!isLengthFixed">
                 <div class="remove-btn remove-btn-position" @click="handleRemove(index)">
                     <span class="minus"></span>
                 </div>
@@ -37,7 +37,7 @@ export default {
     name: "Collection",
     mixins: [CommonMixin],
     components: { PureComponents, },
-    props: ['value', 'children', 'meta', "removeBtnStyle", "addBtnStyle", "title"],
+    props: ['value', 'children', 'meta', "removeBtnStyle", "addBtnStyle", "title","isLengthFixed"],
     data() {
         return {
 
