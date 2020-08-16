@@ -11,7 +11,7 @@ class Collection {
         this.title = new Renderer('ElInput', '')
         this.addBtnStyle=new Renderer('ElInput', '')
         this.removeBtnStyle = new Renderer('ElInput', '')
-        this.isLengthFixed = new Renderer('ElSingleCheckboxC', false,{options:[true]},"是否固定元素")
+        this.isLengthFixed = new Renderer('ElSingleCheckboxC', false,{options:[true]},"不可添加/删除")
     }
     getAttributes(meta){
         
