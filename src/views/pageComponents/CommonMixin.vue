@@ -13,7 +13,7 @@ export default {
     name: "CommonMixin",
     data() {
         return {
-            rules:{},
+            rules: {},
             itemGetters: {}
         }
     },
@@ -47,13 +47,32 @@ export default {
                 }, {})
                 this.itemGetters = {}
                 Object.defineProperties(this.itemGetters, props)
-               
+
+                _.forEach(this.itemState, function (value, key) {
+                    if (value.meta) {
+                        value.attributes.children.forEach(child => {
+
+                            Object.values(child).forEach(comp => {
+
+                                if (comp.type == "computedText") {
+
+                                    Object.defineProperty(comp, "value", {
+                                        get: comp.getter.bind(null, comp, that.itemState, that.itemGetters, child, value.attributes.children)
+                                    })
+
+                                }
+                            })
+                        })
+
+
+                    }
+                })
             },
             immediate: true
         }
     },
-    created(){
-        this.rules = new Rules(this.itemState,this.itemGetters).rules
+    created() {
+        this.rules = new Rules(this.itemState, this.itemGetters).rules
     },
     methods: {
         async goNext() {

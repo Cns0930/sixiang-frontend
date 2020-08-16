@@ -18,9 +18,10 @@ import AutocompleteDef from "./AutocompleteDef"
 import CascaderDef from "./CascaderDef"
 import RegionCascaderDef from "./RegionCascaderDef"
 import QingxingCommentDef from "./QingxingCommentDef"
-
+import ComputedTextDef from "./ComputedTextDef"
 let mapping = [
     {label:"文本",value:"text",componentDef:TextInputLikeDef,isList:false},
+    {label:"文本计算值",value:"computedText",componentDef:ComputedTextDef,isList:false},
     {label:"输入框",value:"input",componentDef:InputDef,isList:false},
     {label:"输入框带建议",value:"autocomplete",componentDef:AutocompleteDef,isList:false},
     {label:"输入框组",value:"inputList",componentDef:InputListDef,isList:false},

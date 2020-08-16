@@ -5,6 +5,7 @@ class TextInputLikeDef extends CommonComponents{
         super({type:"text"})
         this.component = rendererBuilder("text","TextInputLike")
         this.value = new Renderer("ElInput","")
+        
     }
 }
 

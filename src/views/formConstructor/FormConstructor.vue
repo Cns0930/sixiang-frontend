@@ -2,22 +2,21 @@
     <div class="form-constructor">
         <div class="op-bar">
             <div class="left-bar">
-            <el-button @click="handleAddBaseField">创建字段模型</el-button>
-            <el-button @click="handleAddComputedField">创建合成字段模型</el-button>
+                <el-button @click="handleAddBaseField">创建字段模型</el-button>
+                <el-button @click="handleAddComputedField">创建合成字段模型</el-button>
 
-            <!-- <el-button @click="$router.push('/templatemanager')"> -> 模板管理</el-button> -->
+                <!-- <el-button @click="$router.push('/templatemanager')"> -> 模板管理</el-button> -->
 
-            <el-button @click="load">载入字段</el-button>
-            <el-button @click="handlePreview">预览全字段</el-button>
+                <el-button @click="load">载入字段</el-button>
+                <el-button @click="handlePreview">预览全字段</el-button>
             </div>
 
             <div class="right-bar">
-            <el-button :disabled="itemId==-1" @click="handleImportPublic">导入全部公共字段</el-button>
-            <el-button :disabled="itemId==-1" @click="handleManagePublic">管理公共字段</el-button>
+                <el-button :disabled="itemId==-1" @click="handleImportPublic">导入全部公共字段</el-button>
+                <el-button :disabled="itemId==-1" @click="handleManagePublic">管理公共字段</el-button>
             </div>
 
         </div>
-        
 
         <div class="main">
             <!-- 字段表格 -->
@@ -37,7 +36,8 @@
                     <el-table-column fixed="right" label="操作" width="250">
                         <template slot-scope="scope">
                             <el-button @click="handleClickField(scope.row);" type="text" size="small"> 编辑</el-button>
-                            <el-button @click="handleClickChangeType(scope);" type="text" size="small">更改组件类型</el-button>
+                            <el-button @click="handleClickChangeType(scope);" type="text" size="small">更改组件类型
+                            </el-button>
                             <el-button @click="handleClickAddChild(scope.row);" type="text" size="small"
                                 :disabled="!scope.row.isList">添加子项
                             </el-button>
@@ -51,7 +51,7 @@
         <!-- 编辑 -->
         <el-dialog title="字段组件属性填写" :visible.sync="editDialogVisible" width="80%" :close-on-click-modal="false">
             <div class="attribute-content">
-                <div  v-if="temp_fieldObj">
+                <div v-if="temp_fieldObj">
                     <div class="attribute">
                         <span class="attribute-key">fieldNo</span>
                         <el-input v-model="temp_fieldObj.fieldNo"></el-input>
@@ -62,9 +62,9 @@
                         <el-input v-model="temp_fieldObj.label"></el-input>
                     </div>
                     <div class="attribute" v-for="(v,i) in temp_fieldObj.componentDefs" :key="i">
-                        <span  class="attribute-key">{{v.label || i}} </span>
-                        <component class="attribute-value" :is="v.renderTemplateName" v-model="v.value" v-bind="v.attributes"
-                            :key="temp_fieldObj.fieldNo+v.renderTemplateName"></component>
+                        <span class="attribute-key">{{v.label || i}} </span>
+                        <component class="attribute-value" :is="v.renderTemplateName" v-model="v.value"
+                            v-bind="v.attributes" :key="temp_fieldObj.fieldNo+v.renderTemplateName"></component>
                     </div>
                 </div>
             </div>
@@ -155,7 +155,7 @@ import { mapState } from "vuex";
 import _ from "lodash";
 import defRenderers from "@/views/attributeComponents/defRendererComponents/index";
 import { save, getField, saveOne, deleteOne, forkPublicFields } from "@/api/superForm/index";
-import { functionReviverEventRuntime ,convertDefToConfigEventRuntime } from "./util"
+import { functionReviverEventRuntime, convertDefToConfigEventRuntime, functionReviverRuntime } from "./util"
 import { log } from 'handlebars';
 import { mixin } from "@/mixin/mixin"
 export default {
@@ -234,7 +234,7 @@ export default {
                 fieldType: 3,
                 componentDefs: new ComponentDefClass()
             };
-            
+
             let param = {
                 fieldNo: v.fieldNo,
                 label: v.label,
@@ -245,7 +245,7 @@ export default {
                 object: v,
                 parentId: this.temp_parent.id
             }
-            
+
 
 
 
@@ -264,10 +264,10 @@ export default {
         },
         //  确定 改变类型
         async changeTypeConfirm() {
-             let def =defs.find(v => v.value == this.temp_change_type);
-           let ComponentDefClass =def.componentDef
+            let def = defs.find(v => v.value == this.temp_change_type);
+            let ComponentDefClass = def.componentDef
             let isList = !!def.isList;
-           
+
             // 不可修改类型时给出提示
             if (this.temp_change_type == "computed") {
                 if (this.temp_fieldObj.children != null || this.temp_fieldObj.fieldType == 3) {
@@ -302,10 +302,10 @@ export default {
         },
         // 确定添加字段
         async addFieldConfirm() {
-            let def =defs.find(v => v.value == this.temp_type);
+            let def = defs.find(v => v.value == this.temp_type);
 
-            let ComponentDefClass =def.componentDef
-            let fieldType = this.temp_type=="computed"?2:1;
+            let ComponentDefClass = def.componentDef
+            let fieldType = this.temp_type == "computed" ? 2 : 1;
             let isList = !!def.isList;
 
             let v = {
@@ -325,7 +325,7 @@ export default {
                 itemId: this.itemId,
                 fieldType,
                 object: v,
-                
+
             }
             console.log("===param===")
             console.log(param)
@@ -415,14 +415,39 @@ export default {
         //  预览
         handlePreview() {
             let module = {
+                namespaced:true,
                 state: {},
                 getters: {}
             };
-            module.state =convertDefToConfigEventRuntime(this.baseFields,"meta") ;
+            let itemState= convertDefToConfigEventRuntime(this.baseFields, "meta");
+           
+
+            module.state=itemState;
+
+
+
+            let itemGetters = this.computedFields.reduce((result, item) => {
+                // let attrObj = _.mapValues(item.componentDefs, (o) => this.parseFunction(o.value));
+                if (!item.componentDefs.getter) {
+                    console.log(item.componentDefs)
+                }
+                result[item.fieldNo] = functionReviverRuntime(item.componentDefs.getter.value, item.fieldNo);
+
+                return result;
+            }, {});
+           
+            module.getters = itemGetters
+            let gettersList = Object.keys(itemGetters)
+            this.$store.commit("putGettersList", gettersList)
             if (this.$store.hasModule("run")) {
                 this.$store.unregisterModule("run");
             }
+
             this.$store.registerModule("run", module);
+             
+             // 对state中的计算属性进行处理
+            
+
             this.$router.push("/preview");
         },
         // 单个保存
@@ -451,7 +476,7 @@ export default {
             if (!result.success) return;
 
             let tableData = result.data.map(v => ({ id: v.id, fieldType: v.fieldType, children: v.children, ...v.object })).map(deserializeTableData);
-         
+
             this.$store.commit(
                 "putTableData",
                 tableData
@@ -459,12 +484,12 @@ export default {
             this.$store.commit(
                 "putBaseFields",
                 tableData.filter(v => v.fieldType == 1)
-                    
+
             );
             this.$store.commit(
                 "putComputedFields",
                 tableData.filter(v => v.fieldType == 2)
-                    
+
             );
         },
         formatFieldType(row, column, cellValue, index) {
@@ -476,19 +501,19 @@ export default {
             }
             return "其他"
         },
-        async handleImportPublic(){
+        async handleImportPublic() {
             let message = "确认导入吗？\n提示：\n1.已存在的字段不会被覆盖 \n2.导入后如公共字段有修改，不会自动更新";
             if (confirm(message) == true) {
-                let result = await forkPublicFields({itemId: this.itemId, itemName: this.itemName})
-                if(result.success){
-                    this.$message({ type: "success", message: "导入成功！新增"+result.data+"条数据" });
+                let result = await forkPublicFields({ itemId: this.itemId, itemName: this.itemName })
+                if (result.success) {
+                    this.$message({ type: "success", message: "导入成功！新增" + result.data + "条数据" });
                     this.load();
-                }else{
+                } else {
                     this.$message({ type: "warning", message: "导入失败，请查看错误信息或联系管理员" });
                 }
             }
         },
-        handleManagePublic(){
+        handleManagePublic() {
             window.open('#/formconstructor?itemId=-1', '_blank')
         }
     }
@@ -499,7 +524,7 @@ export default {
 .form-constructor {
     display: flex;
     flex-direction: column;
-    .op-bar{
+    .op-bar {
         display: inline-flex;
         justify-content: space-between;
     }
@@ -529,21 +554,17 @@ export default {
     height: 100%;
 }
 .attribute-content {
-    
     .attribute {
         margin: 4px 0;
-        display:flex;
-        align-items:center;
-        .attribute-key{
-           
-            width:200px;
-            text-align:right;
-            padding-right:30px;
-
+        display: flex;
+        align-items: center;
+        .attribute-key {
+            width: 200px;
+            text-align: right;
+            padding-right: 30px;
         }
-        .attribute-value{
-            
-             flex:1
+        .attribute-value {
+            flex: 1;
         }
     }
 }

@@ -2,27 +2,28 @@
     <el-col :span="24" style="position:relative">
         <div class="sub-title-n">
             <div class="tag"></div>
-            <span class="text"  v-if="title">{{title}}</span>
-            <el-button @click="handleAdd"  class="side" icon="el-icon-plus" :style="addBtnStyle">添加</el-button>
+            <span class="text" v-if="title">{{title}}</span>
+            <el-button @click="handleAdd" class="side" icon="el-icon-plus" :style="addBtnStyle">添加</el-button>
         </div>
-        
+
         <el-divider></el-divider>
         <template v-for="(list,index) in children">
             <el-col :span="24"></el-col>
             <el-col :style="removeBtnStyle" class="position">
-                <div class="remove-btn remove-btn-position"  @click="handleRemove(index)">
-                        <span class="minus"></span>
-                    </div>
+                <div class="remove-btn remove-btn-position" @click="handleRemove(index)">
+                    <span class="minus"></span>
+                </div>
 
                 <!-- <el-button @click="handleRemove(index)" class="side "  icon="el-icon-minus">删除</el-button> -->
             </el-col>
+            
             <PureComponents :fields="list" :parent="children"></PureComponents>
             <el-col>
                 <el-divider></el-divider>
             </el-col>
-            
+
         </template>
-        
+
     </el-col>
 </template>
 
@@ -36,7 +37,7 @@ export default {
     name: "Collection",
     mixins: [CommonMixin],
     components: { PureComponents, },
-    props: ['value', 'children', 'meta', "removeBtnStyle", "addBtnStyle","title"],
+    props: ['value', 'children', 'meta', "removeBtnStyle", "addBtnStyle", "title"],
     data() {
         return {
 
@@ -44,7 +45,20 @@ export default {
     },
     methods: {
         handleAdd() {
-            this.children.push(_.cloneDeep(this.meta))
+            
+            let newChild = _.cloneDeep(this.meta);
+            Object.values(newChild).forEach(comp => {
+
+                if (comp.type == "computedText") {
+
+                    Object.defineProperty(comp, "value", {
+                        get: comp.getter.bind(null, comp, this.itemState, this.itemGetters, newChild, this.children)
+                    })
+
+                }
+            })
+
+            this.children.push(newChild)
         },
         handleRemove(i) {
             this.children.splice(i, 1)
@@ -54,10 +68,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.position{
-    position:relative;
-    top:0px;
-    left:0px;
+.position {
+    position: relative;
+    top: 0px;
+    left: 0px;
 }
 .remove-btn {
     position: absolute;

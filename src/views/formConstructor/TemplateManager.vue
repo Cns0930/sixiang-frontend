@@ -146,7 +146,7 @@ import inlineEditor from "@/views/inlineEditorComponent/InlineEditor"
 
 import {mixin} from "@/mixin/mixin"
 import {CodeEditor} from "@/views/attributeComponents/defRendererComponents/defRendererComponents"
-console.log(CodeEditor)
+
 export default {
     name: "TemplateManager",
     components: {

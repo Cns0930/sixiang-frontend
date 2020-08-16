@@ -1,5 +1,6 @@
 import _ from "lodash"
 import dayjs from "dayjs"
+import state from "@/vuex/home/state";
 
 export const mergeFieldAttr = (result, item) => {
     let attrObj = _.mapValues(item.componentDefs, (o) => o.value);
@@ -92,7 +93,7 @@ export function functionReviverRuntime(value, tag) {
     }
     return value;
 }
-// 事件方法 string -> function  ——预览
+// 事件方法 string -> function  ——预览 onchange, 以及validateFn 用这个
 export function functionReviverEventRuntime(value, tag) {
 
     if (typeof value === 'string') {
@@ -124,9 +125,10 @@ export function functionReviverEventRuntime(value, tag) {
 }
 
 
+
 // 将 定义def对象转为配置对象
-export function convertDefToConfigEventRuntime(fields, metaName = "meta", childrenName = "children") {
-    return fields.reduce((result, item) => {
+export function convertDefToConfigEventRuntime(fields, metaName = "meta", childrenName = "children",) {
+    let state= fields.reduce((result, item) => {
 
         let attrObj = _.mapValues(item.componentDefs, function (o, key) {
             if (key == metaName) {
@@ -134,6 +136,7 @@ export function convertDefToConfigEventRuntime(fields, metaName = "meta", childr
 
                 return convertResult
             }
+
             return functionReviverEventRuntime(o.value, item.fieldNo,key)
         });
 
@@ -149,33 +152,54 @@ export function convertDefToConfigEventRuntime(fields, metaName = "meta", childr
             }
         );
 
-        if (mergeObj.meta) {
-
-            Object.defineProperty(mergeObj, "value", {
-                set:function(list){
+        // if (mergeObj.meta) {
+        //     mergeObj.attributes.children.forEach(child=>{
+               
+        //         Object.values(child).forEach(comp=>{
                     
-                    mergeObj.attributes.children=[];
-                    list.forEach(obj=>{
-                        let child = _.cloneDeep(mergeObj.meta);
-                        Object.keys(obj).forEach(key=>{
-                            
-                            child[key].value = obj[key]
-                        })
-                        mergeObj.attributes.children.push(child)
-                    })
-                },
-                get: function () {
-
-                    return mergeObj.attributes.children.map(v => _.mapValues(v, o => o.value))
-                },
-            })
-        }
+        //             if(comp.type=="computedText"){
+        //                 console.log(comp)
+        //                 Object.defineProperty(comp,"value",{
+        //                     get:comp.getter.bind(null,mergeObj.attributes.children)
+        //                 })
+                        
+        //             }
+        //         })
+        //     })
+            
+        // }
 
 
         result[item.fieldNo] = mergeObj;
         return result;
     }, {});
+    // 对state中的计算属性进行处理
+    _.forEach(state, function(value, key) {
+        if (value.meta) {
 
+            
+
+            Object.defineProperty(value, "value", {
+                set:function(list){
+                    
+                    value.attributes.children=[];
+                    list.forEach(obj=>{
+                        let child = _.cloneDeep(value.meta);
+                        Object.keys(obj).forEach(key=>{
+                            child[key].value = obj[key]
+                        })
+                        value.attributes.children.push(child)
+                    })
+                },
+                get: function () {
+                    return value.attributes.children.map(v => _.mapValues(v, o => o.value))
+                },
+            })
+        }
+
+    })
+
+    return state;
 }
 
 // 将 定义def对象转为配置对象 ——输出
