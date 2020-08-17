@@ -49,7 +49,7 @@
         </div>
 
         <!-- 编辑 -->
-        <el-dialog title="字段组件属性填写" :visible.sync="editDialogVisible" width="80%" :close-on-click-modal="false">
+        <el-dialog title="字段组件属性填写" :visible.sync="editDialogVisible" width="80%" :close-on-click-modal="false" >
             <div class="attribute-content">
                 <div v-if="temp_fieldObj">
                     <div class="attribute">
@@ -154,7 +154,7 @@ import { getById } from "@/api/item/index";
 import { mapState } from "vuex";
 import _ from "lodash";
 import defRenderers from "@/views/attributeComponents/defRendererComponents/index";
-import { save, getField, saveOne, deleteOne, forkPublicFields } from "@/api/superForm/index";
+import { save, getField, saveOne, deleteOne, forkPublicFields,getFieldById } from "@/api/superForm/index";
 import { functionReviverEventRuntime, convertDefToConfigEventRuntime, functionReviverRuntime } from "./util"
 import { log } from 'handlebars';
 import { mixin } from "@/mixin/mixin"
@@ -372,8 +372,14 @@ export default {
             this.dialogComputedVisible = false;
         },
         // 点击 fieldNo
-        handleClickField(fieldObj) {
-            this.temp_fieldObj = _.cloneDeep(fieldObj);
+        async handleClickField(fieldObj) {
+            console.log(fieldObj);
+            let result = await getFieldById({id:fieldObj.id});
+            console.log(result)
+            if(!result.success) return;
+
+            let newFieldObj = deserializeTableData({ id: result.data.id, fieldType:  result.data.fieldType, children:  result.data.children, ... result.data.object }); 
+            this.temp_fieldObj = newFieldObj;
             delete this.temp_fieldObj.list;
             this.editDialogVisible = true;
         },
@@ -522,6 +528,9 @@ export default {
 
 <style scoped lang="scss">
 .form-constructor {
+    ::v-deep .el-dialog{
+        margin:0 30px 50px auto;
+    }
     display: flex;
     flex-direction: column;
     .op-bar {

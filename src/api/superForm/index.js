@@ -14,3 +14,6 @@ export const deleteOne = params => axios.post('/superform/fields/deleteOne', par
 
 // 导入公共字段
 export const forkPublicFields = params => axios.post('/superform/fields/forkPublicFields', params).then(res => res.data);
+
+// 根据id 获取字段
+export const getFieldById = params => axios.get('/superform/fields/getById', {params}).then(res => res.data);
