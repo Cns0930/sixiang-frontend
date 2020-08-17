@@ -57,6 +57,9 @@ export default {
             test:""
         }
     },
+    created(){
+        this.stepData.afterEnterFn();
+    },
     computed: {
 
         fields() {

@@ -95,8 +95,13 @@
                 <el-checkbox label="启用" v-model="temp_page.stepObject.useBeforeEnter" @change="handleUseBeforeEnter"></el-checkbox>
                 <!-- 代码框 -->
                 <div v-show="!!temp_page.stepObject.useBeforeEnter" class="ace-container" ref="beforeEnterEdit"
-                    style="width:100%;height:500px"></div>
-
+                    style="width:100%;height:300px"></div>
+                <el-divider></el-divider>
+                <h3>afterEnter: </h3>
+                <el-checkbox label="启用" v-model="temp_page.stepObject.useAfterEnter" @change="handleUseAfterEnter"></el-checkbox>
+                <!-- 代码框 -->
+                <div v-show="!!temp_page.stepObject.useAfterEnter" class="ace-container" ref="afterEnterEdit"
+                    style="width:100%;height:300px"></div>
                     
                 
 
@@ -230,6 +235,11 @@ export default {
             defaultBeforeEnter:`function beforeEnter(state,getters){
 
             }`,
+            //  afterEnter 的ace 编辑器
+            aceForAfterEnter:null,
+            defaultAfterEnter:`function afterEnter(state,getters){
+
+            }`,
             //  output 
             outputDialog: false,
             outputEditor: null,
@@ -324,21 +334,31 @@ export default {
         // 选中 某个页面
         async handleClickPage(page) {
             if (this.aceForConfig) {
+               
                 this.aceForConfig.destroy();
             }
             if(this.aceForBeforeEnter){
-                this.aceForBeforeEnter.destroy();
+               
+                // this.aceForBeforeEnter.destroy();
                 this.aceForBeforeEnter=null;
             }
+            if(this.aceForAfterEnter){
+                
+                // this.aceForAfterEnter.destory();
+                this.aceForAfterEnter=null;
+            }
             this.temp_page = page;
-            console.log(this.temp_page.stepObject.useBeforeEnter)
-            // if(this.temp_page.stepObject.configType == 2){
+          
+           
             await this.$nextTick();
             this.initEditForConfig();
             if(this.temp_page.stepObject.useBeforeEnter){
                 this.initEditForBeforeEnter();
             }
-            // }
+            if(this.temp_page.stepObject.useAfterEnter){
+                this.initEditForAfterEnter();
+            }
+            
         },
         //切换配置类型
         async handleSwitchConfigType(data) {
@@ -368,6 +388,18 @@ export default {
             }
 
         },
+        async handleUseAfterEnter(v){
+            if(v){
+                
+                await this.$nextTick();
+                this.initEditForAfterEnter();
+            }else{
+               
+                this.aceForAfterEnter.destroy();
+                this.aceForAfterEnter=null;
+            }
+
+        },
         // 初始化 beforeEnter编辑器
         async initEditForBeforeEnter(){
            
@@ -377,6 +409,17 @@ export default {
                 this.aceForBeforeEnter.setOption("wrap", "free")
                 this.aceForBeforeEnter.setValue(this.temp_page.stepObject.beforeEnterFn || this.defaultBeforeEnter)
                 beautify.beautify(this.aceForBeforeEnter.session)
+
+        },
+        // 初始化 afterEnter编辑器
+        async initEditForAfterEnter(){
+           
+            this.aceForAfterEnter =  ace.edit(this.$refs.afterEnterEdit);
+            this.aceForAfterEnter.setTheme("ace/theme/monokai");
+            this.aceForAfterEnter.session.setMode("ace/mode/javascript");
+            this.aceForAfterEnter.setOption("wrap", "free")
+            this.aceForAfterEnter.setValue(this.temp_page.stepObject.afterEnterFn || this.defaultAfterEnter)
+            beautify.beautify(this.aceForAfterEnter.session)
 
         },
         // 选择某个字段
@@ -398,6 +441,7 @@ export default {
         async save() {
             this.temp_page.stepObject.configFn = this.aceForConfig.getValue();
             this.temp_page.stepObject.beforeEnterFn = this.aceForBeforeEnter && this.aceForBeforeEnter.getValue();
+            this.temp_page.stepObject.afterEnterFn = this.aceForAfterEnter && this.aceForAfterEnter.getValue();
             let data = {
                 id: this.temp_page.id,
                 stepTitle: this.temp_page.stepTitle,
@@ -406,7 +450,9 @@ export default {
 
                 stepObject: this.temp_page.stepObject,
                 beforeEnterFn:this.temp_page.stepObject.beforeEnterFn,
-                useBeforeEnter:!!this.temp_page.stepObject.useBeforeEnter
+                useBeforeEnter:!!this.temp_page.stepObject.useBeforeEnter,
+                afterEnterFn:this.temp_page.stepObject.afterEnterFn,
+                useAfterEnter:!!this.temp_page.stepObject.useAfterEnter,
             };
             let result = await saveStep(data);
             if (!result.success) return;
@@ -507,6 +553,9 @@ export default {
                 }
                 if(v.stepObject.useBeforeEnter){
                     v.stepObject.beforeEnterFn = eval(`(${v.stepObject.beforeEnterFn})`)
+                }
+                if(v.stepObject.useAfterEnter){
+                    v.stepObject.afterEnterFn = eval(`(${v.stepObject.afterEnterFn})`)
                 }
                 return { ...v.stepObject, stepPagenum: v.stepPagenum }
             }).sort((a, b) => a.stepPagenum - b.stepPagenum)

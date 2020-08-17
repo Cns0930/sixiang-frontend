@@ -99,6 +99,9 @@ export default {
              if(v.stepObject.useBeforeEnter){
                     v.stepObject.beforeEnterFn = eval(`(${v.stepObject.beforeEnterFn})`)
                 }
+            if(v.stepObject.useAfterEnter){
+                v.stepObject.afterEnterFn = eval(`(${v.stepObject.afterEnterFn})`)
+            }
                
             return { ...v.stepObject, stepPagenum: v.stepPagenum }
         }).sort((a, b) => a.stepPagenum - b.stepPagenum)
@@ -136,6 +139,9 @@ export default {
 
 
         this.$store.commit("putTemplateList", result[2].data)
+
+
+
     },
     methods: {
         async init() {

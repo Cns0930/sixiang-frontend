@@ -11,6 +11,7 @@ import Rules from "@/utils/ruleConfig"
 
 export default {
     name: "CommonMixin",
+    props:['stepData'],
     data() {
         return {
             rules: {},
