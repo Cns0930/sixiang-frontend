@@ -12,6 +12,7 @@ class Collection {
         this.addBtnStyle=new Renderer('ElInput', '')
         this.removeBtnStyle = new Renderer('ElInput', '')
         this.isLengthFixed = new Renderer('ElSingleCheckboxC', false,{options:[true]},"不可添加/删除")
+        this.hidden = new Renderer('ElSingleCheckboxC', false,{options:[true]},"是否隐藏")
     }
     getAttributes(meta){
         

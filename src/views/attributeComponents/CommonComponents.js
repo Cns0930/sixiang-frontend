@@ -34,6 +34,8 @@ class CommonComponents {
         this.ruleKey = new Renderer("ElSelectC","required",{options:rulesList},"验证方式")
         this.validateFn = new Renderer("CodeEditor",`
         // value 是组件对象； value.value 是组件值
+        // helper.CheckSocialCreditCode(code) 判断是否统一社会信用代码
+        // helper.IdentityCodeValid(code) 判断是否身份证
         // return {success:false,msg:"验证错误提示"}
         function(value,state,getters,siblings,parent){
             

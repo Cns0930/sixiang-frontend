@@ -46,3 +46,9 @@ export function IdentityCodeValid(str) {
         return true;
     }
 }
+
+export default {
+    CheckSocialCreditCode,
+    IdentityCodeValid,
+    
+}

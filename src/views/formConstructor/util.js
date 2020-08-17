@@ -1,6 +1,8 @@
 import _ from "lodash"
 import dayjs from "dayjs"
 import state from "@/vuex/home/state";
+import helper from "@/utils/function"
+
 
 export const mergeFieldAttr = (result, item) => {
     let attrObj = _.mapValues(item.componentDefs, (o) => o.value);
@@ -76,8 +78,6 @@ export function functionReviverRuntime(value, tag) {
            
             with(this){
                 try{
-                    
-                    
                     ${match[1]}
                 }catch(e){
                     console.warn("错误",'${tag}')
@@ -87,7 +87,8 @@ export function functionReviverRuntime(value, tag) {
                 
                 }`).bind({
                 _,
-                dayjs
+                dayjs,
+                helper
             });
         }
     }
@@ -117,7 +118,8 @@ export function functionReviverEventRuntime(value, tag) {
                 
                 }`).bind({
                 _,
-                dayjs
+                dayjs,
+                helper
             });
         }
     }
