@@ -58,7 +58,10 @@ export default {
         }
     },
     created(){
-        this.stepData.afterEnterFn();
+        
+        if(this.stepData.useAfterEnter){
+            this.stepData.afterEnterFn(this.itemState,this.itemGetters)
+        }
     },
     computed: {
 
