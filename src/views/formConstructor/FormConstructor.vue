@@ -380,6 +380,7 @@ export default {
 
             let newFieldObj = deserializeTableData({ id: result.data.id, fieldType:  result.data.fieldType, children:  result.data.children, ... result.data.object }); 
             this.temp_fieldObj = newFieldObj;
+            console.log(newFieldObj)
             delete this.temp_fieldObj.list;
             this.editDialogVisible = true;
         },

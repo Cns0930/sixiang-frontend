@@ -126,6 +126,12 @@ export function deserializeTableData(fieldJSON){
     if(fieldJSON.fieldType == 2){
         return deserializeComputedField(fieldJSON)
     }
+    if(fieldJSON.fieldType == 3){
+        return deserializeBaseField(fieldJSON)
+    }
 }
+
+
+
 
 export default mapping
