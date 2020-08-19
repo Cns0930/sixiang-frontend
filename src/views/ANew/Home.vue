@@ -51,10 +51,14 @@
 </template>
 
 <script>
-import HomeParent from "../Home"
+// img
+import stepIcon from '@/assets/png/step-icon.png'
+// api
+import { getStep, } from "@/api/step/index";
+// 组件
 import LeftSteper from './LeftSteper'
 import { mapState, mapGetters } from "vuex"
-import stepPagesMap from "./config/stepPagesMap"
+// import stepPagesMap from "./config/stepPagesMap"
 import ApprovalSelectContent from "./stepPages/ApprovalSelectContent"
 import MaterialExtract from "./stepPages/MaterialExtract"
 import FormPage from "./stepPages/FormPage"
@@ -72,7 +76,7 @@ import store from "@/vuex/store"
 
 export default {
     name: "Home",
-    mixins: [HomeParent, CommonMixin],
+    mixins: [ CommonMixin],
     provide() {
         return {
             $itemState: ()=>{
@@ -89,18 +93,10 @@ export default {
         return {
             rules: {},
             stepPagesMap,
+            active:0,
         }
     },
-    async beforeRouteEnter(to, from, next) {
-        let result = await QueryBarcodeApi({ barcode: to.query.barcode.trim() })
-        console.log(result)
-
-        if (_.isEmpty(store.state.home.barcodeInfo)) {
-            next("/home")
-        }
-        next()
-
-    },
+    
     created() {
         // if (this.$route.params.item) {
         //     this.$store.commit("putItem", this.$route.params.item)
@@ -111,7 +107,7 @@ export default {
     components: { LeftSteper, ApprovalSelectContent, MaterialExtract, FormPage, IdCardInfo, CommonMaterial, BaseFormPage, BusinessFormPage },
     computed: {
 
-        ...mapGetters(['sid', "item_code"]),
+        // ...mapGetters(['sid', "item_code"]),
         ...mapState({
             // docList:state=>state.ANew.docList,
             selfServiceCaseId: state => state.home.selfServiceCaseId,

@@ -20,7 +20,7 @@
         <el-button @click="$router.push({path:'/formconstructor', query:{'itemId':$store.state.home.item.id}})">字段管理</el-button>
         <el-button @click="$router.push({path:'/materialmanager', query:{'itemId':$store.state.home.item.id}})">材料管理</el-button>
         <el-button @click="$router.push({path:'/pageconfigure', query:{'itemId':$store.state.home.item.id}})">步骤页面管理</el-button>
-        
+        <el-button @click="$router.push({path:'/setting'})">设置</el-button>
         </div>
         
         <el-divider></el-divider>
