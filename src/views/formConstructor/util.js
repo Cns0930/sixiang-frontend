@@ -180,7 +180,7 @@ export function convertDefToConfigEventRuntime(fields, metaName = "meta", childr
         if (value.meta) {
 
             
-
+         
             Object.defineProperty(value, "value", {
                 set:function(list){
                     
@@ -188,13 +188,28 @@ export function convertDefToConfigEventRuntime(fields, metaName = "meta", childr
                     list.forEach(obj=>{
                         let child = _.cloneDeep(value.meta);
                         Object.keys(obj).forEach(key=>{
-                            child[key].value = obj[key]
+                            if(!child[key]) return;
+
+                            if (child[key].type == "computedText") {
+
+                                Object.defineProperty(child[key], "value", {
+                                    
+                                    get: child[key].getter.bind(null, child[key], state, null, child, value.attributes.children)
+                                })
+
+                            }else{
+                                child[key].value = obj[key]
+                            }
+
+                           
                         })
                         value.attributes.children.push(child)
                     })
                 },
                 get: function () {
-                    return value.attributes.children.map(v => _.mapValues(v, o => o.value))
+                   
+                    let result =value.attributes.children.map(v => _.mapValues(v, o => o.value))
+                    return result
                 },
             })
         }

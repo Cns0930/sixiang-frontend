@@ -56,7 +56,7 @@ let ElCheckboxC = {
                 {
                     options.map(option=> 
                     <el-col span={12} >
-                        <el-checkbox label={option.label} value={option.value} disabled={option.disabled}>{option.label}</el-checkbox>
+                        <el-checkbox label={option.value}  disabled={option.disabled}>{option.label}</el-checkbox>
                     </el-col>
                     )
                 }
