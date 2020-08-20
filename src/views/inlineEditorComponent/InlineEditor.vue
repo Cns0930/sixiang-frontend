@@ -140,6 +140,7 @@ export default {
             useTabStops: false,
             fontSize: 16, // 字体大小
             autoIndent: true, //自动布局
+            wordWrap: 'on', // 自动换行
         });
 
         this.initEditor();
@@ -167,6 +168,7 @@ export default {
                             useTabStops: false,
                             fontSize: 14, // 字体大小
                             autoIndent: true, //自动布局
+                            wordWrap: 'on', // 自动换行
                         }
                     );
                 });
