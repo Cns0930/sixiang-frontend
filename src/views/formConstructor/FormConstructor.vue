@@ -327,8 +327,7 @@ export default {
                 object: v,
 
             }
-            console.log("===param===")
-            console.log(param)
+       
 
             let result = await saveOne(param);
 
@@ -359,8 +358,7 @@ export default {
                 fieldType: 2,
                 object: v
             }
-            console.log("===param===")
-            console.log(param)
+          
 
             let result = await saveOne(param);
 
@@ -373,14 +371,14 @@ export default {
         },
         // 点击 fieldNo
         async handleClickField(fieldObj) {
-            console.log(fieldObj);
+        
             let result = await getFieldById({id:fieldObj.id});
-            console.log(result)
+           
             if(!result.success) return;
 
             let newFieldObj = deserializeTableData({ id: result.data.id, fieldType:  result.data.fieldType, children:  result.data.children, ... result.data.object }); 
             this.temp_fieldObj = newFieldObj;
-            console.log(newFieldObj)
+          
             delete this.temp_fieldObj.list;
             this.editDialogVisible = true;
         },
@@ -389,7 +387,7 @@ export default {
             let param = {
                 fieldId: v.id
             };
-            console.log(param);
+         
             let result = await deleteOne(param);
             if (!result.success) return;
             this.$message({ type: "success", message: "删除成功" });
@@ -400,7 +398,7 @@ export default {
             let param = {
                 fieldId: v.id
             };
-            console.log(param);
+       
             let result = await deleteOne(param);
             if (!result.success) return;
             this.$message({ type: "success", message: "删除成功" });
@@ -412,7 +410,7 @@ export default {
             let param = {
                 fieldId: v.id
             };
-            console.log(param);
+    
             let result = await deleteOne(param);
             if (!result.success) return;
             this.$message({ type: "success", message: "删除成功" });
@@ -479,7 +477,7 @@ export default {
         // 载入
         async load() {
             let result = await getField({ itemName: this.itemName });
-            console.log(result)
+           
             if (!result.success) return;
 
             let tableData = result.data.map(v => ({ id: v.id, fieldType: v.fieldType, children: v.children, ...v.object })).map(deserializeTableData);
