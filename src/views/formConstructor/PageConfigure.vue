@@ -590,6 +590,7 @@ export default {
             import dayjs from "dayjs"
             import customParseFormat from 'dayjs/plugin/customParseFormat'
             dayjs.extend(customParseFormat)
+            import {CheckSocialCreditCode,IdentityCodeValid,setOptions} from "@/utils/function"
             let state = ${serialize(itemState)} 
             _.forEach(state, function(value, key) {
                 if (value.meta) {
@@ -632,6 +633,7 @@ export default {
             import dayjs from "dayjs"
             import customParseFormat from 'dayjs/plugin/customParseFormat'
             dayjs.extend(customParseFormat)
+            import {CheckSocialCreditCode,IdentityCodeValid,setOptions} from "@/utils/function"
             let getters = ${serialize(itemGetters)} 
             export default getters`)
             beautify.beautify(this.outputEditor.session)

@@ -49,7 +49,7 @@ export function IdentityCodeValid(str) {
 
 function setOptions(field,options){
     field.attributes.options = options;
-    if(options && options.length>0){
+    if(options && options.length==1){
         field.value = options[0]
     }
 }
