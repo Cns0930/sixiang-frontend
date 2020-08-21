@@ -58,5 +58,6 @@ function setOptions(field,options){
 export default {
     CheckSocialCreditCode,
     IdentityCodeValid,
+    setOptions
     
 }

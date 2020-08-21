@@ -6,7 +6,7 @@ class InputDef extends CommonComponents{
         this.component = rendererBuilder("text","ElInput")
         this.oninput = new Renderer("CodeEditor",`
         // value是组件改变后的值
-        function(value,state,getters){
+        function(value,state,getters,siblings,parent){
             
         }`);
         this.$type = new Renderer("ElSelectC","text",{options:["text","textarea",]})
