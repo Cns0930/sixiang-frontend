@@ -19,5 +19,5 @@ export default new Vuex.Store({
         fieldModel: fieldModel,
         setting,
     },
-    // plugins: [persist]
+    plugins: [persist]
 })

@@ -74,6 +74,11 @@ export default {
 
             model[this.prop] = this.obj.ruleKey === "custom" ? {self:this.obj,siblings:this.siblings,parent:this.parent} : this.obj && this.obj[this.valueName];
 
+            if(this.prop==='none'){
+                callback("","")
+                return;
+            } 
+            
             validator.validate(model, { firstFields: true }, (errors, invalidFields) => {
 
                 this.validateState = !errors ? 'success' : 'error';

@@ -47,6 +47,14 @@ export function IdentityCodeValid(str) {
     }
 }
 
+function setOptions(field,options){
+    field.attributes.options = options;
+    if(options && options.length>0){
+        field.value = options[0]
+    }
+}
+
+
 export default {
     CheckSocialCreditCode,
     IdentityCodeValid,
