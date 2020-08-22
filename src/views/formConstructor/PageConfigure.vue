@@ -7,7 +7,7 @@
             <el-button @click="loadAll">载入页面</el-button>
             <el-button @click="$router.push({path:'/run',query:{itemId}})">运行页面</el-button>
             <el-button @click="output">输出</el-button>
-            <el-button @click="$router.push({path:'/bangbanruning',query:{itemId,barcode}})">超级帮办模拟运行</el-button>barcode<el-input v-model="barcode" style="width:100px"></el-input>
+            <el-link :href="`bangban.html/#/?itemId=${itemId}&barcode=${barcode}`" target="_blank">超级帮办模拟运行</el-link>barcode<el-input v-model="barcode" style="width:100px"></el-input>
 
         </div>
         <div class="main">
@@ -590,7 +590,7 @@ export default {
             import dayjs from "dayjs"
             import customParseFormat from 'dayjs/plugin/customParseFormat'
             dayjs.extend(customParseFormat)
-            import {CheckSocialCreditCode,IdentityCodeValid,setOptions} from "@/utils/function"
+            import helper from "@/utils/function"
             let state = ${serialize(itemState)} 
             _.forEach(state, function(value, key) {
                 if (value.meta) {
@@ -633,7 +633,7 @@ export default {
             import dayjs from "dayjs"
             import customParseFormat from 'dayjs/plugin/customParseFormat'
             dayjs.extend(customParseFormat)
-            import {CheckSocialCreditCode,IdentityCodeValid,setOptions} from "@/utils/function"
+            import helper from "@/utils/function"
             let getters = ${serialize(itemGetters)} 
             export default getters`)
             beautify.beautify(this.outputEditor.session)

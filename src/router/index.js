@@ -12,7 +12,7 @@ import Run from "@/views/formConstructor/Run"
 import ItemManager from "@/views/formConstructor/ItemManager"
 import Login from "@/views/login/Login"
 import Setting from "@/views/setting/Setting"
-import BangbanRuning from "@/views/ANew/Home"
+
 Vue.use(VueRouter)
 import store from "@/vuex/store"
 import bangbanAxios from "@/api/ANew/config"
@@ -67,15 +67,7 @@ const routes = [
                 name:"itemManeger",
                 component:ItemManager
             },
-            {
-                path:"bangbanruning",
-                name:"bangbanRuning",
-                component:BangbanRuning,
-                beforeEnter(to, from, next){
-                    bangbanAxios.defaults.baseUrl = store.state.setting.bangbanUrl;
-                    next();
-                },
-            },
+            
             {
                 path:"setting",
                 name:"setting",
@@ -88,6 +80,7 @@ const routes = [
         name: 'login',
         component: Login
     },
+
 
 ]
 

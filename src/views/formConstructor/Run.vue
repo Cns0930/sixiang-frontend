@@ -164,8 +164,6 @@ export default {
             ])
             if (result.some(v => !v.success)) return;
             return result;
-
-
         },
         goNext() {
             let nextActive = this.active+1;
