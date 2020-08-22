@@ -17,3 +17,9 @@ export const forkPublicFields = params => axios.post('/superform/fields/forkPubl
 
 // 根据id 获取字段
 export const getFieldById = params => axios.get('/superform/fields/getById', {params}).then(res => res.data);
+
+// 搜索字段
+export const searchFields = params => axios.post('/superform/fields/searchFields', params).then(res => res.data);
+
+// 导入选择的字段
+export const forkSelectedFields = params => axios.post('/superform/fields/forkSelectedFields', params).then(res => res.data);
