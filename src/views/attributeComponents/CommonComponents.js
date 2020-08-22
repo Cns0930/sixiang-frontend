@@ -23,7 +23,8 @@ class CommonComponents {
        
         // // 事件
         this.onchange = new Renderer("CodeEditor",`
-        // value是组件改变后的值 
+        // value是组件改变后的值
+        // helper.setOptions(state['fieldNo'],['value1','value2'])  设置select的options 当options只有一个元素时，将value设置为options的第一个值
         // 当组件属于集合时 siblings 是集合中本元素， parent 是整个集合
         function(value,state,getters,siblings,parent){
             

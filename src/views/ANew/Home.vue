@@ -101,8 +101,10 @@ export default {
         // if (this.$route.params.item) {
         //     this.$store.commit("putItem", this.$route.params.item)
         // }
-        this.rules = new Rules(this.itemState, this.itemGetters).rules;
 
+
+        this.rules = new Rules(this.itemState, this.itemGetters).rules;
+        // this.stepsData = 
     },
     components: { LeftSteper, ApprovalSelectContent, MaterialExtract, FormPage, IdCardInfo, CommonMaterial, BaseFormPage, BusinessFormPage },
     computed: {
@@ -114,9 +116,9 @@ export default {
             isHistoryRecord: state => state.home.isHistoryRecord
         }),
         // 步骤页面的数据—— 根据事项 来定一 步骤页面 和每个步骤的组件
-        stepsData() {
-            return stepPagesMap[this.sid] || [];
-        },
+        // stepsData() {
+        //     return stepPagesMap[this.sid] || [];
+        // },
         step() {
             
             return this.stepsData[this.active]
@@ -134,6 +136,30 @@ export default {
 
     },
     methods: {
+         async init() {
+            if (this.itemId == null) {
+                let itemId = this.$route.query.itemId;
+                let result = await getById({ id: itemId });
+                if (!result.success) {
+                    this.$message({ type: "warning", message: "获取初始事项信息失败" });
+                    return;
+                }
+                this.$store.commit("changeItem", result.data);
+            }
+
+        },
+        async loadAll() {
+            let result = await Promise.all([
+                getStep({ itemName: this.itemName }),
+                getField({ itemName: this.itemName }),
+                getTemplate({ itemName: this.itemName })
+            ])
+            if (result.some(v => !v.success)) return;
+            return result;
+
+
+        },
+
         async goNext(data) {
             let nextActive = this.active + 1;
 

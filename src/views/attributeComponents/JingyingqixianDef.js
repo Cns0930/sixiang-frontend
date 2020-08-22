@@ -6,7 +6,7 @@ class JingyingqixianDef extends CommonComponents{
         this.component = rendererBuilder("text","Jingyingqixian")
         this.span = rendererBuilder("text",24)
         this.value = rendererBuilder("text","")
-        this.independent=rendererBuilder("text",true);
+        this.independent=rendererBuilder("text",false);
     }
    
 }
