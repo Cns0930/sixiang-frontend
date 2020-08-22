@@ -12,6 +12,7 @@
             </div>
 
             <div class="right-bar">
+                <el-button @click="handleSelect">导入自选字段</el-button>
                 <el-button :disabled="itemId==-1" @click="handleImportPublic">导入全部公共字段</el-button>
                 <el-button :disabled="itemId==-1" @click="handleManagePublic">管理公共字段</el-button>
             </div>
@@ -141,6 +142,33 @@
                 <el-button type="primary" @click="changeTypeConfirm">确 定</el-button>
             </span>
         </el-dialog>
+        <!-- 导入自选字段 -->
+        <el-dialog title="导入自选字段" :visible.sync="dialogSelectVisible" width="80%" :close-on-click-modal="false">
+
+            <el-input style="width: 240px;margin: 10px; 10px" placeholder="输入关键词（不限事项字段）" clearable v-model="generalKeyword" @change="searchField"></el-input>
+            <el-input style="width: 240px;margin: 10px; 10px" placeholder="输入关键词（事项名称）" clearable v-model="itemKeyword" @change="searchField"></el-input>
+            <el-input style="width: 240px;margin: 10px; 10px" placeholder="输入关键词（fieldNo/label）" clearable v-model="fieldKeyword" @change="searchField"></el-input>
+            <el-button icon="el-icon-search" circle @click="searchField"></el-button>
+
+            <el-table ref="checkTable" :data="searchResult" border style="width: 100%" row-key="id" @selection-change="handleSelectionChange">
+                <el-table-column prop="itemName" label="事项名称" ></el-table-column>
+                <el-table-column prop="fieldNo" label="fieldNo" width="160"></el-table-column>
+                <el-table-column prop="label" label="label" width="240"></el-table-column>
+                <el-table-column prop="fieldComponentName" label="组件名" width="160"></el-table-column>
+                <el-table-column type="selection" reserve-selection label="选择">
+                </el-table-column>
+            </el-table>
+
+            <el-pagination style="margin: 40px auto 30px 500px;" background layout="prev, pager, next" :page-size="pageSize" 
+            :current-page="currentPage" :total="total" @current-change="tablePageChange">
+            </el-pagination>
+
+            <p>已选中{{temp_selected_fields.length}}个字段</p>
+
+            <el-button type="primary" @click="forkSelected">确认导入</el-button>
+            <el-button type="text" @click="clearSelected">清除所有选择</el-button>
+
+        </el-dialog>
     </div>
 </template>
 
@@ -154,7 +182,7 @@ import { getById } from "@/api/item/index";
 import { mapState } from "vuex";
 import _ from "lodash";
 import defRenderers from "@/views/attributeComponents/defRendererComponents/index";
-import { save, getField, saveOne, deleteOne, forkPublicFields,getFieldById } from "@/api/superForm/index";
+import { save, getField, saveOne, deleteOne, forkPublicFields,getFieldById,searchFields,forkSelectedFields } from "@/api/superForm/index";
 import { functionReviverEventRuntime, convertDefToConfigEventRuntime, functionReviverRuntime } from "./util"
 import { log } from 'handlebars';
 import { mixin } from "@/mixin/mixin"
@@ -185,7 +213,17 @@ export default {
             dialogChangeTypeVisible: false,
             // 子项属性填写用
             dialogChildVisible: false,
-            temp_parent: null
+            temp_parent: null,
+            // 搜索字段导入用
+            dialogSelectVisible: false,
+            generalKeyword: "",
+            itemKeyword: "",
+            fieldKeyword: "",
+            searchResult: [],
+            currentPage: 1,
+            pageSize: 15,
+            total: 0,
+            temp_selected_fields: [],
         };
     },
     computed: {
@@ -520,6 +558,60 @@ export default {
         },
         handleManagePublic() {
             window.open('#/formconstructor?itemId=-1', '_blank')
+        },
+        handleSelect(){
+            this.dialogSelectVisible = true;
+        },
+        searchField(){
+            this.currentPage = 1;
+            this.loadSearch();
+        },
+        //分页切换
+        tablePageChange(n) {
+            if (this.currentPage != n) {
+                this.currentPage = n;
+            }
+            this.loadSearch();
+        },
+        async loadSearch(){
+            let params = {keyword: this.generalKeyword, itemKeyword: this.itemKeyword, fieldKeyword: this.fieldKeyword, pageNum: this.currentPage, pageSize: this.pageSize};
+            let result = await searchFields(params);
+            if(result.success){
+                // 页码
+                this.total = result.data.total
+                this.searchResult = result.data.records;
+            }else{
+                this.$message({ type: "error", message: "查询出错"});
+            }
+        },
+        handleSelectionChange(sel){
+            this.temp_selected_fields = sel;
+        },
+        async forkSelected(){
+            if(this.temp_selected_fields.length > 0){
+            // 进行fieldNo是否重复的检查
+            for (let index = 0; index < this.temp_selected_fields.length; index++){
+                let field = this.temp_selected_fields[index]
+                if(this.temp_selected_fields.map(v => v.fieldNo).indexOf(field.fieldNo) !== index){
+                    this.$message({ type: "warning", message: "重复fieldNo:"+field.fieldNo});
+                    return;
+                }
+            }
+
+            let selectIds = this.temp_selected_fields.map(f => f.id);
+            let params = { itemId: this.itemId, itemName: this.itemName, sourceFieldIds: selectIds};
+            let result = await forkSelectedFields(params);
+            if(result.success){
+                this.$message({ type: "success", message: "导入成功"});
+                this.clearSelected();
+                this.load();
+                this.dialogSelectVisible = false;
+            }
+            }
+        },
+        clearSelected(){
+            this.$refs.checkTable.clearSelection();
+            this.temp_selected_fields = [];
         }
     }
 };
