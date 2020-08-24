@@ -1,7 +1,7 @@
 import Vue from 'vue'
-import App from './App.vue'
-import router from './router'
-import store from '@/vuex/store'
+import App from '@/bangban/App.vue'
+import router from '@/bangban/router'
+import store from '@/bangban/vuex/store'
 import 'element-ui/lib/theme-chalk/index.css'
 import "@/assets/css/editor.css"
 import "@/assets/css/editor_frame.css"
@@ -10,8 +10,11 @@ import "@/assets/css/global.scss"
 
 
 
+
+
+import "@/assets/css/newGlobal.scss"
 import ElementUI from 'element-ui'
-import "ace-builds/webpack-resolver";
+
 
 import '@/api/config'
 
@@ -20,7 +23,7 @@ import _ from 'lodash';
 Vue.prototype._=_;
 
 Vue.config.productionTip = false
-Vue.use(ElementUI ,{ size: 'mini'})
+Vue.use(ElementUI ,{ size: 'medium'})
 Vue.config.errorHandler=function(err,vm,info){
     console.error(err,vm,info)
 }

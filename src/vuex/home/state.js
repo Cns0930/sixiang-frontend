@@ -20,5 +20,11 @@ const state = {
     itemName: '测试',
     // 事项
     item: {},
+    // 超级帮办 皮肤
+    shixiangForm: {
+        approval: ['30', '310115-418-03'],
+        department: '市场监管局',
+        checkList: [],
+    },
 };
 export default state
