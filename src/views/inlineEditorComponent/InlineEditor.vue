@@ -14,7 +14,7 @@
                 <el-divider direction="vertical" content-position="center"></el-divider>
                 <button @click="openEditor">全屏打开代码编辑器</button>
 
-                <el-divider direction="vertical" content-position="center"></el-divider> <button @click="transfer">保存并输出html到超级帮办</button>
+                <!-- <el-divider direction="vertical" content-position="center"></el-divider> <button @click="transfer">保存并输出html到超级帮办(开发中)</button> -->
             </div>
 
             <div class="main">
@@ -468,7 +468,6 @@ export default {
         async transfer(){
             const html = this.monacoEditor.getValue();
             // this.$emit("saveTemplate", html);
-            console.log("===")
             this.$emit("transferHtml", html);
             // let params = {
             //     contentCss: ,

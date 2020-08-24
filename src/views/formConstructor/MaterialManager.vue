@@ -32,7 +32,9 @@
         <!-- 创建模板弹窗 -->
         <el-dialog title="创建模板" :visible.sync="templateCreateVisible" width="50%" :close-on-click-modal="false">
             <div>
-                模板名称:<el-input v-model="temp_template_name" @keyup.enter.native="addTemplate"></el-input>
+                模板名称(必填):<el-input v-model="temp_template_name" @keyup.enter.native="addTemplate"></el-input>
+                材料中文名(必填):<el-input v-model="temp_document_name"></el-input>
+                材料序号(必填):<el-input v-model="temp_document_seq"></el-input>
             </div>
 
             <span slot="footer" class="dialog-footer">
@@ -59,6 +61,8 @@ export default {
             templateCreateVisible: false,
 
             temp_template_name: '',
+            temp_document_seq: '',
+            temp_document_name: '',
 
             temp_template: null,
         }
@@ -84,6 +88,8 @@ export default {
                 sid: this.$store.state.home.item.sid,
                 itemId: this.$store.state.home.item.id,
                 docxTemplateName: this.temp_template_name,
+                documentSeq: this.temp_document_seq,
+                documentName: this.temp_document_name
             });
 
             if (!res.success) return;
