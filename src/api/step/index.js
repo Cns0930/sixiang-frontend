@@ -11,3 +11,6 @@ export const deleteStep = params => axios.get('/superform/steps/delete', {params
 
 // 批量保存步骤
 export const saveStepBatch = params => axios.post('/superform/steps/batchSave', params).then(res => res.data);
+
+// 保存数据到帮办
+export const transferJs = params => axios.post(axios.defaults.serviceURL+"/api/sixiang/saveJavaScript", params).then(res => res.data);

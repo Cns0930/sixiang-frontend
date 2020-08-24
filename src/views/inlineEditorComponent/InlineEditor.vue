@@ -13,6 +13,8 @@
                 <button @click="exportHtmlFromAce">从code编辑器导出html</button>-->
                 <el-divider direction="vertical" content-position="center"></el-divider>
                 <button @click="openEditor">全屏打开代码编辑器</button>
+
+                <el-divider direction="vertical" content-position="center"></el-divider> <button @click="transfer">保存并输出html到超级帮办</button>
             </div>
 
             <div class="main">
@@ -72,6 +74,7 @@ import { mergeFieldAttr } from "../formConstructor/util";
 import { mapState } from "vuex";
 import _ from "lodash";
 import * as monaco from "monaco-editor";
+import { saveStep } from '@/api/step';
 export default {
     name: "InlineEditor",
     props: ["temp_page", "currentPagenum"],
@@ -461,6 +464,21 @@ export default {
             let html = this.monacoEditor.getValue();
 
             this.downloadFile(html, "code模板.html");
+        },
+        async transfer(){
+            const html = this.monacoEditor.getValue();
+            // this.$emit("saveTemplate", html);
+            console.log("===")
+            this.$emit("transferHtml", html);
+            // let params = {
+            //     contentCss: ,
+            //     fileName: ,
+            //     html: ,
+            //     name: ,
+            //     orient: ,
+            //     padding: ,
+
+            // }
         },
     },
 };

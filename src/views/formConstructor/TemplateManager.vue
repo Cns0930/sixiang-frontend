@@ -84,7 +84,7 @@
                 </div> -->
 
                 <inlineEditor ref="inlineEditor" v-if="temp_page" :temp_page="temp_page"
-                    :currentPagenum="currentPagenum" @saveTemplate="saveTemplate"/>
+                    :currentPagenum="currentPagenum" @saveTemplate="saveTemplate" @transferHtml="transferHtml"/>
             </div>
 
         </div>
@@ -285,6 +285,22 @@ export default {
 
             this.$message.success('保存页面成功');
             this.getTemplate();
+        },
+        async transferHtml(html){
+            // TODO: 导出页面到帮办
+            // let params = {
+            //     contentCss: this.temp_page.contentCss,
+            //     fileName: this.temp_template.docxTemplateName,
+            //     html: html,
+            //     name: this.temp_template .documentName,
+            //     orient: this.temp_page.orient,
+            //     pageNum: this.currentPagenum,
+            //     script: this.temp_page.script,
+            //     sid: this.$store.state.home.item.sid,
+            //     padding: this.temp_page.isTable == 1? "table": "text",
+            //     documentSeq: this.temp_template.documentSeq
+            // }
+            // console.log(params)
         },
         async deletePage(page) {
             let message = "确定要删除吗";

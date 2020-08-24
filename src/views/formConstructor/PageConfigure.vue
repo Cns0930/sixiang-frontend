@@ -6,9 +6,10 @@
             <el-button @click="handlePreview">预览页面</el-button>
             <el-button @click="loadAll">载入页面</el-button>
             <el-button @click="$router.push({path:'/run',query:{itemId}})">运行页面</el-button>
-            <el-button @click="output">输出</el-button>
+            <el-button @click="handleOutput">输出</el-button>
             <el-button @click="$router.push({path:'/bangbanruning',query:{itemId,barcode}})">超级帮办模拟运行</el-button>barcode<el-input v-model="barcode" style="width:100px"></el-input>
 
+            <el-divider direction="vertical"></el-divider><el-button @click="transferOutput">保存输出到超级帮办</el-button>
         </div>
         <div class="main">
             <!-- 页面 -->
@@ -188,7 +189,7 @@
 
 <script>
 import { mapState } from "vuex";
-import { getStep, saveStep, deleteStep, saveStepBatch } from "@/api/step/index";
+import { getStep, saveStep, deleteStep, saveStepBatch, transferJs } from "@/api/step/index";
 import { getField } from "@/api/superForm/index";
 import { getTemplate } from '@/api/template/index'
 import { getById } from "@/api/item/index";
@@ -541,6 +542,10 @@ export default {
             return v;
         },
         // 输出 首页
+        handleOutput() {
+            this.outputDialog = true;
+            this.output();
+        },
         async output() {
 
             let result = await getStep({ itemName: this.itemName })
@@ -560,11 +565,9 @@ export default {
                 return { ...v.stepObject, stepPagenum: v.stepPagenum }
             }).sort((a, b) => a.stepPagenum - b.stepPagenum)
 
-            this.outputDialog = true;
+            
             await this.$nextTick();
            
-
-
             this.outputEditor = ace.edit(this.$refs.outputEditor);
             this.outputEditor.setTheme("ace/theme/monokai");
             this.outputEditor.session.setMode("ace/mode/javascript");
@@ -663,6 +666,32 @@ export default {
             this.loadStep();
             }
         },
+        async transferOutput(){
+            // output
+            await this.output();
+            let output = this.outputEditor.getValue();
+
+            // state
+            await this.getState();
+            let state = this.outputEditor.getValue();
+
+            // getters
+            await this.getGetters();
+            let getters = this.outputEditor.getValue();
+
+            let params = {
+                pageStepJs: output,
+                getterJs: getters,
+                sid: this.$store.state.home.item.sid,
+                sixiangUserName: "admin",
+                stateJs: state,
+            };
+            console.log(params)
+
+            // TODO:调用超级帮办接口
+            let result = transferJs(params);
+            console.log(result)
+        }
     }
 };
 </script>
