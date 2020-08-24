@@ -13,7 +13,7 @@ class ComputedTextDef extends CommonComponents{
             return ""
         }`,null,"getter方法");
         this.remark = new Renderer('ElInput', '',null,"备注")
-        this.value = rendererBuilder("text","");
+        this.value = new Renderer("text","", null, '默认值');
         this.component = rendererBuilder("text","TextInputLike")
     }
 }
