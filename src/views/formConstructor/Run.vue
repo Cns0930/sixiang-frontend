@@ -123,7 +123,7 @@ export default {
         }, {});
         let gettersList = Object.keys(itemGetters)
         this.$store.commit("putGettersList", gettersList)
-        console.log(itemGetters)
+        console.log(itemGetters,itemState)
         // 注册模块
         let module = {
             namespaced: true,
