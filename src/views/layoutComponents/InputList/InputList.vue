@@ -34,9 +34,12 @@ export default {
     .delete-btn {
         display: none;
     }
-    &:nth-child(1) .input{
+    &>.input{
         margin-left:0;
     }
+}
+.el-button-group.btn {
+    margin-top: -6px;
 }
     .input-wrapper:hover .delete-btn {
          position: absolute;

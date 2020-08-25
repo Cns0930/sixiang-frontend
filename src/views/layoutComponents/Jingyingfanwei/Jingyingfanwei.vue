@@ -1,11 +1,17 @@
 <template>
     <el-col>
-        <el-button @click="handleAdd" class="side" icon="el-icon-plus">添加</el-button>
-        <el-divider></el-divider>
+        <el-col class="sub-title-n" v-if="title">
+            <div class="tag"></div>
+            <span class="text">{{title}}</span>
+            <el-button @click="handleAdd"  class="side" icon="el-icon-plus">添加</el-button>
+        </el-col>
         <el-col :span="24" v-for="(v,i) in addList" :key="i">
             <el-col :span="12">
-                <el-button @click="handleRemove(v,i)" class="side" icon="el-icon-minus" style="float:left">删除
-                </el-button>
+                <el-col class="position">
+                    <div class="remove-btn remove-btn-position"  @click="handleRemove(v,i)">
+                        <span class="minus"></span>
+                    </div>
+                </el-col>
                 <el-form-item :key="i" label="新增" prop="required" :obj="v.fanwei">
                     <el-select v-model="v.fanwei.value" filterable placeholder="请输入内容" style="width:calc(100% - 140px)"
                         @change="handleChangeFanwei($event,v)">
@@ -53,13 +59,12 @@ export default {
     mixins: [CommonMixin],
     components: { ElFormItem: TestFormItem, },
     // value 格式 ：{jingyingfanwei:{value:"",htmlValue:"",textArray:[]},addList:[{ fanwei: { value: "" }, shixiang: { value: "",options:[] } }]}
-    props: ["value"],
+    props: ["value","title"],
     data() {
         return {
             // addList: [{ fanwei: { value: "" }, shixiang: { value: "",options:[] } }],
             ops,
             meta: { fanwei: { value: "" }, shixiang: { value: "", options: [] } },
-
         }
     },
     computed: {
@@ -150,5 +155,38 @@ export default {
     border-radius: 4px;
     padding: 5px 15px;
     min-height:100px;
+}
+.position{
+    position:relative;
+    top:0px;
+    left:0px;
+}
+.remove-btn {
+    position: absolute;
+    left: 6px;
+    top: 4px;
+    z-index: 10;
+    margin-left: 5px;
+    width: 25px;
+    height: 25px;
+    border-radius: 4px;
+    background: linear-gradient(
+        to bottom,
+        rgba(51, 151, 255, 1) 0%,
+        rgba(1, 59, 211, 1) 100%
+    );
+
+    display: inline-flex;
+    vertical-align: middle;
+    justify-content: center;
+    align-items: center;
+
+    cursor: pointer;
+
+    .minus {
+        width: 18px;
+        height: 2px;
+        background: white;
+    }
 }
 </style>
