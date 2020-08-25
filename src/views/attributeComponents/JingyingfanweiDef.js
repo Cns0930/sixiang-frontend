@@ -13,7 +13,6 @@ class JingyingfanweiDef extends CommonComponents{
     getAttributes(){
         return {
             title: this.$title.value,
-            autosize: this.$autosize.value,
             type:this.$type.value,
             placeholder:"请输入内容"
         }
