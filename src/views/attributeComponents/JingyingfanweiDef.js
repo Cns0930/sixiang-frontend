@@ -8,6 +8,15 @@ class JingyingfanweiDef extends CommonComponents{
         this.value = rendererBuilder("text",{jingyingfanwei:{value:"",htmlValue:"",textArray:[]},addList:[{ fanwei: { value: "" }, shixiang: { value: "",options:[] } }]})
         this.labelWidth =  new Renderer('ElInput', '0')
         this.independent=rendererBuilder("text",true);
+        this.$title = new Renderer('ElInput', '',null,"title")
+    }
+    getAttributes(){
+        return {
+            title: this.$title.value,
+            autosize: this.$autosize.value,
+            type:this.$type.value,
+            placeholder:"请输入内容"
+        }
     }
    
 }
