@@ -64,6 +64,15 @@ export function CheckPostCode(code) {
         return false
     }
 }
+export function CheckMail(code) {
+    var mailreg = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
+    if(!code) return false;
+    if(mailreg.test(code)) {
+        return true
+    } else {
+        return false
+    }
+}
 function setOptions(field,options){
     field.attributes.options = options;
     if(options && options.length==1){
@@ -76,6 +85,8 @@ export default {
     CheckSocialCreditCode,
     IdentityCodeValid,
     setOptions,
-    CheckPhone
+    CheckPhone,
+    CheckMail,
+    CheckPostCode
     
 }

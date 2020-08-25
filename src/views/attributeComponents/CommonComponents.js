@@ -39,6 +39,7 @@ class CommonComponents {
         // helper.IdentityCodeValid(code) 判断是否身份证
         // helper.CheckPhone(code) 判断是否手机号
         // helper.CheckPostCode(code) 判断是否邮政编码
+        // helper.CheckMail(code) 判断是否电子邮箱
         // return {success:false,msg:"验证错误提示"}
         function(value,state,getters,siblings,parent){
             
