@@ -37,6 +37,8 @@ class CommonComponents {
         // value 是组件对象； value.value 是组件值
         // helper.CheckSocialCreditCode(code) 判断是否统一社会信用代码
         // helper.IdentityCodeValid(code) 判断是否身份证
+        // helper.CheckPhone(code) 判断是否手机号
+        // helper.CheckPostCode(code) 判断是否邮政编码
         // return {success:false,msg:"验证错误提示"}
         function(value,state,getters,siblings,parent){
             
