@@ -46,7 +46,24 @@ export function IdentityCodeValid(str) {
         return true;
     }
 }
-
+export function CheckPhone(phone) {
+    var phonereg = /^[1][3,4,5,7,8][0-9]{9}$/;
+    if(!phone) return false;
+    if(phonereg.test(phone)) {
+        return true
+    } else {
+        return false
+    }
+}
+export function CheckPostCode(code) {
+    var codereg = /^[0-9]{6}$/;
+    if(!code) return false;
+    if(codereg.test(code)) {
+        return true
+    } else {
+        return false
+    }
+}
 function setOptions(field,options){
     field.attributes.options = options;
     if(options && options.length==1){
@@ -58,6 +75,7 @@ function setOptions(field,options){
 export default {
     CheckSocialCreditCode,
     IdentityCodeValid,
-    setOptions
+    setOptions,
+    CheckPhone
     
 }
