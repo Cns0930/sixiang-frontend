@@ -95,20 +95,18 @@ export function functionReviverRuntime(value, tag) {
     return value;
 }
 // 事件方法 string -> function  ——预览 onchange, 以及validateFn 用这个
-export function functionReviverEventRuntime(value, tag,key) {
- 
+export function functionReviverEventRuntime(value, tag, key) {
+
     if (typeof value === 'string') {
         var rfunc = /function\s*\w*\s*\([\w\s,]*\)\s*{([\w\W]*)}/,
             match = value.match(rfunc);
 
         if (match) {
-
-            return new Function("value", "state", "getters", "siblings", "parent", `
+            try {
+                return new Function("value", "state", "getters", "siblings", "parent", `
            
             with(this){
                 try{
-                    
-                    
                     ${match[1]}
                 }catch(e){
                     console.warn("错误",'${tag}')
@@ -117,10 +115,15 @@ export function functionReviverEventRuntime(value, tag,key) {
                 }
                 
                 }`).bind({
-                _,
-                dayjs,
-                helper
-            });
+                    _,
+                    dayjs,
+                    helper
+                });
+            } catch (e) {
+                console.warn("错误代码：function body"+match[1])
+                console.warn(e)
+            }
+
         }
     }
     return value;
@@ -183,7 +186,7 @@ export function convertDefToConfigEventRuntime(fields, metaName = "meta", childr
 
             Object.defineProperty(value, "value", {
                 set: function (list) {
-              
+
                     value.attributes.children = [];
                     list.forEach(obj => {
                         let child = _.cloneDeep(value.meta);

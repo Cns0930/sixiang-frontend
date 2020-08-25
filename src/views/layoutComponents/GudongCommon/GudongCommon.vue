@@ -100,8 +100,10 @@ export default {
         validatedStatus() {
             return this.children.map(gudong => {
                 console.log(Object.values(gudong).map(v => v.validateStatus).every(Boolean))
-                return Object.values(gudong).map(v => v.validateStatus).every(Boolean)
+                return Object.values(gudong).filter(v => !v.hidden).map(v => v.validateStatus).every(Boolean)
             })
+
+            
 
         }
 

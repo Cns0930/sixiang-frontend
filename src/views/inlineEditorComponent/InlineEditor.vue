@@ -91,15 +91,18 @@ export default {
         };
     },
     watch: {
-        temp_page: {
-            handler(val, oldVal) {
-                // if (val.id !== oldVal.id || val.templateOrientation !== oldVal.templateOrientation || val.templatePadding !== oldVal.templatePadding) {
-                //     this.initEditor();
-                // }
-                this.initEditor();
-            },
-            deep: true,
-        },
+        // temp_page: {
+        //     handler(val, oldVal) {
+        //         // if (val.id !== oldVal.id || val.templateOrientation !== oldVal.templateOrientation || val.templatePadding !== oldVal.templatePadding) {
+        //         //     this.initEditor();
+        //         // }
+        //         console.log(val,oldVal)
+        //         this.initEditor();
+        //     },
+        //     deep: true,
+        // },
+        'temp_page.isTable'(){this.initEditor()},
+        'temp_page.orient'(){this.initEditor()},
     },
     computed: {
         ...mapState({
