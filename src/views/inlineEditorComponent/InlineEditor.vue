@@ -101,6 +101,7 @@ export default {
         //     },
         //     deep: true,
         // },
+        'temp_page.id'(){this.initEditor()},
         'temp_page.isTable'(){this.initEditor()},
         'temp_page.orient'(){this.initEditor()},
     },
