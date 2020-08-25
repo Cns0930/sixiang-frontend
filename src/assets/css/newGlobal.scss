@@ -335,6 +335,28 @@
     border-radius: 0 0 20px 20px;
 }
 
+.el-radio {
+    color: #fff;
+    .el-radio__label {
+        font-size: 20px;
+    }
+    .el-radio__inner {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+.el-textarea textarea {
+    color: #fff;
+    font-size: 20px;
+    opacity: 1;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+
+// 其他
+
 #dwtcontrolContainer {
     display: none
 }
