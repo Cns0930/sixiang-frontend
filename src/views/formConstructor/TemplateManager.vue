@@ -146,6 +146,7 @@ import inlineEditor from "@/views/inlineEditorComponent/InlineEditor"
 
 import {mixin} from "@/mixin/mixin"
 import {CodeEditor} from "@/views/attributeComponents/defRendererComponents/defRendererComponents"
+import axios from 'axios';
 
 export default {
     name: "TemplateManager",
@@ -287,7 +288,16 @@ export default {
             this.getTemplate();
         },
         async transferHtml(html){
-            // TODO: 导出页面到帮办
+            let serviceBaseUrl = this.$store.state.setting.bangbanUrl;
+            if(serviceBaseUrl.endsWith('/')){
+                serviceBaseUrl = serviceBaseUrl.substring(0, serviceBaseUrl.length-1)
+            }
+            console.log(serviceBaseUrl)
+            if(serviceBaseUrl == null || serviceBaseUrl == ''){
+                this.$message({ type: "error", message: "请先设置超级帮办地址!" });
+                return;
+            }
+            // TODO: 材料分页保存到超级帮办
             let params = {
                 contentCss: this.temp_page.contentCss,
                 fileName: this.templates.template.docxTemplateName,
@@ -298,9 +308,16 @@ export default {
                 script: this.temp_page.script,
                 sid: this.$store.state.home.item.sid,
                 padding: this.temp_page.isTable == 1? "table": "text",
-                documentSeq: this.templates.template.documentSeq
+                // documentSeq: this.templates.template.documentSeq // 不需要传
             }
             console.log(params)
+            let result = await axios.post(serviceBaseUrl+"/api/sixiang/saveHtml", params).then(res => res.data);
+            console.log(result)
+            if(result.code == 200){
+                this.$message({ type: "success", message: "导入成功 请查看数据库" });
+            }else{
+                this.$message({ type: "error", message: result.message + " "+ result.data });
+            }
         },
         async deletePage(page) {
             let message = "确定要删除吗";

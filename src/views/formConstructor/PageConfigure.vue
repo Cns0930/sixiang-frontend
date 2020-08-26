@@ -201,6 +201,7 @@ import {
     deserializeTableData
 } from "../attributeComponents/index";
 import {convertDefToConfigBundle,functionReviverBundle} from "./util"
+import axios from 'axios';
 export default {
     name: "PageConfigure",
     data() {
@@ -667,6 +668,17 @@ export default {
             }
         },
         async transferOutput(){
+            let serviceBaseUrl = this.$store.state.setting.bangbanUrl;
+            // 去尾处理
+            if(serviceBaseUrl.endsWith('/')){
+                serviceBaseUrl = serviceBaseUrl.substring(0, serviceBaseUrl.length-1)
+            }
+            console.log(serviceBaseUrl)
+            if(serviceBaseUrl == null || serviceBaseUrl == ''){
+                this.$message({ type: "error", message: "请先设置超级帮办地址!" });
+                return;
+            }
+
             // output
             await this.output();
             let output = this.outputEditor.getValue();
@@ -688,10 +700,15 @@ export default {
             };
             console.log(params)
 
-            // TODO:调用超级帮办接口
-            let result = transferJs(params);
+            // TODO:步骤保存到超级帮办
+            let result = await axios.post(serviceBaseUrl+"/api/sixiang/saveJavaScript", params).then(res => res.data);
             console.log(result)
-        }
+            if(result.code == 200){
+                this.$message({ type: "success", message: "导入成功 请查看数据库" });
+            }else{
+                this.$message({ type: "error", message: result.message + " "+ result.data });
+            }
+       }
     }
 };
 </script>
