@@ -26,7 +26,7 @@
             材料中文名(必填)<el-input v-model="temp_template.documentName"></el-input>
             材料序号(必填)<el-input v-model="temp_template.documentSeq"></el-input>
             备注<el-input v-model="temp_template.notes"></el-input>
-            
+            page配置<CodeEditor v-model="temp_template.script"></CodeEditor>
 
         </div>
         </div>
@@ -51,11 +51,16 @@
 import { getTemplate, addTemplate, deleteTemplate } from '@/api/template/index'
 import { getById } from "@/api/item/index";
 import {mixin} from "@/mixin/mixin"
+<<<<<<< HEAD
 import axios from 'axios';
 
+=======
+import {CodeEditor} from "@/views/attributeComponents/defRendererComponents/defRendererComponents"
+>>>>>>> e65b85c34cd3178d79a1d46af0a3c87a4822ae33
 export default {
     name: "MaterialManager",
     mixins:[mixin],
+    components:{CodeEditor},
     data() {
         return {
             templates: [],
@@ -91,7 +96,7 @@ export default {
                 itemId: this.$store.state.home.item.id,
                 docxTemplateName: this.temp_template_name,
                 documentSeq: this.temp_document_seq,
-                documentName: this.temp_document_name
+                documentName: this.temp_document_name,
             });
 
             if (!res.success) return;
@@ -128,10 +133,12 @@ export default {
         },
         openDetail(v){
             this.temp_template = v.template;
+            this.temp_template.script || (this.temp_template.script="")
         },
         async saveTemplate(){
+            console.log(this.temp_template)
             let result = await addTemplate(this.temp_template);
-            if (!res.success) return;
+            if (!result.success) return;
 
             this.$message.success('保存模板成功');
         },
