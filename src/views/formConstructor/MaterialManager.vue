@@ -13,6 +13,7 @@
                 <el-button type="text" style="color: orange;" @click="goTemplatemanager(v.template.id)">{{ v.template.docxTemplateName }}</el-button>
                 <el-button @click="openDetail(v)">编辑</el-button>
                 <el-button @click="deleteTemplate(v.template.id)">删除</el-button>
+                <el-button @click="transferTemplate(v)">保存到超级帮办</el-button>
             </div>
         </div>
 
@@ -21,9 +22,9 @@
             <div>
             <el-button type="primary" @click="saveTemplate">保存修改</el-button>
             </div>
-            模板名称<el-input v-model="temp_template.docxTemplateName"></el-input>
-            材料中文名<el-input v-model="temp_template.documentName"></el-input>
-            材料序号<el-input v-model="temp_template.documentSeq"></el-input>
+            模板名称(必填)<el-input v-model="temp_template.docxTemplateName"></el-input>
+            材料中文名(必填)<el-input v-model="temp_template.documentName"></el-input>
+            材料序号(必填)<el-input v-model="temp_template.documentSeq"></el-input>
             备注<el-input v-model="temp_template.notes"></el-input>
             page配置<CodeEditor v-model="temp_template.script"></CodeEditor>
 
@@ -50,6 +51,8 @@
 import { getTemplate, addTemplate, deleteTemplate } from '@/api/template/index'
 import { getById } from "@/api/item/index";
 import {mixin} from "@/mixin/mixin"
+import axios from 'axios';
+
 import {CodeEditor} from "@/views/attributeComponents/defRendererComponents/defRendererComponents"
 export default {
     name: "MaterialManager",
@@ -135,6 +138,36 @@ export default {
             if (!result.success) return;
 
             this.$message.success('保存模板成功');
+        },
+        async transferTemplate(v){
+            // TODO: 材料保存到超级帮办
+            let serviceBaseUrl = this.$store.state.setting.bangbanUrl;
+            if(serviceBaseUrl.endsWith('/')){
+                serviceBaseUrl = serviceBaseUrl.substring(0, serviceBaseUrl.length-1)
+            }
+            console.log(serviceBaseUrl)
+            if(serviceBaseUrl == null || serviceBaseUrl == ''){
+                this.$message({ type: "error", message: "请先设置超级帮办地址!" });
+                return;
+            }
+
+            let params = {
+                documentName: v.template.documentName,
+                documentSeq: v.template.documentSeq,
+                docxTemplateName: v.template.docxTemplateName,
+                notes: v.template.notes,
+                sid: v.template.sid,
+                script: v.template.script,
+            }
+            console.log(params)
+
+            let result = await axios.post(serviceBaseUrl+"/api/sixiang/saveTemplate", params).then(res => res.data);
+            console.log(result)
+            if(result.code == 200){
+                this.$message({ type: "success", message: "导入成功 请查看数据库" });
+            }else{
+                this.$message({ type: "error", message: result.message + " "+ result.data });
+            }
         }
     }
 }
@@ -150,7 +183,7 @@ export default {
         display: flex;
     flex-direction: row;
     .material-list{
-        width: 300px;
+        width: 500px;
         margin-top: 10px;
         padding: 20px;
         border: 1px solid green;
