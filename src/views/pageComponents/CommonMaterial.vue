@@ -17,14 +17,12 @@
                 <div style="height: 100%; overflow-y: auto;" class="mini-scroll container">
                     <div style="width:30cm;margin: 0 auto;color: black;">
                         <div class="row-editor" v-for="(page,index) in doc" :key="index">
-                            <div class="x mini-scroll"
-                                :class="{
+                            <div class="x mini-scroll" :class="{
                                     'page-portrait': page.orient=='row',
                                     'page-landscape': page.orient=='column',
                                     'table-padding': page.isTable==1,
                                     'text-padding': page.isTable==0
-                                    } "
-                                :key="index">
+                                    } " :key="index">
 
                             </div>
 
@@ -57,7 +55,7 @@ import CKEditor from '@/assets/js/ckeditor';
 import Handlebars from "@/utils/handlebarsHelper"
 import _ from "lodash";
 import CommonMixin from "./CommonMixin"
-import {GetDocHtmlTempApi} from "@/api/template/index"
+import { GetDocHtmlTempApi } from "@/api/template/index"
 export default {
     name: 'CommonMaterial',
     mixins: [CommonMixin],
@@ -67,7 +65,7 @@ export default {
             editor: null,
             collapse: true,
             index: 0,
-            docList:[],
+            docList: [],
         }
     },
     computed: {
@@ -75,66 +73,113 @@ export default {
             return this.docList[this.index]
         },
         // docList() {
-            
+
         //     let templateList = this.$store.state.fieldModel.templateList;
         //     return templateList.filter(temp => this.config.includes(temp.template.docxTemplateName))
         // },
         templateObj() {
             return _.mapValues(this.itemState, "value")
         },
-        isLast(){
-            return this.index == this.docList.length-1
+        isLast() {
+            return this.index == this.docList.length - 1
         }
     },
     async created() {
-        let result = await Promise.all(this.config.map(fileName => GetDocHtmlTempApi({ sid: this.$store.state.home.item.sid, docxTemplateName:fileName, pageNum: 0 })));
+        let result = await Promise.all(this.config.map(fileName => GetDocHtmlTempApi({ sid: this.$store.state.home.item.sid, docxTemplateName: fileName, pageNum: 0 })));
         this.docList = result.map(v => v.data);
-        
-        let getters= this.gettersList.reduce((result,fieldNo)=>{
-                        result[fieldNo] = this.getters["run/"+fieldNo]
-                        return result
-                    },{})
-       
 
-         console.log({...this.templateObj,...getters,})
+        let getters = this.gettersList.reduce((result, fieldNo) => {
+            result[fieldNo] = this.getters["run/" + fieldNo]
+            return result
+        }, {})
 
-        this.docList.forEach(doc => {
-            doc.forEach((page,i) => {
-                let pageNum =1 
-                    try{
-                        let fn = eval(`(${page.script})`)
-                        pageNum = fn(this.itemState,this.itemGetters);
 
-                    }catch(e){
-                        console.log(e,"page.script",`第${i}页`)
+        console.log({ ...this.templateObj, ...getters, })
+        let repeat = function (arr, num) {
+            return Array.from({ length: num }).map((v,i) => arr.map(n=>({pageNum:n,_repeatNo:i}))).flat();
+        }
+
+        this.docList = this.docList.map(doc => {
+            if (doc.length < 1) {
+                console.warn("文档页数为0");
+                return;
+            }
+            doc.forEach(page=>{page.originHtmlContent=page.htmlContent})
+            try {
+                let fn = eval(`(${doc[0].script})`)
+                
+                let pageArray = fn(this.itemState, this.itemGetters).flat().map(v=>{
+                    if(typeof v !="object"){
+                        return {pageNum:v}
                     }
+                    return v;
+                }).map(pageInfo => {
                    
-                let template = Handlebars.compile(page.htmlContent)
+                    let page = doc.find(v => v.pageNum == pageInfo.pageNum);
+                    if (!page) {
+                        console.warn(`找不到pageNum：${pageInfo.pageNum}`)
+                        return { htmlContent: "" };
+                    }
+                    page = _.cloneDeep(page)
+                    try {
 
-                try {
-                        
-                    page.pages = Array.from({length:pageNum}).map((v,i)=>template({...this.templateObj,...getters,_repeatNo:i}))
-                    // page.htmlContent = template({...this.templateObj,...getters})
-                    
+                        let template = Handlebars.compile(page.originHtmlContent);
+                       
+                        page.htmlContent = template({ ...this.templateObj, ...getters ,_repeatNo: pageInfo._repeatNo})
+                         
+                    } catch (e) {
+                        console.warn(`模板编译错误：${page.pageNum}`, e);
+                        page.htmlContent = "模板错误"
+                    }
 
-                   
-                } catch (e) {
-                    console.warn(`模板编译错误：${page.pageNum}`, e);
-                    page.htmlContent = "模板错误"
-                }
-            })
+
+                    return page
+                });
+
+                return pageArray
+
+            } catch (e) {
+                console.warn(`script错误：${doc[0].script}`, e);
+                return []
+            }
+            
+
+            // doc.forEach((page, i) => {
+            //     let pageNum = 1
+            //     try {
+            //         // let fn = eval(`(${page.script})`)
+            //         pageNum = fn(this.itemState, this.itemGetters);
+
+            //     } catch (e) {
+            //         console.log(e, "page.script", `第${i}页`)
+            //     }
+
+            //     let template = Handlebars.compile(page.htmlContent)
+
+            //     try {
+
+            //         page.pages = Array.from({ length: pageNum }).map((v, i) => template({ ...this.templateObj, ...getters, _repeatNo: i }))
+            //         // page.htmlContent = template({...this.templateObj,...getters})
+
+
+
+            //     } catch (e) {
+            //         console.warn(`模板编译错误：${page.pageNum}`, e);
+            //         page.htmlContent = "模板错误"
+            //     }
+            // })
         });
 
-        this.docList.forEach((doc,i,docList)=>{
-            docList[i] = doc.flatMap(page=>{
-                return page.pages.flatMap(v=>({...page,htmlContent:v,}))
-            })
-        })
-    
+        // this.docList.forEach((doc, i, docList) => {
+        //     docList[i] = doc.flatMap(page => {
+        //         return page.pages.flatMap(v => ({ ...page, htmlContent: v, }))
+        //     })
+        // })
+
 
     },
     mounted() {
-        
+
         // this.init();
     },
     watch: {
@@ -312,7 +357,7 @@ export default {
             this.initCKEdit()
         },
         goNext() {
-            if(!this.isLast){
+            if (!this.isLast) {
                 this.index++;
                 return;
             }
@@ -330,90 +375,86 @@ export default {
     width: 21cm;
     height: 29.7cm;
     margin-top: 10px;
-    &.table-padding{
+    &.table-padding {
         padding: 2.54cm 1.5cm;
     }
     &.text-padding {
         padding: 2.54cm 3.18cm;
     }
 }
- 
-.page-landscape{
+
+.page-landscape {
     width: 29.7cm;
-    height:21cm;
+    height: 21cm;
     margin-top: 10px;
-    padding: 2.54cm 1.17cm
+    padding: 2.54cm 1.17cm;
 }
 
+.material-mask {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+// 全文本的padding
+.text-padding {
+    padding: 2.54cm 3.18cm;
+}
+//有表格的padding
+.table-padding {
+    padding: 2.54cm 1.5cm;
+}
+.text {
+    margin: 0 auto;
+    white-space: normal;
+    word-break: break-all;
+    word-wrap: break-word;
+    color: black;
+}
 
-   
+.comment {
+    width: 200px;
+    flex-shrink: 0;
+    margin-left: auto;
+    border-left: 1px solid rgba(255, 255, 255, 0.5);
+}
 
-    .material-mask {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background-color: rgba(0, 0, 0, 0.6);
-    }
-    // 全文本的padding
-    .text-padding {
-        padding: 2.54cm 3.18cm;
-    }
-    //有表格的padding
-    .table-padding {
-        padding: 2.54cm 1.5cm;
-    }
-    .text {
-        margin: 0 auto;
-        white-space: normal;
-        word-break: break-all;
-        word-wrap: break-word;
-        color: black;
-    }
+.x {
+    width: 21cm;
+    height: 29.7cm;
+    margin: 10px 0;
+    background-color: white;
+    overflow-y: scroll;
+    overflow-y: overlay;
+}
 
-    .comment {
-        width: 200px;
-        flex-shrink: 0;
-        margin-left: auto;
-        border-left: 1px solid rgba(255, 255, 255, 0.5);
-    }
+.direction-row {
+    width: 29.7cm;
+    height: 21cm;
+    padding: 2.54cm 1.17cm;
+}
 
-    .x {
-        width: 21cm;
-        height: 29.7cm;
-        margin: 10px 0;
-        background-color: white;
-        overflow-y: scroll;
-        overflow-y: overlay;
-    }
+.ckeditor {
+    overflow: hidden;
+    height: 100%;
+}
 
-    .direction-row {
-        width: 29.7cm;
-        height: 21cm;
-        padding: 2.54cm 1.17cm;
-    }
+.main {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    height: 100%;
 
-    .ckeditor {
-        overflow: hidden;
-        height: 100%;
-    }
-
-    .main {
+    .toolbar {
+        width: 100%;
         display: flex;
         flex-direction: column;
-        overflow: hidden;
-        height: 100%;
-
-        .toolbar {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
+        justify-content: center;
+        align-items: center;
     }
-
+}
 
 .content-block {
     max-height: calc(100% - 20px);
