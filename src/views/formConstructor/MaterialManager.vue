@@ -51,12 +51,9 @@
 import { getTemplate, addTemplate, deleteTemplate } from '@/api/template/index'
 import { getById } from "@/api/item/index";
 import {mixin} from "@/mixin/mixin"
-<<<<<<< HEAD
 import axios from 'axios';
 
-=======
 import {CodeEditor} from "@/views/attributeComponents/defRendererComponents/defRendererComponents"
->>>>>>> e65b85c34cd3178d79a1d46af0a3c87a4822ae33
 export default {
     name: "MaterialManager",
     mixins:[mixin],
