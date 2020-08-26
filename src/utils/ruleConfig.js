@@ -47,7 +47,7 @@ const validateEmpty = (rule, value, callback)=>{
         callback();
     }
 }
-export const rulesList = ["none",'required','phone','postCode','idCardNum','mail','cardNum',"custom"]
+export const rulesList = ["none",'required','phone','fixedTelephone','postCode','idCardNum','mail','cardNum',"custom"]
 export default class  {
     constructor(state,getters){
         
@@ -76,6 +76,14 @@ export default class  {
                 required: true,
                 pattern: /^1\d{10}$/,
                 message: '手机号格式不正确',
+                // trigger: 'blur'
+            },
+        ],
+        'fixedTelephone': [
+            {
+                required: true,
+                pattern: /\d{3}(-)?\d{8}$/,
+                message: '固定电话格式不正确',
                 // trigger: 'blur'
             },
         ],
