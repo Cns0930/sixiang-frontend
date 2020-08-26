@@ -13,6 +13,11 @@ class Collection {
         this.removeBtnStyle = new Renderer('ElInput', '')
         this.isLengthFixed = new Renderer('ElSingleCheckboxC', false,{options:[true]},"不可添加/删除")
         this.hidden = new Renderer('ElSingleCheckboxC', false,{options:[true]},"是否隐藏")
+        
+        this.addHook = new Renderer("CodeEditor",`
+        function(state,getters,siblings,parent){
+            
+        }`,null,"添加钩子函数");
     }
     getAttributes(meta){
         
@@ -22,7 +27,8 @@ class Collection {
             addBtnStyle:this.addBtnStyle.value,
             removeBtnStyle:this.removeBtnStyle.value,
             title:this.title.value,
-            isLengthFixed:this.isLengthFixed.value
+            isLengthFixed:this.isLengthFixed.value,
+            addHook:this.addHook.value
         }
     }
 }

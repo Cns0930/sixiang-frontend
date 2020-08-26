@@ -37,7 +37,7 @@ export default {
     name: "Collection",
     mixins: [CommonMixin],
     components: { PureComponents, },
-    props: ['value', 'children', 'meta', "removeBtnStyle", "addBtnStyle", "title","isLengthFixed"],
+    props: ['value', 'children', 'meta', "removeBtnStyle", "addBtnStyle", "title","isLengthFixed","addHook"],
     data() {
         return {
 
@@ -58,7 +58,8 @@ export default {
                 }
             })
 
-            this.children.push(newChild)
+            this.children.push(newChild);
+            this.addHook(this.itemState, this.itemGetters, newChild, this.children)
         },
         handleRemove(i) {
             this.children.splice(i, 1)

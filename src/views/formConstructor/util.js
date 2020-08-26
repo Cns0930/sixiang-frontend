@@ -66,7 +66,7 @@ export function functionReviverEventBundle(value, tag, key) {
 
 
 // 常用方法(或者其他不需要额外参数的方法) string -> function  ——预览
-export function functionReviverRuntime(value, tag) {
+export function functionReviverRuntime(value, tag,args=[]) {
 
     if (typeof value === 'string') {
         var rfunc = /function\s*\w*\s*\([\w\s,]*\)\s*{([\w\W]*)}/,
@@ -74,7 +74,7 @@ export function functionReviverRuntime(value, tag) {
 
         if (match) {
 
-            return new Function("state", "getters", `
+            return new Function("state", "getters",...args, `
            
             with(this){
                 try{
@@ -152,7 +152,7 @@ export function convertDefToConfigEventRuntime(fields, metaName = "meta", childr
             },
             attrObj, {
                 attributes: item.componentDefs.getAttributes ? _.mapValues(item.componentDefs.getAttributes(attrObj[metaName]), function (o, k) {
-                    return functionReviverRuntime(o, item.fieldNo)
+                    return functionReviverRuntime(o, item.fieldNo,['siblings','parent'])
                 }) : {}
             }
         );
