@@ -43,6 +43,15 @@
             </el-form-item>
 
         </el-col>
+        <el-dialog class="message-dialog dialogToMsgbox" title="系统提示" :visible.sync="showTroubleMask" append-to-body
+            :close-on-click-modal="false" width="800px">
+            <div class="message-dialog-content">
+                <div class="info">{{troubleMsg}}</div>
+                <div slot="footer" class="dialog-footer" style="display: flex;justify-content: space-around">
+                    <el-button type="warning" class="dialog-warn-btn" @click="showTroubleMask = false">确 定</el-button>
+                </div>
+            </div>
+        </el-dialog>
     </el-col>
 </template>
 
@@ -65,6 +74,8 @@ export default {
             // addList: [{ fanwei: { value: "" }, shixiang: { value: "",options:[] } }],
             ops,
             meta: { fanwei: { value: "" }, shixiang: { value: "", options: [] } },
+            troubleMsg: '',
+            showTroubleMask: false,
         }
     },
     computed: {
@@ -106,10 +117,13 @@ export default {
         },
         handleCopy(data){
             let context = data.fanwei
-            
+            if(this.resultBlock.htmlValue.includes(context.value)) {
+                this.troubleMsg = '已经存在当前经营范围';
+                this.showTroubleMask = true;
+                return;
+            }
             if (!context.value.trim()) return;
             let textarea = this.resultBlock;
-            console.log()
 
             if (!textarea.textArray.includes(context.value)) {
                 textarea.textArray.push(context.value)
