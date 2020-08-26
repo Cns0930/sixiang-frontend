@@ -59,7 +59,9 @@ export default {
             })
 
             this.children.push(newChild);
-            this.addHook(this.itemState, this.itemGetters, newChild, this.children)
+            if(this.addHook && typeof this.addHook =='function'){
+                this.addHook(this.itemState, this.itemGetters, newChild, this.children)
+            }
         },
         handleRemove(i) {
             this.children.splice(i, 1)
