@@ -6,7 +6,7 @@
     "serve": "vue-cli-service serve",
     "dev": "vue-cli-service serve",
     "start": "vue-cli-service serve",
-    "build": "vue-cli-service build"
+    "build": "vue-cli-service build --max_old_space_size=4096"
   },
   "dependencies": {
     "ace-builds": "^1.4.11",
