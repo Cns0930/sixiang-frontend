@@ -1,7 +1,7 @@
 
 <script>
 import { mapState, mapGetters } from "vuex"
-import Rules from "@/bangban/views/ANew/config/ruleConfig"
+import Rules from "@/utils/ruleConfig"
 export default {
     name: "CommonMixin",
     data() {

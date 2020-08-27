@@ -107,7 +107,7 @@ export default {
             doc.forEach(page=>{page.originHtmlContent=page.htmlContent})
             try {
                  let fn
-                if(!doc[0].script.trim()){
+                if(!doc[0].script || !doc[0].script.trim()){
                     fn = function(){
                         return doc.map(page=>page.pageNum)
                     }
