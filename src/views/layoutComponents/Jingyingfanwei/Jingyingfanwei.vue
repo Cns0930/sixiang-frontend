@@ -98,6 +98,8 @@ export default {
             shixiang.options = getMatter(e);
             if (shixiang.options.length > 0) {
                 shixiang.value = shixiang.options[0].value
+            } else {
+                shixiang.value = '';
             }
         },
         // 移除添加项
@@ -117,7 +119,7 @@ export default {
         },
         handleCopy(data){
             let context = data.fanwei
-            if(this.resultBlock.htmlValue.includes(context.value)) {
+            if(this.resultBlock.value.includes(context.value)) {
                 this.troubleMsg = '已经存在当前经营范围';
                 this.showTroubleMask = true;
                 return;
