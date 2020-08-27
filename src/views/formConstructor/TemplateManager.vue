@@ -128,7 +128,10 @@
                     </el-select>
                     
                     <el-input v-model="currentPagenum" placeholder="请输入页码"></el-input>
-                    <CodeEditor v-model="temp_page.script"></CodeEditor>
+                    <div>
+                    script配置<CodeEditor v-model="temp_page.script"></CodeEditor>
+                    css配置<CSSEditor v-model="temp_page.contentCss"></CSSEditor>
+                    </div>
                 </div>
         </el-dialog>
     </div>
@@ -145,13 +148,13 @@ import defs, { deserializeComputedField, deserializeBaseField } from "../attribu
 import inlineEditor from "@/views/inlineEditorComponent/InlineEditor"
 
 import {mixin} from "@/mixin/mixin"
-import {CodeEditor} from "@/views/attributeComponents/defRendererComponents/defRendererComponents"
+import {CodeEditor,CSSEditor} from "@/views/attributeComponents/defRendererComponents/defRendererComponents"
 import axios from 'axios';
 
 export default {
     name: "TemplateManager",
     components: {
-        inlineEditor,CodeEditor
+        inlineEditor,CodeEditor,CSSEditor
     },
     mixins:[mixin],
     data() {
