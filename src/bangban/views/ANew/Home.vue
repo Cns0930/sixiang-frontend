@@ -70,7 +70,7 @@ import { mixin as initMixin } from "@/mixin/mixin"
 import { mapState, mapGetters } from "vuex"
 // import stepPagesMap from "./config/stepPagesMap"
 // js模块
-import Rules from "@/bangban/views/ANew/config/ruleConfig"
+import Rules from "@/utils/ruleConfig"
 
 import store from "@/vuex/store"
 import { functionReviverRuntime, functionReviverEventRuntime, convertDefToConfigEventRuntime } from "@/views/formConstructor/util"

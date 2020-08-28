@@ -19,7 +19,7 @@ export const utils = {
     dayjs
 }
 // 常用 string 转function  ——输出
-export function functionReviverBundle(value, tag) {
+export function functionReviverBundle(value, tag,args=[]) {
 
     if (typeof value === 'string') {
         var rfunc = /function\s*\w*\s*\([\w\s,]*\)\s*{([\w\W]*)}/,
@@ -27,7 +27,7 @@ export function functionReviverBundle(value, tag) {
 
         if (match) {
             if (!match[1].trim()) return new Function();
-            return new Function("state", "getters", `
+            return new Function("state", "getters",...args, `
              try{
                     ${match[1]}
                 }catch(e){
@@ -250,7 +250,7 @@ export function convertDefToConfigBundle(fields, metaName = "meta", childrenName
             },
             attrObj, {
                 attributes: item.componentDefs.getAttributes ? _.mapValues(item.componentDefs.getAttributes(attrObj[metaName]), function (o, k) {
-                    return functionReviverBundle(o, item.fieldNo)
+                    return functionReviverBundle(o, item.fieldNo,['siblings','parent'])
                 }) : {}
             }
         );
