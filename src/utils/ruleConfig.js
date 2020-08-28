@@ -82,7 +82,7 @@ export default class  {
         'fixedTelephone': [
             {
                 required: true,
-                pattern: /\d{3}(-)?\d{8}$/,
+                pattern: /^(0[0-9]{2,3}\-)?([2-9][0-9]{6,7})+(\-[0-9]{1,4})?$|(^(13[0-9]|15[0|2|3|6|7|8|9]|18[3|6|7|8|9])\d{8}$)/,
                 message: '请输入正确的电话号码',
                 // trigger: 'blur'
             },
