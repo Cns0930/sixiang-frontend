@@ -129,7 +129,7 @@
                     
                     <el-input v-model="currentPagenum" placeholder="请输入页码"></el-input>
                     <div>
-                    script配置<CodeEditor v-model="temp_page.script"></CodeEditor>
+                    <!-- script配置<CodeEditor v-model="temp_page.script"></CodeEditor> -->
                     css配置<CSSEditor v-model="temp_page.contentCss"></CSSEditor>
                     </div>
                 </div>

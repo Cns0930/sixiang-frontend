@@ -61,7 +61,7 @@
         </div>
         <processing v-if="msg" :msg="msg" />
         <el-dialog class="message-dialog" title="请扫描随申码" :visible.sync="showSuiShenBanScanModal" append-to-body
-            :close-on-click-modal="false" width="800px">
+            :close-on-click-modal="false" width="800px" @close="handleBarcodeClose">
             <div class="message-dialog-content">
                 <div class="img-placeholder">
                     <img src="./scan.png" alt="">
@@ -216,8 +216,8 @@ export default {
                     this.idNagetive = data.backImg;
                     // this.checkInfo();
                     this.address = data.baseInfo.address;
-                    this.$emit("change", { name: this.recogniseName, code: this.recogniseIdNum, address: this.address, idPositive: this.idPositive, idNagetive: this.idNagetive })
-
+                    // this.$emit("change", { name: this.recogniseName, code: this.recogniseIdNum, address: this.address, idPositive: this.idPositive, idNagetive: this.idNagetive })
+                    this.emitEvent();
                 } else {
                     this.$message.warning(message);
                 }
@@ -286,7 +286,13 @@ export default {
         //     })
         // },
         callSuiShenBan() {
+            console.log("初始化拉！new IdentityCommon")
+            this.$barcodeScanner.init(this.onBarcodeScanned)
             this.showSuiShenBanScanModal = true
+        },
+        handleBarcodeClose(){
+            console.log("销毁！new IdentityCommon")
+            this.$barcodeScanner.destroy();
         },
         async onBarcodeScanned(barcode) {
             this.barcode = barcode
@@ -307,6 +313,8 @@ export default {
                     this.$message.error('获取证件信息失败!')
                     this.suiShenBanSearching = false
                 })
+                console.log("销毁！new IdentityCommon")
+                this.$barcodeScanner.destroy();
             }
         },
         getTestIdCard() {

@@ -74,6 +74,9 @@ export default {
         
         console.log("默认值获取完毕")
         
+        if(this.stepData.useAfterEnter){
+            this.stepData.afterEnterFn(this.itemState,this.itemGetters)
+        }
     },
     methods: {
         async beforeEnter() {

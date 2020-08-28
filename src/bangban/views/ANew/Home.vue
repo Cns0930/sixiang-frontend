@@ -1,5 +1,6 @@
 <template>
     <div class="home new">
+
         <div class="left">
             <content-card title="收件流程" :img="stepIcon">
                 <LeftSteper slot="content" :stepsData="stepsData" :active.sync="active"
@@ -170,7 +171,7 @@ export default {
             return result;
         }, {});
         let gettersList = Object.keys(itemGetters)
-        this.$store.commit("putGettersList", gettersList)
+        
 
         // 注册模块
         let module = {
@@ -186,7 +187,9 @@ export default {
         // console.log(JSON.stringify(module.state, null, 4));
         this.$store.registerModule("run", module);
 
-
+        
+        this.$store.commit("putGettersList", gettersList)
+        console.log(this.itemGetters)
         this.rules = new Rules(this.itemState, this.itemGetters).rules;
     },
 
@@ -202,7 +205,18 @@ export default {
 
 
         // },
+        async init() {
 
+            let itemId = this.$route.query.itemId;
+            let result = await getById({ id: itemId });
+            if (!result.success) {
+                this.$message({ type: "warning", message: "获取初始事项信息失败" });
+                return;
+            }
+            this.$store.commit("changeItem", result.data);
+            this.$store.commit("putSid", result.data.sid)
+
+        },
         async goNext(data) {
             let nextActive = this.active + 1;
 
@@ -380,7 +394,7 @@ export default {
         },
         async fetchBookInfo() {
             if (this.dev_barcode && this.dev_barcode.trim()) {
-               await  this.onBarcodeScanned(this.dev_barcode)
+                await this.onBarcodeScanned(this.dev_barcode)
             } else {
                 this.$message.warning('请输入票号..')
             }
@@ -437,8 +451,10 @@ export default {
 
 <style scoped lang="scss">
 //  @import "~@/assets/css/index.css";
+
+
 .new {
-    background-image: url("~@/assets/new_background.jpeg");
+    
     &.home {
         height: calc(100vh - 105px);
         color: white;
@@ -447,6 +463,9 @@ export default {
     }
 }
 .home {
+   
+
+
     height: 100%;
     display: flex;
     padding: 20px 60px 20px 60px;

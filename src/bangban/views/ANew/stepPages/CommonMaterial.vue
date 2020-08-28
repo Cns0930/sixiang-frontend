@@ -55,7 +55,8 @@
 import ContentCard from '../components/ContentCard'
 import CKEditor from '@/assets/js/ckeditor';
 import _ from "lodash";
-import { GetDocHtmlTempApi } from '@/api/ANew/index'
+// import { GetDocHtmlTempApi } from '@/api/ANew/index'
+import { GetDocHtmlTempApi } from "@/api/template/index"
 import Handlebars from "@/utils/handlebarsHelper"
 import { mapGetters, mapState } from "vuex"
 import CommonMixin from "@/bangban/views/ANew/CommonMixin"
@@ -79,7 +80,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['getSid',"item_code"]),
+        ...mapGetters(['sid']),
         ...mapState({
             // item_code: state => state.ANew.item_code,
             index:state=>state.ANew.docIndex,
@@ -96,7 +97,7 @@ export default {
         }
     },
     async created() {
-        let result = await Promise.all(this.config.map(fileName => GetDocHtmlTempApi({ sid: this.getSid, fileName, pageNum: 0 })));
+        let result = await Promise.all(this.config.map(fileName => GetDocHtmlTempApi({ sid: this.sid, docxTemplateName:fileName, pageNum: 0 })));
         this.docList = result.map(v => v.data);
         let getterFiledNos = Object.keys(this.getters).filter(fieldNo => fieldNo.startsWith(`${this.item_code}/`))
         let getters = getterFiledNos.reduce((result, fieldNo) => {
@@ -106,38 +107,64 @@ export default {
         }, {})
         console.log("替换属性:")
         console.log({ ...this.templateObj, ...getters })
-        this.docList.forEach(doc => {
-            doc.forEach((page,i) => {
-                let pageNum =1 
-                if(page.script){
-                     try{
-                        let fn = eval(`(${page.script})`)
-                        pageNum = fn(this.itemState,this.itemGetters);
 
-                    }catch(e){
-                        console.log(e,"page.script",`第${i}页`)
+        let repeat = function (arr, num) {
+            return Array.from({ length: num }).map((v,i) => arr.map(n=>({pageNum:n,_repeatNo:i}))).flat();
+        }
+
+        this.docList = this.docList.map(doc => {
+            if (doc.length < 1) {
+                console.warn("文档页数为0");
+                return;
+            }
+            doc.forEach(page=>{page.originHtmlContent=page.htmlContent})
+            try {
+                 let fn
+                if(!doc[0].script || !doc[0].script.trim()){
+                    fn = function(){
+                        return doc.map(page=>page.pageNum)
                     }
+                }else{
+                    fn = eval(`(${doc[0].script})`)
                 }
+                
+                
+                let pageArray = fn(this.itemState, this.itemGetters).flat().map(v=>{
+                    if(typeof v !="object"){
+                        return {pageNum:v}
+                    }
+                    return v;
+                }).map(pageInfo => {
                    
+                    let page = doc.find(v => v.pageNum == pageInfo.pageNum);
+                    if (!page) {
+                        console.warn(`找不到pageNum：${pageInfo.pageNum}`)
+                        return { htmlContent: "" };
+                    }
+                    page = _.cloneDeep(page)
+                    try {
+                        
+                        let template = Handlebars.compile(page.originHtmlContent);
+                       
+                        page.htmlContent = template({ ...this.templateObj, ...getters ,_repeatNo: pageInfo._repeatNo})
+                         
+                    } catch (e) {
+                        console.warn(`模板编译错误：${page.pageNum}`, e);
+                        page.htmlContent = "模板错误"
+                    }
 
-                let template = Handlebars.compile(page.html)
 
-                try {
-                    page.pages = Array.from({length:pageNum}).map((v,i)=>template({...this.templateObj,...getters,_repeatNo:i}))
-                    // page.html = template({ ...this.templateObj, ...getters ,_pageNo:i})
-                } catch (e) {
-                    console.warn(`模板编译错误：${page.pageNum}`, e);
-                    page.html = "模板错误"
-                }
-            })
+                    return page
+                });
+
+                return pageArray
+
+            } catch (e) {
+                console.warn(`script错误：${doc[0].script}`, e);
+                return []
+            }
+
         });
-        this.docList.forEach((doc,i,docList)=>{
-            docList[i] = doc.flatMap(page=>{
-                let result =  page.pages.flatMap(v=>({...page,html:v,}))
-                result.forEach(page=>{delete page.pages})
-                return result
-            })
-        })
         this.$store.commit("putDocList",this.docList);
         this.$store.commit("putAllFieldNo",this.templateObj)
     },

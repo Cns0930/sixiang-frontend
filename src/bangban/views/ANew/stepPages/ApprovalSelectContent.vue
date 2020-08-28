@@ -133,5 +133,8 @@ export default {
         margin-top: -10px;
         margin-left: 10px;
     }
+    .select-form .el-form-item__content .el-checkbox-group .el-col {
+        line-height: 50px;
+    }
 }
 </style>
