@@ -38,6 +38,7 @@ class CommonComponents {
         // helper.CheckSocialCreditCode(code) 判断是否统一社会信用代码
         // helper.IdentityCodeValid(code) 判断是否身份证
         // helper.CheckPhone(code) 判断是否手机号
+        // helper.CheckFixedTelephone(code) 判断是否固定电话
         // helper.CheckPostCode(code) 判断是否邮政编码
         // helper.CheckMail(code) 判断是否电子邮箱
         // return {success:false,msg:"验证错误提示"}
