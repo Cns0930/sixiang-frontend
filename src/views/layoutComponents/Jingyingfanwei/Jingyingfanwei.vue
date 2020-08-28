@@ -76,6 +76,7 @@ export default {
             meta: { fanwei: { value: "" }, shixiang: { value: "", options: [] } },
             troubleMsg: '',
             showTroubleMask: false,
+            nowAddList: [],//当前页面添加的经营范围
         }
     },
     computed: {
@@ -124,6 +125,9 @@ export default {
                 this.showTroubleMask = true;
                 return;
             }
+
+            this.nowAddList.push(context.value);
+
             if (!context.value.trim()) return;
             let textarea = this.resultBlock;
 
@@ -149,7 +153,7 @@ export default {
             let restValue = "。" + valueArr.join("。")
             let realValueArr = realValue.split("，")
             let htmlValue = realValueArr.reduce((result, item) => {
-                if (hightlightJingyingfanwei.includes(item)) {
+                if (hightlightJingyingfanwei.includes(item) && !this.nowAddList.includes(item)) {
                     return `${result}，<span style="color:#00C3FF">${item}</span>`
                 } else {
                     return result + "，" + item
