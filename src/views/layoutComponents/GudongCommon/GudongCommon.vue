@@ -29,7 +29,7 @@
                 </div>
 
                 <!-- tab 添加按钮 -->
-                <el-button type="primary" size="small" icon="el-icon-plus" style="width:100px" @click="addGudongDialog">
+                <el-button type="primary" size="small" icon="el-icon-plus" style="width:100px" @click="addGudongDialog" v-if="canAdd">
                     添加
                 </el-button>
             </div>
@@ -78,7 +78,7 @@
 import PureComponents from "../PureComponents"
 export default {
     name: "GudongCommon",
-    props: ['value', 'children', 'meta', 'labelFieldNo', "gudongNameFieldNo", "gudongCodeFieldNo","deleteOrigin"],
+    props: ['value', 'children', 'meta', 'labelFieldNo', "gudongNameFieldNo", "gudongCodeFieldNo","deleteOrigin","canAdd"],
     components: { PureComponents },
     data() {
         return {

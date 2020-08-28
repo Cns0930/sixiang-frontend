@@ -55,6 +55,15 @@ export function CheckPhone(phone) {
         return false
     }
 }
+export function CheckFixedTelephone(phone) {
+    var telephonereg = /^(0[0-9]{2,3}\-)?([2-9][0-9]{6,7})+(\-[0-9]{1,4})?$|(^(13[0-9]|15[0|2|3|6|7|8|9]|18[3|6|7|8|9])\d{8}$)/;
+    if(!phone) return false;
+    if(telephonereg.test(phone)) {
+        return true
+    } else {
+        return false
+    }
+}
 export function CheckPostCode(code) {
     var codereg = /^[0-9]{6}$/;
     if(!code) return false;
@@ -87,6 +96,6 @@ export default {
     setOptions,
     CheckPhone,
     CheckMail,
-    CheckPostCode
-    
+    CheckPostCode,
+    CheckFixedTelephone
 }

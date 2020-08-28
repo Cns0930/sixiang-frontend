@@ -12,10 +12,12 @@ class GudongCommon {
         this.gudongNameFieldNo = new Renderer('ElInput', '',null,"股东名称的fieldNo")
         this.gudongCodeFieldNo = new Renderer('ElInput', '',null,"股东代码的fieldNo")
         this.deleteOrigin = new Renderer('ElSingleCheckboxC',false,{options:[true]},"是否可删除原股东列表deleteOrigin")
+        this.canAdd = new Renderer('ElSingleCheckboxC',false,{options:[true]},"是否可新增股东canAdd")
     }
     getAttributes(meta){
         
         return {
+            canAdd: this.canAdd.value,
             deleteOrigin: this.deleteOrigin.value,
             children:[meta],
             meta,
