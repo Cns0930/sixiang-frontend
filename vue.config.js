@@ -27,6 +27,7 @@ module.exports = {
         // 输出文件名会被推导为 `subpage.html`。
         bangban: {
             entry: 'src/bangban.js',
+            filename: 'bangban.html',
             template: 'public/bangban.html',
         }
     },
