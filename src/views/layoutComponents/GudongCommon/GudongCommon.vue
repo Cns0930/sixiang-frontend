@@ -22,14 +22,14 @@
 
                     </div>
 
-                    <el-tooltip v-if="deleteOrigin || gudongIndex > defaultNum" class="remove-btn remove-on-tab" effect="dark" content="删除" placement="right-start">
+                    <el-tooltip v-if="!deleteOrigin || gudongIndex > defaultNum" class="remove-btn remove-on-tab" effect="dark" content="删除" placement="right-start">
                         <i class="delete-btn el-icon-close" @click.stop="handelRemove(gudongIndex)"></i>
                     </el-tooltip>
 
                 </div>
 
                 <!-- tab 添加按钮 -->
-                <el-button type="primary" size="small" icon="el-icon-plus" style="width:100px" @click="addGudongDialog" v-if="canAdd">
+                <el-button type="primary" size="small" icon="el-icon-plus" style="width:100px" @click="addGudongDialog" v-if="!canAdd">
                     添加
                 </el-button>
             </div>
