@@ -36,9 +36,9 @@
         </el-col>
         <el-col :span="24">
 
-            <el-form-item label="变更后经营范围" prop="required" :obj="resultBlock"
-                :class="{'default-text-color':resultBlock.confirm === false}">
-                <div contenteditable="true" v-html="resultBlock.htmlValue" class="textarea-like" @input="onhtmlinput">
+            <el-form-item label="变更后经营范围" :prop="jingyingfanweiContext.ruleKey || ''" :obj="jingyingfanweiContext"
+                :class="{'default-text-color':resultBlock.confirm === false}" ref="jingyingfanweiFormItem">
+                <div contenteditable="true" v-html="resultBlock.htmlValue" class="textarea-like" @input="onhtmlinput" @blur="handleBlur">
                 </div>
             </el-form-item>
 
@@ -68,7 +68,7 @@ export default {
     mixins: [CommonMixin],
     components: { ElFormItem: TestFormItem, },
     // value 格式 ：{jingyingfanwei:{value:"",htmlValue:"",textArray:[]},addList:[{ fanwei: { value: "" }, shixiang: { value: "",options:[] } }]}
-    props: ["value","title"],
+    props: ["value","title","validateFn","ruleKey"],
     data() {
         return {
             // addList: [{ fanwei: { value: "" }, shixiang: { value: "",options:[] } }],
@@ -86,6 +86,19 @@ export default {
         resultBlock() {
             return this.value.jingyingfanwei;
         },
+        jingyingfanweiContext(){
+            
+             let result =  {
+                value:this.value.jingyingfanwei.value,
+                ruleKey:this.ruleKey,
+                validateFn:(value,state,getters)=>{
+                    return this.validateFn(state,getters)
+                }
+            }
+           
+            return result
+          
+        }
     },
     created(){
         this.$set(this.resultBlock,"htmlValue",this.valueToHtmlValue(this.resultBlock.value))
@@ -163,6 +176,10 @@ export default {
             htmlValue = htmlValue.substring(1, htmlValue.length) + restValue;;
             return htmlValue
         },
+        handleBlur(){
+            
+            this.$refs.jingyingfanweiFormItem.validate("blur",this.resultBlock.value)
+        }
     }
 }
 </script>
