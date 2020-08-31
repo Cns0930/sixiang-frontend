@@ -7,7 +7,7 @@
             <el-button @click="loadAll">载入页面</el-button>
             <el-button @click="$router.push({path:'/run',query:{itemId}})">运行页面</el-button>
             <el-button @click="handleOutput">输出</el-button>
-            <el-link :href="`bangban.html/#/?itemId=${itemId}&barcode=${barcode}`" target="_blank">超级帮办模拟运行</el-link>barcode<el-input v-model="barcode" style="width:100px"></el-input>
+            <el-link :href="`bangban.html#/?itemId=${itemId}&barcode=${barcode}`" target="_blank">超级帮办模拟运行</el-link>barcode<el-input v-model="barcode" style="width:100px"></el-input>
 
             <el-divider direction="vertical"></el-divider><el-button @click="transferOutput">保存输出到超级帮办</el-button>
         </div>

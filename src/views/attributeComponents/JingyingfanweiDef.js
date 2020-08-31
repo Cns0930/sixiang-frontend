@@ -13,6 +13,8 @@ class JingyingfanweiDef extends CommonComponents{
     getAttributes(){
         return {
             title: this.$title.value,
+            validateFn:this.validateFn.value,
+            ruleKey:this.ruleKey.value,
         }
     }
    
