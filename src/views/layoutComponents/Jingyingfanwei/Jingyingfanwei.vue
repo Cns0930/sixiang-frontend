@@ -146,8 +146,13 @@ export default {
 
             if (!textarea.textArray.includes(context.value)) {
                 textarea.textArray.push(context.value)
+                let lastFullStopIndex = null;
                 // 句号后面加上
-                let lastFullStopIndex = textarea.value.lastIndexOf("。")
+                if(textarea.value.includes('【')) {
+                    lastFullStopIndex = textarea.value.lastIndexOf("。【")
+                } else {
+                    lastFullStopIndex = textarea.value.lastIndexOf("。")
+                }
                 lastFullStopIndex<0 && (lastFullStopIndex=0);
                 let regex = new RegExp("(.{" + lastFullStopIndex + "})")
                   

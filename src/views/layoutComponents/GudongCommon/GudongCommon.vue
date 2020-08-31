@@ -74,7 +74,7 @@
 <script>
 
 
-// import {getEnterpriseInfo,getEnterpriseInfoLike} from "@/api/common/index"
+import {getEnterpriseInfo,getEnterpriseInfoLike} from "@/api/ANew/index"
 import PureComponents from "../PureComponents"
 export default {
     name: "GudongCommon",
@@ -135,7 +135,13 @@ export default {
         },
 
         async querySearchAsync(queryString, cb) {
-            return []
+            cb([])
+            // let res = await getEnterpriseInfoLike({value:queryString});
+            // if(res.message == "SUCCESS" && res.data.length > 0) {
+            //     cb(res.data.map(v=>({value: v.corporateName})))
+            // } else {
+            //     cb([])
+            // }
         },
         handelRemove(i) {
             this.children.splice(i, 1)

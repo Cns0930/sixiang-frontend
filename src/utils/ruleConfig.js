@@ -4,10 +4,18 @@ import {IdentityCodeValid,CheckSocialCreditCode} from "@/utils/function"
 
 
 
- const validateIdCardNum = (rule, value, callback) => {
+const validateIdCardNum = (rule, value, callback) => {
     let isId = IdentityCodeValid(value)
     if(!isId ){
         callback(new Error("请输入正确的身份证号"))
+    }else{
+        callback();
+    }
+}
+const validateSocialCreditCode = (rule, value, callback) => {
+    let isCode = CheckSocialCreditCode(value)
+    if(!isCode ){
+        callback(new Error("请输入正确的统一社会信用代码"))
     }else{
         callback();
     }
@@ -17,7 +25,7 @@ const validateCardNum = (rule, value, callback)=>{
     let isId = IdentityCodeValid(value)
     let isSocial = CheckSocialCreditCode(value)
     if(!isId && !isSocial){
-        callback(new Error("请输入正确的统一社会信用代码"))
+        callback(new Error("证件号码格式不正确"))
     }else{
         callback();
     }
@@ -47,7 +55,7 @@ const validateEmpty = (rule, value, callback)=>{
         callback();
     }
 }
-export const rulesList = ["none",'required','phone','fixedTelephone','postCode','idCardNum','mail','cardNum',"custom"]
+export const rulesList = ["none",'required','socialCreditCode','phone','fixedTelephone','postCode','idCardNum','mail','cardNum',"custom"]
 export default class  {
     constructor(state,getters){
         
@@ -86,6 +94,11 @@ export default class  {
                 message: '请输入正确的电话号码',
                 // trigger: 'blur'
             },
+        ],
+        'socialCreditCode':[
+            {   required: true,
+                validator: validateSocialCreditCode,
+            }
         ],
         'postCode':[
             {   required: true,
