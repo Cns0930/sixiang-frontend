@@ -8,7 +8,7 @@ axios.defaults.baseURL = process.env.VUE_APP_BASE_IP;
 axios.defaults.timeout = 1000 * 60;
 axios.defaults.headers['Content-Type'] = 'application/json';
 // axios.defaults.headers.AUTHORIZTION_FLAG = '';
-axios.defaults.headers.Authorization = '';
+axios.defaults.headers.Authorization = localStorage.getItem('ticket') || '';
 
 const { CancelToken } = axios;
 const source = CancelToken.source();

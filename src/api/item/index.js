@@ -1,5 +1,14 @@
 import axios from 'axios';
 
+//登录
+export const login = params =>axios.post("/login",params).then(res => res.data);
+
+//退出登录
+export const logout = params =>axios.get("/logout",{params}).then(res => res.data);
+
+//获取用户信息
+export const getsession = params =>axios.get("/getsession",{params}).then(res => res.data);
+
 // 事项列表
 export const listAll = params => axios.get("/superform/item/listAll", {params}).then(res => res.data);
 export const listItem = params => axios.get("/superform/item/list", {params}).then(res => res.data);

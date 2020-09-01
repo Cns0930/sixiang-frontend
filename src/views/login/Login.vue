@@ -15,6 +15,9 @@
                     <el-input type="password" v-model="ruleForm.password" auto-complete="off" placeholder="密码"
                         @keyup.native.enter="login(ruleForm)"></el-input>
                 </el-form-item>
+                <el-form-item>
+                    <el-checkbox v-model="ruleForm.rememberMe">记住密码</el-checkbox>
+                </el-form-item>
                 <el-form-item class="login-submit-bg" style="padding-top:40px;">
                     <el-button class="submit-btn" @click.native.prevent="login(ruleForm)">登 录</el-button>
                 </el-form-item>
@@ -25,20 +28,23 @@
 </template>
 
 <script>
+import axios from 'axios';
+import {login} from '@/api/item/index';
 export default {
     name: "Login",
     data() {
         return {
             ruleForm: {
                 userName: "",
-                password: ""
+                password: "",
+                rememberMe: false
             },
         };
     },
     methods: {
-        login(ruleForm) {
+        async login(ruleForm) {
             console.log(ruleForm);
-            let { userName, password } = ruleForm;
+            let { userName, password,rememberMe  } = ruleForm;
             if (!userName) {
                 this.$message.error("请输入用户名");
                 return;
@@ -47,23 +53,33 @@ export default {
                 this.$message.error("请输入密码");
                 return;
             }
-            const result = this.getAuth(userName, password);
+            const result = await this.getAuth(userName, password,rememberMe);
             if (!result.success) {
                 this.$message.error("验证失败！");
                 return;
             }
             localStorage.setItem("ticket", result.data.authorization);
+            localStorage.setItem("username", result.data.userInfo.username);
+            axios.defaults.headers.Authorization = result.data.authorization;
             this.$message.success("登录成功");
             this.$router.push("/");
+            
         },
-        getAuth(userName, password) {
+        async getAuth(userName, password,rememberMe) {
             // FIXME: 之后修改
-            if (userName === "admin" && password === "Hg9s$ixuVe*x4J2X") {
-                return { success: true, data: { authorization: "1234567890" } };
-            } else {
-                return { success: false };
+            // if (userName === "admin" && password === "Hg9s$ixuVe*x4J2X") {
+            //     return { success: true, data: { authorization: "1234567890" } };
+            // } else {
+            //     return { success: false };
+            // }
+            let msg = {
+                account: userName,
+                password,
+                rememberMe
             }
-        }
+            let result = await login(msg);
+            return result;
+        },
     }
 };
 </script>
