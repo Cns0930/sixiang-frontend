@@ -12,7 +12,7 @@ import Run from "@/views/formConstructor/Run"
 import ItemManager from "@/views/formConstructor/ItemManager"
 import Login from "@/views/login/Login"
 import Setting from "@/views/setting/Setting"
-
+import Test from "@/views/test/Test"
 Vue.use(VueRouter)
 import store from "@/vuex/store"
 import bangbanAxios from "@/api/ANew/config"
@@ -79,6 +79,10 @@ const routes = [
         path: '/login',
         name: 'login',
         component: Login
+    },{
+        path: '/test',
+        name: 'test',
+        component: Test
     },
 
 

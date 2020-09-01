@@ -1,5 +1,5 @@
 <template>
-    <el-form label-position="right" label-suffix="：" label-width="200px" hide-required-asterisk class="form-detail"
+    <el-form label-position="right" label-suffix="：" label-width="200px" hide-required-asterisk class="form-detail marinTopGap"
         :rules="rules" ref="form" :validate-on-rule-change="false" @submit.native.prevent>
         <el-row>
             <template v-for="(v,i) in fields">
