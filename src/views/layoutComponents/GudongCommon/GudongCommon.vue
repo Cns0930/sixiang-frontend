@@ -5,7 +5,7 @@
         <div class="tab-block">
 
             <!-- tab 标题 -->
-            <div class="tab-list-title" style="color:black">
+            <div class="tab-list-title">
                 股东列表
             </div>
             <!-- tab -->
@@ -135,13 +135,12 @@ export default {
         },
 
         async querySearchAsync(queryString, cb) {
-            cb([])
-            // let res = await getEnterpriseInfoLike({value:queryString});
-            // if(res.message == "SUCCESS" && res.data.length > 0) {
-            //     cb(res.data.map(v=>({value: v.corporateName})))
-            // } else {
-            //     cb([])
-            // }
+            let res = await getEnterpriseInfoLike({value:queryString});
+            if(res.message == "SUCCESS" && res.data.length > 0) {
+                cb(res.data.map(v=>({value: v.corporateName})))
+            } else {
+                cb([])
+            }
         },
         handelRemove(i) {
             this.children.splice(i, 1)
