@@ -16,6 +16,16 @@
             <el-button type="primary" class="big-btn btn-default" @click="goPrev">返回上一步</el-button>
             <el-button type="warning" class="big-btn btn-warn" @click="goNext">下一步</el-button>
         </div>
+
+        <el-dialog class="message-dialog dialogToMsgbox" title="系统提示" :visible.sync="showBaseValidation" append-to-body
+            :close-on-click-modal="false" width="800px">
+            <div class="message-dialog-content">
+                <div class="info">请填写完整信息</div>
+                <div slot="footer" class="dialog-footer" style="display: flex;justify-content: space-around">
+                    <el-button type="warning" class="dialog-warn-btn" @click="showBaseValidation = false">确 定</el-button>
+                </div>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -32,6 +42,11 @@ export default {
         ...mapState({
             hasQueryDefaultInfo: state => state.ANew.hasQueryDefaultInfo,
         })
+    },
+    data() {
+        return {
+            showBaseValidation: false,
+        }
     },
     async created() {
         if (this.hasQueryDefaultInfo) return;
@@ -110,7 +125,10 @@ export default {
         },
         async goNext() {
             let result = await this.beforeLeave();
-            if (!result) return;
+             if (!result) {
+                this.showBaseValidation = true;
+                return;
+            };
             this.$emit('goNext');
         },
         async msgBox(message, cancelBtnText, confirmBtnText) {
@@ -148,6 +166,6 @@ export default {
 
 <style lang="scss" scoped>
 .form-section {
-    margin-top: 20px;
+    // margin-top: 20px;
 }
 </style>

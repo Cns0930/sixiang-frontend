@@ -8,19 +8,19 @@
                 </div>
                 <el-form label-position="right" label-suffix="：" label-width="200px" hide-required-asterisk
                     class="form-detail" :rules="rules" ref="form" :validate-on-rule-change="false"
-                    @submit.native.prevent>
+                    @submit.native.prevent :class="{'marinTopGap':hasMarginTop}">
                     <el-row >
                         <template v-for="(group,groupIndex) in fieldsGroup">
 
-                            <div class="sub-title-n" v-if="group.fact">
+                            <el-col class="sub-title-n" v-if="group.fact">
                                 <div class="tag"></div>
                                 <span class="text">{{group.fact}}</span>
-                            </div>
+                            </el-col>
 
                             <template v-for="(v,i) in group.fields" >
                                 <el-col :span="24" v-if="v.wrapStart"></el-col>
                                 <template v-if="v.hidden"></template>
-                                <el-col v-else :span="v.span || 12" :key="groupIndex+i">
+                                <el-col v-else :span="v.span || 12" :key="''+groupIndex+i">
                                     <!-- if 列表组件 -->
                                     <component v-if="v.isList" :is="v.component" v-bind="v.attributes" :value="v.value"
                                         @change="v.onchange && v.onchange($event,itemState)"
@@ -64,6 +64,15 @@
             <el-button type="primary" class="big-btn btn-default" @click="goPrev">返回上一步</el-button>
             <el-button type="warning" class="big-btn btn-warn" @click="goNext">下一步</el-button>
         </div>
+        <el-dialog class="message-dialog dialogToMsgbox" title="系统提示" :visible.sync="showBusinessValidation" append-to-body
+            :close-on-click-modal="false" width="800px">
+            <div class="message-dialog-content">
+                <div class="info">请填写完整信息</div>
+                <div slot="footer" class="dialog-footer" style="display: flex;justify-content: space-around">
+                    <el-button type="warning" class="dialog-warn-btn" @click="showBusinessValidation = false">确 定</el-button>
+                </div>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -94,7 +103,7 @@ export default {
     data() {
         return {
             // rules,
-
+            showBusinessValidation: false,
         }
     },
     computed: {
@@ -116,6 +125,16 @@ export default {
                     fields: group.fields.map(fieldNo => this.itemState[fieldNo]).sort((a,b)=>a.sort-b.sort)
                 }
             })
+        },
+        hasMarginTop(){
+            if(this.fieldsGroup.length<1) return false;
+            let firstGroup = this.fieldsGroup[0]
+            let firstFields = firstGroup.fields[0]
+            let hasFirstListTitle =firstFields.isList && firstFields.title;
+            if(!firstGroup.fact && !hasFirstListTitle){
+                return true
+            }
+            return false;
         }
     },
     methods: {
@@ -147,7 +166,10 @@ export default {
         },
         async goNext() {
             let result = await this.beforeLeave();
-            if (!result) return;
+            if (!result) {
+                this.showBusinessValidation = true;
+                return;
+            };
             this.$emit('goNext');
         },
         goPrev() {
@@ -157,7 +179,7 @@ export default {
 }
 </script>
 
-<style  lang="scss">
+<style  lang="scss" scoped>
 .form-info-home {
     height: 100%;
     width: calc(100% - 6px);
@@ -166,4 +188,9 @@ export default {
         padding-bottom: 20px;
     }
 }
+.form-section {
+    // margin-top: 20px;
+}
+
+
 </style>
