@@ -54,6 +54,14 @@ class CommonComponents {
             placeholder:this.placeholder.value
         }
     }
+    getDSLOptions(){
+        return [
+            {
+                label:"值",
+                value:"value"
+            }
+        ]
+    }
 }
 
 export default CommonComponents
