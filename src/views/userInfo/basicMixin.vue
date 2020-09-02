@@ -12,10 +12,10 @@ export default {
         }
     },
     methods: {
-        async search() {
+        async search(name='') {
             let result = await userlist({
-                account: localStorage.getItem('username'),
-                pageNum: this.currentPage - 1,
+                account: name,
+                pageNum: this.currentPage,
                 pageSize: this.pagesize,
             });
 
@@ -23,6 +23,7 @@ export default {
 
             this.totalCount = result.data.total;
             this.tableData = result.data.records;
+            
             this.$message({ type: "success", message: "查询成功" });
         },
         indexMethod(index) {
@@ -31,17 +32,19 @@ export default {
         formatterTime(row,column,flag) {
             let value;
             if(!flag) {
-                value = row.createTime.replace('T',' ').replace(/\-/g,'/').substring(0,16);
+                value = row.createdTime.replace('T',' ').replace(/\-/g,'/').substring(0,16);
             } else {
-                value = row.updateTime.replace('T',' ').replace(/\-/g,'/').substring(0,16);
+                value = row.updatedTime.replace('T',' ').replace(/\-/g,'/').substring(0,16);
             }
             return value
         },
-        handleSizeChange(val) {
-            console.log(`每页 ${val} 条`);
-        },
+        // handleSizeChange(val) {
+        //     console.log(`每页 ${val} 条`);
+        // },
         handleCurrentChange(val) {
             console.log(`当前页: ${val}`);
+            this.currentPage = val;
+            this.search();
         },
     }
 }

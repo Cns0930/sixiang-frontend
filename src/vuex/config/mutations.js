@@ -17,6 +17,10 @@ const mutations = {
     setCrumbList(state,data) {
       state.crumbList = [];
       state.crumbList = data;
+    },
+    setRoles(state,data) {
+      console.log(data,'state')
+      state.roles = data;
     }
 }
 

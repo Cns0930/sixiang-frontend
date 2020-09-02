@@ -1,10 +1,10 @@
 <template>
     <div class="mainLayout">
         <span class="crumbWrap">
-            <el-breadcrumb separator="/">
+            <!-- <el-breadcrumb separator="/">
                 <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
                 <el-breadcrumb-item v-for="(item,index) of crumbList" :key="index" :to="{ path: item.path }">{{item.label}}</el-breadcrumb-item>
-            </el-breadcrumb>
+            </el-breadcrumb> -->
         </span>
         <transition name="slide-fade" mode="out-in">
             <router-view></router-view>

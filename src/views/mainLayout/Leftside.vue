@@ -41,20 +41,19 @@ export default {
     data() {
         return {
             //侧边导航列表
-            navList: [],
         };
     },
     created() {
         // 生成左侧导航菜单 todo
-        const roles = "[]";
-        const authList = roles;
-        this.navList = generaterNavList(authList);
-        console.log(this.navList,'navList');
+        // const roles = "[]";
+        // const authList = roles;
+        // this.navList = generaterNavList(authList);
     },
     computed:{
-        ...mapState('config',{
-            isCollapse: 'isCollapse'
-        })
+        ...mapState('config',["isCollapse","roles"]),
+        navList() {
+            return generaterNavList(JSON.stringify(this.roles))
+        }
     },
     methods: {
         handleOpen(key, keyPath) {

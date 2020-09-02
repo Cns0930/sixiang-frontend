@@ -23,11 +23,23 @@ const routes = [
     {
         path: '/',
         component: Home,
-        redirect: '/user',
+        // beforeEnter: (to,from,next) => {
+        //     let hasAdmin = store.state['config'].roles.includes('admin');
+        //     console.log(hasAdmin,'has',from)
+        //     if(hasAdmin && from.path != '/') {
+        //         next('/user');
+        //     } else if(!hasAdmin && from.path != '/') {
+        //         next('/subhome');
+        //     }
+        // },
         children: [
             {
                 path: '/user',
                 component: User,
+                beforeEnter: (to,from,next) => {
+                    store.commit('config/setCrumbList',[{label:'用户管理',path: '/user'}])
+                    next();
+                }
             },
             {
                 path: '/subhome',

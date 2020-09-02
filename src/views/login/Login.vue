@@ -30,6 +30,7 @@
 <script>
 import axios from 'axios';
 import {login} from '@/api/item/index';
+import {mapMutations} from 'vuex';
 export default {
     name: "Login",
     data() {
@@ -60,9 +61,16 @@ export default {
             }
             localStorage.setItem("ticket", result.data.authorization);
             localStorage.setItem("username", result.data.userInfo.username);
+            localStorage.setItem("account", result.data.userInfo.account);
             axios.defaults.headers.Authorization = result.data.authorization;
+            console.log(result.data.roles,typeof result.data.roles);
+            this.$store.commit('config/setRoles',result.data.roles.sort())
             this.$message.success("登录成功");
-            this.$router.push("/");
+            if(result.data.roles.includes('admin')) {
+                this.$router.push("/user");
+            } else {
+                this.$router.push("/subhome");
+            }
             
         },
         async getAuth(userName, password,rememberMe) {

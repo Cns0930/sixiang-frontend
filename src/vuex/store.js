@@ -9,7 +9,7 @@ import createPersistedState from "vuex-persistedstate";
 Vue.use(Vuex)
 
 const persist = createPersistedState({
-    paths: ['setting']
+    paths: ['setting','config']
   })
 
 // 创建 store 实例

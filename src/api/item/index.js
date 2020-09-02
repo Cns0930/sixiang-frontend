@@ -9,6 +9,12 @@ export const logout = params =>axios.get("/logout",{params}).then(res => res.dat
 //用户列表-含角色
 export const userlist = params =>axios.post("/account/user/userlist", params).then(res => res.data)
 
+//角色列表
+export const getRolelist = params =>axios.post("/account/role/rolelist", params).then(res => res.data)
+
+//用户角色编辑
+export const editUserrole = params =>axios.post("/account/user/edituserrole", params).then(res => res.data)
+
 //获取用户信息
 export const getsession = params =>axios.get("/getsession",{params}).then(res => res.data);
 

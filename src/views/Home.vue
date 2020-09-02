@@ -5,7 +5,7 @@
             <el-dropdown @command="handleCommand" style="cursor: pointer;padding: 0 8px;" class="avatar">
                 <div class="center">
                     {{loginName}}
-                    <img src="./../assets/png/see.png" style="width:24px;height:24px;display:inline-block;vertical-align: middle;" />
+                    <img src="./../assets/png/user.png" style="width:24px;height:24px;display:inline-block;vertical-align: middle;" />
                 </div>
                 <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item command="logout">退出登陆</el-dropdown-item>
@@ -65,6 +65,7 @@ export default {
             if (!v.success) return
             localStorage.removeItem("ticket");
             localStorage.removeItem("username");
+            localStorage.removeItem("account");
             this.$router.push("/login");
         });
     },

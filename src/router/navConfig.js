@@ -5,14 +5,14 @@ const originList = [
     {
         path: "/",
         label: "用户管理",
-        authKey: ["admin", "normal"],
+        authKey: ["admin"],
         group: "用户管理",
         iconImg: product,
         activeImg: act_product,
         children: [
             {
                 path: '/user',
-                label: '用户中心',
+                label: '用户管理',
             },
         ],
         order: 1
@@ -20,7 +20,7 @@ const originList = [
     {
         path: "/subhome",
         label: "超级帮办开发管理",
-        authKey: ["admin", "normal"],
+        authKey: ["admin","developer","researcher","test"],
         iconImg: product,
         activeImg: act_product,
         children: [
@@ -36,13 +36,12 @@ const originList = [
 const showList = (authList, originList) => {
     const roles = JSON.parse(authList) || []
     //todo先全部展示
-    var permitList = originList;
-    // var permitList = originList.filter(item => item.authKey.includes(roles[0]));
+    // var permitList = originList;
+    var permitList = originList.filter(item => item.authKey.includes(roles[0]));
     return permitList
 }
 // 对外的接口函数
 export const generaterNavList = (authList) => {
-
     return showList(authList, originList.sort((a, b) => a.order - b.order))
 }
 export const auth_path_list = originList;
