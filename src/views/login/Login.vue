@@ -18,7 +18,7 @@
                 <el-form-item>
                     <el-checkbox v-model="ruleForm.rememberMe">记住密码</el-checkbox>
                 </el-form-item>
-                <el-form-item class="login-submit-bg" style="padding-top:40px;">
+                <el-form-item class="login-submit-bg">
                     <el-button class="submit-btn" @click.native.prevent="login(ruleForm)">登 录</el-button>
                 </el-form-item>
             </el-form>
@@ -30,6 +30,7 @@
 <script>
 import axios from 'axios';
 import {login} from '@/api/item/index';
+import {mapMutations} from 'vuex';
 export default {
     name: "Login",
     data() {
@@ -60,9 +61,16 @@ export default {
             }
             localStorage.setItem("ticket", result.data.authorization);
             localStorage.setItem("username", result.data.userInfo.username);
+            localStorage.setItem("account", result.data.userInfo.account);
             axios.defaults.headers.Authorization = result.data.authorization;
+            console.log(result.data.roles,typeof result.data.roles);
+            this.$store.commit('config/setRoles',result.data.roles.sort())
             this.$message.success("登录成功");
-            this.$router.push("/");
+            if(result.data.roles.includes('admin')) {
+                this.$router.push("/user");
+            } else {
+                this.$router.push("/subhome");
+            }
             
         },
         async getAuth(userName, password,rememberMe) {
@@ -93,12 +101,11 @@ body {
 .login-bg-container {
     display: flex;
     position: relative;
-    background-color: #eceff3;
-    background-size: auto 120%;
+    background: #eceff3 url(./../../assets/png/BG.png);
+    background-size: cover;
     .login-container{
         .form-container{
             .login-title{
-                transform: translate(-10%,0%);
                 h1{
                     color:#0A3D81;
                     letter-spacing:8px;
@@ -130,13 +137,9 @@ body {
 
 
 .login-container {
-    display: block;
-    position: relative;
-    background-clip: padding-box;
-    margin: auto auto;
-    top: calc(50% - 180px);
+    position: absolute;
+    top: 40%;
     width: 40%;
-    height: 100%;
     .login-item-margin {
         // padding: 20px 0 20px 0;
         padding-bottom: 22px;
