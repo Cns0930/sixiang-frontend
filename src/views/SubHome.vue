@@ -9,7 +9,7 @@
         <el-button @click="$router.push('/')">事项管理</el-button>-->
         <div class="menu">
             
-            <el-page-header @back="$router.push('/')" 
+            <el-page-header @back="$router.push('/subhome')" 
             title="返回事项列表"
             :content="$store.state.home.item.name?$store.state.home.item.name:'请先选择事项'">
             </el-page-header>
