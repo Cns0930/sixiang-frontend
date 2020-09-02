@@ -300,7 +300,7 @@ export default {
                 this.$message({ type: "error", message: "请先设置超级帮办地址!" });
                 return;
             }
-            // TODO: 材料分页保存到超级帮办
+            // 材料分页保存到超级帮办
             let params = {
                 contentCss: this.temp_page.contentCss,
                 fileName: this.templates.template.docxTemplateName,
@@ -311,6 +311,8 @@ export default {
                 script: this.temp_page.script,
                 sid: this.$store.state.home.item.sid,
                 padding: this.temp_page.isTable == 1? "table": "text",
+                // TODO: 拼接htmlPath: /sid/fileName_"page"pageNum.html
+                htmlPath: '/'+ this.$store.state.home.item.sid + '/' + this.templates.template.docxTemplateName +"_page" + this.currentPagenum + ".html"
                 // documentSeq: this.templates.template.documentSeq // 不需要传
             }
             console.log(params)

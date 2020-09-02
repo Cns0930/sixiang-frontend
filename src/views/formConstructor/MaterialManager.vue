@@ -4,6 +4,7 @@
         <div class="op-bar">
             <el-button @click="templateCreateVisible = true"> 新建材料</el-button>
             <el-button @click="getTemplate">载入材料</el-button>
+            <el-button @click="downAllPages">下载所有材料文件</el-button>
         </div>
 
         <div class="main">
@@ -48,7 +49,7 @@
 </template>
 
 <script>
-import { getTemplate, addTemplate, deleteTemplate } from '@/api/template/index'
+import { getTemplate, addTemplate, deleteTemplate, getSingleTemplate } from '@/api/template/index'
 import { getById } from "@/api/item/index";
 import {mixin} from "@/mixin/mixin"
 import axios from 'axios';
@@ -134,8 +135,8 @@ export default {
         },
         async saveTemplate(){
             console.log(this.temp_template)
-            let result = await addTemplate(this.temp_template);
-            if (!result.success) return;
+            let result1 = await addTemplate(this.temp_template);
+            if (!result1.success) return;
 
             this.$message.success('保存模板成功');
         },
@@ -161,13 +162,55 @@ export default {
             }
             console.log(params)
 
-            let result = await axios.post(serviceBaseUrl+"/api/sixiang/saveTemplate", params).then(res => res.data);
-            console.log(result)
-            if(result.code == 200){
-                this.$message({ type: "success", message: "导入成功 请查看数据库" });
+            // 先输出材料
+            let result1 = await axios.post(serviceBaseUrl+"/api/sixiang/saveTemplate", params).then(res => res.data);
+            console.log(result1)
+            if(result1.code == 200){
+                this.$message({ type: "success", message: "材料导入成功 请查看数据库" });
             }else{
-                this.$message({ type: "error", message: result.message + " "+ result.data });
+                this.$message({ type: "error", message: result1.message + " "+ result1.data });
             }
+            // 获取材料下的所有分页 并输出
+            let pageRes = await getSingleTemplate({
+                templateId: v.template.id,
+            })
+            if(pageRes.success){
+                let data = pageRes.data;
+                let pagelist = data.templatePagesList;
+                for(let i in pagelist){
+                    let detail = pagelist[i];
+                    let para = {
+                        contentCss: detail.contentCss,
+                        fileName: v.template.docxTemplateName,
+                        name: v.template.documentName,
+                        orient: detail.orient,
+                        pageNum: detail.pageNum,
+                        script: detail.script,
+                        sid: v.template.sid,
+                        padding: detail.isTable == 1? "table": "text",
+                        htmlPath: '/'+ v.template.sid + '/' + v.template.docxTemplateName +"_page" + detail.pageNum + ".html"
+                    }
+                    console.log(para)
+                    let result2 = await axios.post(serviceBaseUrl+"/api/sixiang/saveHtml", para).then(res => res.data);
+                    console.log(result2)
+                    if(result2.code == 200){
+                        this.$message({ type: "success", message: "页面"+detail.pageNum+"导入成功 请查看数据库" });
+                    }else{
+                        this.$message({ type: "error", message: result2.message + " "+ result2.data });
+                    }
+                }
+            }
+
+        },
+        async downAllPages(){
+            let downRequest = {itemId: this.$store.state.home.item.id};
+            await axios.post("/superform/template-pages/downloadAllPages", downRequest,  { responseType: 'arraybuffer' })
+            .then(response => {
+                let blob = new Blob([response.data], {type: 'application/zip'})
+                let url = window.URL.createObjectURL(blob)
+                // url.pathname = this.$store.state.home.item.sid +".zip";
+                window.location.href = url
+                }).catch(error => this.$message.error(error))
         }
     }
 }

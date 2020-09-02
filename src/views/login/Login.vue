@@ -15,7 +15,10 @@
                     <el-input type="password" v-model="ruleForm.password" auto-complete="off" placeholder="密码"
                         @keyup.native.enter="login(ruleForm)"></el-input>
                 </el-form-item>
-                <el-form-item class="login-submit-bg" style="padding-top:40px;">
+                <el-form-item>
+                    <el-checkbox v-model="ruleForm.rememberMe">记住密码</el-checkbox>
+                </el-form-item>
+                <el-form-item class="login-submit-bg">
                     <el-button class="submit-btn" @click.native.prevent="login(ruleForm)">登 录</el-button>
                 </el-form-item>
             </el-form>
@@ -25,20 +28,24 @@
 </template>
 
 <script>
+import axios from 'axios';
+import {login} from '@/api/item/index';
+import {mapMutations} from 'vuex';
 export default {
     name: "Login",
     data() {
         return {
             ruleForm: {
                 userName: "",
-                password: ""
+                password: "",
+                rememberMe: false
             },
         };
     },
     methods: {
-        login(ruleForm) {
+        async login(ruleForm) {
             console.log(ruleForm);
-            let { userName, password } = ruleForm;
+            let { userName, password,rememberMe  } = ruleForm;
             if (!userName) {
                 this.$message.error("请输入用户名");
                 return;
@@ -47,23 +54,40 @@ export default {
                 this.$message.error("请输入密码");
                 return;
             }
-            const result = this.getAuth(userName, password);
+            const result = await this.getAuth(userName, password,rememberMe);
             if (!result.success) {
                 this.$message.error("验证失败！");
                 return;
             }
             localStorage.setItem("ticket", result.data.authorization);
+            localStorage.setItem("username", result.data.userInfo.username);
+            localStorage.setItem("account", result.data.userInfo.account);
+            axios.defaults.headers.Authorization = result.data.authorization;
+            console.log(result.data.roles,typeof result.data.roles);
+            this.$store.commit('config/setRoles',result.data.roles.sort())
             this.$message.success("登录成功");
-            this.$router.push("/");
-        },
-        getAuth(userName, password) {
-            // FIXME: 之后修改
-            if (userName === "admin" && password === "Hg9s$ixuVe*x4J2X") {
-                return { success: true, data: { authorization: "1234567890" } };
+            if(result.data.roles.includes('admin')) {
+                this.$router.push("/user");
             } else {
-                return { success: false };
+                this.$router.push("/subhome");
             }
-        }
+            
+        },
+        async getAuth(userName, password,rememberMe) {
+            // FIXME: 之后修改
+            // if (userName === "admin" && password === "Hg9s$ixuVe*x4J2X") {
+            //     return { success: true, data: { authorization: "1234567890" } };
+            // } else {
+            //     return { success: false };
+            // }
+            let msg = {
+                account: userName,
+                password,
+                rememberMe
+            }
+            let result = await login(msg);
+            return result;
+        },
     }
 };
 </script>
@@ -77,12 +101,11 @@ body {
 .login-bg-container {
     display: flex;
     position: relative;
-    background-color: #eceff3;
-    background-size: auto 120%;
+    background: #eceff3 url(./../../assets/png/BG.png);
+    background-size: cover;
     .login-container{
         .form-container{
             .login-title{
-                transform: translate(-10%,0%);
                 h1{
                     color:#0A3D81;
                     letter-spacing:8px;
@@ -114,13 +137,9 @@ body {
 
 
 .login-container {
-    display: block;
-    position: relative;
-    background-clip: padding-box;
-    margin: auto auto;
-    top: calc(50% - 180px);
+    position: absolute;
+    top: 40%;
     width: 40%;
-    height: 100%;
     .login-item-margin {
         // padding: 20px 0 20px 0;
         padding-bottom: 22px;
