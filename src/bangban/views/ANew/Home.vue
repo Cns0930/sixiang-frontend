@@ -87,6 +87,9 @@ export default {
             },
 
             $itemGetters: () => {
+
+                
+
                 return this.itemGetters
             },
 
