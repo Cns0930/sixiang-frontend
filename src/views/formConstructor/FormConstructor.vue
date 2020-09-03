@@ -182,7 +182,7 @@ import { getById } from "@/api/item/index";
 import { mapState } from "vuex";
 import _ from "lodash";
 import defRenderers from "@/views/attributeComponents/defRendererComponents/index";
-import { save, getField, saveOne, deleteOne, forkPublicFields,getFieldById,searchFields,forkSelectedFields } from "@/api/superForm/index";
+import { getField, saveOne, deleteOne, forkPublicFields,getFieldById,searchFields,forkSelectedFields } from "@/api/superForm/index";
 import { functionReviverEventRuntime, convertDefToConfigEventRuntime, functionReviverRuntime } from "./util"
 import { log } from 'handlebars';
 import { mixin } from "@/mixin/mixin"

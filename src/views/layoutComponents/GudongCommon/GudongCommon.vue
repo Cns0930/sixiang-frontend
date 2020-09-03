@@ -6,7 +6,7 @@
 
             <!-- tab 标题 -->
             <div class="tab-list-title">
-                股东列表
+                {{title || 股东列表}}
             </div>
             <!-- tab -->
             <div class="tab-list">
@@ -78,7 +78,7 @@ import {getEnterpriseInfo,getEnterpriseInfoLike} from "@/api/ANew/index"
 import PureComponents from "../PureComponents"
 export default {
     name: "GudongCommon",
-    props: ['value', 'children', 'meta', 'labelFieldNo', "gudongNameFieldNo", "gudongCodeFieldNo","deleteOrigin","canAdd"],
+    props: ['value', 'children', 'meta', 'labelFieldNo', "gudongNameFieldNo", "gudongCodeFieldNo","deleteOrigin","canAdd","title"],
     components: { PureComponents },
     data() {
         return {

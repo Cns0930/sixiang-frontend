@@ -13,6 +13,7 @@ class GudongCommon {
         this.gudongCodeFieldNo = new Renderer('ElInput', '',null,"股东代码的fieldNo")
         this.deleteOrigin = new Renderer('ElSingleCheckboxC',false,{options:[true]},"不可删除")
         this.canAdd = new Renderer('ElSingleCheckboxC',false,{options:[true]},"不可新增")
+        this.title = new Renderer('ElInput', '股东列表',null,"股东列表标题")
     }
     getAttributes(meta){
         
@@ -24,6 +25,7 @@ class GudongCommon {
             gudongNameFieldNo:this.gudongNameFieldNo.value,
             gudongCodeFieldNo:this.gudongCodeFieldNo.value,
             labelFieldNo:this.labelFieldNo.value,
+            title:this.title.value,
         }
     }
 }

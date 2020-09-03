@@ -26,7 +26,7 @@
             模板名称(必填)<el-input v-model="temp_template.docxTemplateName"></el-input>
             材料中文名(必填)<el-input v-model="temp_template.documentName"></el-input>
             材料序号(必填)<el-input v-model="temp_template.documentSeq"></el-input>
-            备注<el-input v-model="temp_template.notes"></el-input>
+            备注<el-input type="textarea" :autosize="{ minRows: 1, maxRows: 15}" v-model="temp_template.notes"></el-input>
             page配置<CodeEditor v-model="temp_template.script"></CodeEditor>
 
         </div>
