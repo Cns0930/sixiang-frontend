@@ -17,13 +17,13 @@
                             </el-cascader>
                         </el-form-item>
                         <el-divider />
-                        <el-form-item v-for="(v,i) in fields" :key="i" :label="v.label"
-                            :prop="v.ruleKey ? v.ruleKey : v.required !== false ? 'required' : ''" :obj="v">
+                        <el-form-item v-for="(v,i) in fields" :key="i" :label="v.label == '提示'?'':v.label" 
+                            :prop="v.ruleKey ? v.ruleKey : v.required !== false ? 'required' : ''" :obj="v" v-if="v.component">
                             <component :is="v.component" v-model="v.value" v-bind="v.attributes"></component>
                         </el-form-item>
                     </el-form>
                 </div>
-               
+                <div class="tips" v-if="showTipIndex != -1">提示：{{fields[showTipIndex].value}}</div>
             </div>
         </content-card>
         <div class="operate-btn" style="float: right">
@@ -47,6 +47,7 @@ export default {
     data() {
         return {
             options: [],
+            showTipIndex: -1,
             // rules,
         }
     },
@@ -59,11 +60,11 @@ export default {
             return this.$store.state.ANew;
         },
         fields() {
-          
             return this.config.map(fieldNo => this.itemState[fieldNo])
-           
         },
-
+    },
+    created() {
+        this.showTipIndex = this.fields.findIndex(item => item.type == "constant");
     },
     methods: {
        
@@ -126,6 +127,15 @@ export default {
         .el-radio__inner {
             width: 20px;
             height: 20px;
+        }
+    }
+    .content-block {
+        position: relative;
+        .tips {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
         }
     }
     .el-radio-group {

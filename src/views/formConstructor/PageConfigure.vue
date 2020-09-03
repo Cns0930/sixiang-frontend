@@ -605,6 +605,10 @@ export default {
                             list.forEach(obj=>{
                                 let child = _.cloneDeep(value.meta);
                                 Object.keys(obj).forEach(key=>{
+                                    if(!child[key]){
+                                        console.warn("list中"+key+"不存在")
+                                        return;
+                                    }
                                     child[key].value = obj[key]
                                 })
                                 value.attributes.children.push(child)
