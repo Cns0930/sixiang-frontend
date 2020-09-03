@@ -6,7 +6,7 @@
 
             <!-- tab 标题 -->
             <div class="tab-list-title">
-                {{title || 股东列表}}
+                {{title || "股东列表"}}
             </div>
             <!-- tab -->
             <div class="tab-list">

@@ -40,7 +40,7 @@
                                         <component :is="v.component" v-model="v.value" v-bind="v.attributes"
                                             @change="v.onchange && v.onchange($event,itemState,itemGetters)"
                                             @input="v.oninput && v.oninput($event,itemState,itemGetters)" 
-                                            :class="{'default-text-color':v.hasConfirmed === false}"></component>
+                                            :class="{'default-text-color':v.hasConfirmed === false}" @focus="handleFocus(v)"></component>
                                     </el-form-item>
                                 </el-col>
                                  <el-col :span="24" v-if="v.wrapEnd"></el-col>
@@ -157,6 +157,10 @@ export default {
 
             return result.every(Boolean)
 
+        },
+        handleFocus(v) {
+         
+            v.hasConfirmed = true;
         },
         // async validate() {
         //     return await this.$refs.form.validate();
