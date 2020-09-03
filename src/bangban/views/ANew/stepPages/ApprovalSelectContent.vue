@@ -18,7 +18,7 @@
                         </el-form-item>
                         <el-divider />
                         <el-form-item v-for="(v,i) in fields" :key="i" :label="v.label == '提示'?'':v.label" 
-                            :prop="v.ruleKey ? v.ruleKey : v.required !== false ? 'required' : ''" :obj="v" v-if="v.component">
+                            :prop="v.ruleKey ? v.ruleKey : v.required !== false ? 'required' : ''" :obj="v" v-if="v.component" :class="{'flexGroup':v.attributes.isWrap}">
                             <component :is="v.component" v-model="v.value" v-bind="v.attributes"></component>
                         </el-form-item>
                     </el-form>
@@ -137,6 +137,9 @@ export default {
             left: 50%;
             transform: translateX(-50%);
         }
+        .el-form-item__content {
+            line-height: 36px;
+        }
     }
     .el-radio-group {
         line-height: 24px;
@@ -145,6 +148,16 @@ export default {
     }
     .select-form .el-form-item__content .el-checkbox-group .el-col {
         line-height: 50px;
+    }
+    .el-form-item.flexGroup {
+        .el-row {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            &>.el-col {
+                width: 30%;
+            }
+        }
     }
 }
 </style>

@@ -44,7 +44,6 @@ export default {
     },
     methods: {
         async login(ruleForm) {
-            console.log(ruleForm);
             let { userName, password,rememberMe  } = ruleForm;
             if (!userName) {
                 this.$message.error("请输入用户名");
@@ -63,7 +62,6 @@ export default {
             localStorage.setItem("username", result.data.userInfo.username);
             localStorage.setItem("account", result.data.userInfo.account);
             axios.defaults.headers.Authorization = result.data.authorization;
-            console.log(result.data.roles,typeof result.data.roles);
             this.$store.commit('config/setRoles',result.data.roles.sort())
             this.$message.success("登录成功");
             if(result.data.roles.includes('admin')) {
