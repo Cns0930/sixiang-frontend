@@ -19,7 +19,7 @@ class AutocompleteDef extends CommonComponents{
        
         return {
             
-            placeholder:"请输入内容",
+            placeholder:this.placeholder.value,
             fetchSuggestions:eval(`(function(queryString, cb){
                 let options=${JSON.stringify(options)}
                 var results = queryString ? options.filter(v=>v.value.includes(queryString)) : options;

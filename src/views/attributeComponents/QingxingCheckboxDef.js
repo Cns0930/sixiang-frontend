@@ -35,11 +35,11 @@ class QingxingCheckboxDef extends CommonComponents{
         this.component = rendererBuilder("text","ElCheckboxC")
 
         this.value = rendererBuilder("text",[]) 
-        this.isWrap = new Renderer('ElSingleCheckboxC',false,{options:[true]},"是否展示三列")
+        this.colSpan = new Renderer('ElInput',12,{vModel:12},"情形多列展示(24为100%)")
     }
     getAttributes(){
         return {
-            isWrap: this.isWrap.value,
+            colSpan: this.colSpan.value,
             options:this.options.value
         }
     }
