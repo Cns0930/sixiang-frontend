@@ -25,10 +25,12 @@ const routes = [
         component: Home,
         // beforeEnter: (to,from,next) => {
         //     let hasAdmin = store.state['config'].roles.includes('admin');
-        //     console.log(hasAdmin,'has',from)
-        //     if(hasAdmin && from.path != '/') {
+        //     console.log(hasAdmin,from.path == '/','has',from)
+        //     if(hasAdmin && from.path == '/',hasAdmin) {
+        //         console.log('adminTop')
         //         next('/user');
-        //     } else if(!hasAdmin && from.path != '/') {
+        //     } else if(!hasAdmin && from.path == '/') {
+        //         console.log('noAdmin',hasAdmin);
         //         next('/subhome');
         //     }
         // },
