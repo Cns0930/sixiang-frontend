@@ -629,9 +629,19 @@ export default {
         justify-content: space-between;
     }
     .main {
+        margin-top: 20px;
         display: flex;
-        height: calc(100vh - 40px);
+        height: calc(100vh - 206px);
+        overflow-y: scroll;
+        .fields-table {
+            width: 100%;
+            height: 100%;
+            padding: 0 !important;
+        }
     }
+    // .main::-webkit-scrollbar {
+    //     display:none;
+    // }
     ::v-deep .el-input {
         width: 400px;
     }
@@ -645,7 +655,6 @@ export default {
     flex-direction: column;
     align-items: center;
     border: red 1px solid;
-
     height: 100%;
 }
 .computed-field {
