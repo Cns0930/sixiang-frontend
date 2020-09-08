@@ -162,7 +162,7 @@ export default {
                 textarea.htmlValue = this.valueToHtmlValue(textarea.value)
               
             }
-            this.value.joinList = this.value.addList.filter(v => v.shixiang.value);
+            this.value.joinValue = _.uniq(this.value.addList.filter(v => v.shixiang.value).map(v =>v.shixiang.value)).join(',');
         },
         valueToHtmlValue(value) {
             let valueArr = value.split("。")
