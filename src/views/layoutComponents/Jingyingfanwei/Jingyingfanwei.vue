@@ -162,7 +162,7 @@ export default {
                 textarea.htmlValue = this.valueToHtmlValue(textarea.value)
               
             }
-          
+            this.value.joinList = this.value.addList.filter(v => v.shixiang.value);
         },
         valueToHtmlValue(value) {
             let valueArr = value.split("。")
