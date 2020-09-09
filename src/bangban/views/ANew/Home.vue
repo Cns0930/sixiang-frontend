@@ -149,10 +149,10 @@ export default {
                 v.stepObject.configFn = functionReviverRuntime(v.stepObject.configFn, v.component);
             }
             if (v.stepObject.useBeforeEnter) {
-                v.stepObject.beforeEnterFn = eval(`(${v.stepObject.beforeEnterFn})`)
+                v.stepObject.beforeEnterFn = functionReviverRuntime(`(${v.stepObject.beforeEnterFn})`)
             }
             if (v.stepObject.useAfterEnter) {
-                v.stepObject.afterEnterFn = eval(`(${v.stepObject.afterEnterFn})`)
+                v.stepObject.afterEnterFn = functionReviverRuntime(`(${v.stepObject.afterEnterFn})`)
             }
 
             return { ...v.stepObject, stepPagenum: v.stepPagenum }
