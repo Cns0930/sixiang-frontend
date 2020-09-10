@@ -15,7 +15,7 @@ const originList = [
                 label: '用户管理',
             },
         ],
-        order: 1
+        order: 3
     },
     {
         path: "/subhome",
@@ -30,6 +30,20 @@ const originList = [
             },
         ],
         order: 2
+    },
+    {
+        path: "/basic",
+        label: "基础信息管理",
+        authKey: ["admin","developer","researcher","test"],
+        iconImg: product,
+        activeImg: act_product,
+        children: [
+            {
+                path: '/basic',
+                label: '基础信息',
+            },
+        ],
+        order: 1
     },
 ]
 // 对于导航列表处理函数

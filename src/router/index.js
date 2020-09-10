@@ -15,9 +15,11 @@ import ItemManager from "@/views/formConstructor/ItemManager"
 import Login from "@/views/login/Login"
 import Setting from "@/views/setting/Setting"
 import Test from "@/views/test/Test"
+import ApprovalItem from "@/views/basicInfo/ApprovalItem"
 Vue.use(VueRouter)
 import store from "@/vuex/store"
 import bangbanAxios from "@/api/ANew/config"
+
 
 const routes = [
     {
@@ -96,6 +98,10 @@ const routes = [
                         component:Setting,
                     }
                 ]
+            },
+            {
+                path: '/basic',
+                component: ApprovalItem
             },
         ]
     },
