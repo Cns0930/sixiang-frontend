@@ -26,6 +26,7 @@
             模板名称(必填)<el-input v-model="temp_template.docxTemplateName"></el-input>
             材料中文名(必填)<el-input v-model="temp_template.documentName"></el-input>
             材料序号(必填)<el-input v-model="temp_template.documentSeq"></el-input>
+            pro_doc_id<el-input v-model="temp_template.proDocId"></el-input>
             备注<el-input type="textarea" :autosize="{ minRows: 1, maxRows: 15}" v-model="temp_template.notes"></el-input>
             page配置<CodeEditor v-model="temp_template.script"></CodeEditor>
 
@@ -37,6 +38,7 @@
                 模板名称(必填):<el-input v-model="temp_template_name" @keyup.enter.native="addTemplate"></el-input>
                 材料中文名(必填):<el-input v-model="temp_document_name"></el-input>
                 材料序号(必填):<el-input v-model="temp_document_seq"></el-input>
+                pro_doc_id:<el-input v-model="temp_pro_doc_id"></el-input>
             </div>
 
             <span slot="footer" class="dialog-footer">
@@ -68,6 +70,7 @@ export default {
             temp_template_name: '',
             temp_document_seq: '',
             temp_document_name: '',
+            temp_pro_doc_id: '',
 
             temp_template: null,
         }
@@ -95,6 +98,7 @@ export default {
                 docxTemplateName: this.temp_template_name,
                 documentSeq: this.temp_document_seq,
                 documentName: this.temp_document_name,
+                proDocId :this.temp_pro_doc_id,
             });
 
             if (!res.success) return;
@@ -159,6 +163,7 @@ export default {
                 notes: v.template.notes,
                 sid: v.template.sid,
                 script: v.template.script,
+                proDocId: v.template.proDocId
             }
             console.log(params)
 
