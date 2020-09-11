@@ -2,7 +2,7 @@
     
 </template>
 <script>
-import { listApprovalItem , listMaterial } from "../../api/basicInfo/basic";
+import { listApprovalItem , listMaterial } from "../../api/basicInfo/approval";
 export default {
     data() {
         return {
