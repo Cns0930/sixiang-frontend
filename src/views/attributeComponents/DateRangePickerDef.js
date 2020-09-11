@@ -11,6 +11,7 @@ class DatePickerDef extends CommonComponents{
         this.component = rendererBuilder("text","ElDatePicker")
 
         this.value = rendererBuilder("text",[]) 
+        this.disabled =  new Renderer('ElSingleCheckboxC', false,{options:[true]},"是否禁用")
     }
     getAttributes(){
         return {
@@ -18,7 +19,8 @@ class DatePickerDef extends CommonComponents{
             format:this.$format.value,
             rangeSeparator:this.$rangeSeparator.value,
             valueFormat:this.$valueFormat.value || undefined,
-            placeholder:"请输入内容"
+            placeholder:"请输入内容",
+            disabled: this.disabled.value
         }
     }
 }
