@@ -17,7 +17,7 @@
                 ></el-date-picker>
                 <el-button>搜索</el-button>
                 <div class="handle">
-                    <el-button type="primary">新增</el-button>
+                    <el-button type="primary" @click="handleClickAdd">新增</el-button>
                     <el-button type="primary">导出</el-button>
                     <el-button type="primary">导入</el-button>
                 </div>
@@ -114,48 +114,71 @@
                     :total="totalCount"
                 ></el-pagination>
             </div>
-            <!-- <component :is="model.type" v-model="model.val" v-bind="{
-          type: 'textarea',
-          placeholder:'输入数字信息',
-            }" @input="inputs"></component>-->
         </section>
-        <!-- 新建窗口 -->
 
-        <!-- 编辑窗口 -->
-        <!-- <el-dialog
-        title="事项属性填写"
-        :visible.sync="dialogVisible"
-        width="80%"
-        :close-on-click-modal="false"
-    >
-        <div class="attribute-content">
-            sid
-            <el-input v-model="tempItem.sid"></el-input>审批事项名称
-            <el-input v-model="tempItem.name"></el-input>审批事项英文代号(拼音)
-            <el-input v-model="tempItem.itemCode"></el-input>审批事项大类
-            <el-input v-model="tempItem.category"></el-input>属性
-            <el-input v-model="tempItem.type"></el-input>所属委办局
-            <div>
-                <el-select v-model="tempItem.department">
-                    <el-option
-                        v-for="(v,i) in departmentOptions"
-                        :key="i"
-                        :label="v.department"
-                        :value="v.department"
-                    ></el-option>
-                </el-select>
-            </div>事权性质
-            <el-input v-model="tempItem.authority"></el-input>序号
-            <el-input v-model="tempItem.seq"></el-input>备注
-            <el-input v-model="tempItem.note"></el-input>激活状态
-            <el-input v-model="tempItem.status"></el-input>所在区域
-            <el-input v-model="tempItem.area"></el-input>
-        </div>
-        <span slot="footer" class="dialog-footer">
-            <el-button @click="dialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="saveItem();dialogVisible = false">确 定</el-button>
-        </span>
-    </el-dialog> -->
+        <section class="dialogBox">
+            <!-- 新建窗口 -->
+            <el-dialog
+                title="事项属性填写"
+                :visible.sync="dialogAddVisible"
+                width="80%"
+                :close-on-click-modal="false"
+            >
+                <div class="attribute-content">
+                    <el-form
+                        :inline="false"
+                        label-position="left"
+                        :model="tempEditor"
+                        class="demo-form-inline"
+                    >
+                        <el-form-item label="项目">
+                            <el-select v-model="tempItem.projectId" filterable>
+                                <el-option
+                                    v-for="(v,i) in projectOptions"
+                                    :key="i"
+                                    :label="v.projectName"
+                                    :value="v.projectId"
+                                ></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="大项">
+                            <el-select v-model="tempItem.approvalId" filterable>
+                                <el-option
+                                    v-for="(v,i) in approvalOptions"
+                                    :key="i"
+                                    :label="v.approvalName"
+                                    :value="v.approvalId"
+                                ></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="事项编号">
+                            <el-input v-model="tempItem.itemNo"></el-input>
+                        </el-form-item>
+                        <el-form-item label="事项内部编号">
+                            <el-input v-model="tempItem.itemInternalNo"></el-input>
+                        </el-form-item>
+                        <el-form-item label="事项实施编码">
+                            <el-input v-model="tempItem.itemCode"></el-input>
+                        </el-form-item>
+                        <el-form-item label="事项名称">
+                            <el-input v-model="tempItem.itemName"></el-input>
+                        </el-form-item>
+                        <el-form-item label="事项类型(如新增/变更)">
+                            <el-input v-model="tempItem.itemType"></el-input>
+                        </el-form-item>
+                        <el-form-item label="排序">
+                            <el-input v-model="tempItem.sort"></el-input>
+                        </el-form-item>
+                    </el-form>
+                </div>
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="dialogAddVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="saveItem()">确 定</el-button>
+                </span>
+            </el-dialog>
+
+            <!-- 编辑窗口 -->
+        </section>
     </div>
 </template>
 
@@ -164,7 +187,7 @@
 <script>
 import basicMixin from "./basicMixin";
 import Vue from "vue";
-import { listApprovalAll, listProjectAll } from "../../api/basicInfo/approval";
+import { listApprovalAll, listProjectAll, addApprovalItem } from "../../api/basicInfo/approval";
 
 export default {
     name: "Work",
@@ -185,6 +208,12 @@ export default {
             timeRange: [],
             tableData: [],
             multipleSelection: [],
+            dialogAddVisible: false,
+            dialogUpdateVisible: false,
+            tempItem: {},
+            projectOptions: [],
+            approvalOptions: [],
+            loginName: localStorage.getItem("username"),
         };
     },
     computed: {},
@@ -198,9 +227,31 @@ export default {
         getTime(val) {
             console.log(val);
         },
-        handleSelectionChange(val) {
-            this.multipleSelection = val;
+        // handleSelectionChange(val) {
+        //     this.multipleSelection = val;
+        // },
+        async handleEdit() {},
+        async handleClickAdd() {
+            this.dialogAddVisible = true;
+            // 获取选项
+            let projectRes = await listProjectAll();
+            if (projectRes.success) {
+                this.projectOptions = projectRes.data;
+            }
+            let approvalRes = await listApprovalAll();
+            if (approvalRes.success) {
+                this.approvalOptions = approvalRes.data;
+            }
         },
+        async saveItem(){
+          this.tempItem.createBy = this.loginName;
+          let res = addApprovalItem(this.tempItem);
+          if(res.success){
+            this.$message.success('事项保存成功!');
+            this.tempItem = {};
+            this.dialogAddVisible = false;
+          }
+        }
     },
 };
 </script>

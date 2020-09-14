@@ -11,3 +11,9 @@ export const listApprovalAll = params => { return axios.get(`/ss/approval/listAp
 
 // 获取项目列表
 export const listProjectAll = params => { return axios.get(`/ss/project/listProjectAll`, params).then(res=>res.data); };
+
+// 添加事项
+export const addApprovalItem = params => { return axios.post(`/ss/approvalItem/addApprovalItem`, params).then(res=>res.data); };
+
+// 修改事项
+export const updateApprovalItem = params => { return axios.post(`/ss/approvalItem/updateApprovalItem`, params).then(res=>res.data); };
