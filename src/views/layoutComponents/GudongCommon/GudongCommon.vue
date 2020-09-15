@@ -22,7 +22,7 @@
 
                     </div>
 
-                    <el-tooltip v-if="!deleteOrigin || gudongIndex > defaultNum" class="remove-btn remove-on-tab" effect="dark" content="删除" placement="right-start">
+                    <el-tooltip v-if="!deleteOrigin || gudongIndex > (originNum - 1)" class="remove-btn remove-on-tab" effect="dark" content="删除" placement="right-start">
                         <i class="delete-btn el-icon-close" @click.stop="handelRemove(gudongIndex)"></i>
                     </el-tooltip>
 
@@ -78,7 +78,7 @@ import {getEnterpriseInfo,getEnterpriseInfoLike} from "@/api/ANew/index"
 import PureComponents from "../PureComponents"
 export default {
     name: "GudongCommon",
-    props: ['value', 'children', 'meta', 'labelFieldNo', "gudongNameFieldNo", "gudongCodeFieldNo","deleteOrigin","canAdd","title"],
+    props: ['value', 'children', 'meta', 'labelFieldNo', "gudongNameFieldNo", "gudongCodeFieldNo","deleteOrigin","canAdd","originNum","title"],
     components: { PureComponents },
     data() {
         return {
@@ -86,7 +86,6 @@ export default {
             dialogVisible: false,
             form: {},
             temp_GudongName: "",
-            defaultNum: this.children.length - 1,//默认股东列表数量
         };
     },
     computed: {

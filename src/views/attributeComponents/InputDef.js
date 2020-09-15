@@ -17,7 +17,7 @@ class InputDef extends CommonComponents{
         return {
             autosize: this.$autosize.value,
             type:this.$type.value,
-            placeholder:"请输入内容"
+            placeholder:this.placeholder.value
         }
     }
 }

@@ -23,17 +23,14 @@ const routes = [
     {
         path: '/',
         component: Home,
-        // beforeEnter: (to,from,next) => {
-        //     let hasAdmin = store.state['config'].roles.includes('admin');
-        //     console.log(hasAdmin,from.path == '/','has',from)
-        //     if(hasAdmin && from.path == '/',hasAdmin) {
-        //         console.log('adminTop')
-        //         next('/user');
-        //     } else if(!hasAdmin && from.path == '/') {
-        //         console.log('noAdmin',hasAdmin);
-        //         next('/subhome');
-        //     }
-        // },
+        redirect: to=> {
+            let hasAdmin = store.state['config'].roles.includes('admin');
+            if(hasAdmin) {
+                return '/user'
+            } else {
+                return '/subhome'
+            }
+        },
         children: [
             {
                 path: '/user',

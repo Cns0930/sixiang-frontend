@@ -216,9 +216,9 @@ export default {
         width: 100%;
         height: calc(100vh - 206px);
         overflow-y: scroll;
-    }
-    .main::-webkit-scrollbar {
-        display:none;
+        .item-table {
+            padding: 0 !important;
+        }
     }
 }
 </style>

@@ -36,7 +36,9 @@ Vue.component("Interface",Interface)
 //所有未登录会话重定向到 /login
 router.beforeEach((to, from, next) => {
   const ticket = localStorage.getItem('ticket')
-  if (!ticket && to.path !== '/login') {
+  let haveRole = store.state['config'].roles;
+  //ticket有值，vuex中没有roles角色了，侧边栏会显示异常，则直接到login
+  if ((!ticket && to.path !== '/login') || (to.path !== '/login' && ticket && haveRole.length < 1)) {
       next('/login');
   } else if (to.path === '/login' && ticket) {
       

@@ -48,16 +48,17 @@ let ElRadioC = {
 // 情形 checkbox
 let ElCheckboxC = {
     name:"ElCheckboxC",
-    props:["options","value"],
+    props:["options","value","colSpan"],
     mixins:[LayoutComponentMixin],
     render(){
+        let colSpan = this.colSpan? Number(this.colSpan) : 12;
         if(this.options.length<1) return;
         let options = Object.prototype.toString.call(this.options[0])  =="[object Object]"?this.options:this.options.map(v=>({value:v,label:v,disabled:false}))
         return <el-checkbox-group value={this.value} onInput={(e)=>this.$emit("input",e)} onChange={(e)=>{this.$emit("change",e)}}>
             <el-row>
                 {
                     options.map(option=> 
-                    <el-col span={12} >
+                    <el-col span={colSpan} >
                         <el-checkbox label={option.value}  disabled={option.disabled}>{option.label}</el-checkbox>
                     </el-col>
                     )
