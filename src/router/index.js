@@ -16,6 +16,7 @@ import Login from "@/views/login/Login"
 import Setting from "@/views/setting/Setting"
 import Test from "@/views/test/Test"
 import ApprovalItem from "@/views/basicInfo/ApprovalItem"
+import Material from "@/views/basicInfo/Material"
 Vue.use(VueRouter)
 import store from "@/vuex/store"
 import bangbanAxios from "@/api/ANew/config"
@@ -103,6 +104,10 @@ const routes = [
                 path: '/basic',
                 component: ApprovalItem
             },
+            {
+                path: '/basic/material',
+                component: Material
+            }
         ]
     },
     {

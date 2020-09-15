@@ -42,6 +42,10 @@ const originList = [
                 path: '/basic',
                 label: '基础信息',
             },
+            {
+                path: '/basic/material',
+                label: '材料信息',
+            },
         ],
         order: 1
     },
