@@ -91,17 +91,6 @@
                             >审核</el-button>
                         </template>
                     </el-table-column>
-                    <!-- <el-table-column
-              label="启/停用"
-              fixed="right">
-              <template slot-scope="scope">
-                <el-switch
-                  v-model="value"
-                >
-                <span style="display: none;">{{scope.$index}}</span>
-                </el-switch>
-              </template>
-                    </el-table-column>-->
                 </el-table>
             </div>
             <div class="tablePagination">
@@ -128,7 +117,6 @@
                     <el-form
                         :inline="false"
                         label-position="left"
-                        :model="tempEditor"
                         class="demo-form-inline"
                     >
                         <el-form-item label="项目">
@@ -178,6 +166,50 @@
             </el-dialog>
 
             <!-- 编辑窗口 -->
+            <el-dialog
+                title="事项属性填写"
+                :visible.sync="dialogUpdateVisible"
+                width="80%"
+                :close-on-click-modal="false"
+            >
+                <div class="attribute-content">
+                    <el-form
+                        :inline="false"
+                        label-position="left"
+                        class="demo-form-inline"
+                    >
+                        <el-form-item label="大项">
+                            <el-select v-model="tempItem.approvalId" filterable>
+                                <el-option
+                                    v-for="(v,i) in approvalOptions"
+                                    :key="i"
+                                    :label="v.approvalName"
+                                    :value="v.approvalId"
+                                ></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="事项编号">
+                            <el-input v-model="tempItem.itemNo"></el-input>
+                        </el-form-item>
+                        <el-form-item label="事项实施编码">
+                            <el-input v-model="tempItem.itemCode"></el-input>
+                        </el-form-item>
+                        <el-form-item label="事项名称">
+                            <el-input v-model="tempItem.itemName"></el-input>
+                        </el-form-item>
+                        <el-form-item label="事项类型(如新增/变更)">
+                            <el-input v-model="tempItem.itemType"></el-input>
+                        </el-form-item>
+                        <el-form-item label="排序">
+                            <el-input v-model="tempItem.sort"></el-input>
+                        </el-form-item>
+                    </el-form>
+                </div>
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="dialogUpdateVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="updateItem()">确 定</el-button>
+                </span>
+            </el-dialog>
         </section>
     </div>
 </template>
@@ -187,7 +219,13 @@
 <script>
 import basicMixin from "./basicMixin";
 import Vue from "vue";
-import { listApprovalAll, listProjectAll, addApprovalItem } from "../../api/basicInfo/approval";
+import {
+    listApprovalAll,
+    listProjectAll,
+    addApprovalItem,
+    updateApprovalItem,
+    getByApprovalItemId,
+} from "../../api/basicInfo/approval";
 
 export default {
     name: "Work",
@@ -213,7 +251,7 @@ export default {
             tempItem: {},
             projectOptions: [],
             approvalOptions: [],
-            loginName: localStorage.getItem("username"),
+            // loginName: localStorage.getItem("username"),
         };
     },
     computed: {},
@@ -230,9 +268,23 @@ export default {
         // handleSelectionChange(val) {
         //     this.multipleSelection = val;
         // },
-        async handleEdit() {},
+        async handleEdit(index, row) {
+            console.log(row)
+            let res = await getByApprovalItemId({approvalItemId: row.approvalItemId});
+            if(!res.success){
+                return;
+            }
+            this.tempItem = res.data;
+            this.dialogUpdateVisible = true;
+             // 获取选项
+            let approvalRes = await listApprovalAll();
+            if (approvalRes.success) {
+                this.approvalOptions = approvalRes.data;
+            }
+        },
         async handleClickAdd() {
             this.dialogAddVisible = true;
+            this.tempItem = {};
             // 获取选项
             let projectRes = await listProjectAll();
             if (projectRes.success) {
@@ -243,15 +295,26 @@ export default {
                 this.approvalOptions = approvalRes.data;
             }
         },
-        async saveItem(){
-          this.tempItem.createBy = this.loginName;
-          let res = addApprovalItem(this.tempItem);
-          if(res.success){
-            this.$message.success('事项保存成功!');
-            this.tempItem = {};
-            this.dialogAddVisible = false;
-          }
-        }
+        async saveItem() {
+            this.tempItem.createBy = this.loginName;
+            let res = await addApprovalItem(this.tempItem);
+            if (res.success) {
+                this.$message.success("事项保存成功!");
+                this.tempItem = {};
+                this.dialogAddVisible = false;
+                await this.search();
+            }
+        },
+        async updateItem() {
+            let res = await updateApprovalItem(this.tempItem);
+            console.log(res);
+            if (res.success) {
+                this.$message.success("事项修改成功!");
+                this.tempItem = {};
+                this.dialogUpdateVisible = false;
+                await this.search();
+            }
+        },
     },
 };
 </script>

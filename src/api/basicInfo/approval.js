@@ -17,3 +17,6 @@ export const addApprovalItem = params => { return axios.post(`/ss/approvalItem/a
 
 // 修改事项
 export const updateApprovalItem = params => { return axios.post(`/ss/approvalItem/updateApprovalItem`, params).then(res=>res.data); };
+
+// 查询单个事项
+export const getByApprovalItemId = params => { return axios.get(`/ss/approvalItem/getByApprovalItemId`, {params}).then(res=>res.data); };
