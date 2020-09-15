@@ -14,3 +14,9 @@ export const listProjectAll = params => { return axios.get(`/ss/project/listProj
 
 // 新增材料
 export const addMaterial = params => { return axios.post(`/ss/material/addMaterial`, params).then(res=>res.data); };
+
+// 删除某一份材料信息
+export const delMaterial = params => { return axios.delete(`/ss/material/delMaterial`, {params}).then(res=>res.data); };
+
+//修改材料信息
+export const updateMaterial = params => { return axios.post(`/ss/material/updateMaterial`, params).then(res=>res.data); };

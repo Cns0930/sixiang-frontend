@@ -3,21 +3,8 @@
         <header>材料管理</header>
         <section class="workBox">
             <div class="searchBox">
-                <el-input placeholder="筛选委办局" v-model="value" clearable style="width: 200px;"></el-input>
-                <el-input placeholder="筛选事项" v-model="valueT" clearable style="width: 200px;"></el-input>
-                <el-date-picker
-                    v-model="timeRange"
-                    type="daterange"
-                    range-separator="至"
-                    start-placeholder="开始日期"
-                    @change="getTime"
-                    end-placeholder="结束日期"
-                    format="yyyy-MM-dd"
-                    value-format="yyyy-MM-dd"
-                ></el-date-picker>
-                <el-button>搜索</el-button>
                 <div class="handle">
-                    <el-button type="primary" @click="materialCreateVisible = true">新建材料</el-button>
+                    <el-button type="primary" @click="materialVisible({})">新建材料</el-button>
                     <el-button type="primary">导出</el-button>
                     <el-button type="primary">导入</el-button>
                 </div>
@@ -55,6 +42,7 @@
                         width="100"
                         show-overflow-tooltip
                     ></el-table-column>
+                    <el-table-column prop="materialId" label="事项(小项)办事材料编号" width="100" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="materialCode" label="材料编码" width="100" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="materialName" label="材料名称" width="160"></el-table-column>
                     <el-table-column prop="materialStatus" label="材料状态" width="80"></el-table-column>
@@ -84,12 +72,12 @@
                     ></el-table-column>
                     <el-table-column label="操作" fixed="right">
                         <template slot-scope="scope">
-                            <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                            <el-button size="mini" @click="materialVisible(scope.row)">编辑</el-button>
                             <el-button
                                 size="mini"
                                 type="danger"
-                                @click="handleDelete(scope.$index, scope.row)"
-                            >审核</el-button>
+                                @click="handleDeleteMaterial(scope.row)"
+                            >删除</el-button>
                         </template>
                     </el-table-column>
                     <!-- <el-table-column
@@ -120,29 +108,35 @@
           placeholder:'输入数字信息',
             }" @input="inputs"></component>-->
         </section>
-        <!-- 新建窗口 -->
   <!-- 创建模板弹窗 -->
-        <el-dialog title="创建模板" :visible.sync="materialCreateVisible" width="50%" :close-on-click-modal="false">
+        <el-dialog title="材料信息填写" :visible.sync="materialWriteVisible" width="50%" :close-on-click-modal="false">
             <div>
                
-                审批事项主键(必填):<el-input v-model="materialT_item_id" @keyup.enter.native="addMaterial"></el-input>
-                材料编码(必填):<el-input v-model="materialT_code"></el-input>
-                材料名称(必填):<el-input v-model="materialT_name"></el-input>
-                材料状态(必填):<el-input v-model="materialT_status"></el-input>
-                市证照编码(必填):<el-input v-model="materialT_cat_main_code"></el-input>
-                超级帮办word模板名称(必填):<el-input v-model="materialT_docx_template_name"></el-input>
-                文档编号(必填):<el-input v-model="materialT_document_seq"></el-input>
-                排序(必填):<el-input v-model="materialT_sort"></el-input>
-                备注:<el-input v-model="materialT_note"></el-input>
+                审批事项主键(必填):<el-input v-model="materialT.approvalItemId" @keyup.enter.native="addMaterial"></el-input>
+                材料编码(必填):<el-input v-model="materialT.materialCode"></el-input>
+                材料名称(必填):<el-input v-model="materialT.materialName"></el-input>
+                材料状态(必填):<el-input v-model="materialT.materialStatus"></el-input>
+                市证照编码(必填):<el-input v-model="materialT.catMainCode"></el-input>
+                产生来源(必填):
+            <div>
+                <el-select v-model="materialT.produceSource" placeholder="材料的产生来源">
+                    <el-option label="用户自带" value="用户自带"></el-option>
+                    <el-option label="当场制作" value="当场制作"></el-option>
+                </el-select>
+            </div>
+
+                超级帮办word模板名称(必填):<el-input v-model="materialT.docxTemplateName"></el-input>
+                文档编号(必填):<el-input v-model="materialT.documentSeq"></el-input>
+                排序(必填):<el-input v-model="materialT.sort"></el-input>
+                备注:<el-input v-model="materialT.note"></el-input>
             </div>
 
             <span slot="footer" class="dialog-footer">
-                <el-button @click="materialCreateVisible = false">取 消</el-button>
-                <el-button type="primary" @click="addMaterial">确 定</el-button>
+                <el-button @click="materialWriteVisible = false">取 消</el-button>
+                <el-button type="primary" @click="addMaterial();materialWriteVisible = false">确 定</el-button>
             </span>
         </el-dialog>
         <!-- 编辑窗口 -->
-        
     </div>
 </template>
 
@@ -151,7 +145,7 @@
 <script>
 import basicMixin from "./basicMixin";
 import Vue from "vue";
-import { listMaterial, addMaterial } from "../../api/basicInfo/material";
+import { listMaterial, addMaterial,delMaterial,updateMaterial } from "../../api/basicInfo/material";
 
 export default {
     name: "Material",
@@ -167,18 +161,8 @@ export default {
             //   }
             // },
             type: "material",
-            materialCreateVisible: false,
-
-        
-            materialT_item_id: "",
-            materialT_code: "",
-            materialT_name: "",
-            materialT_status: "",
-            materialT_cat_main_code: "",
-            materialT_docx_template_name: "",
-            materialT_sort: "",
-            materialT_note: "",
-            materialT_document_seq: "",
+            materialT: {},
+            materialWriteVisible: false,
             value: "",
             valueT: "",
             timeRange: [],
@@ -200,37 +184,61 @@ export default {
         handleSelectionChange(val) {
             this.multipleSelection = val;
         },
+        materialVisible(item) {
+            this.materialT = item;
+            this.materialWriteVisible = true;
+        },
         //获取材料列表
         async listMaterial() {
             const res = await listMaterial({
-                materialName: this.materialT_name,
+                materialName: this.materialT.name,
             });
             if (!res.success) return;
             this.tableData = res.data;
         },
         //增加材料
         async addMaterial() {
-            if (!this.materialT_item_id) return;
-
-            const res = await addMaterial({
-                approvalItemId: this.materialT_item_id,
-                catMainCode: this.materialT_cat_main_code,
-                materialCode: this.materialT_code,
-                materialName: this.materialT_name,
-                materialStatus: this.materialT_status,
-                documentSeq: this.materialT_document_seq,
-                docxTemplateName: this.materialT_docx_template_name,
-                note: this.materialT_note,
-                sort: this.materialT_sort,
-            });
-
+            let res;
+            if(!this.materialT.materialId){
+                res = await addMaterial(this.materialT);
+            }else{
+                res = await updateMaterial(this.materialT);
+            }
+            
             if (!res.success) return;
 
-            this.$message.success('新增材料成功');
-            this.materialCreateVisible = false;
-            this.materialT_item_id = '';
+            this.$message.success('保存成功');
+            this.materialWriteVisible = false;
+            // this.materialT_item_id = '';
             
             this.listMaterial();
+        },
+        // 删除
+        async handleDeleteMaterial(v) {
+            let param = {
+                materialId: v.materialId
+            };
+   await this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+    
+            let result = await delMaterial(param);
+            if (!result.success) return;
+            
+            // this.$message({ type: "success", message: "删除成功" });
+            this.load();
         },
     },
 };
