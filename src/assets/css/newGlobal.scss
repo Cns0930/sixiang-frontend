@@ -321,6 +321,20 @@
     }
 }
 
+// 未确认的字体颜色
+.el-form-item {
+
+
+    .default-text-color {
+        .el-input__inner {
+            color: #85A0C0;
+        }
+
+        .el-textarea__inner {
+            color: #85A0C0;
+        }
+    }
+}
 
 //  全局 element css 改写
 .select-form {
