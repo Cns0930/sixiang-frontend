@@ -3,6 +3,9 @@
         <header>材料管理</header>
         <section class="workBox">
             <div class="searchBox">
+                <el-input placeholder="筛选材料名称" v-model="valueMN" clearable style="width: 200px;"></el-input>
+                <el-input placeholder="筛选材料编号" v-model="valueMC" clearable style="width: 200px;"></el-input>
+                <el-button @click="materialSearch()">搜索</el-button>
                 <div class="handle">
                     <el-button type="primary" @click="materialVisible({})">新建材料</el-button>
                     <el-button type="primary">导出</el-button>
@@ -145,7 +148,7 @@
 <script>
 import basicMixin from "./basicMixin";
 import Vue from "vue";
-import { listMaterial, addMaterial,delMaterial,updateMaterial } from "../../api/basicInfo/material";
+import { listMaterial, addMaterial,delMaterial,updateMaterial,getByMaterialId } from "../../api/basicInfo/material";
 
 export default {
     name: "Material",
@@ -163,8 +166,8 @@ export default {
             type: "material",
             materialT: {},
             materialWriteVisible: false,
-            value: "",
-            valueT: "",
+            valueMN: "",
+            valueMC: "",
             timeRange: [],
             tableData: [],
             multipleSelection: [],
@@ -184,17 +187,42 @@ export default {
         handleSelectionChange(val) {
             this.multipleSelection = val;
         },
-        materialVisible(item) {
+        async materialSearch(){
+            console.log("this.valueMN:",this.valueMN," this.valueMC:",this.valueMC)
+            let result = await listMaterial({
+                keyword: this.valueMN + this.valueMC ,
+            });
+
+            if(!result.success) return;
+
+            this.totalCount = result.data.total;
+            this.tableData = result.data.records;
+            
+            this.$message({ type: "success", message: "查询成功" });
+            
+        },
+        async materialVisible(item) {
+            let id = item.materialId;
+            if(!id){
+                item = item;
+            }else{
+                item = await getByMaterialId({materialId: id});
+                item = item.data;
+            }
+            
             this.materialT = item;
             this.materialWriteVisible = true;
         },
         //获取材料列表
         async listMaterial() {
             const res = await listMaterial({
-                materialName: this.materialT.name,
+                approvalItemId: this.materialT.approvalItemId,
+                materialStatus: this.materialT.materialStatus,
+                keyword: this.materialT.materialCode  + this.materialT.materialName ,
             });
             if (!res.success) return;
-            this.tableData = res.data;
+            this.tableData = res.data.records;
+            await this.search();
         },
         //增加材料
         async addMaterial() {
