@@ -259,8 +259,12 @@ export default {
             this.$message.success('保存成功');
             this.materialWriteVisible = false;
             // this.materialT_item_id = '';
+            if(!this.materialT.materialId){
+                await this.search();
+            }else{
+                await this.materialSearch();
+            }
             
-            this.listMaterial();
         },
         // 删除
         async handleDeleteMaterial(v) {
