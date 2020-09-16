@@ -23,4 +23,4 @@ function getMatter(scopes) {
     return []
 }
 
-export { scopes, getMatter }
+export { scopes, getMatter,scopeWithMatter }

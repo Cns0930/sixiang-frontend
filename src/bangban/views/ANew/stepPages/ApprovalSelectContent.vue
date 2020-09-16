@@ -15,7 +15,7 @@
                             <el-cascader :show-all-levels="false" filterable style="width: 400px" v-model="form.approval"
                                 :options="options" :props="{ expandTrigger: 'hover' }" @change="handleChange">
                             </el-cascader>
-                            <el-checkbox style="margin-left: 20px;" v-model="extraAttribute.value">{{extraAttribute.label}}</el-checkbox>
+                            <el-checkbox v-if="extraAttribute" style="margin-left: 20px;" v-model="extraAttribute.value">{{extraAttribute.label}}</el-checkbox>
                         </el-form-item>
                         <el-divider />
                         <el-form-item v-for="(v,i) in fields" :key="i" :label="v.label"
@@ -104,8 +104,8 @@ export default {
     },
     created() {
         let fieldIndex = this.fields.findIndex(v => v.label == '情形');
-        //防止其他页面切回当前后changeShowList为空，属性随配置走
-        if (typeof this.fields[fieldIndex].attributes.adjustOptions == "undefined") {
+        //首先容错&&防止其他页面切回当前后changeShowList为空，属性随配置走
+        if (this.extraAttribute && typeof this.fields[fieldIndex].attributes.adjustOptions == "undefined") {
             this.fields[fieldIndex].attributes.adjustOptions = this.fields[fieldIndex].attributes.options.filter(v => v.hidden);
         }
         this.changeShowList = this.fields[fieldIndex].attributes.adjustOptions;

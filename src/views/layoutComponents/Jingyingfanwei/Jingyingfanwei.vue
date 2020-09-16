@@ -99,10 +99,10 @@
 
 <script>
 
-import { scopes, getMatter } from "./businessConfig"
+import { scopes, getMatter,scopeWithMatter } from "./businessConfig"
 import _ from "lodash"
 import hightlightJingyingfanwei from "./hilightJingyingfanwei"
-let ops = scopes.map(v => ({ value: v, label: v }));
+let ops = scopeWithMatter.map(v => ({ value: v, label: v }));
 import CommonMixin from "@/views/pageComponents/CommonMixin"
 import TestFormItem from '@/components/TestFormItem'
 export default {
@@ -278,7 +278,7 @@ export default {
         },
         //每次修改许可事项后触发
         adjustXuke() {
-            this.value.joinValue = _.uniq(this.value.confirmList.filter(v => v.shixiang.value).map(v =>v.shixiang.value)).join(',');
+            this.value.joinValue = _.uniq(this.value.confirmList.filter(v => v.shixiang.value).map(v =>v.shixiang.value)).join('，');
             if(!this.value.joinValue) {
                 this.troubleMsg = '当前无办理审批手续后方能经营的事项';
                 this.showTroubleMask = true;
