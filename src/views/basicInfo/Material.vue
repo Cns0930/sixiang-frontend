@@ -271,6 +271,7 @@ export default {
             let param = {
                 materialId: v.materialId
             };
+            let id = v.materialId;
    await this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -290,8 +291,11 @@ export default {
             let result = await delMaterial(param);
             if (!result.success) return;
             
-            // this.$message({ type: "success", message: "删除成功" });
-            this.load();
+            if(!id){
+                await this.search();
+            }else{
+                await this.materialSearch();
+            }
         },
     },
 };
