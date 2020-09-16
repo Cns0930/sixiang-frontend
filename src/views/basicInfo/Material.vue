@@ -185,15 +185,33 @@ export default {
         handleSelectionChange(val) {
             this.multipleSelection = val;
         },
-        async materialSearch(){
+        async handleSizeChange(val) {
+            console.log(`每页 ${val} 条`);
             let result = await listMaterial({
                 keyword: this.valueM,
-                pageNum: 1,
-                pageSize: 10,
+                pageNum: this.currentPage,
+                pageSize: val
+            });
+            this.tableData = result.data.records;
+        },
+        async handleCurrentChange(val) {
+            console.log(`当前页: ${val}`);
+            let result = await listMaterial({
+                keyword: this.valueM,
+                pageNum: val,
+                pageSize: this.pagesize
+            });
+            this.tableData = result.data.records;
+        },
+        async materialSearch(){
+            this.currentPage = 1;
+            let result = await listMaterial({
+                keyword: this.valueM,
+                pageNum: this.currentPage,
+                pageSize: this.pagesize
             });
 
             if(!result.success) return;
-
             this.totalCount = result.data.total;
             this.tableData = result.data.records;
             
@@ -217,11 +235,13 @@ export default {
             const res = await listMaterial({
                 approvalItemId: this.materialT.approvalItemId,
                 materialStatus: this.materialT.materialStatus,
-                keyword: this.materialM,
-                pageNum: 1,
-                pageSize: 10,
+                // keyword: this.materialM,
+                pageNum: this.currentPage,
+                pageSize: this.pagesize
             });
             if (!res.success) return;
+            this.totalCount = result.data.total;
+            console.log("dadathis.current:",this.current," dathis.pagesize",this.pagesize," dathis.totalCount",this.totalCount)
             this.tableData = res.data.records;
             await this.search();
         },

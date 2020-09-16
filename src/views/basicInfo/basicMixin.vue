@@ -17,7 +17,9 @@ export default {
             if(this.type === 'work') {
                 result = await listApprovalItem({});
             } else if(this.type === 'material') {
-                result = await listMaterial({});
+                result = await listMaterial({pageNum: this.currentPage,
+                pageSize: this.pagesize});
+                this.tableData = result.data.records;
             } else if(this.type === 'pickUp') {
 
             }
