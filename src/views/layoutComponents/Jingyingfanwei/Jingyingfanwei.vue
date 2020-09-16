@@ -64,7 +64,7 @@
                     <el-form-item label="表述条目" prop="required" :obj="v.fanwei">
                         <el-select v-model="v.fanwei.value" filterable placeholder="请输入内容" style="width:calc(100% - 140px)"
                             @change="handleChangeConfirm($event,v)">
-                            <el-option v-for="(o,q) in ops" :key="q" :label="o.label" :value="o.value">
+                            <el-option v-for="(o,q) in opsXuke" :key="q" :label="o.label" :value="o.value">
                             </el-option>
                         </el-select>
                     </el-form-item>
@@ -102,7 +102,8 @@
 import { scopes, getMatter,scopeWithMatter } from "./businessConfig"
 import _ from "lodash"
 import hightlightJingyingfanwei from "./hilightJingyingfanwei"
-let ops = scopeWithMatter.map(v => ({ value: v, label: v }));
+let ops = scopes.map(v => ({ value: v, label: v }));
+let opsXuke = scopeWithMatter.map(v => ({ value: v.scopes, label: v.scopes }));
 import CommonMixin from "@/views/pageComponents/CommonMixin"
 import TestFormItem from '@/components/TestFormItem'
 export default {
@@ -115,6 +116,7 @@ export default {
         return {
             // addList: [{ fanwei: { value: "" }, shixiang: { value: "",options:[] } }],
             ops,
+            opsXuke,
             meta: { fanwei: { value: "" }, shixiang: { value: "", options: [] } },
             showTroubleMask: false,
             troubleMsg: '',
@@ -273,7 +275,7 @@ export default {
         canShow() {
 
             this.$set(this.value,'showShixiang',true);
-            this.$set(this.value,'confirmList',_.cloneDeep(this.value.addList))
+            this.$set(this.value,'confirmList',_.cloneDeep(this.value.addList.filter(v => v.shixiang.value)))
             this.adjustXuke();
         },
         //每次修改许可事项后触发
