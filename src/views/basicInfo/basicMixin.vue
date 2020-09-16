@@ -3,12 +3,14 @@
 </template>
 <script>
 import { listApprovalItem , listMaterial } from "../../api/basicInfo/approval";
+import _ from "lodash";
 export default {
     data() {
         return {
             pagesize: 10,
             currentPage: 1,
             totalCount: 0,
+            loginName: localStorage.getItem("username"),
         }
     },
     methods: {

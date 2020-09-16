@@ -28,8 +28,9 @@ const routes = [
         component: Home,
         redirect: to=> {
             let hasAdmin = store.state['config'].roles.includes('admin');
-            if(hasAdmin) {
-                return '/user'
+            let hasResearcher = store.state['config'].roles.includes('researcher');
+            if(hasAdmin || hasResearcher) {
+                return '/basic'
             } else {
                 return '/subhome'
             }

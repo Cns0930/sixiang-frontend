@@ -21,14 +21,14 @@
         <!-- 事项表格 -->
         <div class="item-table" style="width: 100%;padding:10px 0;">
             <el-table :data="itemlist" border style="width: 100%">
-                <el-table-column fixed prop="sid" label="sid" width="150"></el-table-column>
+                <el-table-column fixed prop="itemNo" label="sid" width="150"></el-table-column>
                 <el-table-column label="事项名称(点击进入)">
                     <template slot-scope="scope">
                         <el-button
                             @click="handleClickItem(scope.row)"
                             type="text"
                             style="color: orange;"
-                        >{{scope.row.name}}</el-button>
+                        >{{scope.row.itemName}}</el-button>
                     </template>
                 </el-table-column>
                 <el-table-column prop="department" label="委办局" width="120"></el-table-column>
@@ -38,7 +38,7 @@
                     label="创建时间"
                     width="120"
                 ></el-table-column>
-                <el-table-column label="操作" width="120">
+                <!-- <el-table-column label="操作" width="120">
                     <template slot-scope="scope">
                         <el-button
                             @click="handleEditItem(scope.row);"
@@ -51,12 +51,22 @@
                             size="small"
                         >删除</el-button>
                     </template>
-                </el-table-column>
+                </el-table-column> -->
             </el-table>
         </div>
+        <div class="tablePagination">
+                <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page.sync="currentPage"
+                    :page-size="pagesize"
+                    layout="total, prev, pager, next"
+                    :total="totalCount"
+                ></el-pagination>
+            </div>
     </div>
 
-    <el-dialog
+    <!-- <el-dialog
         title="事项属性填写"
         :visible.sync="dialogVisible"
         width="80%"
@@ -89,7 +99,7 @@
             <el-button @click="dialogVisible = false">取 消</el-button>
             <el-button type="primary" @click="saveItem();dialogVisible = false">确 定</el-button>
         </span>
-    </el-dialog>
+    </el-dialog> -->
 </div>
 </template>
 
@@ -101,6 +111,7 @@ import {
     deleteItem,
     filterDateItem,
 } from "@/api/item/index";
+import { listApprovalItem } from "@/api/basicInfo/approval";
 import axios from "../../api/config";
 import dayjs from "dayjs";
 import { parse } from "handlebars";
@@ -113,6 +124,9 @@ export default {
             dialogVisible: false,
             departmentOptions: [],
             dateRange: "",
+            pagesize: 10,
+            currentPage: 1,
+            totalCount: 0,
         };
     },
     mounted() {
@@ -120,19 +134,21 @@ export default {
     },
     methods: {
         async load() {
-            let result = await listAll();
+            let result = await listApprovalItem();
             if (!result.success) {
                 this.$message({ type: "warning", message: "获取初始数据失败" });
             }
-            this.itemlist = result.data;
+            this.itemlist = result.data.records;
+            this.totalCount = result.data.total;
+            this.tableData = result.data.records;
 
             this.itemlist.sort((a, b) => {
                 return dayjs(b.createTime) - dayjs(a.createTime);
             });
             console.log(this.itemlist);
 
-            let departments = await listDepartment();
-            this.departmentOptions = departments.data;
+            // let departments = await listDepartment();
+            // this.departmentOptions = departments.data;
         },
         async saveItem() {
             let result = await saveItem(this.tempItem);
@@ -153,7 +169,7 @@ export default {
             this.$store.commit("changeItem", item);
             this.$router.push({
                 path: "/formconstructor",
-                query: { itemId: item.id },
+                query: { itemId: item.approvalItemId },
             });
         },
         handleEditItem(item) {
@@ -171,7 +187,7 @@ export default {
                     startDate: this.dateRange[0],
                     endDate: this.dateRange[1],
                 };
-                let result = await filterDateItem(params);
+                let result = await listApprovalItem(params);
                 if (!result.success) {
                     this.$message({
                         type: "warning",
@@ -183,7 +199,7 @@ export default {
                 }
                 this.itemlist = result.data;
             } else {
-                let result = await listAll();
+                let result = await listApprovalItem();
                 if (!result.success) {
                     this.$message({
                         type: "warning",
@@ -192,7 +208,9 @@ export default {
                     this.itemlist = []
                     return
                 }
-                this.itemlist = result.data;
+                this.itemlist = result.data.records;
+                this.totalCount = result.data.total;
+                this.tableData = result.data.records;
             }
             this.itemlist.sort((a, b) => {
                 return dayjs(b.createTime) - dayjs(a.createTime);
