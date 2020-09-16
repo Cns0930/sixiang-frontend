@@ -71,7 +71,7 @@
                 </el-col>
                 <el-col :span="12">
                     <el-form-item label="许可事项" prop="none" :obj="v.shixiang">
-                        <el-select v-model="v.shixiang.value" placeholder="请输入内容" style="width: 100%;">
+                        <el-select v-model="v.shixiang.value" placeholder="请输入内容" @change="handleXukeChange" style="width: 100%;">
                             <el-option v-for="(o,q) in v.shixiang.options" :key="q" :label="o.label" :value="o.value">
                             </el-option>
                         </el-select>
@@ -276,6 +276,9 @@ export default {
 
             this.$set(this.value,'showShixiang',true);
             this.$set(this.value,'confirmList',_.cloneDeep(this.value.addList.filter(v => v.shixiang.value)))
+            this.adjustXuke();
+        },
+        handleXukeChange(val) {
             this.adjustXuke();
         },
         //每次修改许可事项后触发
