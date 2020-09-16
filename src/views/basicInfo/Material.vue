@@ -3,8 +3,7 @@
         <header>材料管理</header>
         <section class="workBox">
             <div class="searchBox">
-                <el-input placeholder="筛选材料名称" v-model="valueMN" clearable style="width: 200px;"></el-input>
-                <el-input placeholder="筛选材料编号" v-model="valueMC" clearable style="width: 200px;"></el-input>
+                <el-input placeholder="筛选材料名称或者材料编号" v-model="valueM" clearable style="width: 200px;"></el-input>
                 <el-button @click="materialSearch()">搜索</el-button>
                 <div class="handle">
                     <el-button type="primary" @click="materialVisible({})">新建材料</el-button>
@@ -166,8 +165,7 @@ export default {
             type: "material",
             materialT: {},
             materialWriteVisible: false,
-            valueMN: "",
-            valueMC: "",
+            valueM: "",
             timeRange: [],
             tableData: [],
             multipleSelection: [],
@@ -188,9 +186,10 @@ export default {
             this.multipleSelection = val;
         },
         async materialSearch(){
-            console.log("this.valueMN:",this.valueMN," this.valueMC:",this.valueMC)
             let result = await listMaterial({
-                keyword: this.valueMN + this.valueMC ,
+                keyword: this.valueM,
+                pageNum: 1,
+                pageSize: 10,
             });
 
             if(!result.success) return;
@@ -218,7 +217,9 @@ export default {
             const res = await listMaterial({
                 approvalItemId: this.materialT.approvalItemId,
                 materialStatus: this.materialT.materialStatus,
-                keyword: this.materialT.materialCode  + this.materialT.materialName ,
+                keyword: this.materialM,
+                pageNum: 1,
+                pageSize: 10,
             });
             if (!res.success) return;
             this.tableData = res.data.records;
