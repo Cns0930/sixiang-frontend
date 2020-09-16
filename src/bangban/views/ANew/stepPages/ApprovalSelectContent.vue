@@ -15,7 +15,7 @@
                             <el-cascader :show-all-levels="false" filterable style="width: 400px" v-model="form.approval"
                                 :options="options" :props="{ expandTrigger: 'hover' }" @change="handleChange">
                             </el-cascader>
-                            <el-checkbox v-if="extraAttribute" style="margin-left: 20px;" v-model="extraAttribute.value">{{extraAttribute.label}}</el-checkbox>
+                            <el-checkbox v-if="extraAttribute" style="margin-left: 20px;" v-model="extraAttribute.value" @change="handleExtraChange">{{extraAttribute.label}}</el-checkbox>
                         </el-form-item>
                         <el-divider />
                         <el-form-item v-for="(v,i) in fields" :key="i" :label="v.label"
@@ -62,53 +62,22 @@ export default {
         },
         fields() {
             this.extraAttribute = this.itemState["qingxing_checkbox"];
-            return this.config.filter(v => v != 'qingxing_checkbox').map(fieldNo => this.itemState[fieldNo])
+            let field = this.config.filter(v => v != 'qingxing_checkbox').map(fieldNo => this.itemState[fieldNo]);
+
+            let fieldIndex = field.findIndex(v => v.label == '情形');
+            //首先容错&&防止其他页面切回当前后changeShowList为空，属性随配置走
+            if (this.extraAttribute && typeof field[fieldIndex].attributes.adjustOptions == "undefined") {
+                field[fieldIndex].attributes.adjustOptions = field[fieldIndex].attributes.options.filter(v => v.hidden);
+                this.changeShowList = field[fieldIndex].attributes.adjustOptions;
+                this.$store.commit('putQingxingSpecial',{sid:this.sid,value:this.changeShowList})
+            } else {
+                this.changeShowList = this.$store.state.ANew.qingxingSpecial[this.sid];
+            }
+            return field;
         },
 
     },
-    watch: {
-        //处理extraAttribute.value为真,且选了changeShowList中数据后又改为false
-        "extraAttribute.value": function(newVal) {
-            var _this = this;
-            if(!newVal) {
-                this.fields.forEach((v,index) => {
-                    if(v.label === '情形') {
-                        v.value.length > 0 && this.changeShowList.forEach(item => {
-                            v.value = v.value.filter(m => m != item.value)
-                        })
-                        v.attributes.options.forEach((item,i) => {
-                            
-                            _this.changeShowList.forEach(m => {
-                                
-                                if(item.value == m.value) {
-                                    this.$set(this.fields[index].attributes.options[i],"hidden",true);
-                                }
-                            })
-                        })
-                    }
-                })
-            } else {
-                this.fields.forEach((item,index) => {
-                    if(item.label === '情形') {
-                        item.attributes.options.forEach((v,i) => {
-                            _this.changeShowList.forEach(m => {
-                                if(v.value == m.value) {
-                                    this.$set(this.fields[index].attributes.options[i],"hidden",false);
-                                }
-                            })
-                        })
-                    }
-                })
-            }
-        }
-    },
     created() {
-        let fieldIndex = this.fields.findIndex(v => v.label == '情形');
-        //首先容错&&防止其他页面切回当前后changeShowList为空，属性随配置走
-        if (this.extraAttribute && typeof this.fields[fieldIndex].attributes.adjustOptions == "undefined") {
-            this.fields[fieldIndex].attributes.adjustOptions = this.fields[fieldIndex].attributes.options.filter(v => v.hidden);
-        }
-        this.changeShowList = this.fields[fieldIndex].attributes.adjustOptions;
 
     },
     methods: {
@@ -153,7 +122,41 @@ export default {
                 this.$router.push({name:"办理",params:{item:v}})
             }
         },
-        
+                //处理extraAttribute.value为真,且选了changeShowList中数据后又改为false
+        handleExtraChange(val) {
+            console.log(val,'vals');
+            var _this = this;
+            if(!val) {
+                this.fields.forEach((v,index) => {
+                    if(v.label === '情形') {
+                        v.value.length > 0 && this.changeShowList.forEach(item => {
+                            v.value = v.value.filter(m => m != item.value)
+                        })
+                        v.attributes.options.forEach((item,i) => {
+                            
+                            _this.changeShowList.forEach(m => {
+                                
+                                if(item.value == m.value) {
+                                    this.$set(this.fields[index].attributes.options[i],"hidden",true);
+                                }
+                            })
+                        })
+                    }
+                })
+            } else {
+                this.fields.forEach((item,index) => {
+                    if(item.label === '情形') {
+                        item.attributes.options.forEach((v,i) => {
+                            _this.changeShowList.forEach(m => {
+                                if(v.value == m.value) {
+                                    this.$set(this.fields[index].attributes.options[i],"hidden",false);
+                                }
+                            })
+                        })
+                    }
+                })
+            }
+        }
     }
 }
 </script>
