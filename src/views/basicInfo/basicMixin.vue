@@ -2,7 +2,7 @@
     
 </template>
 <script>
-import { listApprovalItem , listMaterial } from "../../api/basicInfo/approval";
+import { listApprovalItem , listMaterial, getByApprovalItemId } from "../../api/basicInfo/approval";
 import _ from "lodash";
 export default {
     data() {
@@ -14,10 +14,10 @@ export default {
         }
     },
     methods: {
-        async search() {
+        async search(params) {
             let result
             if(this.type === 'work') {
-                result = await listApprovalItem({});
+                result = await listApprovalItem(params);
             } else if(this.type === 'material') {
                 result = await listMaterial({pageNum: this.currentPage,
                 pageSize: this.pagesize});
@@ -50,6 +50,17 @@ export default {
         handleCurrentChange(val) {
             console.log(`当前页: ${val}`);
         },
+        async init(){
+            if(this.$store.state.basic.approvalItem.approvalItemId == null){
+                let itemId = this.$route.query.itemId;
+                let result = await getByApprovalItemId({approvalItemId: itemId});
+                if (!result.success) {
+                this.$message({ type: "warning", message: "获取初始事项信息失败" });
+                return;
+                }
+                this.$store.commit("changeApprovalItem", result.data);
+            }
+        }
     }
 }
 </script>

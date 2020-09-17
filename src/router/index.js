@@ -17,6 +17,7 @@ import Setting from "@/views/setting/Setting"
 import Test from "@/views/test/Test"
 import ApprovalItem from "@/views/basicInfo/ApprovalItem"
 import Material from "@/views/basicInfo/Material"
+import ApprovalSubItem from "@/views/basicInfo/ApprovalSubItem"
 Vue.use(VueRouter)
 import store from "@/vuex/store"
 import bangbanAxios from "@/api/ANew/config"
@@ -39,10 +40,6 @@ const routes = [
             {
                 path: '/user',
                 component: User,
-                beforeEnter: (to,from,next) => {
-                    store.commit('config/setCrumbList',[{label:'用户管理',path: '/user'}])
-                    next();
-                }
             },
             {
                 path: '/subhome',
@@ -103,12 +100,16 @@ const routes = [
             },
             {
                 path: '/basic',
-                component: ApprovalItem
+                component: ApprovalItem,
             },
             {
                 path: '/basic/material',
-                component: Material
-            }
+                component: Material,
+            },
+            {
+                path: '/subitem',
+                component: ApprovalSubItem
+            },
         ]
     },
     {
