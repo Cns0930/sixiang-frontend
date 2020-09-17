@@ -4,6 +4,7 @@
 <script>
 import { listApprovalItem , listMaterial, getByApprovalItemId } from "../../api/basicInfo/approval";
 import _ from "lodash";
+import dayjs from "dayjs";
 export default {
     data() {
         return {
@@ -35,14 +36,8 @@ export default {
         indexMethod(index) {
             return (this.currentPage - 1) * this.pagesize + (index + 1);
         },
-        formatterTime(row,column,flag) {
-            let value;
-            if(!flag) {
-                value = row.createTime.replace('T',' ').replace(/\-/g,'/').substring(0,16);
-            } else {
-                value = row.updateTime.replace('T',' ').replace(/\-/g,'/').substring(0,16);
-            }
-            return value
+        timeFormatter(row, column, cellValue, index) {
+            return dayjs(cellValue).format("YYYY-MM-DD HH:mm:ss")
         },
         handleSizeChange(val) {
             console.log(`每页 ${val} 条`);
