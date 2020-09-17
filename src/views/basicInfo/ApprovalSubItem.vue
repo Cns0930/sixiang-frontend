@@ -1,8 +1,8 @@
 <template>
     <div class="workWrap">
         <header>情形管理</header>
-        <el-button @click="addDialogVisible = true" type="primary">添加</el-button>
-        <el-table :data="tableData">
+        <el-button @click="addDialogVisible = true" type="primary" style="margin-bottom:10px">添加</el-button>
+        <el-table :data="tableData" border>
             <el-table-column prop="subitemName" label="情形"></el-table-column>
             <el-table-column prop="aliasName" label="别名"></el-table-column>
             <el-table-column prop="note" label="备注"></el-table-column>
