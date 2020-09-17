@@ -66,7 +66,7 @@ let ElSingleCheckboxC = {
 // 情形 checkbox
 let ElCheckboxC = {
     name:"ElCheckboxC",
-    props:["options","value","colSpan"],
+    props:["options","value","colSpan","isHidden"],
     mixins:[LayoutComponentMixin],
     render(){
         let colSpan = this.colSpan? Number(this.colSpan) : 12;
@@ -77,7 +77,7 @@ let ElCheckboxC = {
                 {
                     options.map(option=> 
                     <el-col span={colSpan} >
-                        <el-checkbox label={option.value} vShow={!option.hidden} disabled={option.disabled}>{option.label}</el-checkbox>
+                        <el-checkbox label={option.value} vShow={!(this.isHidden && option.needHidden)} disabled={option.disabled}>{option.label}</el-checkbox>
                     </el-col>
                     )
                 }
