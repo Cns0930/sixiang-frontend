@@ -1,32 +1,37 @@
 <template>
     <div class="workWrap">
         <header>情形管理</header>
+        <el-button @click="addSubApproval">添加</el-button>
+        <el-table>
+            
+        </el-table>
     </div>
 </template>
 
 <script>
 import basicMixin from "./basicMixin";
-import Vue from "vue";
-import {
-    listApprovalAll,
-    listProjectAll,
-    addApprovalItem,
-    updateApprovalItem,
-    getByApprovalItemId,
-} from "../../api/basicInfo/approval";
+import {getSubApproval} from "@/api/basicInfo/approvalSub"
+
 
 export default {
     name: "ApprovalSubItem",
-    mixins: [basicMixin],
+    // mixins: [basicMixin],
     data() {
         return {
             // 页面信息
             type: "subItem",
+            itemId:this.$route.query.itemId
         };
     },
     async created() {
-        await this.init();
+        // await this.init();
+        await getSubApproval();
     },
+    methods:{
+        addSubApproval(){
+            
+        },
+    }
 };
 </script>
 
