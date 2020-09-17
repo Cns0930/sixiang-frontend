@@ -2,7 +2,7 @@
 <template>
     <div>
         <div v-for="(v,i) in value" :key="i" class="input-wrapper">
-            <ElInput :value="v" @input="handleInput($event,i)" class="input"></ElInput>
+            <ElInput :value="v" @input="handleInput($event,i)" class="input" @focus="$emit('focus')"></ElInput>
             <el-tooltip class="remove-btn remove-on-tab" effect="dark" content="删除" placement="right-start">
                 <i class="delete-btn el-icon-close" @click.stop="handelRemove(i)"></i>
             </el-tooltip>
