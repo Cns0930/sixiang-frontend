@@ -13,15 +13,15 @@
                     </div>
                 </el-col>
                 <el-form-item :key="i" label="新增" prop="required" :obj="v.fanwei">
-                    <el-select v-model="v.fanwei.value" filterable placeholder="请输入内容" style="width:calc(100% - 140px)"
+                    <el-select v-model="v.fanwei.value" :disabled="v.forbid" filterable placeholder="请输入内容" style="width:calc(100% - 140px)"
                         @change="handleChangeFanwei($event,v)">
                         <el-option v-for="(o,q) in ops" :key="q" :label="o.label" :value="o.value">
                         </el-option>
                     </el-select>
-                    <!-- <el-button class="btn" icon="el-icon-check"
+                    <el-button class="btn" icon="el-icon-check"
                         style="background: linear-gradient(180deg, #3397FF 0%, #013BD3 100%);border-radius: 4px;color:#fff;float:right;font-weight:bold;font-size:20px;padding:7px 10px"
-                        @click="handleCopy(v)">
-                    </el-button> -->
+                        @click="handleCopy(v,i)">
+                    </el-button>
                 </el-form-item>
 
             </el-col>
@@ -117,7 +117,7 @@ export default {
             // addList: [{ fanwei: { value: "" }, shixiang: { value: "",options:[] } }],
             ops,
             opsXuke,
-            meta: { fanwei: { value: "" }, shixiang: { value: "", options: [] } },
+            meta: { fanwei: { value: "" }, shixiang: { value: "", options: [] } ,forbid: false},
             showTroubleMask: false,
             troubleMsg: '',
             addList: [],
@@ -158,7 +158,6 @@ export default {
         } else {
             this.addList = this.value.addList;
         }
-        console.log(this.value,'jingyingfanwei');
         
         // console.log(this.value,'value123123');
         this.$set(this.resultBlock, "htmlValue", this.valueToHtmlValue(this.resultBlock.value))
@@ -179,7 +178,7 @@ export default {
             } else {
                 shixiang.value = '';
             }
-            this.handleCopy(data,'Fanwei');
+            // this.handleCopy(data,'Fanwei');
         },
         handleChangeConfirm(e, data) {
             console.log(e,data,'edata');
@@ -212,11 +211,9 @@ export default {
         onhtmlinput(e) {
             this.$set(this.resultBlock, "value", e.target.innerText);
         },
-        handleCopy(data,flag) {
-            console.log(data,'vvv',flag);
+        handleCopy(data,flag = 'Fanwei',index) {
+            // console.log(data,'vvv',flag);
             if(flag == 'Xuke') {
-                let context = data.fanwei;
-                console.log(this.value);
                 this.adjustXuke();
                 return;
             }
@@ -248,8 +245,8 @@ export default {
 
                 textarea.htmlValue = this.valueToHtmlValue(textarea.value)
             }
-            
-            console.log(this.value,'add');
+            data.forbid = true;
+            console.log(data,this.value,'add');
         },
         valueToHtmlValue(value) {
             let valueArr = value.split("。")
@@ -275,14 +272,43 @@ export default {
         canShow() {
 
             this.$set(this.value,'showShixiang',true);
-            this.$set(this.value,'confirmList',_.cloneDeep(this.value.addList.filter(v => v.shixiang.value)))
+            this.$set(this.value,'confirmList',_.cloneDeep(this.value.addList.filter(v => v.shixiang.value)));
+            // console.log(this.value.confirmList,'confirmList');
+            this.advanceAdjuct(this.value.jingyingfanwei.value);
             this.adjustXuke();
+        },
+        /*
+        *对03页手动添加经营范围后携带到04的处理 or 04页面手动添加-变更后经营范围-中经营范围
+        *目的:循环逗号切割的经营范围数组每一项判断它是否有许可事项，有则在B区展示
+        */
+        advanceAdjuct(value) {
+            let valueArr = value.split("。")
+            let realValue = valueArr[0];
+            let realValueArr = realValue.split("，")
+            let htmlValue = realValueArr.forEach((result, item) => {
+                this.addAdJust(result);
+            });
+        },
+        addAdJust(value) {
+            if(getMatter(value).length > 0) {
+                let msg = _.cloneDeep(this.meta);
+                msg.fanwei.value = value;
+                msg.shixiang.options = getMatter(value);
+                if(msg.shixiang.options.length > 0) {
+                    msg.shixiang.value = msg.shixiang.options[0].value;
+                } else {
+                    msg.shixiang.value = '';
+                }
+                this.value.confirmList.push(msg);
+            }
         },
         handleXukeChange(val) {
             this.adjustXuke();
         },
         //每次修改许可事项后触发
         adjustXuke() {
+            console.log(_.uniqBy(this.value.confirmList,'fanwei.value'),'fanwei123');
+            this.value.confirmList = _.uniqBy(this.value.confirmList,'fanwei.value');
             this.value.joinValue = _.uniq(this.value.confirmList.filter(v => v.shixiang.value).map(v =>v.shixiang.value)).join('，');
             if(!this.value.joinValue) {
                 this.troubleMsg = '当前无办理审批手续后方能经营的事项';
@@ -292,7 +318,6 @@ export default {
     }
 }
 </script>
-
 <style lang="scss" scoped>
 .textarea-like {
     font-size: 20px;
