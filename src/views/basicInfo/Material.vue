@@ -110,29 +110,29 @@
           placeholder:'输入数字信息',
             }" @input="inputs"></component>-->
         </section>
-  <!-- 创建模板弹窗 -->
+        <!-- 创建模板弹窗 -->
         <el-dialog title="材料信息填写" :visible.sync="materialWriteVisible" width="50%" :close-on-click-modal="false">
-            <div>
-               
-                审批事项主键(必填):<el-input v-model="materialT.approvalItemId" @keyup.enter.native="addMaterial"></el-input>
-                材料编码(必填):<el-input v-model="materialT.materialCode"></el-input>
-                材料名称(必填):<el-input v-model="materialT.materialName"></el-input>
-                材料状态(必填):<el-input v-model="materialT.materialStatus"></el-input>
-                市证照编码(必填):<el-input v-model="materialT.catMainCode"></el-input>
-                产生来源(必填):
-            <div>
-                <el-select v-model="materialT.produceSource" placeholder="材料的产生来源">
-                    <el-option label="用户自带" value="用户自带"></el-option>
-                    <el-option label="当场制作" value="当场制作"></el-option>
-                </el-select>
-            </div>
+            <el-form>
+                <div>
+                <el-form-item label="审批事项主键(必填)">
+                    :<el-input v-model="materialT.approvalItemId" @keyup.enter.native="addMaterial"></el-input></el-form-item>
+                    <el-form-item label="材料编码(必填)">:<el-input v-model="materialT.materialCode"></el-input></el-form-item>
+                    <el-form-item label="材料名称(必填)">:<el-input v-model="materialT.materialName"></el-input></el-form-item>
+                    <el-form-item label="材料状态(必填)">:<el-input v-model="materialT.materialStatus"></el-input></el-form-item>
+                    <el-form-item label="市证照编码(必填)"> :<el-input v-model="materialT.catMainCode"></el-input></el-form-item>
+                <div> <el-form-item label="产生来源(必填)">
+                    <el-select v-model="materialT.produceSource" placeholder="材料的产生来源">
+                        <el-option label="用户自带" value="用户自带"></el-option>
+                        <el-option label="当场制作" value="当场制作"></el-option>
+                    </el-select></el-form-item>
+                </div>
 
-                超级帮办word模板名称(必填):<el-input v-model="materialT.docxTemplateName"></el-input>
-                文档编号(必填):<el-input v-model="materialT.documentSeq"></el-input>
-                排序(必填):<el-input v-model="materialT.sort"></el-input>
-                备注:<el-input v-model="materialT.note"></el-input>
-            </div>
-
+                    <el-form-item label="超级帮办word模板名称(必填)">:<el-input v-model="materialT.docxTemplateName"></el-input></el-form-item>
+                    <el-form-item label="文档编号(必填)">:<el-input v-model="materialT.documentSeq"></el-input></el-form-item>
+                    <el-form-item label="排序(必填)">:<el-input v-model="materialT.sort"></el-input></el-form-item>
+                    <el-form-item label="备注">:<el-input v-model="materialT.note"></el-input></el-form-item>
+                </div>
+            </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="materialWriteVisible = false">取 消</el-button>
                 <el-button type="primary" @click="addMaterial();materialWriteVisible = false">确 定</el-button>

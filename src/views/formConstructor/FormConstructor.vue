@@ -16,10 +16,22 @@
                 <el-button :disabled="itemId==-1" @click="handleImportPublic">导入全部公共字段</el-button>
                 <el-button :disabled="itemId==-1" @click="handleManagePublic">管理公共字段</el-button>
             </div>
-
+            
         </div>
-
+        <div class="searchBox">
+                <el-input placeholder="筛选字段名称或者字段编号" v-model="valueF" clearable style="width: 200px;margin-left: 0px"></el-input>
+                <el-select v-model="temp_type_search" clearable style="width: 200px;">
+                    <el-option v-for="(v,i) in typeOptions" :key="i" :label="v.label" :value="v.value" placeholder="筛选组件类型"></el-option>
+                </el-select>
+                
+                <el-select v-model="field_type" placeholder="筛选字段类型" clearable style="width: 200px;margin-left: 210px;">
+                        <el-option label="基本字段" value="1"></el-option>
+                        <el-option label="合成字段" value="2"></el-option>
+                    </el-select>
+                <el-button style="margin-left: 210px;" @click="fieldSearch()">搜索</el-button>
+        </div>
         <div class="main">
+       
             <!-- 字段表格 -->
             <div class="fields-table" style="width: 100%;padding:10px 60px">
                 <el-table :data="tableData" border style="width: 100%" row-key="id"
@@ -34,8 +46,9 @@
                             {{scope.row.componentDefs.remark?scope.row.componentDefs.remark.value:""}}
                         </template>
                     </el-table-column>
-                    <el-table-column fixed="right" label="操作" width="250">
+                    <el-table-column fixed="right" label="操作" width="350">
                         <template slot-scope="scope">
+                            <el-button @click="handleClickFieldDY(scope.row);" type="text" size="small"> 调研人员编辑</el-button>
                             <el-button @click="handleClickField(scope.row);" type="text" size="small"> 编辑</el-button>
                             <el-button @click="handleClickChangeType(scope);" type="text" size="small">更改组件类型
                             </el-button>
@@ -46,8 +59,20 @@
                         </template>
                     </el-table-column>
                 </el-table>
+                <div class="tablePagination">
+                    <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page.sync="currentPage"
+                    :page-size="pagesize"
+                    layout="total, prev, pager, next"
+                    :total="totalCount"
+                ></el-pagination>
             </div>
+            </div>
+             
         </div>
+            
 
         <!-- 编辑 -->
         <el-dialog title="字段组件属性填写" :visible.sync="editDialogVisible" width="80%" :close-on-click-modal="false" >
@@ -72,6 +97,43 @@
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editDialogVisible = false">取 消</el-button>
                 <el-button type="primary" @click="handleSaveField(temp_fieldObj);editDialogVisible = false">确 定
+                </el-button>
+            </span>
+        </el-dialog>
+        <!-- 调研人员编辑 -->
+        <el-dialog title="字段组件属性填写" :visible.sync="editDialogVisibleDY" width="80%" :close-on-click-modal="false" >
+            <div class="attribute-content">
+                <div v-if="temp_fieldObj">
+                    <div class="attribute">
+                        <span class="attribute-key">fieldNo</span>
+                        <el-input v-model="temp_fieldObj.fieldNo"></el-input>
+                    </div>
+                    <div class="attribute">
+                        <span class="attribute-key">fieldName</span>
+                        <el-input v-model="temp_fieldObj.fieldName"></el-input>
+                    </div>
+                    <div class="attribute">
+                        <span class="attribute-key">label</span>
+                        <el-input v-model="temp_fieldObj.label"></el-input>
+                    </div>
+                    <div class="attribute">
+                        <span class="attribute-key">字段说明信息</span>
+                        <el-input type="textarea" v-model="temp_fieldObj.description_info" autosize></el-input>
+                    </div>
+                    <div class="attribute">
+                        <span class="attribute-key">前端信息验证</span>
+                        <el-input type="textarea" v-model="temp_fieldObj.validation_info" autosize></el-input>
+                    </div>
+                   <!-- <div class="attribute" v-for="(v,i) in temp_fieldObj.componentDefs" :key="i">
+                        <span class="attribute-key">{{v.label || i}} </span>
+                        <component class="attribute-value" :is="v.renderTemplateName" v-model="v.value"
+                            v-bind="v.attributes" :key="temp_fieldObj.fieldNo+v.renderTemplateName"></component>
+                    </div> -->
+                </div>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="editDialogVisibleDY = false">取 消</el-button>
+                <el-button type="primary" @click="handleSaveField(temp_fieldObj);editDialogVisibleDY = false">确 定
                 </el-button>
             </span>
         </el-dialog>
@@ -218,11 +280,17 @@ export default {
             dialogSelectVisible: false,
             generalKeyword: "",
             itemKeyword: "",
+            valueF: "",
+            temp_type_search: "",
+            editDialogVisibleDY: false,
+            field_type: "",
             fieldKeyword: "",
             searchResult: [],
             currentPage: 1,
             pageSize: 15,
             total: 0,
+            pagesize: 10,
+            totalCount: 0,
             temp_selected_fields: [],
         };
     },
@@ -231,7 +299,7 @@ export default {
             baseFields: state => state.fieldModel.baseFields,
             computedFields: state => state.fieldModel.computedFields,
             itemName: state => state.home.item.name,
-            itemId: state => state.home.item.id,
+            itemId: state => state.home.item.approvalItemId,
             tableData: state =>
                 state.fieldModel.tableData
         })
@@ -255,6 +323,22 @@ export default {
             this.temp_change_type = scope.row.type
             this.temp_fieldObj = scope.row;
             this.dialogChangeTypeVisible = true;
+        },
+         indexMethod(index) {
+            return (this.currentPage - 1) * this.pagesize + (index + 1);
+        },
+        async handleSizeChange(val) {
+            console.log(`每页 ${val} 条`);
+            this.load();
+        },
+        async handleCurrentChange(val) {
+            console.log(`当前页: ${val}`);
+            this.load();
+        },
+        //条件查询
+        async fieldSearch(){
+            this.currentPage = 1;
+            this.load();
         },
         // 添加子项
         handleClickAddChild(row) {
@@ -340,8 +424,9 @@ export default {
         },
         // 确定添加字段
         async addFieldConfirm() {
+            console.log("defs:",defs)
             let def = defs.find(v => v.value == this.temp_type);
-
+            console.log("def:",def)
             let ComponentDefClass = def.componentDef
             let fieldType = this.temp_type == "computed" ? 2 : 1;
             let isList = !!def.isList;
@@ -416,9 +501,24 @@ export default {
 
             let newFieldObj = deserializeTableData({ id: result.data.id, fieldType:  result.data.fieldType, children:  result.data.children, ... result.data.object }); 
             this.temp_fieldObj = newFieldObj;
-          
+          console.log("1this.temp_fieldObj:",this.temp_fieldObj)
             delete this.temp_fieldObj.list;
+            console.log("2this.temp_fieldObj.list:",this.temp_fieldObj.list)
             this.editDialogVisible = true;
+        },
+        //调研人员的 点击 fieldNo
+        async handleClickFieldDY(fieldObj) {
+        
+            let result = await getFieldById({id:fieldObj.id});
+           
+            if(!result.success) return;
+
+            let newFieldObj = deserializeTableData({ id: result.data.id, fieldType:  result.data.fieldType,fieldName:  result.data.fieldName,descriptionInfo:  result.data.descriptionInfo,validationInfo:  result.data.validationInfo, children:  result.data.children, ... result.data.object }); 
+            this.temp_fieldObj = newFieldObj;
+          console.log("1this.temp_fieldObj:",this.temp_fieldObj)
+            delete this.temp_fieldObj.list;
+            console.log("2this.temp_fieldObj.list:",this.temp_fieldObj)
+            this.editDialogVisibleDY = true;
         },
         // 删除 fieldNo
         async handleDeleteBaseField(v, i) {
@@ -498,6 +598,9 @@ export default {
             let param = {
                 id: v.id,
                 fieldNo: v.fieldNo,
+                fieldName: v.fieldName,
+                descriptionInfo: v.description_info,
+                validationInfo: v.validation_info,
                 label: v.label,
                 fieldComponentName: v.componentDefs?.type?.value,
                 itemName: this.itemName,
@@ -514,12 +617,17 @@ export default {
         },
         // 载入
         async load() {
-            let result = await getField({ itemName: this.itemName });
-           
+            let result = await getField({ approvalItemId: this.itemId,pageNum: this.currentPage,
+                pageSize: this.pagesize,
+                keyword: this.valueF,
+                fieldComponentName: this.temp_type_search,
+                fieldType: this.field_type
+                 });
             if (!result.success) return;
-
-            let tableData = result.data.map(v => ({ id: v.id, fieldType: v.fieldType, children: v.children, ...v.object })).map(deserializeTableData);
-
+            this.totalCount = result.data.total;
+            this.currentPage = result.data.current;
+            let tableData = result.data.records.map(v => ({ id: v.id, fieldType: v.fieldType, children: v.children, ...v.object })).map(deserializeTableData);
+            console.log("tableData:",tableData)
             this.$store.commit(
                 "putTableData",
                 tableData
@@ -618,6 +726,19 @@ export default {
 </script>
 
 <style scoped lang="scss">
+ .searchBox {
+        margin-top: 10px;
+        display: flex;
+        flex-direction: row;
+        background: #fff;
+        & > * {
+            margin-left: 10px;
+        }
+        .handle {
+            margin-left: auto;
+            margin-top: -55px;
+        }
+    }
 .form-constructor {
     ::v-deep .el-dialog{
         margin:0 30px 50px auto;

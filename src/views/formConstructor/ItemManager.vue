@@ -166,10 +166,11 @@ export default {
             }
         },
         handleClickItem(item) {
+            console.log("item:",item)
             this.$store.commit("changeItem", item);
             this.$router.push({
                 path: "/formconstructor",
-                query: { itemId: item.approvalItemId },
+                query: { approvalItemId: item.approvalItemId},
             });
         },
         handleEditItem(item) {

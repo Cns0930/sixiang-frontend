@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // 获取字段
-export const getField = params => axios.post('/superform/fields/list2', params).then(res => res.data);
+export const getField = params => axios.get('/superform/fields/list2', {params}).then(res => res.data);
 
 // 保存单个字段
 export const saveOne = params => axios.post('/superform/fields/saveOne', params).then(res => res.data);
