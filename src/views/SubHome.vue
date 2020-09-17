@@ -11,15 +11,15 @@
             
             <el-page-header @back="$router.push('/subhome')" 
             title="返回事项列表"
-            :content="$store.state.home.item.name?$store.state.home.item.name:'请先选择事项'">
+            :content="$store.state.home.item.itemName?$store.state.home.item.itemName:'请先选择事项'">
             </el-page-header>
         
             <!-- <el-divider></el-divider> -->
             <el-divider direction="vertical" content-position="center"></el-divider>
 
-            <el-button @click="$router.push({path:'/formconstructor', query:{'itemId':$store.state.home.item.id}})">字段管理</el-button>
-            <el-button @click="$router.push({path:'/materialmanager', query:{'itemId':$store.state.home.item.id}})">材料管理</el-button>
-            <el-button @click="$router.push({path:'/pageconfigure', query:{'itemId':$store.state.home.item.id}})">步骤页面管理</el-button>
+            <el-button @click="$router.push({path:'/formconstructor', query:{'itemId':$store.state.home.item.approvalItemId}})">字段管理</el-button>
+            <el-button @click="$router.push({path:'/materialmanager', query:{'itemId':$store.state.home.item.approvalItemId}})">材料管理</el-button>
+            <el-button @click="$router.push({path:'/pageconfigure', query:{'itemId':$store.state.home.item.approvalItemId}})">步骤页面管理</el-button>
             <el-button @click="$router.push({path:'/setting'})">设置</el-button>
         </div>
         

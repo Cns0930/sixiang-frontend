@@ -170,7 +170,7 @@ export default {
             this.$store.commit("changeItem", item);
             this.$router.push({
                 path: "/formconstructor",
-                query: { approvalItemId: item.approvalItemId},
+                query: { itemId: item.approvalItemId},
             });
         },
         handleEditItem(item) {
