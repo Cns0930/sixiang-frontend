@@ -3,19 +3,48 @@
         <header>事项管理</header>
         <section class="workBox">
             <div class="searchBox">
-                <el-input placeholder="筛选委办局" v-model="value" clearable style="width: 200px;"></el-input>
-                <el-input placeholder="筛选事项" v-model="valueT" clearable style="width: 200px;"></el-input>
+                <el-select
+                    placeholder="筛选项目"
+                    v-model="filterProjectId"
+                    filterable clearable
+                    style="width: 200px;">
+                    <el-option
+                        v-for="(v,i) in projectOptions"
+                        :key="i"
+                        :label="v.projectName"
+                        :value="v.projectId"
+                    ></el-option>
+                </el-select>
+                <el-select
+                    placeholder="筛选大项"
+                    v-model="filterApprovalId"
+                    filterable clearable
+                    style="width: 200px;"
+                >
+                    <el-option
+                        v-for="(v,i) in approvalOptions"
+                        :key="i"
+                        :label="v.approvalName"
+                        :value="v.approvalId"
+                    ></el-option>
+                </el-select>
+                <el-input
+                    placeholder="搜索事项"
+                    v-model="filterKeyword"
+                    clearable
+                    style="width: 200px;"
+                ></el-input>
                 <el-date-picker
                     v-model="timeRange"
                     type="daterange"
                     range-separator="至"
-                    start-placeholder="开始日期"
+                    start-placeholder="创建时间开始日期"
                     @change="getTime"
-                    end-placeholder="结束日期"
+                    end-placeholder="创建时间截止日期"
                     format="yyyy-MM-dd"
-                    value-format="yyyy-MM-dd"
+                    value-format="yyyy-MM-dd HH:mm:ss"
                 ></el-date-picker>
-                <el-button>搜索</el-button>
+                <el-button @click="searchItem">搜索</el-button>
                 <div class="handle">
                     <el-button type="primary" @click="handleClickAdd">新增</el-button>
                     <el-button type="primary">导出</el-button>
@@ -32,23 +61,9 @@
                     tooltip-effect="dark"
                     :default-sort="{prop: 'createTime', order: 'descending'}"
                 >
-                    <!-- <el-table-column
-              type="selection"
-              width="50">
-                    </el-table-column>-->
                     <el-table-column label="序号" type="index" width="45" :index="indexMethod"></el-table-column>
-                    <!-- <el-table-column
-              label="部门"
-              sortable
-              width="120">
-              <template slot-scope="scope">{{ scope.row.date }}</template>
-            </el-table-column>
-            <el-table-column
-              prop="name"
-              label="大项"
-              sortable
-              width="120">
-                    </el-table-column>-->
+                    <el-table-column prop="projectName" label="项目" sortable width="80"></el-table-column>
+                    <el-table-column prop="approvalName" label="大项" sortable width="80"></el-table-column>
                     <el-table-column
                         prop="itemInternalNo"
                         label="内部事项编号"
@@ -56,7 +71,15 @@
                         show-overflow-tooltip
                     ></el-table-column>
                     <el-table-column prop="itemNo" label="事项编号" width="100" show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="itemName" label="事项名称" width="160"></el-table-column>
+                    <el-table-column label="事项名称" width="160">
+                        <template slot-scope="scope">
+                        <el-button
+                            @click="handleClickItem(scope.row)"
+                            type="text"
+                            style="color: orange;"
+                        >{{scope.row.itemName}}</el-button>
+                    </template>
+                    </el-table-column>
                     <el-table-column prop="itemType" label="事项类型" width="80"></el-table-column>
                     <el-table-column
                         prop="itemCode"
@@ -114,11 +137,7 @@
                 :close-on-click-modal="false"
             >
                 <div class="attribute-content">
-                    <el-form
-                        :inline="false"
-                        label-position="left"
-                        class="demo-form-inline"
-                    >
+                    <el-form :inline="false" label-position="left" class="demo-form-inline">
                         <el-form-item label="项目">
                             <el-select v-model="tempItem.projectId" filterable>
                                 <el-option
@@ -173,11 +192,7 @@
                 :close-on-click-modal="false"
             >
                 <div class="attribute-content">
-                    <el-form
-                        :inline="false"
-                        label-position="left"
-                        class="demo-form-inline"
-                    >
+                    <el-form :inline="false" label-position="left" class="demo-form-inline">
                         <el-form-item label="大项">
                             <el-select v-model="tempItem.approvalId" filterable>
                                 <el-option
@@ -228,24 +243,20 @@ import {
 } from "../../api/basicInfo/approval";
 
 export default {
-    name: "Work",
+    name: "ApprovalItem",
     mixins: [basicMixin],
     data() {
         return {
-            // model: {
-            //   type: 'NumberInput',
-            //   val: '12',
-            //   options: {
-            //     type: 'textarea',
-            //     placeholder:'输入数字信息',
-            //   }
-            // },
+            // 页面信息
             type: "work",
-            value: "",
-            valueT: "",
+            // 筛选
+            filterProjectId: null,
+            filterApprovalId: null,
+            filterKeyword: "",
             timeRange: [],
+            // 表格
             tableData: [],
-            multipleSelection: [],
+            // 弹窗
             dialogAddVisible: false,
             dialogUpdateVisible: false,
             tempItem: {},
@@ -257,6 +268,7 @@ export default {
     computed: {},
     async created() {
         await this.search();
+        await this.loadOptions();
     },
     methods: {
         // inputs(val) {
@@ -269,14 +281,16 @@ export default {
         //     this.multipleSelection = val;
         // },
         async handleEdit(index, row) {
-            console.log(row)
-            let res = await getByApprovalItemId({approvalItemId: row.approvalItemId});
-            if(!res.success){
+            console.log(row);
+            let res = await getByApprovalItemId({
+                approvalItemId: row.approvalItemId,
+            });
+            if (!res.success) {
                 return;
             }
             this.tempItem = res.data;
             this.dialogUpdateVisible = true;
-             // 获取选项
+            // 获取选项
             let approvalRes = await listApprovalAll();
             if (approvalRes.success) {
                 this.approvalOptions = approvalRes.data;
@@ -285,15 +299,7 @@ export default {
         async handleClickAdd() {
             this.dialogAddVisible = true;
             this.tempItem = {};
-            // 获取选项
-            let projectRes = await listProjectAll();
-            if (projectRes.success) {
-                this.projectOptions = projectRes.data;
-            }
-            let approvalRes = await listApprovalAll();
-            if (approvalRes.success) {
-                this.approvalOptions = approvalRes.data;
-            }
+            await this.loadOptions();
         },
         async saveItem() {
             this.tempItem.createBy = this.loginName;
@@ -315,6 +321,37 @@ export default {
                 await this.search();
             }
         },
+        async loadOptions() {
+            // 获取选项
+            let projectRes = await listProjectAll();
+            if (projectRes.success) {
+                this.projectOptions = projectRes.data;
+            }
+            let approvalRes = await listApprovalAll();
+            if (approvalRes.success) {
+                this.approvalOptions = approvalRes.data;
+            }
+        },
+        async searchItem() {
+            let params = {
+                approvalId: this.filterApprovalId,
+                projectId: this.filterProjectId,
+                keyword: this.filterKeyword,
+            }
+            if(this.timeRange.length > 1){
+                params.startTime = this.timeRange[0];
+                params.endTime = this.timeRange[1];
+            }
+            console.log(params);
+            this.search(params);
+        },
+        handleClickItem(item){
+            this.$store.commit("changeApprovalItem", item);
+            this.$router.push({
+                path: "/subitem",
+                query: { itemId: item.approvalItemId },
+            });
+        }
     },
 };
 </script>

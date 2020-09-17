@@ -4,6 +4,7 @@ import homeModule from "./home/module";
 import config from "./config/module";
 import fieldModel from "./fieldModel/module"
 import setting from "./setting/module"
+import basic from "./basic/module";
 import createPersistedState from "vuex-persistedstate";
 
 Vue.use(Vuex)
@@ -19,6 +20,7 @@ export default new Vuex.Store({
         home: homeModule,
         fieldModel: fieldModel,
         setting,
+        basic,
     },
     plugins: [persist]
 })

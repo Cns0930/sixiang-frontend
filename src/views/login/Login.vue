@@ -64,15 +64,16 @@ export default {
             axios.defaults.headers.Authorization = result.data.authorization;
             this.$store.commit('config/setRoles',result.data.roles.sort())
             this.$message.success("登录成功");
-            if(result.data.roles.includes('admin')) {
-                this.$router.push("/user");
+
+            let hasAdmin = result.data.roles.includes('admin');
+            let hasResearcher = result.data.roles.includes('researcher');
+            if(hasAdmin || hasResearcher) {
+                this.$router.push('/basic')
             } else {
                 this.$router.push("/subhome");
             }
-            
         },
         async getAuth(userName, password,rememberMe) {
-            // FIXME: 之后修改
             // if (userName === "admin" && password === "Hg9s$ixuVe*x4J2X") {
             //     return { success: true, data: { authorization: "1234567890" } };
             // } else {
