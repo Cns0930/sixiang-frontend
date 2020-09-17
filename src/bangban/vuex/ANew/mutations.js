@@ -23,6 +23,9 @@ const mutations = {
     },
     putHasJingbanrenInfo(state,data){
         state.hasJingbanrenInfo=data;
+    },
+    putQingxingSpecial(state,data) {
+        state.qingxingSpecial[data.sid] = data.value;
     }
 }
 

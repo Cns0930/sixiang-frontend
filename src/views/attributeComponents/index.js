@@ -1,6 +1,7 @@
 import InputDef from "./InputDef"
 import ComputedDef from "./ComputedDef"
 import SelectDef from "./SelectDef"
+import SingleCheckboxDef from "./SingleCheckboxDef"
 import QingxingCheckboxDef from "./QingxingCheckboxDef"
 import DatePickerDef from "./DatePickerDef"
 import RadioDef from "./RadioDef"
@@ -28,6 +29,7 @@ let mapping = [
     {label:"下拉选择",value:"select",componentDef:SelectDef,isList:false},
     {label:"级联选择",value:"cascader",componentDef:CascaderDef,isList:false},
     {label:"行政区划级联选择",value:"regionCascader",componentDef:RegionCascaderDef,isList:false},
+    {label:"勾选",value:"singleCheckbox",componentDef:SingleCheckboxDef,isList:false},
     {label:"情形多选",value:"qingxingCheckbox",componentDef:QingxingCheckboxDef,isList:false},
     {label:"情形说明",value:"qingxingComment",componentDef:QingxingCommentDef,isList:false},
     {label:"单选",value:"radio",componentDef:RadioDef,isList:false},
