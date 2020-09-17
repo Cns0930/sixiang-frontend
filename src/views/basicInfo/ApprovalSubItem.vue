@@ -5,12 +5,23 @@
         <el-table>
             
         </el-table>
+
+         <el-dialog title="添加情形" :visible.sync="dialogChangeTypeVisible" width="50%" :close-on-click-modal="false">
+
+            <el-select v-model="temp_change_type">
+                <el-option v-for="(v,i) in typeOptions" :key="i" :label="v.label" :value="v.value"></el-option>
+            </el-select>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogChangeTypeVisible = false">取 消</el-button>
+                <el-button type="primary" @click="changeTypeConfirm">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
 <script>
 import basicMixin from "./basicMixin";
-import {getSubApproval} from "@/api/basicInfo/approvalSub"
+import {getApprovalSub,addApprovalSub} from "@/api/basicInfo/approvalSub"
 
 
 export default {
@@ -29,7 +40,7 @@ export default {
     },
     methods:{
         addSubApproval(){
-            
+            // addApprovalSub()
         },
     }
 };
