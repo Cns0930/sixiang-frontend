@@ -48,8 +48,8 @@
                     </el-table-column>
                     <el-table-column fixed="right" label="操作" width="350">
                         <template slot-scope="scope">
-                            <el-button @click="handleClickFieldDY(scope.row);" type="text" size="small"> 调研人员编辑</el-button>
-                            <el-button @click="handleClickField(scope.row);" type="text" size="small"> 编辑</el-button>
+                            <el-button @click="handleClickFieldDY(scope.row);" type="text" size="small" :disabled="handleDisabledDY()"> 调研人员编辑</el-button>
+                            <el-button @click="handleClickField(scope.row);" type="text" size="small" :disabled="handleDisabledKF()"> 编辑</el-button>
                             <el-button @click="handleClickChangeType(scope);" type="text" size="small">更改组件类型
                             </el-button>
                             <el-button @click="handleClickAddChild(scope.row);" type="text" size="small"
@@ -300,8 +300,9 @@ export default {
             computedFields: state => state.fieldModel.computedFields,
             itemName: state => state.home.item.name,
             itemId: state => state.home.item.approvalItemId,
-            tableData: state =>
-                state.fieldModel.tableData
+            tableData: state => state.fieldModel.tableData,
+            roles: state => state.config.roles,
+
         })
     },
     async mounted() {
@@ -340,6 +341,23 @@ export default {
             this.currentPage = 1;
             this.load();
         },
+        // 判断按钮是否可用 
+        handleDisabledDY(){
+            if(this.roles.includes("admin") || this.roles.includes("researcher")){
+                return false;
+            }else{
+                return true;
+            }
+            
+        },
+        handleDisabledKF(){
+            if(this.roles.includes("admin") || this.roles.includes("developer")){
+                return false;
+            }else{
+                return true;
+            }
+            
+        },
         // 添加子项
         handleClickAddChild(row) {
             this.temp_parent = row;
@@ -365,6 +383,7 @@ export default {
                 itemId: this.itemId,
                 fieldType: 3,
                 object: v,
+                approvalItemId: this.itemId,
                 parentId: this.temp_parent.id
             }
 
@@ -451,7 +470,7 @@ export default {
                 label: v.label,
                 fieldComponentName: v.componentDefs?.type?.value,
                 itemName: this.itemName,
-                itemId: this.itemId,
+                approvalItemId: this.itemId,
                 fieldType,
                 object: v,
 
@@ -483,7 +502,7 @@ export default {
                 label: v.label,
                 fieldComponentName: v.componentDefs?.type?.value,
                 itemName: this.itemName,
-                itemId: this.itemId,
+                approval_item_id: this.itemId,
                 fieldType: 2,
                 object: v
             }
@@ -716,7 +735,7 @@ export default {
             }
 
             let selectIds = this.temp_selected_fields.map(f => f.id);
-            let params = { itemId: this.itemId, itemName: this.itemName, sourceFieldIds: selectIds};
+            let params = { approvalItemId: this.itemId, itemName: this.itemName, sourceFieldIds: selectIds};
             let result = await forkSelectedFields(params);
             if(result.success){
                 this.$message({ type: "success", message: "导入成功"});
