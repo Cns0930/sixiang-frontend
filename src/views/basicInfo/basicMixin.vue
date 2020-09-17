@@ -33,7 +33,7 @@ export default {
             return (this.currentPage - 1) * this.pagesize + (index + 1);
         },
         timeFormatter(row, column, cellValue, index) {
-            return dayjs(cellValue).format("YYYY-MM-DD hh:mm:ss")
+            return dayjs(cellValue).format("YYYY-MM-DD HH:mm:ss")
         },
         handleSizeChange(val) {
             console.log(`每页 ${val} 条`);

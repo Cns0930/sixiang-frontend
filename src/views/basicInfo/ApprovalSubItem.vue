@@ -123,10 +123,7 @@ export default {
             this.$message({ type: "success", message: "添加成功" })
 
         },
-        // 时间格式化
-        timeFormatter(row, column, cellValue, index) {
-            return dayjs(cellValue).format("YYYY-MM-DD hh:mm:ss")
-        },
+
         // 处理编辑
         handleEdit(scope) {
             this.editForm = _.clone(scope.row);
