@@ -118,11 +118,11 @@
                     </div>
                     <div class="attribute">
                         <span class="attribute-key">字段说明信息</span>
-                        <el-input type="textarea" v-model="temp_fieldObj.description_info" autosize></el-input>
+                        <el-input type="textarea" v-model="temp_fieldObj.descriptionInfo" autosize></el-input>
                     </div>
                     <div class="attribute">
                         <span class="attribute-key">前端信息验证</span>
-                        <el-input type="textarea" v-model="temp_fieldObj.validation_info" autosize></el-input>
+                        <el-input type="textarea" v-model="temp_fieldObj.validationInfo" autosize></el-input>
                     </div>
                    <!-- <div class="attribute" v-for="(v,i) in temp_fieldObj.componentDefs" :key="i">
                         <span class="attribute-key">{{v.label || i}} </span>
@@ -404,6 +404,9 @@ export default {
                     {
                         id: this.temp_fieldObj.id,
                         fieldNo: this.temp_fieldObj.fieldNo,
+                        fieldName: this.temp_fieldObj.fieldName,
+                        descriptionInfo: this.temp_fieldObj.descriptionInfo,
+                        validationInfo: this.temp_fieldObj.validation_info,
                         type: this.temp_change_type,
                         label: this.temp_fieldObj.label,
                         fieldType: 2,
@@ -411,6 +414,9 @@ export default {
                     } : {
                         id: this.temp_fieldObj.id,
                         fieldNo: this.temp_fieldObj.fieldNo,
+                        fieldName: this.temp_fieldObj.fieldName,
+                        descriptionInfo: this.temp_fieldObj.descriptionInfo,
+                        validationInfo: this.temp_fieldObj.validation_info,
                         type: this.temp_change_type,
                         label: this.temp_fieldObj.label,
                         fieldComponentName: this.temp_change_type,
@@ -501,23 +507,24 @@ export default {
 
             let newFieldObj = deserializeTableData({ id: result.data.id, fieldType:  result.data.fieldType, children:  result.data.children, ... result.data.object }); 
             this.temp_fieldObj = newFieldObj;
-          console.log("1this.temp_fieldObj:",this.temp_fieldObj)
             delete this.temp_fieldObj.list;
-            console.log("2this.temp_fieldObj.list:",this.temp_fieldObj.list)
             this.editDialogVisible = true;
         },
         //调研人员的 点击 fieldNo
         async handleClickFieldDY(fieldObj) {
-        
             let result = await getFieldById({id:fieldObj.id});
            
             if(!result.success) return;
-
-            let newFieldObj = deserializeTableData({ id: result.data.id, fieldType:  result.data.fieldType,fieldName:  result.data.fieldName,descriptionInfo:  result.data.descriptionInfo,validationInfo:  result.data.validationInfo, children:  result.data.children, ... result.data.object }); 
+            let newFieldObj = deserializeTableData({ 
+                id: result.data.id, 
+                fieldType: result.data.fieldType,
+                fieldName: result.data.fieldName,
+                descriptionInfo: result.data.descriptionInfo,
+                validationInfo: result.data.validationInfo, 
+                children: result.data.children, ... result.data.object 
+            }); 
             this.temp_fieldObj = newFieldObj;
-          console.log("1this.temp_fieldObj:",this.temp_fieldObj)
             delete this.temp_fieldObj.list;
-            console.log("2this.temp_fieldObj.list:",this.temp_fieldObj)
             this.editDialogVisibleDY = true;
         },
         // 删除 fieldNo
@@ -599,8 +606,8 @@ export default {
                 id: v.id,
                 fieldNo: v.fieldNo,
                 fieldName: v.fieldName,
-                descriptionInfo: v.description_info,
-                validationInfo: v.validation_info,
+                descriptionInfo: v.descriptionInfo,
+                validationInfo: v.validationInfo,
                 label: v.label,
                 fieldComponentName: v.componentDefs?.type?.value,
                 itemName: this.itemName,
@@ -626,7 +633,9 @@ export default {
             if (!result.success) return;
             this.totalCount = result.data.total;
             this.currentPage = result.data.current;
-            let tableData = result.data.records.map(v => ({ id: v.id, fieldType: v.fieldType, children: v.children, ...v.object })).map(deserializeTableData);
+            let tableData = result.data.records.map(v => ({ id: v.id, fieldType: v.fieldType, fieldName: v.fieldName,
+                descriptionInfo: v.descriptionInfo,
+                validationInfo: v.validationInfo,children: v.children, ...v.object })).map(deserializeTableData);
             console.log("tableData:",tableData)
             this.$store.commit(
                 "putTableData",
