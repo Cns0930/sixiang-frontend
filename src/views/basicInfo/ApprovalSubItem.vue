@@ -1,7 +1,7 @@
 <template>
     <div class="workWrap">
         <header>情形管理</header>
-        <el-button @click="addDialogVisible = true">添加</el-button>
+        <el-button @click="addDialogVisible = true" type="primary">添加</el-button>
         <el-table :data="tableData">
             <el-table-column prop="subitemName" label="情形"></el-table-column>
             <el-table-column prop="aliasName" label="别名"></el-table-column>
@@ -11,7 +11,7 @@
             <el-table-column label="操作">
                 <template slot-scope="scope">
                     <el-button-group>
-                        <el-button @click="handleEdit(scope)">编辑</el-button>
+                        <el-button @click="handleEdit(scope)" type="primary">编辑</el-button>
                         <el-button type="danger" @click="handleDelete(scope)">删除</el-button>
                     </el-button-group>
                 </template>
