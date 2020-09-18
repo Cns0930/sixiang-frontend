@@ -26,13 +26,13 @@
         <el-dialog title="添加材料字段" :visible.sync="addDialogVisible" width="50%" :close-on-click-modal="false">
 
             <el-form label-width="80px" :model="addForm">
+                <el-form-item label="材料名称" prop="materialName">
+                    <el-select v-model="addForm.materialW" clearable placeholder="请选择材料名称">
+                        <el-option v-for="(v,i) in typeMaterialOptions" :key="i" :label="v.materialName" :value="v.materialId"> </el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item label="字段名称" required prop="fieldName">
                     <el-input v-model="addForm.fieldName"></el-input>
-                </el-form-item>
-                <el-form-item label="材料名称" required prop="materialName">
-                    <el-select v-model="addForm.materialName" clearable placeholder="请选择材料名称">
-                        <el-option v-for="(v,i) in typeMaterialOptions" :key="i" :label="v.label" :value="v.value"> </el-option>
-                    </el-select>
                 </el-form-item>
                 <el-form-item label="备注">
                     <el-input v-model="addForm.note"></el-input>
@@ -43,17 +43,18 @@
                 <el-button type="primary" @click="addField">确 定</el-button>
             </span>
         </el-dialog>
+        <!--编辑字段-->
         <el-dialog title="编辑材料字段" :visible.sync="editDialogVisible" width="50%" :close-on-click-modal="false">
-
             <el-form label-width="80px" :model="editForm">
+            <el-form-item label="材料名称" prop="materialName">
+                <el-select v-model="editForm.materialId" clearable placeholder="请选择材料名称">
+                    <el-option v-for="(v,i) in typeMaterialOptions" :key="i" :label="v.materialName" :value="v.materialId"> </el-option>
+                </el-select>
+            </el-form-item>
                 <el-form-item label="字段名称" required prop="fieldName">
                     <el-input v-model="editForm.fieldName"></el-input>
                 </el-form-item>
-                <el-form-item label="材料名称" required prop="materialName">
-                    <el-select v-model="addForm.materialName" clearable placeholder="请选择材料名称">
-                        <el-option v-for="(v,i) in typeMaterialOptions" :key="i" :label="v.label" :value="v.value"> </el-option>
-                    </el-select>
-                </el-form-item>
+                
                 <el-form-item label="备注">
                     <el-input v-model="editForm.note"></el-input>
                 </el-form-item>
@@ -68,7 +69,7 @@
 
 <script>
 import basicMixin from "./basicMixin";
-import { getField, addField, updateField, deleteField,getAllByApprovalItemId,listField } from "@/api/basicInfo/field";
+import { getField, addField, updateField, deleteField,getAllByApprovalItemId,listField,listFieldUnionMaterial } from "@/api/basicInfo/field";
 import dayjs from "dayjs";
 export default {
     name: "FieldItem",
@@ -80,6 +81,7 @@ export default {
             itemId: this.$route.query.itemId,
             addDialogVisible: false,
             tableData: [],
+            material_change: "",
             pageSize: 10,
             currentPage: 1,
             typeMaterialOptions: [],
@@ -106,7 +108,7 @@ export default {
     methods: {
         // 查询表格
         async reloadTable() {
-            let result = await listField({pageNum:this.currentPage,pageSize:this.pageSize});
+            let result = await listFieldUnionMaterial({pageNum:this.currentPage,pageSize:this.pageSize});
             if (!result.success) return;
             this.tableData = result.data.records;
             this.total = result.data.total;
@@ -119,12 +121,13 @@ export default {
         async materialList(){
             let result = await getAllByApprovalItemId({approvalItemId: this.itemId});
             if (!result.success) return;
-            this.typeMaterialOptions = result.data.records;
+            this.typeMaterialOptions = result.data;
         },
         // 添加
         async addField() {
+            console.log("addField->this.materialW",this.addForm.materialW)
             let result = await addField({
-                "materialId": this.addForm.materialId,
+                "materialId": this.addForm.materialW,
                 "approvalItemId": this.itemId,
                 "note": this.addForm.note,
                 "fieldName": this.addForm.fieldName
@@ -139,6 +142,8 @@ export default {
         // 处理编辑
         handleEdit(scope) {
             this.editForm = _.clone(scope.row);
+            this.material_change = scope.row.materialName;
+            console.log("this.editForm:",this.editForm)
             this.editDialogVisible = true;
         },
         // 编辑

@@ -43,7 +43,7 @@ const originList = [
                 label: '基础信息',
             },
             {
-                path: '/field?itemId=1',
+                path: '/field?itemId=46',
                 label: '字段管理',
             },
             {

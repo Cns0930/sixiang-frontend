@@ -49,6 +49,11 @@
                 <el-form-item label="情形别名">
                     <el-input v-model="editForm.aliasName"></el-input>
                 </el-form-item>
+               <!-- <el-form-item label="材料名称" prop="materialName">
+                    <el-select v-model="addForm.materialW" multiple placeholder="请选择材料名称">
+                        <el-option v-for="(v,i) in typeMaterialOptions" :key="i" :label="v.materialName" :value="v.materialId"> </el-option>
+                    </el-select>
+                </el-form-item> -->
                 <el-form-item label="备注">
                     <el-input v-model="editForm.note"></el-input>
                 </el-form-item>

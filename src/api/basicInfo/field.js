@@ -17,3 +17,6 @@ export const listField = params => { return axios.post(`/ss/field/listField`, pa
 
 // 获取指定事项下的所有材料
 export const getAllByApprovalItemId = params => { return axios.get(`/ss/material/getAllByApprovalItemId`, {params}).then(res=>res.data); };
+
+// 查询所有字段(包括材料名)-分页
+export const listFieldUnionMaterial = params => { return axios.post(`/ss/field/listFieldUnionMaterial`, params).then(res=>res.data); };
