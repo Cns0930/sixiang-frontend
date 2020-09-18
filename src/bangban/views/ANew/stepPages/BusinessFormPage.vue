@@ -67,7 +67,7 @@
         <el-dialog class="message-dialog dialogToMsgbox" title="系统提示" :visible.sync="showBusinessValidation" append-to-body
             :close-on-click-modal="false" width="800px">
             <div class="message-dialog-content">
-                <div class="info">请填写完整信息</div>
+                <div class="info">{{tipMsg}}</div>
                 <div slot="footer" class="dialog-footer" style="display: flex;justify-content: space-around">
                     <el-button type="warning" class="dialog-warn-btn" @click="showBusinessValidation = false">确 定</el-button>
                 </div>
@@ -103,6 +103,7 @@ export default {
     data() {
         return {
             // rules,
+            tipMsg: '',
             showBusinessValidation: false,
         }
     },
@@ -171,9 +172,15 @@ export default {
         async goNext() {
             let result = await this.beforeLeave();
             if (!result) {
+                this.tipMsg = '请填写完整信息';
                 this.showBusinessValidation = true;
                 return;
             };
+            if(this.config.some(v => v.fields.includes("businessScope_new")) && !this.itemState['businessScope_new'].value.joinValue) {
+                this.tipMsg = '请生成并确认许可事项';
+                this.showBusinessValidation = true;
+                return;
+            }
             this.$emit('goNext');
         },
         goPrev() {

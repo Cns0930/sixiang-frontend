@@ -20,7 +20,7 @@
                     </el-select>
                     <el-button class="btn" icon="el-icon-check"
                         style="background: linear-gradient(180deg, #3397FF 0%, #013BD3 100%);border-radius: 4px;color:#fff;float:right;font-weight:bold;font-size:20px;padding:7px 10px"
-                        @click="handleCopy(v,i)">
+                        @click="handleCopy(v)">
                     </el-button>
                 </el-form-item>
 
@@ -170,7 +170,7 @@ export default {
             this.value.confirmList.push(_.cloneDeep(this.meta))
         },
         handleChangeFanwei(e, data) {
-            console.log(e,data,'edata');
+            // console.log(e,data,'edata');
             let shixiang = data.shixiang;
             shixiang.options = getMatter(e);
             if (shixiang.options.length > 0) {
@@ -211,14 +211,18 @@ export default {
         onhtmlinput(e) {
             this.$set(this.resultBlock, "value", e.target.innerText);
         },
-        handleCopy(data,flag = 'Fanwei',index) {
+        handleCopy(data,flag = 'Fanwei') {
             // console.log(data,'vvv',flag);
             if(flag == 'Xuke') {
                 this.adjustXuke();
                 return;
             }
             let context = data.fanwei;
-            if (this.resultBlock.value.includes(context.value)) {
+            if(!context.value) {
+                this.troubleMsg = '请填写完整信息';
+                this.showTroubleMask = true;
+                return;
+            } else if (this.resultBlock.value.includes(context.value)) {
                 this.troubleMsg = '已经存在当前经营范围';
                 this.showTroubleMask = true;
                 return;
@@ -246,7 +250,7 @@ export default {
                 textarea.htmlValue = this.valueToHtmlValue(textarea.value)
             }
             data.forbid = true;
-            console.log(data,this.value,'add');
+            // console.log(data,this.value,'add');
         },
         valueToHtmlValue(value) {
             let valueArr = value.split("。")
@@ -307,7 +311,7 @@ export default {
         },
         //每次修改许可事项后触发
         adjustXuke() {
-            console.log(_.uniqBy(this.value.confirmList,'fanwei.value'),'fanwei123');
+            // console.log(_.uniqBy(this.value.confirmList,'fanwei.value'),'fanwei123');
             this.value.confirmList = _.uniqBy(this.value.confirmList,'fanwei.value');
             this.value.joinValue = _.uniq(this.value.confirmList.filter(v => v.shixiang.value).map(v =>v.shixiang.value)).join('，');
             if(!this.value.joinValue) {
