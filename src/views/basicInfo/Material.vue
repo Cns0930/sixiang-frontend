@@ -60,7 +60,7 @@
                     <el-table-column
                         prop="createTime"
                         label="创建时间"
-                        :formatter="(row,column,flag) => formatterTime(row,column,0)"
+                        :formatter="timeFormatter"
                         sortable
                         width="140"
                     ></el-table-column>
@@ -68,7 +68,7 @@
                         prop="updateTime"
                         label="最后修改时间"
                         width="140"
-                        :formatter="(row,column,flag) => formatterTime(row,column,1)"
+                        :formatter="timeFormatter"
                         sortable
                         show-overflow-tooltip
                     ></el-table-column>
