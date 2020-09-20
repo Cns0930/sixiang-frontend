@@ -115,11 +115,11 @@ const routes = [
                         component: Material,
                     },
                     {
-                        path: '/subitem',
+                        path: '/basic/subitem',
                         component: ApprovalSubItem
                     },
                     {
-                        path: '/field',
+                        path: '/basic/field',
                         component: Field
                     },
                 ]

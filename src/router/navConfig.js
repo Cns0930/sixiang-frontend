@@ -41,15 +41,7 @@ const originList = [
             {
                 path: '/basic',
                 label: '基础信息',
-            },
-            {
-                path: '/field?itemId=46',
-                label: '字段管理',
-            },
-            {
-                path: '/basic/material',
-                label: '材料信息',
-            },
+            }
         ],
         order: 1
     },

@@ -339,7 +339,7 @@ export default {
         handleClickItem(item){
             this.$store.commit("changeApprovalItem", item);
             this.$router.push({
-                path: "/subitem",
+                path: "/basic/subitem",
                 query: { itemId: item.approvalItemId },
             });
         },

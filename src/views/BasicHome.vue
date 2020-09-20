@@ -18,10 +18,8 @@
             <el-button
                 @click="$router.push({path:'/pageconfigure', query:{'itemId':$store.state.home.item.approvalItemId}})"
             >步骤页面管理</el-button>
-            <el-button @click="$router.push({path:'/setting'})">设置</el-button> -->
+            <el-button @click="$router.push({path:'/setting'})">设置</el-button>-->
         </div>
-
-        
 
         <router-view></router-view>
     </div>
@@ -38,13 +36,25 @@ export default {
     },
     methods: {
         handleClick(tab, event) {
-            // TODO: 如果切换了标签 则跳转 带上事项id
-            if(this.activeName !== tab.name){
-                if(this.activeName === 'subitem'){
-
+            
+                if (this.activeName === "subitem") {
+                    this.$router.push({
+                        path: "/basic/subitem",
+                        query: { itemId: this.$route.query.itemId },
+                    });
+                }else if (this.activeName === "material") {
+                    this.$router.push({
+                        path: "/basic/material",
+                        query: { itemId: this.$route.query.itemId },
+                    });
+                }else if (this.activeName === "field") {
+                    this.$router.push({
+                        path: "/basic/field",
+                        query: { itemId: this.$route.query.itemId },
+                    });
                 }
-            }
-        }
+            
+        },
     },
 };
 </script>
