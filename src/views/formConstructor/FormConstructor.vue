@@ -8,7 +8,7 @@
                 <!-- <el-button @click="$router.push('/templatemanager')"> -> 模板管理</el-button> -->
 
                 <el-button @click="load">载入字段</el-button>
-                <el-button @click="handlePreview">预览全字段</el-button>
+                <el-button @click="handlePreview">预览当前页字段</el-button>
             </div>
 
             <div class="right-bar">
@@ -37,15 +37,12 @@
                 <el-table :data="tableData" border style="width: 100%" row-key="id"
                     :tree-props="{children: 'list', hasChildren: 'hasChildren'}" default-expand-all>
                     <el-table-column fixed prop="fieldNo" label="fieldNo" width="150"></el-table-column>
+                    <el-table-column prop="fieldName" label="字段名称" width="150"></el-table-column>
                     <el-table-column prop="label" label="label" width="180"></el-table-column>
                     <el-table-column prop="type" label="组件名" width="120"></el-table-column>
                     <el-table-column prop="fieldType" label="类型" :formatter="formatFieldType" width="120">
                     </el-table-column>
-                    <el-table-column label="备注">
-                        <template slot-scope="scope">
-                            {{scope.row.componentDefs.remark?scope.row.componentDefs.remark.value:""}}
-                        </template>
-                    </el-table-column>
+                    <el-table-column prop="remark" label="备注"> </el-table-column>
                     <el-table-column fixed="right" label="操作" width="350">
                         <template slot-scope="scope">
                             <el-button @click="handleClickFieldDY(scope.row);" type="text" size="small" :disabled="handleDisabledDY()"> 调研人员编辑</el-button>
@@ -82,10 +79,13 @@
                         <span class="attribute-key">fieldNo</span>
                         <el-input v-model="temp_fieldObj.fieldNo"></el-input>
                     </div>
-
                     <div class="attribute">
                         <span class="attribute-key">label</span>
                         <el-input v-model="temp_fieldObj.label"></el-input>
+                    </div>
+                    <div class="attribute">
+                        <span class="attribute-key">备注(以此为准)</span>
+                        <el-input v-model="temp_fieldObj.remark"></el-input>
                     </div>
                     <div class="attribute" v-for="(v,i) in temp_fieldObj.componentDefs" :key="i">
                         <span class="attribute-key">{{v.label || i}} </span>
@@ -133,7 +133,7 @@
             </div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editDialogVisibleDY = false">取 消</el-button>
-                <el-button type="primary" @click="handleSaveField(temp_fieldObj);editDialogVisibleDY = false">确 定
+                <el-button type="primary" @click="handleSaveFieldReseacher(temp_fieldObj);editDialogVisibleDY = false">确 定
                 </el-button>
             </span>
         </el-dialog>
@@ -141,15 +141,19 @@
         <!-- 创建基本字段 -->
         <el-dialog title="创建基本字段" :visible.sync="dialogVisible" width="80%" :close-on-click-modal="false">
             <div>
-                fieldNo:
+                字段编号:
                 <el-input v-model="temp_fieldNo"></el-input>
             </div>
             <div>
-                名称（中文）:
+                字段前端标签:
                 <el-input v-model="temp_label"></el-input>
             </div>
             <div>
-                <el-select v-model="temp_type">
+                字段名称:
+                <el-input v-model="temp_fieldName"></el-input>
+            </div>
+            <div>
+                <el-select v-model="temp_type" filterable>
                     <el-option v-for="(v,i) in typeOptions" :key="i" :label="v.label" :value="v.value"></el-option>
                 </el-select>
             </div>
@@ -160,16 +164,20 @@
         </el-dialog>
         <!-- 创建子项字段 -->
         <el-dialog title="创建子项字段" :visible.sync="dialogChildVisible" width="80%" :close-on-click-modal="false">
-            <div>
-                fieldNo:
+             <div>
+                字段编号:
                 <el-input v-model="temp_fieldNo"></el-input>
             </div>
             <div>
-                名称（中文）:
+                字段前端标签:
                 <el-input v-model="temp_label"></el-input>
             </div>
             <div>
-                <el-select v-model="temp_type">
+                字段名称:
+                <el-input v-model="temp_fieldName"></el-input>
+            </div>
+            <div>
+                <el-select v-model="temp_type" filterable>
                     <el-option v-for="(v,i) in typeOptions" :key="i" :label="v.label" :value="v.value"></el-option>
                 </el-select>
             </div>
@@ -179,7 +187,7 @@
             </span>
         </el-dialog>
         <!-- 创建合成字段 -->
-        <el-dialog title="创建合成字段" :visible.sync="dialogComputedVisible" width="50%" :close-on-click-modal="false">
+        <!-- <el-dialog title="创建合成字段" :visible.sync="dialogComputedVisible" width="50%" :close-on-click-modal="false">
             <div>
                 fieldNo:
                 <el-input v-model="temp_computed_fieldNo"></el-input>
@@ -192,7 +200,7 @@
                 <el-button @click="dialogComputedVisible = false">取 消</el-button>
                 <el-button type="primary" @click="addComputedFieldConfirm">确 定</el-button>
             </span>
-        </el-dialog>
+        </el-dialog> -->
         <!-- 更改组件类型 -->
         <el-dialog title="更改组件类型" :visible.sync="dialogChangeTypeVisible" width="50%" :close-on-click-modal="false">
 
@@ -221,8 +229,8 @@
                 </el-table-column>
             </el-table>
 
-            <el-pagination style="margin: 40px auto 30px 500px;" background layout="prev, pager, next" :page-size="pageSize" 
-            :current-page="currentPage" :total="total" @current-change="tablePageChange">
+            <el-pagination style="margin: 40px auto 30px 500px;" background layout="prev, pager, next" :page-size="searchPageSize" 
+            :current-page="searchCurrentPage" :total="searchTotal" @current-change="tablePageChange">
             </el-pagination>
 
             <p>已选中{{temp_selected_fields.length}}个字段</p>
@@ -264,6 +272,7 @@ export default {
             temp_fieldNo: "",
             temp_type: "",
             temp_label: "",
+            temp_fieldName: "",
             // 添加 合成fieldNo的dialog 用
             dialogComputedVisible: false,
             temp_computed_fieldNo: "",
@@ -287,9 +296,10 @@ export default {
             fieldKeyword: "",
             searchResult: [],
             currentPage: 1,
-            pageSize: 15,
-            total: 0,
-            pagesize: 10,
+            searchCurrentPage: 1,
+            searchPageSize: 15,
+            searchTotal: 0,
+            pagesize: 30,
             totalCount: 0,
             temp_selected_fields: [],
         };
@@ -298,7 +308,6 @@ export default {
         ...mapState({
             baseFields: state => state.fieldModel.baseFields,
             computedFields: state => state.fieldModel.computedFields,
-            itemName: state => state.home.item.name,
             itemId: state => state.home.item.approvalItemId,
             tableData: state => state.fieldModel.tableData,
             roles: state => state.config.roles,
@@ -379,26 +388,18 @@ export default {
                 fieldNo: v.fieldNo,
                 label: v.label,
                 fieldComponentName: v.componentDefs?.type?.value,
-                itemName: this.itemName,
-                itemId: this.itemId,
+                fieldName: this.temp_fieldName, 
                 fieldType: 3,
                 object: v,
                 approvalItemId: this.itemId,
                 parentId: this.temp_parent.id
             }
 
-
-
-
-
             let result = await saveOne(param);
 
             if (!result.success) return;
 
             this.$message({ type: "success", message: "保存成功" });
-
-
-
             this.load();
 
             this.dialogChildVisible = false;
@@ -416,7 +417,6 @@ export default {
                     return
                 }
             }
-
 
             this.temp_fieldObj =
                 this.temp_change_type == "computed" ?
@@ -469,14 +469,16 @@ export default {
                 fieldNo: v.fieldNo,
                 label: v.label,
                 fieldComponentName: v.componentDefs?.type?.value,
-                itemName: this.itemName,
+                fieldName: this.temp_fieldName,
                 approvalItemId: this.itemId,
                 fieldType,
                 object: v,
-
             }
-       
-
+            if(this.roles.includes("admin") || this.roles.includes("developer")){
+                param.createRole = "developer";
+            }else{
+                param.createRole = "researcher";
+            }
             let result = await saveOne(param);
 
             if (!result.success) return;
@@ -501,13 +503,16 @@ export default {
                 fieldNo: v.fieldNo,
                 label: v.label,
                 fieldComponentName: v.componentDefs?.type?.value,
-                itemName: this.itemName,
-                approval_item_id: this.itemId,
+                approvalItemId: this.itemId,
                 fieldType: 2,
                 object: v
             }
+            if(this.roles.includes("admin") || this.roles.includes("developer")){
+                param.createRole = "developer";
+            }else{
+                param.createRole = "researcher";
+            }
           
-
             let result = await saveOne(param);
 
             if (!result.success) return;
@@ -524,7 +529,8 @@ export default {
            
             if(!result.success) return;
 
-            let newFieldObj = deserializeTableData({ id: result.data.id, fieldType:  result.data.fieldType, children:  result.data.children, ... result.data.object }); 
+            let newFieldObj = deserializeTableData({ id: result.data.id, fieldType: result.data.fieldType, remark: result.data.remark,
+            children:  result.data.children, ... result.data.object }); 
             this.temp_fieldObj = newFieldObj;
             delete this.temp_fieldObj.list;
             this.editDialogVisible = true;
@@ -619,8 +625,28 @@ export default {
 
             this.$router.push("/preview");
         },
-        // 单个保存
+        // 单个保存 属于调研的不用传
         async handleSaveField(v) {
+            let param = {
+                id: v.id,
+                fieldNo: v.fieldNo,
+                fieldName: v.fieldName,
+                label: v.label,
+                fieldComponentName: v.componentDefs?.type?.value,
+                fieldType: v.fieldType,
+                object: v,
+                remark: v.remark
+            };
+            console.log(param)
+            let result = await saveOne(param);
+
+            if (!result.success) return;
+            v.id = result.data.id;
+            this.$message({ type: "success", message: "保存成功" });
+            this.load();
+        },
+        // 调研编辑的保存 有些字段不用改
+        async handleSaveFieldReseacher(v){
             let param = {
                 id: v.id,
                 fieldNo: v.fieldNo,
@@ -629,10 +655,7 @@ export default {
                 validationInfo: v.validationInfo,
                 label: v.label,
                 fieldComponentName: v.componentDefs?.type?.value,
-                itemName: this.itemName,
-                itemId: this.itemId,
                 fieldType: v.fieldType,
-                object: v
             };
             let result = await saveOne(param);
 
@@ -653,6 +676,7 @@ export default {
             this.totalCount = result.data.total;
             this.currentPage = result.data.current;
             let tableData = result.data.records.map(v => ({ id: v.id, fieldType: v.fieldType, fieldName: v.fieldName,
+                remark: v.remark,
                 descriptionInfo: v.descriptionInfo,
                 validationInfo: v.validationInfo,children: v.children, ...v.object })).map(deserializeTableData);
             console.log("tableData:",tableData)
@@ -681,6 +705,7 @@ export default {
             return "其他"
         },
         async handleImportPublic() {
+            // TODO: 修改导入方式
             let message = "确认导入吗？\n提示：\n1.已存在的字段不会被覆盖 \n2.导入后如公共字段有修改，不会自动更新";
             if (confirm(message) == true) {
                 let result = await forkPublicFields({ itemId: this.itemId, itemName: this.itemName })
@@ -693,6 +718,7 @@ export default {
             }
         },
         handleManagePublic() {
+            // TODO: 
             window.open('#/formconstructor?itemId=-1', '_blank')
         },
         handleSelect(){
@@ -710,11 +736,11 @@ export default {
             this.loadSearch();
         },
         async loadSearch(){
-            let params = {keyword: this.generalKeyword, itemKeyword: this.itemKeyword, fieldKeyword: this.fieldKeyword, pageNum: this.currentPage, pageSize: this.pageSize};
+            let params = {keyword: this.generalKeyword, itemKeyword: this.itemKeyword, fieldKeyword: this.fieldKeyword, pageNum: this.searchCurrentPage, pageSize: this.searchPageSize};
             let result = await searchFields(params);
             if(result.success){
                 // 页码
-                this.total = result.data.total
+                this.searchToal = result.data.total
                 this.searchResult = result.data.records;
             }else{
                 this.$message({ type: "error", message: "查询出错"});
@@ -735,7 +761,7 @@ export default {
             }
 
             let selectIds = this.temp_selected_fields.map(f => f.id);
-            let params = { approvalItemId: this.itemId, itemName: this.itemName, sourceFieldIds: selectIds};
+            let params = { approvalItemId: this.itemId, sourceFieldIds: selectIds};
             let result = await forkSelectedFields(params);
             if(result.success){
                 this.$message({ type: "success", message: "导入成功"});

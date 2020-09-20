@@ -262,12 +262,12 @@ export default {
             tempItem: {},
             projectOptions: [],
             approvalOptions: [],
-            // loginName: localStorage.getItem("username"),
+            pagesize: 15,
         };
     },
     computed: {},
     async created() {
-        await this.search();
+        await this.searchItem();
         await this.loadOptions();
     },
     methods: {
@@ -308,7 +308,7 @@ export default {
                 this.$message.success("事项保存成功!");
                 this.tempItem = {};
                 this.dialogAddVisible = false;
-                await this.search();
+                await this.list();
             }
         },
         async updateItem() {
@@ -318,7 +318,7 @@ export default {
                 this.$message.success("事项修改成功!");
                 this.tempItem = {};
                 this.dialogUpdateVisible = false;
-                await this.search();
+                await this.list();
             }
         },
         async loadOptions() {
@@ -333,17 +333,8 @@ export default {
             }
         },
         async searchItem() {
-            let params = {
-                approvalId: this.filterApprovalId,
-                projectId: this.filterProjectId,
-                keyword: this.filterKeyword,
-            }
-            if(this.timeRange.length > 1){
-                params.startTime = this.timeRange[0];
-                params.endTime = this.timeRange[1];
-            }
-            console.log(params);
-            this.search(params);
+           this.currentPage = 1;
+           this.list();
         },
         handleClickItem(item){
             this.$store.commit("changeApprovalItem", item);
@@ -351,7 +342,24 @@ export default {
                 path: "/subitem",
                 query: { itemId: item.approvalItemId },
             });
-        }
+        },
+        async handleCurrentChange(){
+            this.list();
+        },
+        async list(){
+            let params = {
+                approvalId: this.filterApprovalId,
+                projectId: this.filterProjectId,
+                keyword: this.filterKeyword,
+                pageSize: this.pagesize,
+                pageNum: this.currentPage,
+            }
+            if(this.timeRange != null && this.timeRange.length > 1){
+                params.startTime = this.timeRange[0];
+                params.endTime = this.timeRange[1];
+            }
+            this.search(params);
+        }   
     },
 };
 </script>

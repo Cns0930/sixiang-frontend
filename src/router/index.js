@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import SubHome from '../views/SubHome.vue'
+import BasicHome from '../views/BasicHome.vue'
 import User from '../views/userInfo/user.vue'
 import Editor from "../views/editor/Editor"
 // import InlineEditor from "../views/inlineEditor/InlineEditor"
@@ -100,16 +101,24 @@ const routes = [
             },
             {
                 path: '/basic',
-                component: ApprovalItem,
-            },
-            {
-                path: '/basic/material',
-                component: Material,
-            },
-            {
-                path: '/subitem',
-                component: ApprovalSubItem
-            },
+                component: BasicHome,
+                children: [
+                    {
+                        path: '/basic',
+                        name: 'ApprovalItem',
+                        component: ApprovalItem,
+                    },
+                    {
+                        path: '/basic/material',
+                        name: 'Material',
+                        component: Material,
+                    },
+                    {
+                        path: '/subitem',
+                        component: ApprovalSubItem
+                    },
+                ]
+            },            
         ]
     },
     {

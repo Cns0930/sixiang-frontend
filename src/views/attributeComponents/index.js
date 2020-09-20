@@ -75,6 +75,8 @@ export function deserializeBaseField(fieldJSON) {
         fieldName: fieldJSON.fieldName,
         descriptionInfo: fieldJSON.descriptionInfo,
         validationInfo: fieldJSON.validationInfo, 
+        remark: fieldJSON.remark,
+        createRole: fieldJSON.createRole,
         componentDefs: actualComponentDefs
     }
 
@@ -93,14 +95,16 @@ export function deserializeComputedField(fieldJSON){
         }
         
     })
-
-
     let output = {
         id:fieldJSON.id,
         fieldNo: fieldJSON.fieldNo,
         type: fieldJSON.type,
         fieldType: 2,
-        // fieldTypeCn: "合成字段",
+        fieldName: fieldJSON.fieldName,
+        descriptionInfo: fieldJSON.descriptionInfo,
+        validationInfo: fieldJSON.validationInfo, 
+        remark: fieldJSON.remark,
+        createRole: fieldJSON.createRole,
         label: fieldJSON.label,
         componentDefs:actualComponentDefs
     }
