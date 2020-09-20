@@ -1,10 +1,10 @@
 <template>
     <div class="workWrap">
-        <header>情形管理</header>
+        <header>材料字段管理</header>
         <el-button @click="addDialogVisible = true" type="primary" style="margin-bottom:10px">添加</el-button>
         <el-table :data="tableData" border>
-            <el-table-column prop="subitemName" label="情形"></el-table-column>
-            <el-table-column prop="aliasName" label="别名"></el-table-column>
+            <el-table-column prop="materialName" label="材料名称"></el-table-column>
+            <el-table-column prop="fieldName" label="字段名称"></el-table-column>
             <el-table-column prop="note" label="备注"></el-table-column>
             <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter"></el-table-column>
             <el-table-column prop="updateTime" label="更新时间" :formatter="timeFormatter"></el-table-column>
@@ -22,14 +22,17 @@
                 :current-page.sync="currentPage" :page-size="pageSize" layout="total, prev, pager, next"
                 :total="total"></el-pagination>
         </div>
-        <el-dialog title="添加情形" :visible.sync="addDialogVisible" width="50%" :close-on-click-modal="false">
+        <!--添加字段-->
+        <el-dialog title="添加材料字段" :visible.sync="addDialogVisible" width="50%" :close-on-click-modal="false">
 
             <el-form label-width="80px" :model="addForm">
-                <el-form-item label="情形名称" required prop="subitemName">
-                    <el-input v-model="addForm.subitemName"></el-input>
+                <el-form-item label="材料名称" prop="materialName">
+                    <el-select v-model="addForm.materialW" clearable placeholder="请选择材料名称">
+                        <el-option v-for="(v,i) in typeMaterialOptions" :key="i" :label="v.materialName" :value="v.materialId"> </el-option>
+                    </el-select>
                 </el-form-item>
-                <el-form-item label="情形别名">
-                    <el-input v-model="addForm.aliasName"></el-input>
+                <el-form-item label="字段名称" required prop="fieldName">
+                    <el-input v-model="addForm.fieldName"></el-input>
                 </el-form-item>
                 <el-form-item label="备注">
                     <el-input v-model="addForm.note"></el-input>
@@ -37,30 +40,28 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="addDialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="addSubApproval">确 定</el-button>
+                <el-button type="primary" @click="addField">确 定</el-button>
             </span>
         </el-dialog>
-        <el-dialog title="编辑情形" :visible.sync="editDialogVisible" width="50%" :close-on-click-modal="false">
-
+        <!--编辑字段-->
+        <el-dialog title="编辑材料字段" :visible.sync="editDialogVisible" width="50%" :close-on-click-modal="false">
             <el-form label-width="80px" :model="editForm">
-                <el-form-item label="情形名称" required prop="subitemName">
-                    <el-input v-model="editForm.subitemName"></el-input>
+            <el-form-item label="材料名称" prop="materialName">
+                <el-select v-model="editForm.materialId" clearable placeholder="请选择材料名称">
+                    <el-option v-for="(v,i) in typeMaterialOptions" :key="i" :label="v.materialName" :value="v.materialId"> </el-option>
+                </el-select>
+            </el-form-item>
+                <el-form-item label="字段名称" required prop="fieldName">
+                    <el-input v-model="editForm.fieldName"></el-input>
                 </el-form-item>
-                <el-form-item label="情形别名">
-                    <el-input v-model="editForm.aliasName"></el-input>
-                </el-form-item>
-               <!-- <el-form-item label="材料名称" prop="materialName">
-                    <el-select v-model="addForm.materialW" multiple placeholder="请选择材料名称">
-                        <el-option v-for="(v,i) in typeMaterialOptions" :key="i" :label="v.materialName" :value="v.materialId"> </el-option>
-                    </el-select>
-                </el-form-item> -->
+                
                 <el-form-item label="备注">
                     <el-input v-model="editForm.note"></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editDialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="editSubApproval">确 定</el-button>
+                <el-button type="primary" @click="editField">确 定</el-button>
             </span>
         </el-dialog>
     </div>
@@ -68,21 +69,22 @@
 
 <script>
 import basicMixin from "./basicMixin";
-import { getApprovalSub, addApprovalSub, updateApprovalSub, deleteApprovalSub } from "@/api/basicInfo/approvalSub"
-import dayjs from "dayjs"
-
+import { getField, addField, updateField, deleteField,getAllByApprovalItemId,listField,listFieldUnionMaterial } from "@/api/basicInfo/field";
+import dayjs from "dayjs";
 export default {
-    name: "ApprovalSubItem",
+    name: "FieldItem",
     mixins: [basicMixin],
     data() {
         return {
             // 页面信息
-            type: "subItem",
+            type: "field",
             itemId: this.$route.query.itemId,
             addDialogVisible: false,
             tableData: [],
+            material_change: "",
             pageSize: 10,
             currentPage: 1,
+            typeMaterialOptions: [],
             total: 0,
             addForm: {
                 aliasName: "",
@@ -91,7 +93,7 @@ export default {
             },
             editDialogVisible: false,
             editForm: {
-                approvalSubitemId: 0,
+                fielditemId: 0,
                 aliasName: "",
                 note: "",
                 subitemName: "",
@@ -100,12 +102,13 @@ export default {
     },
     async created() {
         // await this.init();
+        this.materialList();
         this.reloadTable();
     },
     methods: {
         // 查询表格
         async reloadTable() {
-            let result = await getApprovalSub({pageNum:this.currentPage});
+            let result = await listFieldUnionMaterial({pageNum:this.currentPage,pageSize:this.pageSize});
             if (!result.success) return;
             this.tableData = result.data.records;
             this.total = result.data.total;
@@ -114,13 +117,20 @@ export default {
         handleCurrentChange(){
             this.reloadTable();
         },
+        // 查询当前事项下的所有材料
+        async materialList(){
+            let result = await getAllByApprovalItemId({approvalItemId: this.itemId});
+            if (!result.success) return;
+            this.typeMaterialOptions = result.data;
+        },
         // 添加
-        async addSubApproval() {
-            let result = await addApprovalSub({
-                "aliasName": this.addForm.aliasName,
+        async addField() {
+            console.log("addField->this.materialW",this.addForm.materialW)
+            let result = await addField({
+                "materialId": this.addForm.materialW,
                 "approvalItemId": this.itemId,
                 "note": this.addForm.note,
-                "subitemName": this.addForm.subitemName
+                "fieldName": this.addForm.fieldName
             })
             if (!result.success) return;
             this.addDialogVisible = false;
@@ -132,11 +142,13 @@ export default {
         // 处理编辑
         handleEdit(scope) {
             this.editForm = _.clone(scope.row);
+            this.material_change = scope.row.materialName;
+            console.log("this.editForm:",this.editForm)
             this.editDialogVisible = true;
         },
         // 编辑
-        async editSubApproval() {
-            let result = await updateApprovalSub(this.editForm);
+        async editField() {
+            let result = await updateField(this.editForm);
             if (!result.success) return;
             this.reloadTable();
             this.editDialogVisible = false;
@@ -145,7 +157,7 @@ export default {
         async handleDelete(scope) {
             try {
                 await this.$confirm("是否删除", "确认删除",);
-                let result = await deleteApprovalSub({ approvalSubitemId: scope.row.approvalSubitemId });
+                let result = await deleteField({ fieldId: scope.row.fieldId });
                 if (!result.success) return;
                 this.$message({ type: "success", message: "删除成功" })
                 this.reloadTable();
