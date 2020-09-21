@@ -79,12 +79,17 @@
                 </el-col>
             </el-col>
             <el-col :span="24">
-                <el-form-item label="许可事项">
+                <el-form-item label="许可事项" :prop="shixiangContext.ruleKey || ''" :obj="shixiangContext">
                     <el-input type="textarea" v-model="value.joinValue" disabled class="xuketext"></el-input>
                 </el-form-item>
             </el-col>
         </el-col>
-
+        <!-- 空元素用来校验是-生成许可事项 -->
+        <el-col :span="24" v-else>
+            <el-form-item class="emptyEl" :prop="emptyXuke.ruleKey || ''" :obj="emptyXuke">
+                <el-input type="textarea" v-model="emptyValue"></el-input>
+            </el-form-item>
+        </el-col>
         <el-dialog class="message-dialog dialogToMsgbox" title="系统提示" :visible.sync="showTroubleMask" append-to-body
             :close-on-click-modal="false" width="800px">
             <div class="message-dialog-content">
@@ -110,7 +115,7 @@ export default {
     name: "Jingyingfanwei",
     mixins: [CommonMixin],
     components: { ElFormItem: TestFormItem, },
-    // value 格式 ：{jingyingfanwei:{value:"",htmlValue:"",textArray:[]},addList:[{ fanwei: { value: "" }, shixiang: { value: "",options:[] } }]}
+    // value 格式 ：{jingyingfanwei:{value:"",htmlValue:"",textArray:[]},addList:[{ fanwei: { value: "" }, shixiang: { value: "",options:[] } },confirmList:[{ fanwei: { value: "" }, shixiang: { value: "",options:[] } }],joinValue:''}
     props: ["value", "title", "validateFn", "ruleKey"],
     data() {
         return {
@@ -122,6 +127,7 @@ export default {
             troubleMsg: '',
             addList: [],
             nowAddList: [],//当前页面添加的经营范围
+            emptyValue: '',
         }
     },
     computed: {
@@ -148,7 +154,23 @@ export default {
 
             return result
 
-        }
+        },
+        emptyXuke() {
+            let result = {
+                value: this.emptyValue,
+                ruleKey: 'required',
+            }
+
+            return result
+        },
+        shixiangContext() {
+            let result = {
+                value: this.value.joinValue,
+                ruleKey: 'required',
+            }
+
+            return result
+        },
     },
     created() {
         
@@ -313,7 +335,7 @@ export default {
         adjustXuke() {
             // console.log(_.uniqBy(this.value.confirmList,'fanwei.value'),'fanwei123');
             this.value.confirmList = _.uniqBy(this.value.confirmList,'fanwei.value');
-            this.value.joinValue = _.uniq(this.value.confirmList.filter(v => v.shixiang.value).map(v =>v.shixiang.value)).join('，');
+            this.$set(this.value,'joinValue',_.uniq(this.value.confirmList.filter(v => v.shixiang.value).map(v =>v.shixiang.value)).join('，'))
             if(!this.value.joinValue) {
                 this.troubleMsg = '当前无办理审批手续后方能经营的事项';
                 this.showTroubleMask = true;
@@ -378,6 +400,28 @@ export default {
     .el-textarea__inner {
         resize: none;
         background-color: #00286D;
+    }
+}
+/deep/ .emptyEl {
+    position: relative;
+    width: 120px;
+    height: 20px;
+    .el-form-item__content {
+        margin: 0 !important;
+        width: 120px;
+        height: 40px;
+        position: absolute;
+        .el-textarea {
+            position: absolute;
+            .el-textarea__inner {
+                height: 20px !important;
+                opacity: 0;
+            }
+        }
+        .el-form-item__error {
+            top: 10% !important;
+            left: 10px;
+        }
     }
 }
 </style>

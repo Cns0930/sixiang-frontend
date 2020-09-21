@@ -176,11 +176,6 @@ export default {
                 this.showBusinessValidation = true;
                 return;
             };
-            if(this.config.some(v => v.fields.includes("businessScope_new")) && !this.itemState['businessScope_new'].value.joinValue) {
-                this.tipMsg = '请生成并确认许可事项';
-                this.showBusinessValidation = true;
-                return;
-            }
             this.$emit('goNext');
         },
         goPrev() {
