@@ -125,7 +125,6 @@ export default {
         },
         // 添加
         async addField() {
-            console.log("addField->this.materialW",this.addForm.materialW)
             let result = await addField({
                 "materialId": this.addForm.materialW,
                 "approvalItemId": this.itemId,

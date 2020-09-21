@@ -4,13 +4,15 @@
         <el-button @click="addDialogVisible = true" type="primary" style="margin-bottom:10px">添加</el-button>
         <el-table :data="tableData" border>
             <el-table-column prop="approvalSubitem.subitemName" label="情形"></el-table-column>
-            <el-table-column prop="aliasName" label="别名"></el-table-column>
-            <el-table-column prop="note" label="备注"></el-table-column>
+            <el-table-column prop="approvalSubitem.aliasName" label="别名"></el-table-column>
+            <el-table-column prop="material.materialName" label="所需材料"></el-table-column>
+            <el-table-column prop="approvalSubitem.note" label="备注"></el-table-column>
             <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter"></el-table-column>
             <el-table-column prop="updateTime" label="更新时间" :formatter="timeFormatter"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
                     <el-button-group>
+                        <el-button @click="handleMaterialEdit(scope)" type="primary">材料编辑</el-button>
                         <el-button @click="handleEdit(scope)" type="primary">编辑</el-button>
                         <el-button type="danger" @click="handleDelete(scope)">删除</el-button>
                     </el-button-group>
@@ -25,7 +27,7 @@
         <el-dialog title="添加情形" :visible.sync="addDialogVisible" width="50%" :close-on-click-modal="false">
 
             <el-form label-width="80px" :model="addForm">
-                <el-form-item label="情形名称" required prop="subitemName">
+                <el-form-item label="情形名称">
                     <el-input v-model="addForm.subitemName"></el-input>
                 </el-form-item>
                 <el-form-item label="情形别名">
@@ -40,20 +42,27 @@
                 <el-button type="primary" @click="addSubApproval">确 定</el-button>
             </span>
         </el-dialog>
+        <el-dialog title="编辑情形所需材料" :visible.sync="editDialogVisibleM" width="50%" :close-on-click-modal="false">
+            <el-form label="材料名称">
+                    <el-select multiple placeholder="请选择材料名称" v-model="materials">
+                        <el-option v-for="(v,i) in typeMaterialOptions" :key="i" :label="v.materialName" :value="v.materialId"> </el-option>
+                    </el-select>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="editDialogVisibleM = false">取 消</el-button>
+                <el-button type="primary" @click="editSubMaterial">确 定</el-button>
+            </span>
+        </el-dialog>
         <el-dialog title="编辑情形" :visible.sync="editDialogVisible" width="50%" :close-on-click-modal="false">
 
             <el-form label-width="80px" :model="editForm">
-                <el-form-item label="情形名称" required prop="subitemName">
+                <el-form-item label="情形名称" prop="subitemName">
                     <el-input v-model="editForm.subitemName"></el-input>
                 </el-form-item>
                 <el-form-item label="情形别名">
                     <el-input v-model="editForm.aliasName"></el-input>
                 </el-form-item>
-               <!-- <el-form-item label="材料名称" prop="materialName">
-                    <el-select v-model="addForm.materialW" multiple placeholder="请选择材料名称">
-                        <el-option v-for="(v,i) in typeMaterialOptions" :key="i" :label="v.materialName" :value="v.materialId"> </el-option>
-                    </el-select>
-                </el-form-item> -->
+              
                 <el-form-item label="备注">
                     <el-input v-model="editForm.note"></el-input>
                 </el-form-item>
@@ -68,7 +77,8 @@
 
 <script>
 import basicMixin from "./basicMixin";
-import { getApprovalSub, addApprovalSub, updateApprovalSub, deleteApprovalSub } from "@/api/basicInfo/approvalSub"
+import { getApprovalSub, addApprovalSub, updateApprovalSub, deleteApprovalSub, relateMaterial } from "@/api/basicInfo/approvalSub"
+import { getAllByApprovalItemId } from "@/api/basicInfo/field";
 import dayjs from "dayjs"
 
 export default {
@@ -90,6 +100,9 @@ export default {
                 subitemName: "",
             },
             editDialogVisible: false,
+            editDialogVisibleM: false,
+            typeMaterialOptions: [],
+            materials: "",
             editForm: {
                 approvalSubitemId: 0,
                 aliasName: "",
@@ -129,10 +142,29 @@ export default {
             this.$message({ type: "success", message: "添加成功" })
 
         },
-
+        // 查询当前事项下的所有材料
+        async materialList(){
+            let result = await getAllByApprovalItemId({approvalItemId: this.itemId});
+            console.log("result:",result)
+            if (!result.success) return;
+            this.typeMaterialOptions = result.data;
+        },
+        //处理材料编辑
+        handleMaterialEdit(scope){
+            this.materialList();
+            this.materials = _.clone(scope.row.materials);
+            this.editDialogVisibleM = true;
+        },
+        // 所需材料编辑
+        async editSubMaterial() {
+            let result = await relateMaterial({approvalItemId: this.itemId,materialIds: this.materials});
+            if (!result.success) return;
+            this.reloadTable();
+            this.editDialogVisibleM = false;
+        },
         // 处理编辑
         handleEdit(scope) {
-            this.editForm = _.clone(scope.row);
+            this.editForm = _.clone(scope.row.approvalSubitem);
             this.editDialogVisible = true;
         },
         // 编辑
