@@ -37,7 +37,7 @@ import { getField } from "@/api/superForm/index";
 import { getTemplate } from '@/api/template/index'
 import { getById } from '@/api/item/index'
 import { components } from "@/views/pageComponents/index"
-
+import {mixin} from "@/mixin/mixin"
 import { deserializeTableData } from "../attributeComponents/index";
 import _ from "lodash"
 import dayjs from "dayjs"
@@ -50,7 +50,8 @@ dayjs.extend(customParseFormat)
 export default {
     name: "Run",
     components: { ...components },
-    mixins: [CommonMixin],
+    // mixins: [CommonMixin],
+    mixins: [mixin],
     provide() {
         return {
             $itemState: () => this.itemState,
@@ -77,7 +78,8 @@ export default {
         //     return this.$store.getters
         // },
         ...mapState({
-            gettersList: state => state.fieldModel.gettersList
+            gettersList: state => state.fieldModel.gettersList,
+            itemId: state => state.home.item.approvalItemId,
         }),
         itemName() {
             return this.$store.state.home.item.name
@@ -106,7 +108,11 @@ export default {
             return { ...v.stepObject, stepPagenum: v.stepPagenum }
         }).sort((a, b) => a.stepPagenum - b.stepPagenum)
 
-        this.allFields = result[1].data.map(v => ({ id: v.id, fieldType: v.fieldType, children: v.children, ...v.object })).map(deserializeTableData);
+        this.allFields = result[1].data.records.map(v => ({ id: v.id, fieldType: v.fieldType, fieldName: v.fieldName,
+                remark: v.remark,
+                descriptionInfo: v.descriptionInfo,
+                validationInfo: v.validationInfo,children: v.children, ...v.object })).map(deserializeTableData);
+                console.log("allFields:",this.allFields)
         let baseFields = this.allFields.filter(v => v.fieldType == 1)
 
         let itemState = convertDefToConfigEventRuntime(baseFields);
@@ -144,23 +150,23 @@ export default {
 
     },
     methods: {
-        async init() {
-            if (this.itemId == null) {
-                let itemId = this.$route.query.itemId;
-                let result = await getById({ id: itemId });
-                if (!result.success) {
-                    this.$message({ type: "warning", message: "获取初始事项信息失败" });
-                    return;
-                }
-                this.$store.commit("changeItem", result.data);
-            }
+        // async init() {
+        //     if (this.itemId == null) {
+        //         let itemId = this.$route.query.itemId;
+        //         let result = await getById({ id: itemId });
+        //         if (!result.success) {
+        //             this.$message({ type: "warning", message: "获取初始事项信息失败" });
+        //             return;
+        //         }
+        //         this.$store.commit("changeItem", result.data);
+        //     }
 
-        },
+        // },
         async loadAll() {
             let result = await Promise.all([
-                getStep({ itemName: this.itemName }),
-                getField({ itemName: this.itemName }),
-                getTemplate({ itemName: this.itemName })
+                getStep({ approvalItemId: this.itemId  }),
+                getField({ approvalItemId: this.itemId  }),
+                getTemplate({ approvalItemId: this.itemId  })
             ])
             if (result.some(v => !v.success)) return;
             return result;

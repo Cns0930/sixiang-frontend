@@ -3,7 +3,7 @@
         <div class="op-bar">
             <el-button @click="importDefault">导入默认步骤</el-button>
             <el-button @click="createStepPage">创建步骤页面</el-button>
-            <el-button @click="handlePreview">预览页面</el-button>
+           <!-- <el-button @click="handlePreview">预览页面</el-button>-->
             <el-button @click="loadAll">载入页面</el-button>
             <el-button @click="$router.push({path:'/run',query:{itemId}})">运行页面</el-button>
             <el-button @click="handleOutput">输出</el-button>
@@ -197,6 +197,7 @@ import ace from "ace-builds";
 import beautify from "ace-builds/src-noconflict/ext-beautify";
 import pageComponents from "../pageComponents/index"
 import serialize from 'serialize-javascript';
+import {mixin} from "@/mixin/mixin"
 import {
     deserializeTableData
 } from "../attributeComponents/index";
@@ -204,6 +205,7 @@ import {convertDefToConfigBundle,functionReviverBundle} from "./util"
 import axios from 'axios';
 export default {
     name: "PageConfigure",
+    mixins: [mixin],
     data() {
         return {
             // 创建页面用
@@ -255,7 +257,7 @@ export default {
             computedFields: state => state.fieldModel.computedFields,
             // stepPages: state => state.fieldModel.stepPages,
             itemName: state => state.home.item.name,
-            itemId: state => state.home.item.id,
+            itemId: state => state.home.item.approvalItemId,
         }),
         temp_fields() {
             if (this.temp_page.stepPageType != 'field') return [];
@@ -271,22 +273,23 @@ export default {
         }
 
     },
-    mounted() {
-        this.init();
+    async mounted() {
+        await this.init();
+        await this.loadStep();
     },
     methods: {
-        async init(){
-            if(this.itemId == null){
-                let itemId = this.$route.query.itemId;
-                let result = await getById({id: itemId});
-                if (!result.success) {
-                this.$message({ type: "warning", message: "获取初始事项信息失败" });
-                return;
-                }
-                this.$store.commit("changeItem", result.data);
-            }
-            this.loadAll();
-        },
+        // async init(){
+        //     if(this.itemId == null){
+        //         let itemId = this.$route.query.itemId;
+        //         let result = await getById({id: itemId});
+        //         if (!result.success) {
+        //         this.$message({ type: "warning", message: "获取初始事项信息失败" });
+        //         return;
+        //         }
+        //         this.$store.commit("changeItem", result.data);
+        //     }
+        //     this.loadAll();
+        // },
         createStepPage() {
             this.stepPageCreateVisible = true;
         },
@@ -296,8 +299,7 @@ export default {
             let data = {
                 stepTitle: this.temp_page_name,
                 stepComponent: component.name,
-                itemName: this.itemName,
-                itemId: this.itemId,
+                approvalItemId: this.itemId,
                 // 类型，字段 或者 材料
                 stepPageType: component.type,
                 stepObject: {},
@@ -482,38 +484,40 @@ export default {
             console.log(this.temp_page.stepObject.config)
         },
         //  预览
-        handlePreview() {
-            let module = {
-                state: {},
-                getters: {}
-            };
-            console.log(this.temp_page.fields);
-            module.state = this.temp_page.fields.reduce((result, item) => {
+        // handlePreview() {
+        //     let module = {
+        //         state: {},
+        //         getters: {}
+        //     };
+        //     console.log("this.temp_page:",this.temp_page);
+        //     console.log(this.temp_page.fields);
+        //     module.state = this.temp_page.fields.reduce((result, item) => {
 
-                let attrObj = _.mapValues(item.componentDefs, (o) => this.functionReviver(o.value));
-                console.log(attrObj)
-                let mergeObj = _.merge({ label: item.label, fieldNo: item.fieldNo }, attrObj, { attributes: item.componentDefs.getAttributes ? item.componentDefs.getAttributes() || {} : {} })
-                result[item.fieldNo] = mergeObj;
-                return result;
-            }, {});
-            if (this.$store.hasModule("preview")) {
-                this.$store.unregisterModule("preview");
-            }
-            console.log(JSON.stringify(module.state, null, 4));
-            this.$store.registerModule("preview", module);
-            this.$router.push("/preview");
-        },
+        //         let attrObj = _.mapValues(item.componentDefs, (o) => this.functionReviver(o.value));
+        //         console.log(attrObj)
+        //         let mergeObj = _.merge({ label: item.label, fieldNo: item.fieldNo }, attrObj, { attributes: item.componentDefs.getAttributes ? item.componentDefs.getAttributes() || {} : {} })
+        //         result[item.fieldNo] = mergeObj;
+        //         return result;
+        //     }, {});
+        //     if (this.$store.hasModule("preview")) {
+        //         this.$store.unregisterModule("preview");
+        //     }
+        //     console.log(JSON.stringify(module.state, null, 4));
+        //     this.$store.registerModule("preview", module);
+        //     this.$router.push("/preview");
+        // },
         async loadStep() {
-            let result = await getStep({ itemName: this.itemName });
+            console.log("this.itemId:",this.itemId)
+            let result = await getStep({ approvalItemId: this.itemId });
             if (!result.success) return;
             this.stepPages = this.initStepPagesData(result.data);
         },
         // 重新加载步骤列表
         async loadAll() {
             let result = await Promise.all([
-                getStep({ itemName: this.itemName }),
-                getField({ itemName: this.itemName }),
-                getTemplate({ itemName: this.itemName })
+                getStep({approvalItemId: this.itemId}),
+                getField({ approvalItemId: this.itemId }),
+                getTemplate({ approvalItemId: this.itemId })
             ])
             if (result.some(v => !v.success)) return;
 
@@ -522,10 +526,12 @@ export default {
             let tplRes = result[2]
 
 
-
             this.stepPages = this.initStepPagesData(stepRes.data);
 
-            this.fields = fieldRes.data.map(v => ({ id: v.id, fieldType: v.fieldType, children: v.children, ...v.object })).map(deserializeTableData)
+            this.fields = fieldRes.data.records.map(v => ({ id: v.id, fieldType: v.fieldType, fieldName: v.fieldName,
+                remark: v.remark,
+                descriptionInfo: v.descriptionInfo,
+                validationInfo: v.validationInfo,children: v.children, ...v.object  })).map(deserializeTableData)
             this.materials = tplRes.data;
         },
         initStepPagesData(data) {
@@ -549,7 +555,7 @@ export default {
         },
         async output() {
 
-            let result = await getStep({ itemName: this.itemName })
+            let result = await getStep({ approvalItemId: this.itemId })
 
 
             let stepsData = result.data.map(v => {
@@ -584,8 +590,11 @@ export default {
         },
         // 输出 state
         async getState() {
-            let result = await getField({ itemName: this.itemName })
-            let allFields = result.data.map(v => ({ id: v.id, fieldType: v.fieldType, children: v.children, ...v.object })).map(deserializeTableData);
+            let result = await getField({ approvalItemId: this.itemId  })
+            let allFields = result.data.records.map(v => ({ id: v.id, fieldType: v.fieldType, fieldName: v.fieldName,
+                remark: v.remark,
+                descriptionInfo: v.descriptionInfo,
+                validationInfo: v.validationInfo,children: v.children, ...v.object })).map(deserializeTableData);
             let baseFields = allFields.filter(v => v.fieldType == 1)
 
             let itemState = convertDefToConfigBundle(baseFields);
@@ -627,8 +636,8 @@ export default {
         },
         //输出 getter
         async getGetters() {
-            let result = await getField({ itemName: this.itemName })
-            let allFields = result.data.map(v => ({ id: v.id, fieldType: v.fieldType, children: v.children, ...v.object })).map(deserializeTableData);
+            let result = await getField({ approvalItemId: this.itemId  })
+            let allFields = result.data.records.map(v => ({ id: v.id, fieldType: v.fieldType, children: v.children, ...v.object })).map(deserializeTableData);
             
             let itemGetters =allFields.filter(v => v.fieldType == 2).reduce((result, item) => {
                 // let attrObj = _.mapValues(item.componentDefs, (o) => this.parseFunction(o.value));
@@ -659,8 +668,7 @@ export default {
                 return this.initStepObject({
                 stepTitle: each.p_name,
                 stepComponent: each.c_name,
-                itemName: this.itemName,
-                itemId: this.itemId,
+                approvalItemId: this.itemId ,
                 stepPageType: component.type,
                 stepObject: {},
             })
@@ -682,7 +690,7 @@ export default {
                 this.$message({ type: "error", message: "请先设置超级帮办地址!" });
                 return;
             }
-
+            console.log("this.outputEditor:",this.outputEditor)
             // output
             await this.output();
             let output = this.outputEditor.getValue();

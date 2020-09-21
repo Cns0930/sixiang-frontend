@@ -3,7 +3,7 @@
         <header>情形管理</header>
         <el-button @click="addDialogVisible = true" type="primary" style="margin-bottom:10px">添加</el-button>
         <el-table :data="tableData" border>
-            <el-table-column prop="subitemName" label="情形"></el-table-column>
+            <el-table-column prop="approvalSubitem.subitemName" label="情形"></el-table-column>
             <el-table-column prop="aliasName" label="别名"></el-table-column>
             <el-table-column prop="note" label="备注"></el-table-column>
             <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter"></el-table-column>
@@ -105,10 +105,11 @@ export default {
     methods: {
         // 查询表格
         async reloadTable() {
-            let result = await getApprovalSub({pageNum:this.currentPage});
+            let result = await getApprovalSub({pageNum:this.currentPage,approvalItemId: this.itemId});
+            console.log("result:",result);
             if (!result.success) return;
-            this.tableData = result.data.records;
             this.total = result.data.total;
+            this.tableData = result.data;
         },
         //  切页
         handleCurrentChange(){
