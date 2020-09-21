@@ -74,6 +74,12 @@
         <!-- 编辑 -->
         <el-dialog title="字段组件属性填写" :visible.sync="editDialogVisible" width="80%" :close-on-click-modal="false" >
             <div class="attribute-content">
+                <div v-if="temp_field_info">
+                    <div class="attribute">字段说明信息: {{temp_field_info.descriptionInfo}}</div>
+                    <div class="attribute">前端验证信息: {{temp_field_info.validationInfo}}</div>
+                </div>
+                <el-divider></el-divider>
+
                 <div v-if="temp_fieldObj">
                     <div class="attribute">
                         <span class="attribute-key">fieldNo</span>
@@ -302,6 +308,8 @@ export default {
             pagesize: 30,
             totalCount: 0,
             temp_selected_fields: [],
+            // 展示用
+            temp_field_info: null,
         };
     },
     computed: {
@@ -524,10 +532,13 @@ export default {
         },
         // 点击 fieldNo
         async handleClickField(fieldObj) {
-        
+
             let result = await getFieldById({id:fieldObj.id});
            
             if(!result.success) return;
+
+            // 处理调研备注信息的展示
+            this.temp_field_info = {descriptionInfo: result.data.descriptionInfo, validationInfo: result.data.validationInfo};
 
             let newFieldObj = deserializeTableData({ id: result.data.id, fieldType: result.data.fieldType, remark: result.data.remark,
             children:  result.data.children, ... result.data.object }); 

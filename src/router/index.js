@@ -102,13 +102,13 @@ const routes = [
             },
             {
                 path: '/basic',
+                name: 'ApprovalItem',
+                component: ApprovalItem,
+            },
+            {
+                path: '/basic/subitem',
                 component: BasicHome,
                 children: [
-                    {
-                        path: '/basic',
-                        name: 'ApprovalItem',
-                        component: ApprovalItem,
-                    },
                     {
                         path: '/basic/material',
                         name: 'Material',

@@ -1,44 +1,54 @@
 <template>
-<div class="item-manager">
-    <section class="tabs">
-        <div class="op-bar">
+    <div class="item-manager">
+        <section class="tabs">
+            <!-- <div class="op-bar">
             <el-button @click="handleEditItem({});">创建新事项</el-button>
-        </div>
-        <div class="time-filter" style="width: 100%;margin-left: 40px;">
-            <span class="demonstration">筛选事项创建时间:</span>
-            <el-date-picker
-                v-model="dateRange"
-                type="daterange"
-                range-separator="-"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                style="margin: 0 20px;"
-            ></el-date-picker>
-            <el-button @click="filterDate();" size="small">确认</el-button>
-        </div>
-    </section>
-    <div class="main">
-        <!-- 事项表格 -->
-        <div class="item-table" style="width: 100%;padding:10px 0;">
-            <el-table :data="itemlist" border style="width: 100%">
-                <el-table-column fixed prop="itemNo" label="sid" width="150"></el-table-column>
-                <el-table-column label="事项名称(点击进入)">
-                    <template slot-scope="scope">
-                        <el-button
-                            @click="handleClickItem(scope.row)"
-                            type="text"
-                            style="color: orange;"
-                        >{{scope.row.itemName}}</el-button>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="department" label="委办局" width="120"></el-table-column>
-                <el-table-column
-                    prop="createTime"
-                    :formatter="dateFormat"
-                    label="创建时间"
-                    width="120"
-                ></el-table-column>
-                <!-- <el-table-column label="操作" width="120">
+            </div>-->
+
+            <el-input
+                placeholder="搜索事项(编号或名称)"
+                v-model="filterKeyword"
+                clearable
+                style="width: 280px;"
+            ></el-input>
+
+            <div class="time-filter" style="width: 100%;margin-left: 40px;">
+                <span class="demonstration">筛选事项创建时间:</span>
+                <el-date-picker
+                    v-model="dateRange"
+                    type="daterange"
+                    range-separator="-"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    style="margin: 0 20px;"
+                    format="yyyy-MM-dd"
+                    value-format="yyyy-MM-dd HH:mm:ss"
+                ></el-date-picker>
+                <el-button @click="filterDate();" size="small">确认</el-button>
+            </div>
+        </section>
+        <div class="main">
+            <!-- 事项表格 -->
+            <div class="item-table" style="width: 100%;padding:10px 0;">
+                <el-table :data="itemlist" border style="width: 100%">
+                    <el-table-column fixed prop="itemNo" label="sid" width="150"></el-table-column>
+                    <el-table-column label="事项名称(点击进入)">
+                        <template slot-scope="scope">
+                            <el-button
+                                @click="handleClickItem(scope.row)"
+                                type="text"
+                                style="color: orange;"
+                            >{{scope.row.itemName}}</el-button>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="department" label="委办局" width="120"></el-table-column>
+                    <el-table-column
+                        prop="createTime"
+                        :formatter="dateFormat"
+                        label="创建时间"
+                        width="120"
+                    ></el-table-column>
+                    <!-- <el-table-column label="操作" width="120">
                     <template slot-scope="scope">
                         <el-button
                             @click="handleEditItem(scope.row);"
@@ -51,10 +61,10 @@
                             size="small"
                         >删除</el-button>
                     </template>
-                </el-table-column> -->
-            </el-table>
-        </div>
-        <div class="tablePagination">
+                    </el-table-column>-->
+                </el-table>
+            </div>
+            <div class="tablePagination">
                 <el-pagination
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
@@ -64,9 +74,9 @@
                     :total="totalCount"
                 ></el-pagination>
             </div>
-    </div>
+        </div>
 
-    <!-- <el-dialog
+        <!-- <el-dialog
         title="事项属性填写"
         :visible.sync="dialogVisible"
         width="80%"
@@ -99,8 +109,8 @@
             <el-button @click="dialogVisible = false">取 消</el-button>
             <el-button type="primary" @click="saveItem();dialogVisible = false">确 定</el-button>
         </span>
-    </el-dialog> -->
-</div>
+        </el-dialog>-->
+    </div>
 </template>
 
 <script>
@@ -127,6 +137,8 @@ export default {
             pagesize: 10,
             currentPage: 1,
             totalCount: 0,
+
+            filterKeyword: "",
         };
     },
     mounted() {
@@ -140,7 +152,7 @@ export default {
             }
             this.itemlist = result.data.records;
             this.totalCount = result.data.total;
-            this.tableData = result.data.records;
+            // this.tableData = result.data.records;
 
             this.itemlist.sort((a, b) => {
                 return dayjs(b.createTime) - dayjs(a.createTime);
@@ -153,7 +165,10 @@ export default {
         async saveItem() {
             let result = await saveItem(this.tempItem);
             if (!result.success) return;
-            this.$message({ type: "success", message: "保存成功 请重新筛选时间后查看数据" });
+            this.$message({
+                type: "success",
+                message: "保存成功 请重新筛选时间后查看数据",
+            });
             this.filterDate();
         },
         async handleDeleteItem(v) {
@@ -166,11 +181,11 @@ export default {
             }
         },
         handleClickItem(item) {
-            console.log("item:",item)
+            console.log("item:", item);
             this.$store.commit("changeItem", item);
             this.$router.push({
                 path: "/formconstructor",
-                query: { itemId: item.approvalItemId},
+                query: { itemId: item.approvalItemId },
             });
         },
         handleEditItem(item) {
@@ -182,40 +197,38 @@ export default {
             return dayjs(daterc).format("YYYY-MM-DD");
         },
         async filterDate() {
-            console.log(this.dateRange);
+            let params = {
+                keyword: this.filterKeyword,
+                pageSize: this.pagesize,
+                pageNum: this.currentPage,
+            };
             if (this.dateRange) {
-                let params = {
-                    startDate: this.dateRange[0],
-                    endDate: this.dateRange[1],
-                };
-                let result = await listApprovalItem(params);
-                if (!result.success) {
-                    this.$message({
-                        type: "warning",
-                        message: "获取数据失败",
-                        
-                    });
-                    this.itemlist = []
-                    return
-                }
-                this.itemlist = result.data;
-            } else {
-                let result = await listApprovalItem();
-                if (!result.success) {
-                    this.$message({
-                        type: "warning",
-                        message: "获取数据失败",
-                    });
-                    this.itemlist = []
-                    return
-                }
-                this.itemlist = result.data.records;
-                this.totalCount = result.data.total;
-                this.tableData = result.data.records;
+                params.startTime = this.dateRange[0];
+                params.endTime = this.dateRange[1];
             }
+            let result = await listApprovalItem(params);
+            if (!result.success) {
+                this.$message({
+                    type: "warning",
+                    message: "获取数据失败",
+                });
+                this.itemlist = [];
+                return;
+            }
+
+            this.itemlist = result.data.records;
+            this.totalCount = result.data.total;
+            // this.tableData = result.data.records;
+
             this.itemlist.sort((a, b) => {
                 return dayjs(b.createTime) - dayjs(a.createTime);
             });
+        },
+        async handleCurrentChange(){
+            this.filterDate();
+        },
+        handleSizeChange(val) {
+            console.log(`每页 ${val} 条`);
         },
     },
 };
