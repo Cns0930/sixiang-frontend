@@ -21,3 +21,9 @@ export const deletePage = params => axios.post('/superform/template/deletePage',
 
 // 获取template
 export const GetDocHtmlTempApi = params => axios.get('/superform/template-pages/getDocHtmlTemplate', {params}).then(res => res.data);
+
+// 获取添加材料表格
+export const GetAddTable = params => axios.get('/ss/material/getAllByApprovalItemId', {params}).then(res => res.data);
+
+// 批量新增模板
+export const batchSave = params => axios.post('/superform/template/batchSave', params).then(res => res.data);

@@ -23,7 +23,7 @@
                         <!-- <el-button style="width:45px;" @click="handleDelete(i)">删除</el-button> -->
                     </el-button-group>
                     <div style="margin-left:40px;">
-                        <div v-for="(page,pageIndex) in templates.templatePagesList" style="margin-top: 2px;" :class="{'active':temp_page && page.id == temp_page.id}">
+                        <div v-for="(page,pageIndex) in templates.templatePagesList" :key='pageIndex' style="margin-top: 2px;" :class="{'active':temp_page && page.id == temp_page.id}">
                             - <el-button type="text" style="width:50px;margin:0"
                                 @click="handleClickPage(page,pageIndex)">{{page.pageNum}} 页
                             </el-button>
