@@ -690,7 +690,6 @@ export default {
                 this.$message({ type: "error", message: "请先设置超级帮办地址!" });
                 return;
             }
-            console.log("this.outputEditor:",this.outputEditor)
             // output
             await this.output();
             let output = this.outputEditor.getValue();
@@ -706,13 +705,13 @@ export default {
             let params = {
                 pageStepJs: output,
                 getterJs: getters,
-                sid: this.$store.state.home.item.sid,
+                sid: this.$store.state.home.item.itemNo,
                 sixiangUserName: "admin",
                 stateJs: state,
             };
             console.log(params)
 
-            // TODO:步骤保存到超级帮办
+            // 步骤保存到超级帮办
             let result = await axios.post(serviceBaseUrl+"/api/sixiang/saveJavaScript", params).then(res => res.data);
             console.log(result)
             if(result.code == 200){

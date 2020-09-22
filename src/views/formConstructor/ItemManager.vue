@@ -41,12 +41,17 @@
                             >{{scope.row.itemName}}</el-button>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="department" label="委办局" width="120"></el-table-column>
+                    <el-table-column
+                        prop="itemCode"
+                        label="事项实施编码"
+                        width="140"
+                        show-overflow-tooltip
+                    ></el-table-column>
                     <el-table-column
                         prop="createTime"
                         :formatter="dateFormat"
                         label="创建时间"
-                        width="120"
+                        width="140"
                     ></el-table-column>
                     <!-- <el-table-column label="操作" width="120">
                     <template slot-scope="scope">
@@ -134,7 +139,7 @@ export default {
             dialogVisible: false,
             departmentOptions: [],
             dateRange: "",
-            pagesize: 10,
+            pagesize: 15,
             currentPage: 1,
             totalCount: 0,
 
@@ -142,7 +147,7 @@ export default {
         };
     },
     mounted() {
-        this.load();
+        this.list();
     },
     methods: {
         async load() {
@@ -169,7 +174,7 @@ export default {
                 type: "success",
                 message: "保存成功 请重新筛选时间后查看数据",
             });
-            this.filterDate();
+            this.list();
         },
         async handleDeleteItem(v) {
             let message = "确定要删除" + v.name + "吗";
@@ -177,7 +182,7 @@ export default {
                 let result = await deleteItem({ itemId: v.id });
                 if (!result.success) return;
                 this.$message({ type: "success", message: "删除成功" });
-                this.filterDate();
+                this.list();
             }
         },
         handleClickItem(item) {
@@ -197,6 +202,10 @@ export default {
             return dayjs(daterc).format("YYYY-MM-DD");
         },
         async filterDate() {
+            this.currentPage = 1;
+            await this.list();
+        },
+        async list(){
             let params = {
                 keyword: this.filterKeyword,
                 pageSize: this.pagesize,
@@ -220,12 +229,12 @@ export default {
             this.totalCount = result.data.total;
             // this.tableData = result.data.records;
 
-            this.itemlist.sort((a, b) => {
-                return dayjs(b.createTime) - dayjs(a.createTime);
-            });
+            // this.itemlist.sort((a, b) => {
+            //     return dayjs(b.createTime) - dayjs(a.createTime);
+            // });
         },
         async handleCurrentChange(){
-            this.filterDate();
+            await this.list();
         },
         handleSizeChange(val) {
             console.log(`每页 ${val} 条`);
