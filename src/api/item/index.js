@@ -22,9 +22,9 @@ export const getsession = params =>axios.get("/getsession",{params}).then(res =>
 export const listAll = params => axios.get("/superform/item/listAll", {params}).then(res => res.data);
 export const listItem = params => axios.get("/superform/item/list", {params}).then(res => res.data);
 
-// 获取单个事项
-export const getById = params => axios.get("/superform/item/getById", {params}).then(res => res.data);
-
+// 获取单个事项 
+// export const getById = params => axios.get("/superform/item/getById", {params}).then(res => res.data);
+export const getById = params => axios.get("/ss/approvalItem/getByApprovalItemId", {params}).then(res => res.data);
 // 保存事项
 export const saveItem = params => axios.post("/superform/item/save", params).then(res => res.data);
 

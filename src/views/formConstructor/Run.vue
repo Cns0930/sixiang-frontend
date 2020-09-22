@@ -112,7 +112,6 @@ export default {
                 remark: v.remark,
                 descriptionInfo: v.descriptionInfo,
                 validationInfo: v.validationInfo,children: v.children, ...v.object })).map(deserializeTableData);
-                console.log("allFields:",this.allFields)
         let baseFields = this.allFields.filter(v => v.fieldType == 1)
 
         let itemState = convertDefToConfigEventRuntime(baseFields);
