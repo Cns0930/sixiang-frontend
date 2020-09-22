@@ -114,11 +114,8 @@
         <el-dialog title="材料信息填写" :visible.sync="materialWriteVisible" width="50%" :close-on-click-modal="false">
             <el-form>
                 <div>
-                <el-form-item label="审批事项主键(必填)">
-                    :<el-input v-model="materialT.approvalItemId" @keyup.enter.native="addMaterial"></el-input></el-form-item>
                     <el-form-item label="材料编码(必填)">:<el-input v-model="materialT.materialCode"></el-input></el-form-item>
                     <el-form-item label="材料名称(必填)">:<el-input v-model="materialT.materialName"></el-input></el-form-item>
-                    <el-form-item label="材料状态(必填)">:<el-input v-model="materialT.materialStatus"></el-input></el-form-item>
                     <el-form-item label="市证照编码(必填)"> :<el-input v-model="materialT.catMainCode"></el-input></el-form-item>
                 <div> <el-form-item label="产生来源(必填)">
                     <el-select v-model="materialT.produceSource" placeholder="材料的产生来源">
@@ -190,7 +187,8 @@ export default {
             let result = await listMaterial({
                 keyword: this.valueM,
                 pageNum: this.currentPage,
-                pageSize: val
+                pageSize: val,
+                approvalItemId: this.$route.query.itemId,
             });
             this.tableData = result.data.records;
         },
@@ -199,7 +197,8 @@ export default {
             let result = await listMaterial({
                 keyword: this.valueM,
                 pageNum: val,
-                pageSize: this.pagesize
+                pageSize: this.pagesize,
+                approvalItemId: this.$route.query.itemId,
             });
             this.tableData = result.data.records;
         },
@@ -208,7 +207,9 @@ export default {
             let result = await listMaterial({
                 keyword: this.valueM,
                 pageNum: this.currentPage,
-                pageSize: this.pagesize
+                pageSize: this.pagesize,
+                approvalItemId: this.materialT.approvalItemId,
+                materialStatus: this.materialT.materialStatus,
             });
 
             if(!result.success) return;
@@ -249,6 +250,9 @@ export default {
         async addMaterial() {
             let res;
             if(!this.materialT.materialId){
+                this.materialT["materialStatus"]= "Y";
+                this.materialT["approvalItemId"] = this.$route.query.itemId;
+                console.log("this.materialT ",this.materialT)
                 res = await addMaterial(this.materialT);
             }else{
                 res = await updateMaterial(this.materialT);
