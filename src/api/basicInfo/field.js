@@ -19,4 +19,4 @@ export const listField = params => { return axios.post(`/ss/field/listField`, pa
 export const getAllByApprovalItemId = params => { return axios.get(`/ss/material/getAllByApprovalItemId`, {params}).then(res=>res.data); };
 
 // 查询所有字段(包括材料名)-分页
-export const listFieldUnionMaterial = params => { return axios.post(`/ss/field/listFieldUnionMaterial`, params).then(res=>res.data); };
+export const listFieldUnionMaterial = params => { return axios.get(`/ss/field/listFieldUnionMaterial`, {params}).then(res=>res.data); };
