@@ -131,7 +131,7 @@
         <el-dialog title="添加字段" :visible.sync="addFieldDialogVisible" width="50%" :close-on-click-modal="false">
             <el-button type="text" @click="chooseAllFieldToTemp"> 全选</el-button>
             <el-table :data="fields">
-                <el-table-column prop="fieldNo" label="fieldNo"></el-table-column>
+                <el-table-column prop="fieldNo" label="fieldNo" sortable=""></el-table-column>
                 <el-table-column prop="label" label="字段名"></el-table-column>
                 <el-table-column prop="type" label="组件"></el-table-column>
 
@@ -190,7 +190,7 @@
 <script>
 import { mapState } from "vuex";
 import { getStep, saveStep, deleteStep, saveStepBatch, transferJs } from "@/api/step/index";
-import { getField } from "@/api/superForm/index";
+import { getFieldAll } from "@/api/superForm/index";
 import { getTemplate } from '@/api/template/index'
 import { getById } from "@/api/item/index";
 import ace from "ace-builds";
@@ -253,8 +253,6 @@ export default {
     },
     computed: {
         ...mapState({
-            baseFields: state => state.fieldModel.baseFields,
-            computedFields: state => state.fieldModel.computedFields,
             // stepPages: state => state.fieldModel.stepPages,
             itemName: state => state.home.item.name,
             itemId: state => state.home.item.approvalItemId,
@@ -275,7 +273,7 @@ export default {
     },
     async mounted() {
         await this.init();
-        await this.loadStep();
+        await this.loadAll();
     },
     methods: {
         // async init(){
@@ -516,7 +514,7 @@ export default {
         async loadAll() {
             let result = await Promise.all([
                 getStep({approvalItemId: this.itemId}),
-                getField({ approvalItemId: this.itemId }),
+                getFieldAll({ approvalItemId: this.itemId }),
                 getTemplate({ approvalItemId: this.itemId })
             ])
             if (result.some(v => !v.success)) return;
@@ -528,10 +526,8 @@ export default {
 
             this.stepPages = this.initStepPagesData(stepRes.data);
 
-            this.fields = fieldRes.data.records.map(v => ({ id: v.id, fieldType: v.fieldType, fieldName: v.fieldName,
-                remark: v.remark,
-                descriptionInfo: v.descriptionInfo,
-                validationInfo: v.validationInfo,children: v.children, ...v.object  })).map(deserializeTableData)
+            this.fields = fieldRes.data.map(v => ({ id: v.id, fieldType: v.fieldType, fieldName: v.fieldName,
+                remark: v.remark,children: v.children, ...v.object  })).map(deserializeTableData)
             this.materials = tplRes.data;
         },
         initStepPagesData(data) {
@@ -590,11 +586,9 @@ export default {
         },
         // 输出 state
         async getState() {
-            let result = await getField({ approvalItemId: this.itemId  })
+            let result = await getFieldAll({ approvalItemId: this.itemId  })
             let allFields = result.data.records.map(v => ({ id: v.id, fieldType: v.fieldType, fieldName: v.fieldName,
-                remark: v.remark,
-                descriptionInfo: v.descriptionInfo,
-                validationInfo: v.validationInfo,children: v.children, ...v.object })).map(deserializeTableData);
+                remark: v.remark,children: v.children, ...v.object })).map(deserializeTableData);
             let baseFields = allFields.filter(v => v.fieldType == 1)
 
             let itemState = convertDefToConfigBundle(baseFields);

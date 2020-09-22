@@ -3,6 +3,9 @@ import axios from 'axios';
 // 获取字段
 export const getField = params => axios.get('/superform/fields/list2', {params}).then(res => res.data);
 
+// 获取所有字段
+export const getFieldAll = params => axios.get('/superform/fields/listAll', {params}).then(res => res.data);
+
 // 保存单个字段
 export const saveOne = params => axios.post('/superform/fields/saveOne', params).then(res => res.data);
 
