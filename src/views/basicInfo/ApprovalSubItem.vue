@@ -151,12 +151,23 @@ export default {
             this.typeMaterialOptions = result.data;
         },
         //处理材料编辑
-        handleMaterialEdit(scope){
-            this.materialList();
+        async handleMaterialEdit(scope){
+            // this.materialList();
+            let result = await getAllByApprovalItemId({approvalItemId: this.itemId});
             this.approvalSubitem = scope.row.approvalSubitem;
-            this.ids = scope.row.material.map(v  => v.materialId)
-            // console.log("处理材料编辑this.materials:",this.materials)
-            this.editDialogVisibleM = true;
+            if(result.data.length == 0){
+                this.$message({ type: "warning", message: "该事项还未添加材料" })
+            }else{
+                if (!result.success) return;
+                this.typeMaterialOptions = result.data;
+                if(scope.row.material != null){
+                    this.ids = scope.row.material.map(v  => v.materialId)
+                }else{
+                    this.ids = [];
+                }
+                
+                this.editDialogVisibleM = true;
+            }
         },
         // 所需材料编辑
         async editSubMaterial() {
@@ -170,7 +181,11 @@ export default {
             var materialNameList = []
             if(row.material != null){
                 for(let i = 0;i<row.material.length;i++){
-                materialNameList.push(row.material[i].materialName)
+                    if(row.material[i] === null){
+                        console.log("111:",row.material[i])
+                    }else{
+                        materialNameList.push(row.material[i].materialName)
+                    }
              }
             }
             
@@ -192,7 +207,7 @@ export default {
         async handleDelete(scope) {
             try {
                 await this.$confirm("是否删除", "确认删除",);
-                let result = await deleteApprovalSub({ approvalSubitemId: scope.row.approvalSubitemId });
+                let result = await deleteApprovalSub({ approvalSubitemId: scope.row.approvalSubitem.approvalSubitemId });
                 if (!result.success) return;
                 this.$message({ type: "success", message: "删除成功" })
                 this.reloadTable();
