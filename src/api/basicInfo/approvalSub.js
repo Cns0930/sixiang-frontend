@@ -11,3 +11,6 @@ export const updateApprovalSub = params => { return axios.post(`/ss/approvalSub/
 
 // 删除情形
 export const deleteApprovalSub = params => { return axios.get(`/ss/approvalSub/delApprovalSub`, {params}).then(res=>res.data); };
+
+//选择情形对应的材料-全部替换
+export const relateMaterial = params => { return axios.post(`/ss/approvalSub/relateMaterial`, params).then(res=>res.data); };
