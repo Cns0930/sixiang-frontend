@@ -5,7 +5,7 @@
         <el-table :data="tableData" border>
             <el-table-column prop="approvalSubitem.subitemName" label="情形"></el-table-column>
             <el-table-column prop="approvalSubitem.aliasName" label="别名"></el-table-column>
-            <el-table-column prop="material.materialName" label="所需材料"></el-table-column>
+            <el-table-column prop="material.materialName" label="所需材料" :formatter="formatterMaterial"></el-table-column>
             <el-table-column prop="approvalSubitem.note" label="备注"></el-table-column>
             <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter"></el-table-column>
             <el-table-column prop="updateTime" label="更新时间" :formatter="timeFormatter"></el-table-column>
@@ -44,7 +44,7 @@
         </el-dialog>
         <el-dialog title="编辑情形所需材料" :visible.sync="editDialogVisibleM" width="50%" :close-on-click-modal="false">
             <el-form label="材料名称">
-                    <el-select multiple placeholder="请选择材料名称" v-model="materials">
+                    <el-select multiple placeholder="请选择材料名称" v-model="ids">
                         <el-option v-for="(v,i) in typeMaterialOptions" :key="i" :label="v.materialName" :value="v.materialId"> </el-option>
                     </el-select>
             </el-form>
@@ -108,7 +108,8 @@ export default {
                 aliasName: "",
                 note: "",
                 subitemName: "",
-            }
+            },
+            ids: []
         };
     },
     async created() {
@@ -152,15 +153,28 @@ export default {
         //处理材料编辑
         handleMaterialEdit(scope){
             this.materialList();
-            this.materials = _.clone(scope.row.materials);
+            this.approvalSubitem = scope.row.approvalSubitem;
+            this.ids = scope.row.material.map(v  => v.materialId)
+            // console.log("处理材料编辑this.materials:",this.materials)
             this.editDialogVisibleM = true;
         },
         // 所需材料编辑
         async editSubMaterial() {
-            let result = await relateMaterial({approvalItemId: this.itemId,materialIds: this.materials});
+            
+            let result = await relateMaterial({approvalSubitemId: this.approvalSubitem.approvalSubitemId,materialIds: this.ids});
             if (!result.success) return;
             this.reloadTable();
             this.editDialogVisibleM = false;
+        },
+        formatterMaterial(row,column){
+            var materialNameList = []
+            if(row.material != null){
+                for(let i = 0;i<row.material.length;i++){
+                materialNameList.push(row.material[i].materialName)
+             }
+            }
+            
+            return materialNameList.join(",");
         },
         // 处理编辑
         handleEdit(scope) {

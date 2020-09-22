@@ -2,7 +2,8 @@
     
 </template>
 <script>
-import { listApprovalItem , listMaterial, getByApprovalItemId } from "../../api/basicInfo/approval";
+import { listApprovalItem , getByApprovalItemId } from "../../api/basicInfo/approval";
+import { listMaterial } from "../../api/basicInfo/material";
 import _ from "lodash";
 import dayjs from "dayjs";
 export default {
@@ -11,6 +12,7 @@ export default {
             pagesize: 10,
             currentPage: 1,
             totalCount: 0,
+            materialStatus: "Y",
             loginName: localStorage.getItem("username"),
         }
     },
@@ -21,7 +23,10 @@ export default {
                 result = await listApprovalItem(params);
             } else if(this.type === 'material') {
                 result = await listMaterial({pageNum: this.currentPage,
-                pageSize: this.pagesize});
+                pageSize: this.pagesize,
+                approvalItemId: this.$route.query.itemId,
+                materialStatus: this.materialStatus,});
+                if(!result.success) return;
                 this.tableData = result.data.records;
             } else if(this.type === 'pickUp') {
 

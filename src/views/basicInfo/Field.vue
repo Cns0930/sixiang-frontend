@@ -108,7 +108,8 @@ export default {
     methods: {
         // 查询表格
         async reloadTable() {
-            let result = await listFieldUnionMaterial({pageNum:this.currentPage,pageSize:this.pageSize});
+            console.log("this.itemId:",this.$route.query.itemId)
+                let result = await listFieldUnionMaterial({approvalItemId: this.itemId,pageNum:this.currentPage,pageSize:this.pageSize});
             if (!result.success) return;
             this.tableData = result.data.records;
             this.total = result.data.total;
@@ -142,7 +143,6 @@ export default {
         handleEdit(scope) {
             this.editForm = _.clone(scope.row);
             this.material_change = scope.row.materialName;
-            console.log("this.editForm:",this.editForm)
             this.editDialogVisible = true;
         },
         // 编辑
