@@ -109,6 +109,7 @@ export default {
             showConfirm: false,
             dev_barcode: this.$route.query.barcode,
             barcode: "",
+            itemId: this.$route.query.itemId,
         }
     },
     components: { LeftSteper, ApprovalSelectContent, MaterialExtract, FormPage, IdCardInfo, CommonMaterial, BaseFormPage, BusinessFormPage, ContentCard },
@@ -139,10 +140,9 @@ export default {
         await this.fetchBookInfo();
         // 获取 step data 和 field
         let result = await Promise.all([
-            getStep({ itemName: this.itemName }),
-            getField({ itemName: this.itemName }),
+            getStep({ approvalItemId: this.itemId  }),
+            getField({ approvalItemId: this.itemId  }),
         ])
-
         this.stepsData = result[0].data.map(v => {
 
             if (typeof v.stepObject.configFn == "string" && v.stepObject.configFn.indexOf('function') > -1) {
@@ -158,7 +158,11 @@ export default {
             return { ...v.stepObject, stepPagenum: v.stepPagenum }
         }).sort((a, b) => a.stepPagenum - b.stepPagenum)
 
-        this.allFields = result[1].data.map(v => ({ id: v.id, fieldType: v.fieldType, children: v.children, ...v.object })).map(deserializeTableData);
+        this.allFields = result[1].data.records.map(v => ({ id: v.id, fieldType: v.fieldType, fieldName: v.fieldName,
+                remark: v.remark,
+                descriptionInfo: v.descriptionInfo,
+                validationInfo: v.validationInfo,children: v.children, ...v.object })).map(deserializeTableData);
+        console.log("allAAA:",this.allFields)
         let baseFields = this.allFields.filter(v => v.fieldType == 1)
 
         let itemState = convertDefToConfigEventRuntime(baseFields);
@@ -173,6 +177,8 @@ export default {
 
             return result;
         }, {});
+        console.log("baseFields:",baseFields)
+        console.log("itemGetters:",itemGetters)
         let gettersList = Object.keys(itemGetters)
         
 
@@ -211,7 +217,7 @@ export default {
         async init() {
 
             let itemId = this.$route.query.itemId;
-            let result = await getById({ id: itemId });
+            let result = await getById({ approvalItemId: itemId });
             if (!result.success) {
                 this.$message({ type: "warning", message: "获取初始事项信息失败" });
                 return;
