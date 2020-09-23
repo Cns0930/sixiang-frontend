@@ -494,7 +494,7 @@ export default {
             this.$emit("transferHtml", html);
         },
         async initRender(){
-            let result = await getFieldAll({ approvalItemId: this.itemId});
+            let result = await getFieldAll({ approvalItemId: this.$store.state.home.item.approvalItemId});
             if (!result.success) return;
             let tableData = result.data.map(v => ({ id: v.id, fieldType: v.fieldType, fieldName: v.fieldName,
                 remark: v.remark,
