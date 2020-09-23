@@ -76,6 +76,9 @@ import _ from "lodash";
 import * as monaco from "monaco-editor";
 import { saveStep } from '@/api/step';
 import { getFieldAll } from "@/api/superForm/index";
+import {
+    deserializeTableData
+} from "../attributeComponents/index";
 export default {
     name: "InlineEditor",
     props: ["temp_page", "currentPagenum"],
@@ -89,6 +92,8 @@ export default {
             dialogVisible: false,
             dialogEditor: null,
             // beautify:null,
+            baseFields:[],
+            computedFields:[],
         };
     },
     watch: {
