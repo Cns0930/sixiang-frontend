@@ -33,7 +33,7 @@
 
 <script>
 import { getStep, } from "@/api/step/index";
-import { getField } from "@/api/superForm/index";
+import { getFieldAll } from "@/api/superForm/index";
 import { getTemplate } from '@/api/template/index'
 import { getById } from '@/api/item/index'
 import { components } from "@/views/pageComponents/index"
@@ -50,8 +50,7 @@ dayjs.extend(customParseFormat)
 export default {
     name: "Run",
     components: { ...components },
-    // mixins: [CommonMixin],
-    mixins: [mixin],
+    mixins: [CommonMixin, mixin],
     provide() {
         return {
             $itemState: () => this.itemState,
@@ -108,10 +107,9 @@ export default {
             return { ...v.stepObject, stepPagenum: v.stepPagenum }
         }).sort((a, b) => a.stepPagenum - b.stepPagenum)
 
-        this.allFields = result[1].data.records.map(v => ({ id: v.id, fieldType: v.fieldType, fieldName: v.fieldName,
+        this.allFields = result[1].data.map(v => ({ id: v.id, fieldType: v.fieldType, fieldName: v.fieldName,
                 remark: v.remark,
-                descriptionInfo: v.descriptionInfo,
-                validationInfo: v.validationInfo,children: v.children, ...v.object })).map(deserializeTableData);
+                children: v.children, ...v.object })).map(deserializeTableData);
         let baseFields = this.allFields.filter(v => v.fieldType == 1)
 
         let itemState = convertDefToConfigEventRuntime(baseFields);
@@ -164,7 +162,7 @@ export default {
         async loadAll() {
             let result = await Promise.all([
                 getStep({ approvalItemId: this.itemId  }),
-                getField({ approvalItemId: this.itemId  }),
+                getFieldAll({ approvalItemId: this.itemId  }),
                 getTemplate({ approvalItemId: this.itemId  })
             ])
             if (result.some(v => !v.success)) return;

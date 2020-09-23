@@ -8,7 +8,7 @@
                 <!-- <el-button @click="$router.push('/templatemanager')"> -> 模板管理</el-button> -->
 
                 <el-button @click="load">载入字段</el-button>
-                <el-button @click="handlePreview">预览当前页字段</el-button>
+                <el-button @click="handlePreview">预览全字段</el-button>
             </div>
 
             <div class="right-bar">
@@ -258,7 +258,7 @@ import { getById } from "@/api/item/index";
 import { mapState } from "vuex";
 import _ from "lodash";
 import defRenderers from "@/views/attributeComponents/defRendererComponents/index";
-import { getField, saveOne, deleteOne, forkPublicFields,getFieldById,searchFields,forkSelectedFields } from "@/api/superForm/index";
+import { getField, saveOne, deleteOne, forkPublicFields,getFieldById,searchFields,forkSelectedFields, getFieldAll } from "@/api/superForm/index";
 import { functionReviverEventRuntime, convertDefToConfigEventRuntime, functionReviverRuntime } from "./util"
 import { log } from 'handlebars';
 import { mixin } from "@/mixin/mixin"
@@ -314,8 +314,8 @@ export default {
     },
     computed: {
         ...mapState({
-            baseFields: state => state.fieldModel.baseFields,
-            computedFields: state => state.fieldModel.computedFields,
+            // baseFields: state => state.fieldModel.baseFields,
+            // computedFields: state => state.fieldModel.computedFields,
             itemId: state => state.home.item.approvalItemId,
             tableData: state => state.fieldModel.tableData,
             roles: state => state.config.roles,
@@ -599,20 +599,24 @@ export default {
         },
 
         //  预览
-        handlePreview() {
+        async handlePreview() {
+            let result = await getFieldAll({ approvalItemId: this.itemId});
+            if (!result.success) return;
+            let tableData = result.data.map(v => ({ id: v.id, fieldType: v.fieldType, fieldName: v.fieldName,
+                remark: v.remark,
+                children: v.children, ...v.object })).map(deserializeTableData);
+            let baseFields =  tableData.filter(v => v.fieldType == 1);
+            let computedFields = tableData.filter(v => v.fieldType == 2);
             let module = {
                 namespaced:true,
                 state: {},
                 getters: {}
             };
-            let itemState= convertDefToConfigEventRuntime(this.baseFields, "meta");
-           
-
+            let itemState= convertDefToConfigEventRuntime(baseFields, "meta");
+    
             module.state=itemState;
 
-
-
-            let itemGetters = this.computedFields.reduce((result, item) => {
+            let itemGetters = computedFields.reduce((result, item) => {
                 // let attrObj = _.mapValues(item.componentDefs, (o) => this.parseFunction(o.value));
                 if (!item.componentDefs.getter) {
                     console.log(item.componentDefs)
@@ -695,16 +699,16 @@ export default {
                 "putTableData",
                 tableData
             )
-            this.$store.commit(
-                "putBaseFields",
-                tableData.filter(v => v.fieldType == 1)
+            // this.$store.commit(
+            //     "putBaseFields",
+            //     tableData.filter(v => v.fieldType == 1)
 
-            );
-            this.$store.commit(
-                "putComputedFields",
-                tableData.filter(v => v.fieldType == 2)
+            // );
+            // this.$store.commit(
+            //     "putComputedFields",
+            //     tableData.filter(v => v.fieldType == 2)
 
-            );
+            // );
         },
         formatFieldType(row, column, cellValue, index) {
             if (cellValue == 1) {

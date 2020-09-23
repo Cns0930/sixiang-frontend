@@ -89,7 +89,7 @@
 
         </div>
         <!-- 创建模板弹窗 -->
-        <el-dialog title="创建模板" :visible.sync="templateCreateVisible" width="50%" :close-on-click-modal="false">
+        <!-- <el-dialog title="创建模板" :visible.sync="templateCreateVisible" width="50%" :close-on-click-modal="false">
             <div>
                 模板名称:<el-input v-model="temp_template_name"></el-input>
             </div>
@@ -98,7 +98,7 @@
                 <el-button @click="templateCreateVisible = false">取 消</el-button>
                 <el-button type="primary" @click="addTemplate">确 定</el-button>
             </span>
-        </el-dialog>
+        </el-dialog> -->
 
         <el-dialog title="载入字段" :visible.sync="fieldVisible" width="30" :close-on-click-modal="false" 
         postition="fixed">
@@ -143,7 +143,7 @@ import { mapState } from "vuex"
 import { mergeFieldAttr } from "./util"
 
 import { getSingleTemplate, addTemplate, addEditPage, deletePage } from '@/api/template/index'
-import { getField } from '@/api/superForm/index'
+import { getFieldAll } from '@/api/superForm/index'
 import defs, { deserializeComputedField, deserializeBaseField } from "../attributeComponents/index"
 import inlineEditor from "@/views/inlineEditorComponent/InlineEditor"
 
@@ -191,15 +191,18 @@ export default {
 
             isListShown:true,
 
+            baseFields:[],
+            computedFields:[],
+
         }
     },
-    computed: {
-        ...mapState({
-            baseFields: state => state.fieldModel.baseFields,
-            computedFields: state => state.fieldModel.computedFields,
-            // templates: state => state.fieldModel.templates,
-        })
-    },
+    // computed: {
+    //     ...mapState({
+    //         baseFields: state => state.fieldModel.baseFields,
+    //         computedFields: state => state.fieldModel.computedFields,
+    //         // templates: state => state.fieldModel.templates,
+    //     })
+    // },
     mounted() {
         this.init()
         this.getTemplate()
@@ -213,22 +216,22 @@ export default {
             if (!res.success) return;
             this.templates = res.data;
         },
-        async addTemplate() {
-            if (!this.temp_template_name) return;
+        // async addTemplate() {
+        //     if (!this.temp_template_name) return;
 
-            const res = await addTemplate({
-                itemName: this.$store.state.home.item.name,
-                docxTemplateName: this.temp_template_name,
-            })
+        //     const res = await addTemplate({
+        //         itemName: this.$store.state.home.item.name,
+        //         docxTemplateName: this.temp_template_name,
+        //     })
 
-            if (!res.success) return;
+        //     if (!res.success) return;
 
-            this.$message.success('新增模板成功');
-            this.templateCreateVisible = false;
-            this.temp_template_name = '';
+        //     this.$message.success('新增模板成功');
+        //     this.templateCreateVisible = false;
+        //     this.temp_template_name = '';
 
-            this.getTemplate();
-        },
+        //     this.getTemplate();
+        // },
         addPage(template) {
             // let length = template.pages?.length || 0;
             // let data = { pageNo: length, orientation: "portrait", paddingType: "text" }
@@ -241,8 +244,8 @@ export default {
             }
             template.templatePagesList.push({
                 id: null, // 当前页面的id
-                itemId: template.template.itemId, // 事项id
-                itemName: template.template.itemName, // 事项名称
+                approvalItemId: template.template.approvalItemId, // 事项id
+                // itemName: template.template.itemName, // 事项名称
                 htmlContent: "<p>等待编辑</p>", // html的内容
                 templateId: template.template.id, // 所属的父模板的id
                 orient: "column", // 方向
@@ -271,8 +274,8 @@ export default {
         async saveTemplate(html){
             const res = await addEditPage({
                 id: this.temp_page.id,
-                itemId: this.temp_page.itemId,
-                itemName: this.temp_page.itemName,
+                approvalItemId: this.temp_page.approvalItemId,
+                // itemName: this.temp_page.itemName,
                 htmlContent: html,
                 templateId: this.temp_page.templateId,
                 orient: this.temp_page.orient,
@@ -309,10 +312,10 @@ export default {
                 orient: this.temp_page.orient,
                 pageNum: this.currentPagenum,
                 script: this.temp_page.script,
-                sid: this.$store.state.home.item.sid,
+                sid: this.$store.state.home.item.itemNo,
                 padding: this.temp_page.isTable == 1? "table": "text",
                 // TODO: 拼接htmlPath: /sid/fileName_"page"pageNum.html
-                htmlPath: '/'+ this.$store.state.home.item.sid + '/' + this.templates.template.docxTemplateName +"_page" + this.currentPagenum + ".html"
+                htmlPath: '/'+ this.$store.state.home.item.itemNo + '/' + this.templates.template.docxTemplateName +"_page" + this.currentPagenum + ".html"
                 // documentSeq: this.templates.template.documentSeq // 不需要传
             }
             console.log(params)
@@ -353,12 +356,12 @@ export default {
         },
         async loadAllField() {
             this.fieldVisible = true
-            const result = await getField({
-                itemName: this.$store.state.home.item.name,
+            const result = await getFieldAll({
+                approvalItemId: this.$store.state.home.item.approvalItemId,
             })
             if (!result.success) return;
-            this.$store.commit("putBaseFields", result.data.filter(v => v.fieldType == 1).map(v => v.object).map(deserializeBaseField))
-            this.$store.commit("putComputedFields", result.data.filter(v => v.fieldType == 2).map(v => v.object).map(deserializeComputedField))
+            this.baseFields = result.data.filter(v => v.fieldType == 1).map(v => v.object).map(deserializeBaseField)
+            this.computedFields = result.data.filter(v => v.fieldType == 2).map(v => v.object).map(deserializeComputedField)
             this.baseJSON = this.baseFields.reduce(mergeFieldAttr, {})
             this.computedJSON = this.computedFields.reduce(mergeFieldAttr, {})
             // this.renderJSON = { ..._.mapValues(this.baseJSON), ..._.mapValues(this.computedJSON) }

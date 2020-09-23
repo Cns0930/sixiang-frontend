@@ -587,7 +587,7 @@ export default {
         // 输出 state
         async getState() {
             let result = await getFieldAll({ approvalItemId: this.itemId  })
-            let allFields = result.data.records.map(v => ({ id: v.id, fieldType: v.fieldType, fieldName: v.fieldName,
+            let allFields = result.data.map(v => ({ id: v.id, fieldType: v.fieldType, fieldName: v.fieldName,
                 remark: v.remark,children: v.children, ...v.object })).map(deserializeTableData);
             let baseFields = allFields.filter(v => v.fieldType == 1)
 

@@ -186,7 +186,7 @@ export default {
             this.$router.push({
                 path: '/templatemanager',
                 query: {
-                    itemId: this.$store.state.home.item.id,
+                    itemId: this.$store.state.home.item.approvalItemId,
                     id: id,
                 },
             });
@@ -217,11 +217,11 @@ export default {
             }
 
             let params = {
-                documentName: v.template.documentName,
+                documentName: v.template.materialName,
                 documentSeq: v.template.documentSeq,
                 docxTemplateName: v.template.docxTemplateName,
                 notes: v.template.notes,
-                sid: v.template.sid,
+                sid: this.$store.state.home.item.itemNo,
                 script: v.template.script,
             }
             console.log(params)
@@ -246,13 +246,13 @@ export default {
                     let para = {
                         contentCss: detail.contentCss,
                         fileName: v.template.docxTemplateName,
-                        name: v.template.documentName,
+                        name: v.template.materialName,
                         orient: detail.orient,
                         pageNum: detail.pageNum,
                         script: detail.script,
-                        sid: v.template.sid,
+                        sid: this.$store.state.home.item.itemNo,
                         padding: detail.isTable == 1 ? "table" : "text",
-                        htmlPath: '/' + v.template.sid + '/' + v.template.docxTemplateName + "_page" + detail.pageNum + ".html"
+                        htmlPath: '/' + this.$store.state.home.item.itemNo + '/' + v.template.docxTemplateName + "_page" + detail.pageNum + ".html"
                     }
                     console.log(para)
                     let result2 = await axios.post(serviceBaseUrl + "/api/sixiang/saveHtml", para).then(res => res.data);
@@ -267,7 +267,7 @@ export default {
 
         },
         async downAllPages() {
-            let downRequest = { itemId: this.$store.state.home.item.id };
+            let downRequest = { approvalItemId: this.$store.state.home.item.id };
             await axios.post("/superform/template-pages/downloadAllPages", downRequest, { responseType: 'arraybuffer' })
                 .then(response => {
                     let blob = new Blob([response.data], { type: 'application/zip' })
