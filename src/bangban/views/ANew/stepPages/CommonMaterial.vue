@@ -97,7 +97,7 @@ export default {
         }
     },
     async created() {
-        let result = await Promise.all(this.config.map(fileName => GetDocHtmlTempApi({ sid: this.sid, docxTemplateName:fileName, pageNum: 0 })));
+        let result = await Promise.all(this.config.map(fileName => GetDocHtmlTempApi({ sid: this.$store.state.home.item.itemNo, docxTemplateName:fileName, pageNum: 0 })));
         this.docList = result.map(v => v.data);
         let getterFiledNos = Object.keys(this.getters).filter(fieldNo => fieldNo.startsWith(`${this.item_code}/`))
         let getters = getterFiledNos.reduce((result, fieldNo) => {

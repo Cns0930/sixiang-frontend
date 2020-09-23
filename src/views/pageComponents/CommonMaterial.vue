@@ -85,7 +85,7 @@ export default {
         }
     },
     async created() {
-        let result = await Promise.all(this.config.map(fileName => GetDocHtmlTempApi({ sid: this.$store.state.home.item.sid, docxTemplateName: fileName, pageNum: 0 })));
+        let result = await Promise.all(this.config.map(fileName => GetDocHtmlTempApi({ sid: this.$store.state.home.item.itemNo, docxTemplateName: fileName, pageNum: 0 })));
         this.docList = result.map(v => v.data);
 
         let getters = this.gettersList.reduce((result, fieldNo) => {
