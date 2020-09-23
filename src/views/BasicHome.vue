@@ -7,6 +7,7 @@
                 <el-tab-pane label="情形管理" name="subitem"></el-tab-pane>
                 <el-tab-pane label="材料管理" name="material"></el-tab-pane>
                 <el-tab-pane label="字段管理" name="field"></el-tab-pane>
+                <el-tab-pane label="附件管理" name="accessory"></el-tab-pane>
             </el-tabs>
 
             <!-- <el-button
@@ -50,6 +51,11 @@ export default {
                 }else if (this.activeName === "field") {
                     this.$router.push({
                         path: "/basic/field",
+                        query: { itemId: this.$route.query.itemId },
+                    });
+                }else if (this.activeName === "accessory") {
+                    this.$router.push({
+                        path: "/basic/accessory",
                         query: { itemId: this.$route.query.itemId },
                     });
                 }

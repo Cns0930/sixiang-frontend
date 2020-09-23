@@ -20,6 +20,7 @@ import ApprovalItem from "@/views/basicInfo/ApprovalItem"
 import Material from "@/views/basicInfo/Material"
 import ApprovalSubItem from "@/views/basicInfo/ApprovalSubItem"
 import Field from "@/views/basicInfo/Field"
+import Accessory from "@/views/basicInfo/Accessory"
 Vue.use(VueRouter)
 import store from "@/vuex/store"
 import bangbanAxios from "@/api/ANew/config"
@@ -121,6 +122,10 @@ const routes = [
                     {
                         path: '/basic/field',
                         component: Field
+                    },
+                    {
+                        path: '/basic/accessory',
+                        component: Accessory
                     },
                 ]
             },            
