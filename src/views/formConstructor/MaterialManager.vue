@@ -5,6 +5,7 @@
             <el-button @click="openAddDialog"> 新建材料</el-button>
             <el-button @click="getTemplate">载入材料</el-button>
             <el-button @click="downAllPages">下载所有材料文件</el-button>
+            <el-button @click="downWords">下载word模板</el-button>
         </div>
 
         <div class="main">
@@ -101,6 +102,11 @@ export default {
             hasSelectList: [],
         }
     },
+    // computed: {
+    //     ...mapState({
+    //         itemId: state => state.home.item.approvalItemId,
+    //     })
+    // },
     async mounted() {
         await this.init();
         await this.getTemplate();
@@ -265,6 +271,16 @@ export default {
                 }
             }
 
+        },
+        async downWords() {
+            let downWordRequest = { approvalItemId: this.$route.query.itemId,type: "word" };
+            await axios.post("/superform/additional/downloadWord", downWordRequest, { responseType: 'arraybuffer' })
+                .then(response => {
+                    let blob = new Blob([response.data], { type: 'application/zip' })
+                    let url = window.URL.createObjectURL(blob)
+                    // url.pathname = this.$store.state.home.item.sid +".zip";
+                    window.location.href = url
+                }).catch(error => this.$message.error(error))
         },
         async downAllPages() {
             let downRequest = { itemId: this.$store.state.home.item.id };
