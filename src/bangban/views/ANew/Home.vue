@@ -50,7 +50,7 @@ import _ from "lodash"
 import stepIcon from '@/assets/png/step-icon.png'
 // api
 import { getStep, } from "@/api/step/index";
-import { getField } from "@/api/superForm/index";
+import { getFieldAll } from "@/api/superForm/index";
 import { getTemplate } from '@/api/template/index'
 import { getById } from '@/api/item/index'
 import { CommitSelfRecord, QueryBarcodeApi } from '@/api/ANew/index'
@@ -109,7 +109,7 @@ export default {
             showConfirm: false,
             dev_barcode: this.$route.query.barcode,
             barcode: "",
-            itemId: this.$route.query.itemId,
+            // itemId: this.$route.query.itemId,
         }
     },
     components: { LeftSteper, ApprovalSelectContent, MaterialExtract, FormPage, IdCardInfo, CommonMaterial, BaseFormPage, BusinessFormPage, ContentCard },
@@ -129,8 +129,11 @@ export default {
 
             return this.stepsData[this.active]
         },
-        itemName() {
-            return this.$store.state.home.item.name
+        // itemName() {
+        //     return this.$store.state.home.item.name
+        // },
+        itemId(){
+            return this.$store.state.home.item.approvalItemId
         }
 
     },
@@ -141,7 +144,7 @@ export default {
         // 获取 step data 和 field
         let result = await Promise.all([
             getStep({ approvalItemId: this.itemId  }),
-            getField({ approvalItemId: this.itemId  }),
+            getFieldAll({ approvalItemId: this.itemId  }),
         ])
         this.stepsData = result[0].data.map(v => {
 
@@ -158,11 +161,9 @@ export default {
             return { ...v.stepObject, stepPagenum: v.stepPagenum }
         }).sort((a, b) => a.stepPagenum - b.stepPagenum)
 
-        this.allFields = result[1].data.records.map(v => ({ id: v.id, fieldType: v.fieldType, fieldName: v.fieldName,
+        this.allFields = result[1].data.map(v => ({ id: v.id, fieldType: v.fieldType, fieldName: v.fieldName,
                 remark: v.remark,
-                descriptionInfo: v.descriptionInfo,
-                validationInfo: v.validationInfo,children: v.children, ...v.object })).map(deserializeTableData);
-        console.log("allAAA:",this.allFields)
+                children: v.children, ...v.object })).map(deserializeTableData);
         let baseFields = this.allFields.filter(v => v.fieldType == 1)
 
         let itemState = convertDefToConfigEventRuntime(baseFields);

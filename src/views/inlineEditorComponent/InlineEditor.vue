@@ -75,6 +75,7 @@ import { mapState } from "vuex";
 import _ from "lodash";
 import * as monaco from "monaco-editor";
 import { saveStep } from '@/api/step';
+import { getFieldAll } from "@/api/superForm/index";
 export default {
     name: "InlineEditor",
     props: ["temp_page", "currentPagenum"],
@@ -106,11 +107,11 @@ export default {
         'temp_page.orient'(){this.initEditor()},
     },
     computed: {
-        ...mapState({
-            baseFields: (state) => state.fieldModel.baseFields,
-            computedFields: (state) => state.fieldModel.computedFields,
-            // templates: state => state.fieldModel.templates,
-        }),
+        // ...mapState({
+        //     baseFields: (state) => state.fieldModel.baseFields,
+        //     computedFields: (state) => state.fieldModel.computedFields,
+        //     // templates: state => state.fieldModel.templates,
+        // }),
         renderjson() {
             let baseJSON = this.baseFields.reduce(mergeFieldAttr, {});
             let computedJSON = this.computedFields.reduce(mergeFieldAttr, {});
@@ -423,18 +424,18 @@ export default {
                 alert("未输入");
             }
         },
-        importHtmlThenRender() {
-            let page = prompt("输入页数", "0");
-            if (!page) return;
-            let html = prompt("粘贴html", "");
-            if (html != null && html != "") {
-                let template = Handlebars.compile(html);
-                let result = template(this.renderjson);
-                this.editor.data.set({ [page]: result });
-            } else {
-                alert("未输入");
-            }
-        },
+        // importHtmlThenRender() {
+        //     let page = prompt("输入页数", "0");
+        //     if (!page) return;
+        //     let html = prompt("粘贴html", "");
+        //     if (html != null && html != "") {
+        //         let template = Handlebars.compile(html);
+        //         let result = template(this.renderjson);
+        //         this.editor.data.set({ [page]: result });
+        //     } else {
+        //         alert("未输入");
+        //     }
+        // },
         downloadFile(string, filename) {
             var a = document.createElement("a");
             a.download = filename;
@@ -462,6 +463,7 @@ export default {
         setHtmlToEditor() {
             let html = this.monacoEditor.getValue();
             let template = Handlebars.compile(html);
+            this.initRender();
             console.log(this.renderjson);
             let result = template(this.renderjson);
             this.editor.data.set({ [this.page]: result });
@@ -486,6 +488,17 @@ export default {
             // 传输
             this.$emit("transferHtml", html);
         },
+        async initRender(){
+            let result = await getFieldAll({ approvalItemId: this.itemId});
+            if (!result.success) return;
+            let tableData = result.data.map(v => ({ id: v.id, fieldType: v.fieldType, fieldName: v.fieldName,
+                remark: v.remark,
+                children: v.children, ...v.object })).map(deserializeTableData);
+            this.baseFields = 
+                tableData.filter(v => v.fieldType == 1);
+            this.computedFields = 
+                tableData.filter(v => v.fieldType == 2);
+        }
     },
 };
 </script>

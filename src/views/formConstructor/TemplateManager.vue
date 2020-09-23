@@ -193,13 +193,13 @@ export default {
 
         }
     },
-    computed: {
-        ...mapState({
-            baseFields: state => state.fieldModel.baseFields,
-            computedFields: state => state.fieldModel.computedFields,
-            // templates: state => state.fieldModel.templates,
-        })
-    },
+    // computed: {
+    //     ...mapState({
+    //         baseFields: state => state.fieldModel.baseFields,
+    //         computedFields: state => state.fieldModel.computedFields,
+    //         // templates: state => state.fieldModel.templates,
+    //     })
+    // },
     mounted() {
         this.init()
         this.getTemplate()
@@ -241,8 +241,8 @@ export default {
             }
             template.templatePagesList.push({
                 id: null, // 当前页面的id
-                itemId: template.template.itemId, // 事项id
-                itemName: template.template.itemName, // 事项名称
+                approvalItemId: template.template.approvalItemId, // 事项id
+                // itemName: template.template.itemName, // 事项名称
                 htmlContent: "<p>等待编辑</p>", // html的内容
                 templateId: template.template.id, // 所属的父模板的id
                 orient: "column", // 方向
@@ -271,8 +271,8 @@ export default {
         async saveTemplate(html){
             const res = await addEditPage({
                 id: this.temp_page.id,
-                itemId: this.temp_page.itemId,
-                itemName: this.temp_page.itemName,
+                approvalItemId: this.temp_page.approvalItemId,
+                // itemName: this.temp_page.itemName,
                 htmlContent: html,
                 templateId: this.temp_page.templateId,
                 orient: this.temp_page.orient,
@@ -309,10 +309,10 @@ export default {
                 orient: this.temp_page.orient,
                 pageNum: this.currentPagenum,
                 script: this.temp_page.script,
-                sid: this.$store.state.home.item.sid,
+                sid: this.$store.state.home.item.itemNo,
                 padding: this.temp_page.isTable == 1? "table": "text",
                 // TODO: 拼接htmlPath: /sid/fileName_"page"pageNum.html
-                htmlPath: '/'+ this.$store.state.home.item.sid + '/' + this.templates.template.docxTemplateName +"_page" + this.currentPagenum + ".html"
+                htmlPath: '/'+ this.$store.state.home.item.itemNo + '/' + this.templates.template.docxTemplateName +"_page" + this.currentPagenum + ".html"
                 // documentSeq: this.templates.template.documentSeq // 不需要传
             }
             console.log(params)

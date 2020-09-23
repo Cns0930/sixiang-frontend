@@ -58,7 +58,7 @@ export default {
         }
     },
     created(){
-        
+        console.log(this.config)
         if(this.stepData.useAfterEnter){
             this.stepData.afterEnterFn(this.itemState,this.itemGetters)
         }
@@ -66,6 +66,7 @@ export default {
     computed: {
 
         fields() {
+            
             if (this.config.every(v => _.isString(v))) {
                 return this.config.map(fieldNo => this.itemState[fieldNo]).sort((a,b)=>a.sort-b.sort)
             }
