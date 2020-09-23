@@ -20,3 +20,6 @@ export const updateApprovalItem = params => { return axios.post(`/ss/approvalIte
 
 // 查询单个事项
 export const getByApprovalItemId = params => { return axios.get(`/ss/approvalItem/getByApprovalItemId`, {params}).then(res=>res.data); };
+
+// 导入情形 
+export const copyApprovalSub = params => { return axios.get(`/ss/approvalSub/copyApprovalSub`, {params}).then(res=>res.data); };

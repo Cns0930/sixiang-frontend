@@ -2,6 +2,7 @@
     <div class="workWrap">
         <header>情形管理</header>
         <el-button @click="addDialogVisible = true" type="primary" style="margin-bottom:10px">添加</el-button>
+        <el-button @click="handleImport()" type="primary" style="margin-bottom:10px">导入情形</el-button>
         <el-table :data="tableData" border>
             <el-table-column prop="approvalSubitem.subitemName" label="情形"></el-table-column>
             <el-table-column prop="approvalSubitem.aliasName" label="别名"></el-table-column>
@@ -72,6 +73,20 @@
                 <el-button type="primary" @click="editSubApproval">确 定</el-button>
             </span>
         </el-dialog>
+        <el-dialog title="导入已有事项的情形" :visible.sync="importDialogVisible" width="50%" :close-on-click-modal="false">
+
+            <el-form label="事项名称">
+                    <el-select clearable placeholder="请选择事项名称" v-model="idd">
+                        <el-option v-for="(v,i) in typeSubItemOptions" :key="i" :label="v.itemName" :value="v.approvalItemId"> </el-option>
+                    </el-select>
+            </el-form>
+                
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="importDialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="importSubApproval">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -79,6 +94,7 @@
 import basicMixin from "./basicMixin";
 import { getApprovalSub, addApprovalSub, updateApprovalSub, deleteApprovalSub, relateMaterial } from "@/api/basicInfo/approvalSub"
 import { getAllByApprovalItemId } from "@/api/basicInfo/field";
+import { listApprovalItem,copyApprovalSub } from "@/api/basicInfo/approval";
 import dayjs from "dayjs"
 
 export default {
@@ -90,6 +106,7 @@ export default {
             type: "subItem",
             itemId: this.$route.query.itemId,
             addDialogVisible: false,
+            importDialogVisible: false,
             tableData: [],
             pageSize: 10,
             currentPage: 1,
@@ -102,6 +119,7 @@ export default {
             editDialogVisible: false,
             editDialogVisibleM: false,
             typeMaterialOptions: [],
+            typeSubItemOptions: [],
             materials: "",
             editForm: {
                 approvalSubitemId: 0,
@@ -109,7 +127,8 @@ export default {
                 note: "",
                 subitemName: "",
             },
-            ids: []
+            ids: [],
+            idd: "",
         };
     },
     async created() {
@@ -139,6 +158,24 @@ export default {
             })
             if (!result.success) return;
             this.addDialogVisible = false;
+            this.reloadTable();
+            this.$message({ type: "success", message: "添加成功" })
+
+        },
+        //导入情形
+        async handleImport(){
+            let result = await listApprovalItem();
+            this.typeSubItemOptions = result.data.records;
+            console.log("resulthhh:",this.typeSubItemOptions);
+            this.importDialogVisible = true;
+        },
+        async importSubApproval() {
+            let result = await copyApprovalSub({
+                "aimsItemId": this.itemId,
+                "sourceItemId": this.idd
+            })
+            if (!result.success) return;
+            this.importDialogVisible = false;
             this.reloadTable();
             this.$message({ type: "success", message: "添加成功" })
 
