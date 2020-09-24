@@ -190,24 +190,24 @@ export default {
         customUpload(file) {
             let fd = new FormData();
             fd.append("file", file);
-            fd.append("approvalItemId",this.itemId)
-            fd.append("notes",this.addFormWord.notes)
-            fd.append("type",this.activeName)
-            fd.append("operateUser",localStorage.getItem("username"))
+            fd.append("approvalItemId", this.itemId)
+            fd.append("notes", this.addFormWord.notes)
+            fd.append("type", this.activeName)
+            fd.append("operateUser", localStorage.getItem("username"))
             console.log(fd)
             axios.post(
-                    this.url,
-                    fd
-                )
+                this.url,
+                fd
+            )
                 .then(
                     (res) => {
                         console.log('res');
                         console.log(res);
                         if (res.data.data === 'SUCCESS') {
-                        this.$message.success('上传成功');
-                        this.reloadTable();
-                        this.addWordDialogVisible = false;
-                        this.addOtherDialogVisible = false
+                            this.$message.success('上传成功');
+                            this.reloadTable();
+                            this.addWordDialogVisible = false;
+                            this.addOtherDialogVisible = false
                         } else {
                             this.$message.warning('上传失败,请重新上传');
                         }
@@ -239,10 +239,21 @@ export default {
 
         // 进行下载
         async handleDownload(row) {
-            await axios({method: 'get', url:"/superform/additional/downloadWord", params: {approvalItemId: row.approvalItemId, type: row.type},  responseType: 'arraybuffer' }).then((_res) => {
-                let blob = new Blob([_res.data],{ type: 'application/zip'});
-                let objectUrl = URL.createObjectURL(blob);
-                window.location.href = objectUrl;
+            await axios({ method: 'get', url: "/superform/additional/downloadWord", params: { approvalItemId: row.approvalItemId, type: row.type }, responseType: 'arraybuffer' }).then((_res) => {
+                let blob = new Blob([_res.data], { type: 'application/zip' });
+                const a = document.createElement('a')
+                // 生成文件路径
+                let href = window.URL.createObjectURL(blob)
+                a.href = href
+                // let _fileName = _res.headers['Content-disposition'].split(';')[1].split('=')[1].split('.')[0]
+                let _fileName = _res.headers['content-disposition'].split(';')[1].split('=')[1]
+                // 文件名中有中文 则对文件名进行转码
+                a.download = decodeURIComponent(_fileName)
+                // 利用a标签做下载
+                document.body.appendChild(a)
+                a.click()
+                document.body.removeChild(a)
+                window.URL.revokeObjectURL(href)
             })
         },
         // 删除
