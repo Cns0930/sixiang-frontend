@@ -630,8 +630,8 @@ export default {
         },
         //输出 getter
         async getGetters() {
-            let result = await getField({ approvalItemId: this.itemId  })
-            let allFields = result.data.records.map(v => ({ id: v.id, fieldType: v.fieldType, children: v.children, ...v.object })).map(deserializeTableData);
+            let result = await getFieldAll({ approvalItemId: this.itemId  })
+            let allFields = result.data.map(v => ({ id: v.id, fieldType: v.fieldType, children: v.children, ...v.object })).map(deserializeTableData);
             
             let itemGetters =allFields.filter(v => v.fieldType == 2).reduce((result, item) => {
                 // let attrObj = _.mapValues(item.componentDefs, (o) => this.parseFunction(o.value));

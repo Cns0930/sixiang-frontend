@@ -3,7 +3,7 @@
         <div class="op-bar">
             <div class="left-bar">
                 <el-button @click="handleAddBaseField">创建字段模型</el-button>
-                <el-button @click="handleAddComputedField">创建合成字段模型</el-button>
+                <!-- <el-button @click="handleAddComputedField">创建合成字段模型</el-button> -->
 
                 <!-- <el-button @click="$router.push('/templatemanager')"> -> 模板管理</el-button> -->
 
@@ -147,15 +147,15 @@
         <!-- 创建基本字段 -->
         <el-dialog title="创建基本字段" :visible.sync="dialogVisible" width="80%" :close-on-click-modal="false">
             <div>
-                字段编号:
+                字段编号(fieldNo):
                 <el-input v-model="temp_fieldNo"></el-input>
             </div>
             <div>
-                字段前端标签:
+                字段前端标签(label):
                 <el-input v-model="temp_label"></el-input>
             </div>
             <div>
-                字段名称:
+                字段名称(fieldName):
                 <el-input v-model="temp_fieldName"></el-input>
             </div>
             <div>
@@ -171,15 +171,15 @@
         <!-- 创建子项字段 -->
         <el-dialog title="创建子项字段" :visible.sync="dialogChildVisible" width="80%" :close-on-click-modal="false">
              <div>
-                字段编号:
+                字段编号(fieldNo):
                 <el-input v-model="temp_fieldNo"></el-input>
             </div>
             <div>
-                字段前端标签:
+                字段前端标签(label):
                 <el-input v-model="temp_label"></el-input>
             </div>
             <div>
-                字段名称:
+                字段名称(fieldName):
                 <el-input v-model="temp_fieldName"></el-input>
             </div>
             <div>
