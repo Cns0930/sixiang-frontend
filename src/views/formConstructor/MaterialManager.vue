@@ -5,6 +5,7 @@
             <el-button @click="openAddDialog"> 新建材料</el-button>
             <el-button @click="getTemplate">载入材料</el-button>
             <el-button @click="downAllPages">下载所有材料文件</el-button>
+            <el-button @click="handleDownload" type="primary">下载最新word模板</el-button>
         </div>
 
         <div class="main">
@@ -275,6 +276,14 @@ export default {
                     // url.pathname = this.$store.state.home.item.sid +".zip";
                     window.location.href = url
                 }).catch(error => this.$message.error(error))
+        },
+        // 下载最新word模板
+        async handleDownload() {
+            await axios({method: 'get', url:"/superform/additional/downloadWord", params: {approvalItemId: this.$store.state.home.item.approvalItemId, type: 'word'},  responseType: 'arraybuffer' }).then((_res) => {
+                let blob = new Blob([_res.data],{ type: 'application/zip'});
+                let objectUrl = URL.createObjectURL(blob);
+                window.location.href = objectUrl;
+            })
         }
     }
 }

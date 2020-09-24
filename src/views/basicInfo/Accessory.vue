@@ -3,16 +3,16 @@
         <header>材料附件管理</header>
         <template>
             <el-tabs v-model="activeName" @tab-click="handleClick" style="margin: 20px 0px;">
-            <el-tab-pane label="word类型附件" name="word">word类型附件</el-tab-pane>
-            <el-tab-pane label="other类型附件" name="other">other类型附件</el-tab-pane>
+            <el-tab-pane label="模板类型附件" name="word">模板类型附件</el-tab-pane>
+            <el-tab-pane label="其他类型附件" name="other">其他类型附件</el-tab-pane>
             </el-tabs>
         </template>
-        <el-button @click="openAddWordDialog" type="primary" style="margin-bottom:10px" v-if="activeName === 'word'">上传word附件</el-button>
-        <el-button @click="addOtherDialogVisible = true" type="primary" style="margin-bottom:10px" v-if="activeName === 'other'">上传other附件</el-button>
+        <el-button @click="addWordDialogVisible = true" type="primary" style="margin-bottom:10px" v-if="activeName === 'word'">上传模板附件</el-button>
+        <el-button @click="addOtherDialogVisible = true" type="primary" style="margin-bottom:10px" v-if="activeName === 'other'">上传其他附件</el-button>
         <!-- word type -->
         <el-table :data="tableDataWord" border v-if="activeName === 'word'">
             <el-table-column prop="fileVersion" label="版本"></el-table-column>
-            <el-table-column prop="filePath" label="word文件名" :formatter="fileNameFormatter"></el-table-column>
+            <el-table-column prop="filePath" label="模板文件Name" :formatter="fileNameFormatter"></el-table-column>
             <el-table-column prop="operateUser" label="创建者"></el-table-column>
             <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter"></el-table-column>
             <el-table-column prop="notes" label="备注"></el-table-column>
@@ -20,7 +20,6 @@
                 <template slot-scope="scope">
                     <el-button-group>
                         <el-button @click="handleDownload(scope.row)" type="primary" :disabled="scope.row.latest === false">下载</el-button>
-                        <!-- <el-button type="danger" @click="handleDelete(scope)">删除</el-button> -->
                     </el-button-group>
                 </template>
             </el-table-column>
@@ -32,22 +31,23 @@
                 <el-form-item label="备注">
                     <el-input v-model="addFormWord.notes"></el-input>
                 </el-form-item>
-                <el-form-item label="上传word">
+                <el-form-item label="上传模板">
                     <el-upload
                         class="upload-demo" 
                         ref="upload" 
                         :action="url" 
-                        :limit="2"
-                        multiple
+                        :limit="1"
+                        accept=".zip, .rar"
                         :with-credentials="true"
-                        accept=".docx" 
                         :on-success="upFile"
                         :data="this.addFormWord"
                         :on-remove="handleRemove" 
                         :on-exceed="handleExceed"
                         :auto-upload="false"
+                        :before-upload="customUpload"
                     >
-                        <el-button type="primary" @click="add('addFormWord')">添加</el-button>
+                        <el-button type="primary">添加</el-button>
+                        <div slot="tip" class="el-upload__tip">只能上传压缩包文件</div>
                     </el-upload>
                 </el-form-item>
             </el-form>
@@ -59,34 +59,47 @@
         <!-- other type -->
         <el-table :data="tableDataOther" border v-if="activeName === 'other'">
             <el-table-column prop="fileVersion" label="版本"></el-table-column>
-            <el-table-column prop="filePath" label="other文件名" :formatter="fileNameFormatter"></el-table-column>
+            <el-table-column prop="filePath" label="其他文件Name" :formatter="fileNameFormatter"></el-table-column>
             <el-table-column prop="operateUser" label="创建者"></el-table-column>
             <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter"></el-table-column>
             <el-table-column prop="notes" label="备注"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
                     <el-button-group>
-                        <el-button @click="handleEdit(scope)" type="primary" :disabled="scope.row.latest === false">下载</el-button>
-                        <!-- <el-button type="danger" @click="handleDelete(scope)">删除</el-button> -->
+                        <el-button @click="handleDownload(scope.row)" type="primary" :disabled="scope.row.latest === false">下载</el-button>
                     </el-button-group>
                 </template>
             </el-table-column>
         </el-table>
             <!--添加字段-->
         <el-dialog title="上传other类型文件" :visible.sync="addOtherDialogVisible" width="50%" :close-on-click-modal="false">
-
-            <el-form label-width="80px" :model="addFormOther">
+            <el-form label-width="80px" :model="addFormWord">
                 <el-form-item label="备注">
-                    <el-input v-model="addFormOther.notes"></el-input>
+                    <el-input v-model="addFormWord.notes"></el-input>
                 </el-form-item>
-                <el-form-item label="上传的文件" required prop="fieldName">
-                    <el-input v-model="addFormOther.file"></el-input>
+                <el-form-item label="上传其他">
+                    <el-upload
+                        class="upload-demo" 
+                        ref="upload" 
+                        :action="url" 
+                        :limit="1"
+                        accept=".zip, .rar"
+                        :with-credentials="true"
+                        :on-success="upFile"
+                        :data="this.addFormWord"
+                        :on-remove="handleRemove" 
+                        :on-exceed="handleExceed"
+                        :auto-upload="false"
+                        :before-upload="customUpload"
+                    >
+                        <el-button type="primary">添加</el-button>
+                        <div slot="tip" class="el-upload__tip">只能上传压缩包文件</div>
+                    </el-upload>
                 </el-form-item>
-                
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="addOtherDialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="upload">确 定</el-button>
+                <el-button type="primary" @click="upload()">确 定</el-button>
             </span>
         </el-dialog>
     </div>
@@ -97,6 +110,7 @@ import basicMixin from "./basicMixin";
 import { getField, addField, updateField, deleteField, getAllByApprovalItemId, listField, listFieldUnionMaterial } from "@/api/basicInfo/field";
 import { listAccessory, downloadFile, uploadFile } from "@/api/basicInfo/accessory"
 import dayjs from "dayjs";
+import axios from "axios";
 export default {
     name: "FieldItem",
     mixins: [basicMixin],
@@ -122,13 +136,6 @@ export default {
                 type: null,
                 operateUser: null,
             },
-            addFormOther: {
-                approvalItemId: null,
-                notes: "",
-                file: [],
-                type: null,
-                operateUser: null,
-            },
             editDialogVisible: false,
             editForm: {
                 fielditemId: 0,
@@ -147,8 +154,6 @@ export default {
         // }
     },
     async created() {
-        // await this.init();
-        // this.materialList();
         this.reloadTable();
     },
     methods: {
@@ -173,24 +178,44 @@ export default {
         },
         // 切换标签
         handleClick(tab, event) {
-            console.log(tab, event);
-        },
-        openAddWordDialog() {
-            this.addFormWord.type = this.activeName;
-            this.addFormWord.operateUser = localStorage.getItem("username");
-            this.addFormWord.approvalItemId = this.itemId;
-            console.log('this.addFormWord');
-            console.log(this.addFormWord);
-            this.addWordDialogVisible = true;
+            this.reloadTable();
+            this.addFormWord = {
+                approvalItemId: null,
+                notes: "",
+                type: null,
+                operateUser: null,
+            };
         },
         // 上传文件
-        add(addFormWord) {
-            this.addFormWord.type = this.activeName;
-            this.addFormWord.operateUser = localStorage.getItem("username");
-            this.addFormWord.approvalItemId = this.itemId;
-            this.$refs.upload.submit();
+        customUpload(file) {
+            let fd = new FormData();
+            fd.append("file", file);
+            fd.append("approvalItemId",this.itemId)
+            fd.append("notes",this.addFormWord.notes)
+            fd.append("type",this.activeName)
+            fd.append("operateUser",localStorage.getItem("username"))
+            console.log(fd)
+            axios.post(
+                    this.url,
+                    fd
+                )
+                .then(
+                    (res) => {
+                        console.log('res');
+                        console.log(res);
+                        if (res.data.data === 'SUCCESS') {
+                        this.$message.success('上传成功');
+                        this.reloadTable();
+                        this.addWordDialogVisible = false;
+                        this.addOtherDialogVisible = false
+                        } else {
+                            this.$message.warning('上传失败,请重新上传');
+                        }
+                    },
+                );
+            return false;
         },
-        async upload() {
+        upload() {
             this.addFormWord.type = this.activeName;
             this.addFormWord.operateUser = localStorage.getItem("username");
             this.addFormWord.approvalItemId = this.itemId;
@@ -203,37 +228,22 @@ export default {
             if (res.status == 200) {
                 this.$message.success(res);
             }
-            // else {
-            //     this.$message.warning(res.info);
-            //     let _this = this;
-            //     setTimeout(function () {
-            //         _this.$refs.upload.clearFiles();
-            //     }, 1000);
-            // }
         },
         // 上传文件超出个数
         handleExceed(files, fileList) {
-            this.$message.warning(`当前只能选择上传2 个文件`);
+            this.$message.warning(`只能选择上传 1 个文件`);
         },
         //  移除文件
         handleRemove(res, file, fileList) {
-            this.$message.warning(`移除当前${res.name}文件，请重新选择文件上传！`);
         },
 
-        // 处理编辑
+        // 进行下载
         async handleDownload(row) {
-            console.log('row');
-            console.log(row);
-            let request = {
-                approvalItemId: row.approvalItemId,
-                type: row.type
-            };
-            let res = await downloadFile(request);
-            if (res.success) {
-                this.$message({ type: "success", message: "下载成功" });
-            } else {
-                this.$message({ type: "warning", message: "下载失败" });
-            }
+            await axios({method: 'get', url:"/superform/additional/downloadWord", params: {approvalItemId: row.approvalItemId, type: row.type},  responseType: 'arraybuffer' }).then((_res) => {
+                let blob = new Blob([_res.data],{ type: 'application/zip'});
+                let objectUrl = URL.createObjectURL(blob);
+                window.location.href = objectUrl;
+            })
         },
         // 删除
         async handleDelete(scope) {
