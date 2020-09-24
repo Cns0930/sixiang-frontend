@@ -444,12 +444,12 @@ export default {
             this.temp_page.stepObject.configFn = this.aceForConfig.getValue();
             this.temp_page.stepObject.beforeEnterFn = this.aceForBeforeEnter && this.aceForBeforeEnter.getValue();
             this.temp_page.stepObject.afterEnterFn = this.aceForAfterEnter && this.aceForAfterEnter.getValue();
+            this.temp_page.stepObject.title = this.temp_page.stepTitle;
             let data = {
                 id: this.temp_page.id,
                 stepTitle: this.temp_page.stepTitle,
                 stepPagenum: this.temp_page.stepPagenum,
                 stepPageType: this.temp_page.stepPageType,
-
                 stepObject: this.temp_page.stepObject,
                 beforeEnterFn:this.temp_page.stepObject.beforeEnterFn,
                 useBeforeEnter:!!this.temp_page.stepObject.useBeforeEnter,

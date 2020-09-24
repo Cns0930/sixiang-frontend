@@ -95,6 +95,7 @@ export default {
             temp_template_name: '',
             temp_document_seq: '',
             temp_document_name: '',
+            temp_pro_doc_id: '',
 
             temp_template: null,
             tableData: [],
@@ -229,6 +230,7 @@ export default {
                 notes: v.template.notes,
                 sid: this.$store.state.home.item.itemNo,
                 script: v.template.script,
+                proDocId: v.template.proDocId
             }
             console.log(params)
 

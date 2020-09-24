@@ -171,7 +171,8 @@ export default {
             let restValue = "。" + valueArr.join("。")
             let realValueArr = realValue.split("，")
             let htmlValue = realValueArr.reduce((result, item) => {
-                if (hightlightJingyingfanwei.includes(item) && !this.nowAddList.includes(item)) {
+                // if (hightlightJingyingfanwei.includes(item) && !this.nowAddList.includes(item)) {
+                if (hightlightJingyingfanwei.includes(item)) {
                     return `${result}，<span style="color:#00C3FF">${item}</span>`
                 } else {
                     return result + "，" + item
