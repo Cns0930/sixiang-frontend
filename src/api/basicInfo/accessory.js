@@ -4,7 +4,7 @@ import axios from '../config'
 export const listAccessory = params => { return axios.get(`/superform/additional/listAdditional`, {params} ).then(res=>res.data); };
 
 // 材料附件下载
-export const downloadFile = params => { return axios.get(`/superform/additional/downloadWord`, {params} ).then(res=>res.data); };
+export const downloadFile = params => { return axios.get(`/superform/additional/downloadWord`, {params},{ responseType: 'arraybuffer' }).then(res=>res.data); };
 
 // 材料附件上传
 export const uploadFile = params => { return axios.post(`/superform/additional/uploadWord`, params ).then(res=>res.data); };
