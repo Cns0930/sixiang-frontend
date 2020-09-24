@@ -136,6 +136,33 @@
             </span>
         </el-dialog>
         <!-- 编辑窗口 -->
+         <!-- 导入自选字段 
+        <el-dialog title="导入自选字段" :visible.sync="dialogSelectVisible" width="80%" :close-on-click-modal="false">
+
+            <el-input style="width: 240px;margin: 10px; 10px" placeholder="输入关键词（不限事项字段）" clearable v-model="generalKeyword" @change="searchField"></el-input>
+            <el-input style="width: 240px;margin: 10px; 10px" placeholder="输入关键词（事项名称）" clearable v-model="itemKeyword" @change="searchField"></el-input>
+            <el-input style="width: 240px;margin: 10px; 10px" placeholder="输入关键词（fieldNo/label）" clearable v-model="fieldKeyword" @change="searchField"></el-input>
+            <el-button icon="el-icon-search" circle @click="searchField"></el-button>
+
+            <el-table ref="checkTable" :data="searchResult" border style="width: 100%" row-key="id" @selection-change="handleSelectionChange">
+                <el-table-column prop="itemName" label="事项名称" ></el-table-column>
+                <el-table-column prop="fieldNo" label="fieldNo" width="160"></el-table-column>
+                <el-table-column prop="label" label="label" width="240"></el-table-column>
+                <el-table-column prop="fieldComponentName" label="组件名" width="160"></el-table-column>
+                <el-table-column type="selection" reserve-selection label="选择">
+                </el-table-column>
+            </el-table> 
+
+            <el-pagination style="margin: 40px auto 30px 500px;" background layout="prev, pager, next" :page-size="searchPageSize" 
+            :current-page="searchCurrentPage" :total="searchTotal" @current-change="tablePageChange">
+            </el-pagination>
+
+            <p>已选中{{temp_selected_fields.length}}个字段</p>
+
+            <el-button type="primary" @click="forkSelected">确认导入</el-button>
+            <el-button type="text" @click="clearSelected">清除所有选择</el-button>
+
+        </el-dialog>-->
     </div>
 </template>
 

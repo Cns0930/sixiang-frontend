@@ -102,6 +102,11 @@ export default {
             hasSelectList: [],
         }
     },
+    // computed: {
+    //     ...mapState({
+    //         itemId: state => state.home.item.approvalItemId,
+    //     })
+    // },
     async mounted() {
         await this.init();
         await this.getTemplate();
