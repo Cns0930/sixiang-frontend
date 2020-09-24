@@ -279,11 +279,14 @@ export default {
         },
         // 下载最新word模板
         async handleDownload() {
-            await axios({method: 'get', url:"/superform/additional/downloadWord", params: {approvalItemId: this.$store.state.home.item.approvalItemId, type: 'word'},  responseType: 'arraybuffer' }).then((_res) => {
-                let blob = new Blob([_res.data],{ type: 'application/zip'});
-                let objectUrl = URL.createObjectURL(blob);
-                window.location.href = objectUrl;
-            })
+            let res = await axios({method: 'get', url:"/superform/additional/downloadWord", params: {approvalItemId: this.$store.state.home.item.approvalItemId, type: 'word'},  responseType: 'arraybuffer' });
+            if (res.data.byteLength === 0) {
+                this.$message.warning('该事项下没有模板文件');
+                return;
+            }
+            let blob = new Blob([res.data],{ type: 'application/zip'});
+            let objectUrl = URL.createObjectURL(blob);
+            window.location.href = objectUrl;
         }
     }
 }
