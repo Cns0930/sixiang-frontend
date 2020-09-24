@@ -22,6 +22,9 @@
                 :current-page.sync="currentPage" :page-size="pageSize" layout="total, prev, pager, next"
                 :total="total"></el-pagination>
         </div>
+        <div class="right-bar">
+            <el-button @click="$router.push({path:'/formconstructor', query:{'itemId':$route.query.itemId}})">-> 前端字段页 (帮办工具模块)</el-button>
+        </div>
         <!--添加字段-->
         <el-dialog title="添加材料字段" :visible.sync="addDialogVisible" width="50%" :close-on-click-modal="false">
 
