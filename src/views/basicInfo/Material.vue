@@ -136,8 +136,8 @@
             </span>
         </el-dialog>
         <!-- 编辑窗口 -->
-         <!-- 导入自选字段 
-        <el-dialog title="导入自选字段" :visible.sync="dialogSelectVisible" width="80%" :close-on-click-modal="false">
+         <!-- 导入自选材料 -->
+        <el-dialog title="导入自选材料" :visible.sync="dialogSelectVisible" width="80%" :close-on-click-modal="false">
 
             <el-input style="width: 240px;margin: 10px; 10px" placeholder="输入关键词（不限事项字段）" clearable v-model="generalKeyword" @change="searchField"></el-input>
             <el-input style="width: 240px;margin: 10px; 10px" placeholder="输入关键词（事项名称）" clearable v-model="itemKeyword" @change="searchField"></el-input>
@@ -162,7 +162,7 @@
             <el-button type="primary" @click="forkSelected">确认导入</el-button>
             <el-button type="text" @click="clearSelected">清除所有选择</el-button>
 
-        </el-dialog>-->
+        </el-dialog>
     </div>
 </template>
 

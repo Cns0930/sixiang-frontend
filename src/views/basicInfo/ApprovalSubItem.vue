@@ -82,8 +82,8 @@
             </el-form>
                 
             <el-table :data="tableDataSS" border>
-            <el-table-column prop="approvalSubitem.subitemName" label="情形"></el-table-column>
-            <el-table-column prop="approvalSubitem.aliasName" label="别名"></el-table-column>
+            <el-table-column prop="subitemName" label="情形"></el-table-column>
+            <el-table-column prop="aliasName" label="别名"></el-table-column>
         </el-table>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="importDialogVisible = false">取 消</el-button>
@@ -95,7 +95,7 @@
 
 <script>
 import basicMixin from "./basicMixin";
-import { getApprovalSub, addApprovalSub, updateApprovalSub, deleteApprovalSub, relateMaterial } from "@/api/basicInfo/approvalSub"
+import { getApprovalSub, addApprovalSub, updateApprovalSub, deleteApprovalSub, relateMaterial,listApprovalSubAll } from "@/api/basicInfo/approvalSub"
 import { getAllByApprovalItemId } from "@/api/basicInfo/field";
 import { listApprovalItem,copyApprovalSub } from "@/api/basicInfo/approval";
 import dayjs from "dayjs"
@@ -186,10 +186,10 @@ export default {
         },
         async selectOne(){
             this.tableDataSS = [];
-            let result = await getApprovalSub({pageNum:this.currentPage,approvalItemId: this.idd});
+            let result = await listApprovalSubAll({approvalItemId: this.idd});
             if (!result.success) return;
             this.total = result.data.total;
-            this.tableDataSS = result.data.records;
+            this.tableDataSS = result.data;
         },
         // 查询当前事项下的所有材料
         async materialList(){
