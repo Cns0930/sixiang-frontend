@@ -13,8 +13,8 @@
 
             <div class="right-bar">
                 <el-button @click="handleSelect">导入自选字段</el-button>
-                <el-button :disabled="itemId==-1" @click="handleImportPublic">导入全部公共字段</el-button>
-                <el-button :disabled="itemId==-1" @click="handleManagePublic">管理公共字段</el-button>
+                <!-- <el-button :disabled="itemId==-1" @click="handleImportPublic">导入全部公共字段</el-button>
+                <el-button :disabled="itemId==-1" @click="handleManagePublic">管理公共字段</el-button> -->
             </div>
             
         </div>

@@ -267,7 +267,7 @@ export default {
 
         },
         async downAllPages() {
-            let downRequest = { approvalItemId: this.$store.state.home.item.id };
+            let downRequest = { approvalItemId: this.$store.state.home.item.approvalItemId };
             await axios.post("/superform/template-pages/downloadAllPages", downRequest, { responseType: 'arraybuffer' })
                 .then(response => {
                     let blob = new Blob([response.data], { type: 'application/zip' })
