@@ -8,7 +8,7 @@
                 <div class="handle">
                     <el-button type="primary" @click="materialVisible({})">新建材料</el-button>
                     <el-button type="primary">导出</el-button>
-                    <el-button type="primary">导入</el-button>
+                    <el-button type="primary" @click="handleImport()">导入</el-button>
                 </div>
             </div>
             <div class="tableWrap">
@@ -37,14 +37,14 @@
               label="大项"
               sortable
               width="120">
-                    </el-table-column>-->
+                    </el-table-column>
                     <el-table-column
                         prop="approvalItemId"
                         label="审批事项编号"
                         width="100"
                         show-overflow-tooltip
                     ></el-table-column>
-                    <el-table-column prop="materialId" label="事项(小项)办事材料编号" width="100" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="materialId" label="事项(小项)办事材料编号" width="100" show-overflow-tooltip></el-table-column>-->
                     <el-table-column prop="materialCode" label="材料编码" width="100" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="materialName" label="材料名称" width="160"></el-table-column>
                     <el-table-column prop="materialStatus" label="材料状态" width="80"></el-table-column>
@@ -137,30 +137,36 @@
         </el-dialog>
         <!-- 编辑窗口 -->
          <!-- 导入自选材料 -->
-        <el-dialog title="导入自选材料" :visible.sync="dialogSelectVisible" width="80%" :close-on-click-modal="false">
+        <el-dialog title="导入自选材料" :visible.sync="importDialogVisible" width="80%" :close-on-click-modal="false">
 
-            <el-input style="width: 240px;margin: 10px; 10px" placeholder="输入关键词（不限事项字段）" clearable v-model="generalKeyword" @change="searchField"></el-input>
-            <el-input style="width: 240px;margin: 10px; 10px" placeholder="输入关键词（事项名称）" clearable v-model="itemKeyword" @change="searchField"></el-input>
-            <el-input style="width: 240px;margin: 10px; 10px" placeholder="输入关键词（fieldNo/label）" clearable v-model="fieldKeyword" @change="searchField"></el-input>
-            <el-button icon="el-icon-search" circle @click="searchField"></el-button>
+            <el-form label="事项名称">
+                    <el-select clearable filterable placeholder="请选择事项名称或者输入关键词" v-model="idd" @change="selectOne" style="position:relative" 
+                    remote reserve-keyword :remote-method="remoteMethod" :loading="loading"> 
+                        <el-option v-for="(v,i) in typeSubItemOptions" :key="i" :label="v.itemName" :value="v.approvalItemId"> 
+                            
+                        </el-option>
+                   
+                    <div class="text-center" style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
+                            <a class="text-normal">
+                                <el-pagination @size-change="handleSizeChangeSelect" @current-change="handleCurrentChangeSelect"
+                                            :current-page="currentPageSelect" :total="totalAim"
+                                            :page-sizes="10" :page-size="pageSize"
+                                            layout="prev, pager, next"/>
+                            </a>
+                            </div> </el-select>
+            </el-form>
 
-            <el-table ref="checkTable" :data="searchResult" border style="width: 100%" row-key="id" @selection-change="handleSelectionChange">
-                <el-table-column prop="itemName" label="事项名称" ></el-table-column>
-                <el-table-column prop="fieldNo" label="fieldNo" width="160"></el-table-column>
-                <el-table-column prop="label" label="label" width="240"></el-table-column>
-                <el-table-column prop="fieldComponentName" label="组件名" width="160"></el-table-column>
+            <el-table :data="tableDataSS" border row-key="materialId" ref="checkTable" @selection-change="handleSelectionChange">
+                <el-table-column prop="materialCode" label="材料编码" ></el-table-column>
+                <el-table-column prop="materialName" label="材料名称"></el-table-column>
                 <el-table-column type="selection" reserve-selection label="选择">
                 </el-table-column>
             </el-table> 
 
-            <el-pagination style="margin: 40px auto 30px 500px;" background layout="prev, pager, next" :page-size="searchPageSize" 
-            :current-page="searchCurrentPage" :total="searchTotal" @current-change="tablePageChange">
-            </el-pagination>
-
             <p>已选中{{temp_selected_fields.length}}个字段</p>
-
-            <el-button type="primary" @click="forkSelected">确认导入</el-button>
+            <el-button type="primary" @click="importSubApproval">确认导入</el-button>
             <el-button type="text" @click="clearSelected">清除所有选择</el-button>
+            <el-button @click="importDialogVisible = false">取 消</el-button>
 
         </el-dialog>
     </div>
@@ -171,8 +177,8 @@
 <script>
 import basicMixin from "./basicMixin";
 import Vue from "vue";
-import { listMaterial, addMaterial,delMaterial,updateMaterial,getByMaterialId } from "../../api/basicInfo/material";
-
+import { listMaterial, addMaterial,delMaterial,updateMaterial,getByMaterialId,copySelectedMaterial,getAllByApprovalItemId } from "../../api/basicInfo/material";
+import { listApprovalItem } from "@/api/basicInfo/approval";
 export default {
     name: "Material",
     mixins: [basicMixin],
@@ -189,6 +195,17 @@ export default {
             type: "material",
             materialT: {},
             materialWriteVisible: false,
+            currentPageSelect: 1,
+            pageSize: 10,
+            selectData: [],
+            importDialogVisible: false,
+            tableDataSS: [],
+            typeSubItemOptions: [],
+            idd: "",
+            itemId: this.$route.query.itemId,
+            temp_selected_fields: [],
+            list: [],
+            loading: false,
             valueM: "",
             timeRange: [],
             tableData: [],
@@ -229,6 +246,33 @@ export default {
             });
             this.tableData = result.data.records;
         },
+        //下拉框带分页
+        async handleSizeChangeSelect(size){
+            this.selectData = [];
+            this.pageSize = size;
+            let result = await listApprovalItem({pageNum: this.currentPageSelect,pageSize: this.pageSize});
+            this.typeSubItemOptions = result.data.records;
+        },
+        async handleCurrentChangeSelect(current){
+            this.selectData = [];
+            this.currentPageSelect = current;
+            let result = await listApprovalItem({pageNum: this.currentPageSelect,pageSize: this.pageSize});
+            this.typeSubItemOptions = result.data.records;
+        },
+        //远程搜索
+        async remoteMethod(query){
+            if(query !== ''){
+                let result = await listApprovalItem({keyword:query, pageNum: this.currentPageSelect,pageSize: this.pageSize});
+                this.loading = true;
+                setTimeout(() => {
+                    this.loading = false;
+                    
+                    this.totalAim = result.data.total;
+                    this.typeSubItemOptions = result.data.records;
+                    
+                })
+            }
+        },
         async materialSearch(){
             this.currentPage = 1;
             let result = await listMaterial({
@@ -257,6 +301,55 @@ export default {
             
             this.materialT = item;
             this.materialWriteVisible = true;
+        },
+        //导入材料
+        async handleImport(){
+            let result = await listApprovalItem({pageNum: this.currentPageSelect,pageSize: this.pageSize});
+            this.totalAim = result.data.total;
+            this.typeSubItemOptions = result.data.records;
+            console.log("resulthhh:",this.typeSubItemOptions);
+            this.importDialogVisible = true;
+        },
+        async selectOne(){
+            this.tableDataSS = [];
+            let result = await getAllByApprovalItemId({approvalItemId: this.idd});
+            if (!result.success) return;
+            this.total = result.data.total;
+            this.tableDataSS = result.data;
+        },
+        handleSelectionChange(sel){
+            this.temp_selected_fields = sel;
+        },
+        async importSubApproval(){
+            console.log("this.temp_selected_fields:",this.temp_selected_fields);
+            if(this.temp_selected_fields.length > 0){
+            // 进行materialName是否重复的检查
+            let a = this.temp_selected_fields.map(v => v.materialName);
+            console.log("a",a);
+            for (let index = 0; index < this.temp_selected_fields.length; index++){
+                let field = this.temp_selected_fields[index];
+                console.log("field.materialName:",field.materialName);
+                if(this.temp_selected_fields.map(v => v.materialName).indexOf(field.materialName) !== index){
+                    this.$message({ type: "warning", message: "重复材料:"+field.materialName});
+                    return;
+                }
+            }
+
+            let selectIds = this.temp_selected_fields.map(f => f.materialId);
+            let param = {};
+            param["aimsItemId"]=this.itemId;
+            param["sourceMaterialIds"]=selectIds;
+            let result = await copySelectedMaterial(JSON.stringify(param))
+            if (!result.success) return;
+            this.$message({ type: "success", message: "导入成功"});
+                this.clearSelected();
+                this.search();
+                this.importDialogVisible = false;
+            }
+        },
+        clearSelected(){
+            this.$refs.checkTable.clearSelection();
+            this.temp_selected_fields = [];
         },
         //获取材料列表
         async listMaterial() {
@@ -316,11 +409,11 @@ export default {
             let result = await delMaterial(param);
             if (!result.success) return;
             
-            if(!id){
+            // if(!id){
                 await this.search();
-            }else{
-                await this.materialSearch();
-            }
+            // }else{
+                // await this.materialSearch();
+            // }
         },
     },
 };

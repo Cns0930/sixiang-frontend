@@ -76,9 +76,20 @@
         <el-dialog title="导入已有事项的情形" :visible.sync="importDialogVisible" width="50%" :close-on-click-modal="false">
 
             <el-form label="事项名称">
-                    <el-select clearable placeholder="请选择事项名称" v-model="idd" @change="selectOne">
-                        <el-option v-for="(v,i) in typeSubItemOptions" :key="i" :label="v.itemName" :value="v.approvalItemId"> </el-option>
-                    </el-select>
+                    <el-select clearable filterable placeholder="请选择事项名称或者输入关键词" v-model="idd" @change="selectOne" style="position:relative" 
+                    remote reserve-keyword :remote-method="remoteMethod" :loading="loading"> 
+                        <el-option v-for="(v,i) in typeSubItemOptions" :key="i" :label="v.itemName" :value="v.approvalItemId"> 
+                            
+                        </el-option>
+                   
+                    <div class="text-center" style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
+                            <a class="text-normal">
+                                <el-pagination @size-change="handleSizeChangeSelect" @current-change="handleCurrentChangeSelect"
+                                            :current-page="currentPageSelect" :total="totalAim"
+                                            :page-sizes="10" :page-size="pageSize"
+                                            layout="prev, pager, next"/>
+                            </a>
+                            </div> </el-select>
             </el-form>
                 
             <el-table :data="tableDataSS" border>
@@ -124,6 +135,12 @@ export default {
             editDialogVisibleM: false,
             typeMaterialOptions: [],
             typeSubItemOptions: [],
+            currentPageSelect: 1,
+            pageSize: 10,
+            selectData: [],
+            tableDataSS: [],
+            temp_selected_fields: [],
+            loading: false,
             materials: "",
             editForm: {
                 approvalSubitemId: 0,
@@ -166,10 +183,37 @@ export default {
             this.$message({ type: "success", message: "添加成功" })
 
         },
+        //下拉框带分页
+        async handleSizeChangeSelect(size){
+            this.selectData = [];
+            this.pageSize = size;
+            let result = await listApprovalItem({pageNum: this.currentPageSelect,pageSize: this.pageSize});
+            this.typeSubItemOptions = result.data.records;
+        },
+        async handleCurrentChangeSelect(current){
+            this.selectData = [];
+            this.currentPageSelect = current;
+            let result = await listApprovalItem({pageNum: this.currentPageSelect,pageSize: this.pageSize});
+            this.typeSubItemOptions = result.data.records;
+        },
+        //远程搜索
+        async remoteMethod(query){
+            if(query !== ''){
+                let result = await listApprovalItem({keyword:query, pageNum: this.currentPageSelect,pageSize: this.pageSize});
+                this.loading = true;
+                setTimeout(() => {
+                    this.loading = false;
+                    this.totalAim = result.data.total;
+                    this.typeSubItemOptions = result.data.records;
+                    
+                })
+            }
+        },
         //导入情形
         async handleImport(){
-            let result = await listApprovalItem();
+            let result = await listApprovalItem({pageNum: this.currentPageSelect,pageSize: this.pageSize});
             this.typeSubItemOptions = result.data.records;
+            this.totalAim = result.data.total;
             console.log("resulthhh:",this.typeSubItemOptions);
             this.importDialogVisible = true;
         },

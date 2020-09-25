@@ -23,3 +23,8 @@ export const updateMaterial = params => { return axios.post(`/ss/material/update
 
 //查询某一份材料
 export const getByMaterialId = params => { return axios.get(`/ss/material/getByMaterialId`, {params}).then(res=>res.data); };
+
+//导入材料
+export const copySelectedMaterial = params => { return axios.post(`/ss/material/copySelectedMaterial`, params).then(res=>res.data); };
+//获取指定事项下的所有材料 不分页
+export const getAllByApprovalItemId = params => { return axios.get(`/ss/material/getAllByApprovalItemId`, {params}).then(res=>res.data); };
