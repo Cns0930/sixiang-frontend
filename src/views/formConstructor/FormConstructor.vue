@@ -45,8 +45,8 @@
                     <el-table-column prop="remark" label="备注"> </el-table-column>
                     <el-table-column fixed="right" label="操作" width="350">
                         <template slot-scope="scope">
-                            <el-button @click="handleClickFieldDY(scope.row);" type="text" size="small" :disabled="handleDisabledDY()"> 调研人员编辑</el-button>
-                            <el-button @click="handleClickField(scope.row);" type="text" size="small" :disabled="handleDisabledKF()"> 编辑</el-button>
+                            <el-button @click="handleClickFieldDY(scope.row);" type="text" size="small"> 需求编辑</el-button>
+                            <el-button @click="handleClickField(scope.row);" type="text" size="small"> 编辑</el-button>
                             <el-button @click="handleClickChangeType(scope);" type="text" size="small">更改组件类型
                             </el-button>
                             <el-button @click="handleClickAddChild(scope.row);" type="text" size="small"
@@ -135,11 +135,17 @@
                         <component class="attribute-value" :is="v.renderTemplateName" v-model="v.value"
                             v-bind="v.attributes" :key="temp_fieldObj.fieldNo+v.renderTemplateName"></component>
                     </div> -->
+                    <!-- TODO: 关联审批点 -->
+                    <div class="attribute">
+                        <span class="attribute-key">关联材料审批点</span>
+                        <el-cascader placeholder="选择材料审批点" :options="basicFieldOptions" filterable v-model="temp_relate_fieldId" clearable></el-cascader>
+                    </div>
+
                 </div>
             </div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editDialogVisibleDY = false">取 消</el-button>
-                <el-button type="primary" @click="handleSaveFieldReseacher(temp_fieldObj);editDialogVisibleDY = false">确 定
+                <el-button type="primary" @click="handleSaveFieldReseacher(temp_fieldObj)">确 定
                 </el-button>
             </span>
         </el-dialog>
@@ -259,6 +265,7 @@ import { mapState } from "vuex";
 import _ from "lodash";
 import defRenderers from "@/views/attributeComponents/defRendererComponents/index";
 import { getField, saveOne, deleteOne, forkPublicFields,getFieldById,searchFields,forkSelectedFields, getFieldAll } from "@/api/superForm/index";
+import { listMaterialFieldLayer } from "@/api/basicInfo/field";
 import { functionReviverEventRuntime, convertDefToConfigEventRuntime, functionReviverRuntime } from "./util"
 import { log } from 'handlebars';
 import { mixin } from "@/mixin/mixin"
@@ -310,6 +317,9 @@ export default {
             temp_selected_fields: [],
             // 展示用
             temp_field_info: null,
+            // 关联审批点
+            basicFieldOptions: [],
+            temp_relate_fieldId: null,
         };
     },
     computed: {
@@ -561,6 +571,21 @@ export default {
             }); 
             this.temp_fieldObj = newFieldObj;
             delete this.temp_fieldObj.list;
+            // 初始化关联选项
+            await this.initBasicFieldOptions();
+            // 初始化关联数据
+            let ssFieldId = result.data.ssFieldId
+            if(ssFieldId == null){
+                this.temp_relate_fieldId = [];
+            }else{
+            let parent = this.basicFieldOptions.find(function(item){
+                let children = item.children;
+                return children.findIndex(function(child){return child.value == ssFieldId}) !== -1;
+            })
+            if(typeof(parent) !== "undefined"){
+                this.temp_relate_fieldId = [parent.value, ssFieldId];
+            }
+            }
             this.editDialogVisibleDY = true;
         },
         // 删除 fieldNo
@@ -662,6 +687,7 @@ export default {
         },
         // 调研编辑的保存 有些字段不用改
         async handleSaveFieldReseacher(v){
+            // TODO: 保存关联
             let param = {
                 id: v.id,
                 fieldNo: v.fieldNo,
@@ -672,12 +698,16 @@ export default {
                 fieldComponentName: v.componentDefs?.type?.value,
                 fieldType: v.fieldType,
             };
+            if(this.temp_relate_fieldId != null && this.temp_relate_fieldId.length > 0){
+                param.ssFieldId = this.temp_relate_fieldId[this.temp_relate_fieldId.length -1];
+            }
             let result = await saveOne(param);
 
             if (!result.success) return;
             v.id = result.data.id;
             this.$message({ type: "success", message: "保存成功" });
             this.load();
+            this.editDialogVisibleDY = false;
         },
         // 载入
         async load() {
@@ -789,6 +819,27 @@ export default {
         clearSelected(){
             this.$refs.checkTable.clearSelection();
             this.temp_selected_fields = [];
+        },
+        // TODO: 审批点数据处理
+        async initBasicFieldOptions(){
+            let result = await listMaterialFieldLayer({approvalItemId: this.itemId});
+            if(!result.success){
+                return;
+            }
+            let initData = result.data;
+            // 遍历数组
+            for(let v of initData){
+                // 获取材料名和id, 在basicFieldOptions里找到
+                let material = this.basicFieldOptions.find(function(item){return item.value === v.materialId});
+                // 如果为空 则新建
+                if(typeof(material) == "undefined"){
+                    let newM = {value: v.materialId, label: v.materialName, children: [{value: v.fieldId, label: v.fieldName}]}
+                    this.basicFieldOptions.push(newM);
+                }else {
+                // 如果不为空 则添加到children
+                material.children.push({value: v.fieldId, label: v.fieldName})
+                }
+            }
         }
     }
 };
