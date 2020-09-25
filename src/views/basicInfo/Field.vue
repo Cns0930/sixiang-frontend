@@ -366,6 +366,7 @@ export default {
                     fieldData = [];
                 }
             }
+            this.lookFieldsData.push(fieldData);
             this.lookFieldsDialogVisible = true;
         }
     }
