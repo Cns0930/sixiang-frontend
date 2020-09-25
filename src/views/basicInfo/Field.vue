@@ -2,6 +2,7 @@
     <div class="workWrap">
         <header>材料字段管理</header>
         <el-button @click="addDialogVisible = true" type="primary" style="margin-bottom:10px">添加</el-button>
+        <el-button @click="openImportDialog" type="primary" style="margin-bottom:10px">导入</el-button>
         <el-table :data="tableData" border>
             <el-table-column prop="materialName" label="材料名称"></el-table-column>
             <el-table-column prop="fieldName" label="字段名称"></el-table-column>
@@ -67,13 +68,106 @@
                 <el-button type="primary" @click="editField">确 定</el-button>
             </span>
         </el-dialog>
+        <!-- 导入字段 -->
+        <el-dialog title="导入材料字段" :visible.sync="importDialogVisible" width="75%" :close-on-click-modal="false">
+            <div class="searchBox">
+                <el-input placeholder="筛选事项名称/材料名称/材料编码" v-model="reloadTableItem.keyword" clearable style="width: 250px;" @keyup.native.enter='materialSearch' @change="materialSearch"></el-input>
+                <el-button @click="materialSearch">搜索</el-button>
+            </div>
+
+            <el-table
+                ref="multipleTable"
+                class="workTable"
+                :data="tableDataImport"
+                style="width: 100%;"
+                border
+                tooltip-effect="dark"
+            >
+                    <el-table-column label="序号" type="index" width="45" :index="indexMethod"></el-table-column>
+                    <el-table-column
+                        prop="approvalItemId"
+                        label="审批事项编号"
+                        width="100"
+                        show-overflow-tooltip
+                    ></el-table-column>
+                    <el-table-column prop="itemName" label="审批事项名称"></el-table-column>
+                    <el-table-column prop="materialCode" label="材料编码" width="100" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="materialId" label="材料ID" width="100" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="materialName" label="材料名称"></el-table-column>
+
+                    <el-table-column
+                        label="是否关联"
+                        fixed="right"
+                        width="80"
+                    >
+                        <template slot-scope="scope">
+                            <el-switch
+                                v-model="scope.row.isRelevance"
+                            >
+                                <span style="display: none;">{{scope.$index}}</span>
+                            </el-switch>
+                        </template>
+                    </el-table-column>
+
+                    <el-table-column
+                        prop="materialName"
+                        label="关联材料名称"
+                        fixed="right"
+                        width="200"
+                    >
+                        <template slot-scope="scope">
+                            <el-select v-model="scope.row.aimsMaterialId" clearable placeholder="请选择材料名称">
+                                <el-option v-for="(v,i) in typeMaterialOptions" :key="i" :label="v.materialName" :value="v.materialId"> </el-option>
+                            </el-select>
+                        </template>
+                    </el-table-column>
+                
+                    <el-table-column label="操作" fixed="right" width="200">
+                        <template slot-scope="scope">
+                            <el-button  type='text' @click="LookMaterial(scope.row)">查看该材料字段</el-button>
+                            <el-button  type='text' @click="importMaterial(scope.row)">导入字段</el-button>
+                        </template>
+                    </el-table-column>
+            </el-table>
+            <div class="tablePagination">
+                <el-pagination
+                    @current-change="handleCurrentChangeImport"
+                    :current-page.sync="currentPageImport"
+                    :page-size="reloadTableItem.pagesize"
+                    layout="total, prev, pager, next"
+                    :total="totalImport"
+                ></el-pagination>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="importDialogVisible = false">取 消</el-button>
+            </span>
+        </el-dialog>
+
+        <!-- 查看字段 -->
+        <el-dialog :title="getMaterialName" :visible.sync="lookFieldsDialogVisible" width="50%" :close-on-click-modal="false">
+            <div v-if="this.lookFieldsData.length !== 0">
+            <el-row :gutter="20" v-for="(item,index) in lookFieldsData" :key="index">
+                <el-col :span="6" v-for="fieldName in item" :key="fieldName"><div class="grid-content bg-purple">{{fieldName}}</div></el-col>
+            </el-row>
+            <el-row>
+                <el-col :span="24"><div class="grid-content bg-purple">{{noLookFieldsData}}</div></el-col>
+            </el-row>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="lookFieldsDialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="importMaterial(materialRow)">导 入</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
 <script>
 import basicMixin from "./basicMixin";
-import { getField, addField, updateField, deleteField,getAllByApprovalItemId,listField,listFieldUnionMaterial } from "@/api/basicInfo/field";
+import { getField, addField, updateField, deleteField, 
+    getAllByApprovalItemId, listField, 
+    listFieldUnionMaterial, listAllMaterial, importfields, lookfields } from "@/api/basicInfo/field";
 import dayjs from "dayjs";
+import { getRolelist } from '@/api/item';
 export default {
     name: "FieldItem",
     mixins: [basicMixin],
@@ -100,7 +194,31 @@ export default {
                 aliasName: "",
                 note: "",
                 subitemName: "",
-            }
+            },
+            // 导入材料字段相关
+            importDialogVisible: false,
+            tableDataImport: [],
+            totalImport: null,
+            currentPageImport: 1,
+            totalImport: null,
+            reloadTableItem: {
+                approvalItemId: null,
+                pageNum: null,
+                pageSize: null,
+                keyword: null,
+                materialStatus: null,
+            },
+            importRequest: {
+                aimsMaterialId: null,
+                approvalItemId: null,
+                materialId: null,
+            },
+            // 导入材料->查看该材料下字段
+            lookFieldsDialogVisible: false,
+            materialRow: null,
+            lookFieldsData: [],
+            getMaterialName: null,
+            noLookFieldsData: null,
         };
     },
     async created() {
@@ -111,19 +229,19 @@ export default {
     methods: {
         // 查询表格
         async reloadTable() {
-            console.log("this.itemId:",this.$route.query.itemId)
-                let result = await listFieldUnionMaterial({approvalItemId: this.itemId,pageNum:this.currentPage,pageSize:this.pageSize});
+            console.log("this.itemId:", this.$route.query.itemId)
+            let result = await listFieldUnionMaterial({ approvalItemId: this.itemId, pageNum: this.currentPage, pageSize: this.pageSize });
             if (!result.success) return;
             this.tableData = result.data.records;
             this.total = result.data.total;
         },
         //  切页
-        handleCurrentChange(){
+        handleCurrentChange() {
             this.reloadTable();
         },
         // 查询当前事项下的所有材料
-        async materialList(){
-            let result = await getAllByApprovalItemId({approvalItemId: this.itemId});
+        async materialList() {
+            let result = await getAllByApprovalItemId({ approvalItemId: this.itemId });
             if (!result.success) return;
             this.typeMaterialOptions = result.data;
         },
@@ -157,6 +275,7 @@ export default {
         },
         // 删除
         async handleDelete(scope) {
+
             try {
                 await this.$confirm("是否删除", "确认删除",);
                 let result = await deleteField({ fieldId: scope.row.fieldId });
@@ -168,6 +287,86 @@ export default {
             }
 
 
+        },
+        // 导入字段相关
+        async reloadImportTable() {
+            console.log("this.itemId:", this.$route.query.itemId)
+            this.reloadTableItem.pageNum = this.currentPageImport;
+            let result = await listAllMaterial(this.reloadTableItem);
+            if (!result.success) return;
+            this.tableDataImport = result.data.records;
+            this.tableDataImport.forEach(item => {
+                this.$set(item, "aimsMaterialId", null);
+                this.$set(item, "isRelevance", true);
+            });
+            this.totalImport = result.data.total;
+        },
+        handleCurrentChangeImport() {
+            this.reloadImportTable();
+        },
+        materialSearch() {
+            this.currentPageImport = 1;
+            this.reloadImportTable();
+        },
+        openImportDialog() {
+            this.reloadImportTable();
+            this.importDialogVisible = true;
+        },
+        async importMaterial(row) {
+            console.log('row');
+            console.log(row);
+            this.importRequest = {
+                aimsMaterialId: null,
+                approvalItemId: null,
+                materialId: null,
+            };
+            this.importRequest.approvalItemId = this.itemId;
+            this.importRequest.materialId = row.materialId;
+            if (row.isRelevance) {
+                this.importRequest.aimsMaterialId = row.aimsMaterialId;
+            }
+            let result = await importfields(this.importRequest);
+            if (!result.success) {
+                this.$message({ type: "warning", message: "导入失败" });
+                return;
+            } else if (result.data === 0) {
+                this.$message({ type: "warning", message: "该材料下无字段可导入" });
+                return;
+            } else {
+                this.reloadTable();
+                this.$message({ type: "success", message: "导入成功" });
+                this.lookFieldsDialogVisible = false;
+            }
+        },
+        async LookMaterial(row) {
+            this.lookFieldsData = [];
+            this.noLookFieldsData = null;
+            console.log('row');
+            console.log(row);
+            if (row.materialName !== null) {
+                this.getMaterialName = row.materialName;
+            } else {
+                this.getMaterialName = '无材料名';
+            }
+            this.materialRow = row;
+            let result = await lookfields({materialId: row.materialId});
+            let fieldData = [];
+            if (result.data.length === 0) {
+                this.noLookFieldsData = '该材料下无对应的字段';
+            } else {
+                this.noLookFieldsData = null;
+            }
+            let y = 0;
+            for(let i = 0; i < result.data.length; i += 1){
+                fieldData.push(result.data[i].fieldName);
+                y += 1;
+                if ( y === 4 ) {
+                    this.lookFieldsData.push(fieldData);
+                    y = 0;
+                    fieldData = [];
+                }
+            }
+            this.lookFieldsDialogVisible = true;
         }
     }
 };
@@ -185,5 +384,37 @@ export default {
         line-height: 50px;
         letter-spacing: 1px;
     }
+    .searchBox {
+        margin-bottom: 10px;
+        display: flex;
+        flex-direction: row;
+        background: #fff;
+    }
+     .el-row {
+    margin-bottom: 20px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  .el-col {
+    border-radius: 4px;
+  }
+  .bg-purple-dark {
+    background: #ffffff;
+  }
+  .bg-purple {
+    background: #ffffff;
+  }
+  .bg-purple-light {
+    background: #ffffff;
+  }
+  .grid-content {
+    border-radius: 4px;
+    min-height: 36px;
+  }
+  .row-bg {
+    padding: 10px 0;
+    background-color: #f9fafc;
+  }
 }
 </style>

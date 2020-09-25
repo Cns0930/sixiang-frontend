@@ -25,7 +25,7 @@
             </el-table-column>
         </el-table>
             <!--添加字段-->
-        <el-dialog title="上传word类型文件" :visible.sync="addWordDialogVisible" width="50%" :close-on-click-modal="false">
+        <el-dialog title="上传word类型文件" :visible.sync="addWordDialogVisible" width="50%" :close-on-click-modal="false" v-if="activeName === 'word'">
 
             <el-form label-width="80px" :model="addFormWord">
                 <el-form-item label="备注">
@@ -72,7 +72,7 @@
             </el-table-column>
         </el-table>
             <!--添加字段-->
-        <el-dialog title="上传other类型文件" :visible.sync="addOtherDialogVisible" width="50%" :close-on-click-modal="false">
+        <el-dialog title="上传other类型文件" :visible.sync="addOtherDialogVisible" width="50%" :close-on-click-modal="false" v-if="activeName === 'other'">
             <el-form label-width="80px" :model="addFormWord">
                 <el-form-item label="备注">
                     <el-input v-model="addFormWord.notes"></el-input>
@@ -185,6 +185,7 @@ export default {
                 type: null,
                 operateUser: null,
             };
+            this.$refs.upload.clearFiles();
         },
         // 上传文件
         customUpload(file) {
@@ -194,7 +195,8 @@ export default {
             fd.append("notes", this.addFormWord.notes)
             fd.append("type", this.activeName)
             fd.append("operateUser", localStorage.getItem("username"))
-            console.log(fd)
+            console.log('fd');
+            console.log(fd);
             axios.post(
                 this.url,
                 fd
@@ -206,6 +208,7 @@ export default {
                         if (res.data.data === 'SUCCESS') {
                             this.$message.success('上传成功');
                             this.reloadTable();
+                            this.$refs.upload.clearFiles();
                             this.addWordDialogVisible = false;
                             this.addOtherDialogVisible = false
                         } else {
@@ -234,7 +237,7 @@ export default {
             this.$message.warning(`只能选择上传 1 个文件`);
         },
         //  移除文件
-        handleRemove(res, file, fileList) {
+        handleRemove(file, fileList) {
         },
 
         // 进行下载

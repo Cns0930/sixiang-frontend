@@ -23,3 +23,11 @@ export const listFieldUnionMaterial = params => { return axios.get(`/ss/field/li
 
 // 查询事项下所有字段 带材料名
 export const listMaterialFieldLayer = params => { return axios.get(`/ss/field/listMaterialFieldLayer`, {params}).then(res=>res.data); };
+// 查询所有材料
+export const listAllMaterial = params => { return axios.get(`/ss/material/listMaterial`, {params}).then(res=>res.data); };
+
+// 导入字段
+export const importfields = params => { return axios.get(`/ss/field/copyField`, {params}).then(res=>res.data); };
+
+// 查询某一材料下的字段
+export const lookfields = params => { return axios.get(`/ss/field/listFieldAllByMaterial`, {params}).then(res=>res.data); };
