@@ -150,7 +150,7 @@
                             <a class="text-normal">
                                 <el-pagination @size-change="handleSizeChangeSelect" @current-change="handleCurrentChangeSelect"
                                             :current-page="currentPageSelect" :total="totalAim"
-                                            :page-sizes="10" :page-size="pageSize"
+                                            :page-size="pageSize"
                                             layout="prev, pager, next"/>
                             </a>
                             </div> </el-select>
@@ -209,6 +209,7 @@ export default {
             valueM: "",
             timeRange: [],
             tableData: [],
+            totalAim: 0,
             multipleSelection: [],
         };
     },
