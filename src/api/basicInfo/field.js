@@ -20,3 +20,6 @@ export const getAllByApprovalItemId = params => { return axios.get(`/ss/material
 
 // 查询所有字段(包括材料名)-分页
 export const listFieldUnionMaterial = params => { return axios.get(`/ss/field/listFieldUnionMaterial`, {params}).then(res=>res.data); };
+
+// 查询事项下所有字段 带材料名
+export const listMaterialFieldLayer = params => { return axios.get(`/ss/field/listMaterialFieldLayer`, {params}).then(res=>res.data); };
