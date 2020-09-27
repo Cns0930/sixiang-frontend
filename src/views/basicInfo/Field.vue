@@ -323,6 +323,10 @@ export default {
             this.importRequest.approvalItemId = this.itemId;
             this.importRequest.materialId = row.materialId;
             if (row.isRelevance) {
+                if (row.aimsMaterialId === null) {
+                    this.$message({ type: "warning", message: "请选择要导入的材料" });
+                    return;
+                }
                 this.importRequest.aimsMaterialId = row.aimsMaterialId;
             }
             let result = await importfields(this.importRequest);
