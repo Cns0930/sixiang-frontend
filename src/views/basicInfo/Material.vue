@@ -7,8 +7,8 @@
                 <el-button @click="materialSearch()">搜索</el-button>
                 <div class="handle">
                     <el-button type="primary" @click="materialVisible({})">新建材料</el-button>
-                    <el-button type="primary">导出</el-button>
-                    <el-button type="primary" @click="handleImport()">导入</el-button>
+                    <!-- <el-button type="primary">导出</el-button> -->
+                    <el-button type="primary" @click="handleImport()">导入材料</el-button>
                 </div>
             </div>
             <div class="tableWrap">
@@ -163,7 +163,7 @@
                 </el-table-column>
             </el-table> 
 
-            <p>已选中{{temp_selected_fields.length}}个字段</p>
+            <p>已选中{{temp_selected_fields.length}}个材料</p>
             <el-button type="primary" @click="importSubApproval">确认导入</el-button>
             <el-button type="text" @click="clearSelected">清除所有选择</el-button>
             <el-button @click="importDialogVisible = false">取 消</el-button>

@@ -47,8 +47,8 @@
                 <el-button @click="searchItem">搜索</el-button>
                 <div class="handle">
                     <el-button type="primary" @click="handleClickAdd">新增</el-button>
-                    <el-button type="primary">导出</el-button>
-                    <el-button type="primary">导入</el-button>
+                    <!-- <el-button type="primary">导出</el-button>
+                    <el-button type="primary">导入</el-button> -->
                 </div>
             </div>
             <div class="tableWrap">
@@ -71,7 +71,7 @@
                         show-overflow-tooltip
                     ></el-table-column>
                     <el-table-column prop="itemNo" label="事项编号" width="100" show-overflow-tooltip></el-table-column>
-                    <el-table-column label="事项名称" width="160">
+                    <el-table-column label="事项名称" width="200">
                         <template slot-scope="scope">
                         <el-button
                             @click="handleClickItem(scope.row)"
@@ -106,12 +106,8 @@
                     ></el-table-column>
                     <el-table-column label="操作" fixed="right">
                         <template slot-scope="scope">
+                            <el-button size="mini" type="primary" @click="handleClickItem(scope.row)">管理详情</el-button>
                             <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-                            <el-button
-                                size="mini"
-                                type="danger"
-                                @click="handleDelete(scope.$index, scope.row)"
-                            >审核</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
