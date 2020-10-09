@@ -63,7 +63,7 @@
                 >
                     <el-table-column label="序号" type="index" width="45" :index="indexMethod"></el-table-column>
                     <el-table-column prop="projectName" label="项目" sortable width="80"></el-table-column>
-                    <el-table-column prop="approvalName" label="大项" sortable width="80"></el-table-column>
+                    <el-table-column prop="approvalName" label="大项" show-overflow-tooltip sortable width="80"></el-table-column>
                     <el-table-column
                         prop="itemInternalNo"
                         label="内部事项编号"
