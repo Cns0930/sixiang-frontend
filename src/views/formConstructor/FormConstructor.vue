@@ -667,6 +667,18 @@ export default {
         },
         // 单个保存 属于调研的不用传
         async handleSaveField(v) {
+            //情形默认选中则添加value
+            if(v.type && v.type === "qingxingCheckbox") {
+                v.componentDefs.options.value.forEach(m => {
+                    if(m.chosen) {
+                        if(!v.componentDefs.value.value.includes(m.value)) {
+                            v.componentDefs.value.value.push(m.value)
+                        }
+                    } else {
+                        v.componentDefs.value.value = v.componentDefs.value.value.filter(v => v != m.value)
+                    }
+                })
+            }
             let param = {
                 id: v.id,
                 fieldNo: v.fieldNo,

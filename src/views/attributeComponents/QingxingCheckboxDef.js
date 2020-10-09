@@ -10,6 +10,8 @@ let ListInput = {
         let  scopedSlotsValue ={default:(scope)=><el-input vModel={scope.row.value} style="width:100%"></el-input>}
         let scopedSlotsCode ={default:(scope)=><el-input vModel={scope.row.code} style="width:100%"></el-input>}
         let scopedSlotsDisabled ={default:(scope)=><el-checkbox vModel={scope.row.disabled} ></el-checkbox>}
+        let scopedSlotsHidden ={default:(scope)=><el-checkbox vModel={scope.row.hidden} ></el-checkbox>}
+        let scopedSlotsChosen ={default:(scope)=><el-checkbox vModel={scope.row.chosen} ></el-checkbox>}
         let scopedSlotOp ={default:(scope)=><div>
             <el-button onclick={() => { this.value.splice(scope.$index + 1, 0, {label:"",value:"",code:"",disabled:false}) }}>添加</el-button>
             <el-button onClick={() => { this.value.splice(scope.$index, 1) }}>删除</el-button>
@@ -20,6 +22,8 @@ let ListInput = {
                 
                 <el-table-column prop="code" label="情形编号" scopedSlots={scopedSlotsCode}> </el-table-column>
                 <el-table-column prop="disabled" label="是否禁用" scopedSlots={scopedSlotsDisabled}> </el-table-column>
+                <el-table-column prop="hidden" label="是否默认隐藏" scopedSlots={scopedSlotsHidden}> </el-table-column>
+                <el-table-column prop="chosen" label="是否默认选中" scopedSlots={scopedSlotsChosen}> </el-table-column>
                 <el-table-column  label="操作" scopedSlots={scopedSlotOp}> </el-table-column>
             </ElTable>
     }
@@ -30,7 +34,7 @@ class QingxingCheckboxDef extends CommonComponents{
         super({type:"qingxingCheckbox"})
 
         // this.options = new Renderer("InputArray",[""],{})
-        this.options = new Renderer(ListInput,[{label:"xxxx",value:"",code:"",disabled:false,}],{})
+        this.options = new Renderer(ListInput,[{label:"xxxx",value:"",code:"",hidden: false,disabled:false,}],{})
 
         this.component = rendererBuilder("text","ElCheckboxC")
 

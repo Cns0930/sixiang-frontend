@@ -321,6 +321,20 @@
     }
 }
 
+// 未确认的字体颜色
+.el-form-item {
+
+
+    .default-text-color {
+        .el-input__inner {
+            color: #85A0C0;
+        }
+
+        .el-textarea__inner {
+            color: #85A0C0;
+        }
+    }
+}
 
 //  全局 element css 改写
 .select-form {
@@ -336,6 +350,15 @@
     .el-form-item__content {
         line-height: 58px;
     }
+}
+//input  disable 的背景
+
+.el-input.is-disabled .el-input__inner {
+    background-color: rgba(43, 67, 108, 1);
+    border-color: rgba(212, 215, 224, 1);
+    color: rgba(122, 152, 203, 1);
+    ;
+
 }
 
 .el-form-item__label {

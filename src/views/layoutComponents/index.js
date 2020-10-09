@@ -45,6 +45,24 @@ let ElRadioC = {
     }
 }
 
+// 单个checkbox
+let ElSingleCheckboxC = {
+    name: "ElSingleCheckboxC",
+    props: ["options", "value",'label'],
+
+    render() {
+        return <span>
+            {
+                this.options.map(option =>
+                    <el-checkbox value={this.value} onInput={(e) => this.$emit("input", e)} label={option}></el-checkbox>
+                )
+            }
+
+        </span>
+
+    }
+}
+
 // 情形 checkbox
 let ElCheckboxC = {
     name:"ElCheckboxC",
@@ -59,7 +77,7 @@ let ElCheckboxC = {
                 {
                     options.map(option=> 
                     <el-col span={colSpan} >
-                        <el-checkbox label={option.value}  disabled={option.disabled}>{option.label}</el-checkbox>
+                        <el-checkbox label={option.value} vShow={!option.hidden} disabled={option.disabled}>{option.label}</el-checkbox>
                     </el-col>
                     )
                 }
@@ -84,6 +102,7 @@ export default {
     InputList,
     Collection,
     GudongCommon,
+    ElSingleCheckboxC,
     TextInputLike,
     Chuzifangshi,
     Jingyingfanwei,
