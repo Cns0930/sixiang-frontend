@@ -106,8 +106,9 @@
                     ></el-table-column>
                     <el-table-column label="操作" fixed="right">
                         <template slot-scope="scope">
-                            <el-button size="mini" type="primary" @click="handleClickItem(scope.row)">管理详情</el-button>
+                            <el-button size="mini" @click="handleClickItem(scope.row)">管理详情</el-button>
                             <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                            <el-button size="mini" type="danger" @click="handleClose(scope.row)">关闭</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -236,6 +237,7 @@ import {
     addApprovalItem,
     updateApprovalItem,
     getByApprovalItemId,
+    shutApprovalItem,
 } from "../../api/basicInfo/approval";
 
 export default {
@@ -338,6 +340,17 @@ export default {
                 path: "/basic/subitem",
                 query: { itemId: item.approvalItemId },
             });
+        },
+        async handleClose(item){
+            try {
+                await this.$confirm("是否关闭项目", "确认关闭",);
+                let result = await shutApprovalItem({ approvalItemId: item.approvalItemId });
+                if (!result.success) return;
+                await this.list();
+                this.$message({ type: "success", message: "关闭成功" })
+            } catch (e) {
+                this.$message({ type: "warning", message: "取消关闭" })
+            }
         },
         async handleCurrentChange(){
             this.list();
