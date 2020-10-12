@@ -31,7 +31,7 @@
 
             <el-form label-width="80px" :model="addForm">
                 <el-form-item label="材料名称" prop="materialName">
-                    <el-select v-model="addForm.materialW" clearable placeholder="请选择材料名称">
+                    <el-select v-model="addForm.materialW" clearable placeholder="请选择材料名称" @focus="changeMaterialValue">
                         <el-option v-for="(v,i) in typeMaterialOptions" :key="i" :label="v.materialName" :value="v.materialId"> </el-option>
                     </el-select>
                 </el-form-item>
@@ -244,6 +244,14 @@ export default {
             let result = await getAllByApprovalItemId({ approvalItemId: this.itemId });
             if (!result.success) return;
             this.typeMaterialOptions = result.data;
+        },
+        // 添加字段的导入材料字段
+        changeMaterialValue(){
+            this.typeMaterialOptions.forEach(v =>{
+                if(v.materialName === null){
+                    v.materialName = v.docxTemplateName;
+                }
+            })
         },
         // 添加
         async addField() {
