@@ -33,6 +33,7 @@
                     v-model="filterKeyword"
                     clearable
                     style="width: 200px;"
+                    @change="searchItem"
                 ></el-input>
                 <el-date-picker
                     v-model="timeRange"
