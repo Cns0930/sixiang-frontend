@@ -782,13 +782,13 @@ export default {
             this.dialogSelectVisible = true;
         },
         searchField(){
-            this.currentPage = 1;
+            this.searchCurrentPage = 1;
             this.loadSearch();
         },
         //分页切换
         tablePageChange(n) {
-            if (this.currentPage != n) {
-                this.currentPage = n;
+            if (this.searchCurrentPage != n) {
+                this.searchCurrentPage = n;
             }
             this.loadSearch();
         },
@@ -797,7 +797,7 @@ export default {
             let result = await searchFields(params);
             if(result.success){
                 // 页码
-                this.searchToal = result.data.total
+                this.searchTotal = result.data.total
                 this.searchResult = result.data.records;
             }else{
                 this.$message({ type: "error", message: "查询出错"});
