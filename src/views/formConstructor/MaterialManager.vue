@@ -260,7 +260,8 @@ export default {
                         script: detail.script,
                         sid: this.$store.state.home.item.itemNo,
                         padding: detail.isTable == 1 ? "table" : "text",
-                        htmlPath: '/' + this.$store.state.home.item.itemNo + '/' + v.template.docxTemplateName + "_page" + detail.pageNum + ".html"
+                        htmlPath: '/' + this.$store.state.home.item.itemNo + '/' + v.template.docxTemplateName + "_page" + detail.pageNum + ".html",
+                        html: detail.htmlContent,
                     }
                     console.log(para)
                     let result2 = await axios.post(serviceBaseUrl + "/api/sixiang/saveHtml", para).then(res => res.data);
