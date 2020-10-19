@@ -24,14 +24,14 @@
                 :total="total"></el-pagination>
         </div>
         <div class="right-bar">
-            <el-button @click="$router.push({path:'/formconstructor', query:{'itemId':$route.query.itemId}})">-> 前端字段页 (帮办工具模块)</el-button>
+            <el-button class="button" size="medium" @click="goFormconstructor" round>前端字段管理<i class="el-icon-edit"></i>帮办工具模块<i class="el-icon-right el-icon--right"></i></el-button>
         </div>
         <!--添加字段-->
         <el-dialog title="添加材料字段" :visible.sync="addDialogVisible" width="50%" :close-on-click-modal="false">
 
             <el-form label-width="80px" :model="addForm">
                 <el-form-item label="材料名称" prop="materialName">
-                    <el-select v-model="addForm.materialW" clearable placeholder="请选择材料名称">
+                    <el-select v-model="addForm.materialW" clearable placeholder="请选择材料名称" @focus="changeMaterialValue">
                         <el-option v-for="(v,i) in typeMaterialOptions" :key="i" :label="v.materialName" :value="v.materialId"> </el-option>
                     </el-select>
                 </el-form-item>
@@ -245,6 +245,14 @@ export default {
             if (!result.success) return;
             this.typeMaterialOptions = result.data;
         },
+        // 添加字段的导入材料字段
+        changeMaterialValue(){
+            this.typeMaterialOptions.forEach(v =>{
+                if(v.materialName === null){
+                    v.materialName = v.docxTemplateName;
+                }
+            })
+        },
         // 添加
         async addField() {
             let result = await addField({
@@ -372,6 +380,12 @@ export default {
             }
             this.lookFieldsData.push(fieldData);
             this.lookFieldsDialogVisible = true;
+        },
+        // 跳转到帮办工具模块并打开新标签页
+        goFormconstructor() {
+            let routeUrl = this.$router.resolve({ name: "FormConstructor", query:{'itemId': this.$route.query.itemId }});
+            window.open(routeUrl.href, '_blank');
+            // this.$router.push({ name: "FormConstructor", query:{'itemId': this.$route.query.itemId }});
         }
     }
 };
@@ -420,6 +434,15 @@ export default {
   .row-bg {
     padding: 10px 0;
     background-color: #f9fafc;
+  }
+  .right-bar {
+      .button {
+        //   width: 60px;
+        //   height: 20px;
+        font-size: 18px;
+        font-weight: 600;
+        font-family:  Tahoma,Helvetica,"Arial","Microsoft YaHei", "宋体",sans-serif;
+      }
   }
 }
 </style>

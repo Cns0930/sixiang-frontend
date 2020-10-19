@@ -33,6 +33,7 @@
                     v-model="filterKeyword"
                     clearable
                     style="width: 200px;"
+                    @change="searchItem"
                 ></el-input>
                 <el-date-picker
                     v-model="timeRange"
@@ -63,7 +64,7 @@
                 >
                     <el-table-column label="序号" type="index" width="45" :index="indexMethod"></el-table-column>
                     <el-table-column prop="projectName" label="项目" sortable width="80"></el-table-column>
-                    <el-table-column prop="approvalName" label="大项" sortable width="80"></el-table-column>
+                    <el-table-column prop="approvalName" label="大项" show-overflow-tooltip sortable width="80"></el-table-column>
                     <el-table-column
                         prop="itemInternalNo"
                         label="内部事项编号"
@@ -106,8 +107,9 @@
                     ></el-table-column>
                     <el-table-column label="操作" fixed="right">
                         <template slot-scope="scope">
-                            <el-button size="mini" type="primary" @click="handleClickItem(scope.row)">管理详情</el-button>
+                            <el-button size="mini" @click="handleClickItem(scope.row)">管理详情</el-button>
                             <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                            <el-button size="mini" type="danger" @click="handleClose(scope.row)">关闭</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -236,6 +238,7 @@ import {
     addApprovalItem,
     updateApprovalItem,
     getByApprovalItemId,
+    shutApprovalItem,
 } from "../../api/basicInfo/approval";
 
 export default {
@@ -338,6 +341,17 @@ export default {
                 path: "/basic/subitem",
                 query: { itemId: item.approvalItemId },
             });
+        },
+        async handleClose(item){
+            try {
+                await this.$confirm("是否关闭项目", "确认关闭",);
+                let result = await shutApprovalItem({ approvalItemId: item.approvalItemId });
+                if (!result.success) return;
+                await this.list();
+                this.$message({ type: "success", message: "关闭成功" })
+            } catch (e) {
+                this.$message({ type: "warning", message: "取消关闭" })
+            }
         },
         async handleCurrentChange(){
             this.list();

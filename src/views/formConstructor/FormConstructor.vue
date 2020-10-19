@@ -667,6 +667,18 @@ export default {
         },
         // 单个保存 属于调研的不用传
         async handleSaveField(v) {
+            //情形默认选中则添加value
+            if(v.type && v.type === "qingxingCheckbox") {
+                v.componentDefs.options.value.forEach(m => {
+                    if(m.chosen) {
+                        if(!v.componentDefs.value.value.includes(m.value)) {
+                            v.componentDefs.value.value.push(m.value)
+                        }
+                    } else {
+                        v.componentDefs.value.value = v.componentDefs.value.value.filter(v => v != m.value)
+                    }
+                })
+            }
             let param = {
                 id: v.id,
                 fieldNo: v.fieldNo,
@@ -770,13 +782,13 @@ export default {
             this.dialogSelectVisible = true;
         },
         searchField(){
-            this.currentPage = 1;
+            this.searchCurrentPage = 1;
             this.loadSearch();
         },
         //分页切换
         tablePageChange(n) {
-            if (this.currentPage != n) {
-                this.currentPage = n;
+            if (this.searchCurrentPage != n) {
+                this.searchCurrentPage = n;
             }
             this.loadSearch();
         },
@@ -785,7 +797,7 @@ export default {
             let result = await searchFields(params);
             if(result.success){
                 // 页码
-                this.searchToal = result.data.total
+                this.searchTotal = result.data.total
                 this.searchResult = result.data.records;
             }else{
                 this.$message({ type: "error", message: "查询出错"});

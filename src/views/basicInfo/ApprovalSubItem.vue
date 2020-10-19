@@ -8,8 +8,8 @@
             <el-table-column prop="approvalSubitem.aliasName" label="别名"></el-table-column>
             <el-table-column prop="material.materialName" label="所需材料" :formatter="formatterMaterial"></el-table-column>
             <el-table-column prop="approvalSubitem.note" label="备注"></el-table-column>
-            <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter"></el-table-column>
-            <el-table-column prop="updateTime" label="更新时间" :formatter="timeFormatter"></el-table-column>
+            <el-table-column prop="approvalSubitem.createTime" label="创建时间" :formatter="timeFormatter"></el-table-column>
+            <el-table-column prop="approvalSubitem.updateTime" label="更新时间" :formatter="timeFormatter"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
                     <el-button-group>

@@ -168,12 +168,7 @@ export default {
             this.tableDataOther = res.data;
         },
         fileNameFormatter(row, column, cellValue, index) {
-            let location = 0
-            for (let i = 0; i < cellValue.length; i++) {
-                if (cellValue[i] === '\\') {
-                    location = i;
-                }
-            }
+            let location = cellValue.lastIndexOf("\/");
             return cellValue.substring(location + 1);
         },
         // 切换标签

@@ -131,7 +131,10 @@ export default {
     },
     created() {
         this.idPositive= this.value.idPositive;
-        this.idNagetive = this.value.idNagetive
+        this.idNagetive = this.value.idNagetive;
+        this.recogniseName=this.value.name;
+        this.recogniseIdNum=this.value.code;
+        this.address=this.value.address;
     },
    
     methods: {

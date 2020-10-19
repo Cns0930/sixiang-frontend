@@ -27,6 +27,7 @@ let state = {
     docIndex:0,
     hasQueryDefaultInfo:false,
     hasJingbanrenInfo:false,
+    qingxingSpecial: {}//存放情形option中特殊显示隐藏的数据
 }
 
 

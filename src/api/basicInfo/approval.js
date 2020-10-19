@@ -23,3 +23,6 @@ export const getByApprovalItemId = params => { return axios.get(`/ss/approvalIte
 
 // 导入情形 
 export const copyApprovalSub = params => { return axios.get(`/ss/approvalSub/copyApprovalSub`, {params}).then(res=>res.data); };
+
+// 关闭事项
+export const shutApprovalItem = params => { return axios.get(`/ss/approvalItem/shutApprovalItem`, {params}).then(res=>res.data); };

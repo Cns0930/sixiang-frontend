@@ -10,6 +10,7 @@
                 v-model="filterKeyword"
                 clearable
                 style="width: 280px;"
+                @change="filterDate"
             ></el-input>
 
             <div class="time-filter" style="width: 100%;margin-left: 40px;">

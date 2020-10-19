@@ -315,8 +315,9 @@ export default {
                 sid: this.$store.state.home.item.itemNo,
                 padding: this.temp_page.isTable == 1? "table": "text",
                 // TODO: 拼接htmlPath: /sid/fileName_"page"pageNum.html
-                htmlPath: '/'+ this.$store.state.home.item.itemNo + '/' + this.templates.template.docxTemplateName +"_page" + this.currentPagenum + ".html"
+                htmlPath: '/'+ this.$store.state.home.item.itemNo + '/' + this.templates.template.docxTemplateName +"_page" + this.currentPagenum + ".html",
                 // documentSeq: this.templates.template.documentSeq // 不需要传
+                html: this.temp_page.htmlContent,
             }
             console.log(params)
             let result = await axios.post(serviceBaseUrl+"/api/sixiang/saveHtml", params).then(res => res.data);

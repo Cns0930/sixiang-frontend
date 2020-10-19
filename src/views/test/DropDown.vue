@@ -1,11 +1,13 @@
 <template>
      <el-dropdown  @command="handleAddCondition" trigger="click">
           <span class="el-dropdown-link" style="pointer:cursor">
-        <i class="el-icon-plus el-icon--right"></i>
+        <i class="el-icon-arrow-down el-icon--right"></i>
       </span>
             <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item command="condition">添加条件</el-dropdown-item>
-                <el-dropdown-item command="action">添加行为</el-dropdown-item>
+                <!-- <el-dropdown-item command="subCondition">添加子条件</el-dropdown-item> -->
+                <!-- <el-dropdown-item command="action">添加行为</el-dropdown-item> -->
+                <el-dropdown-item command="delete">删除</el-dropdown-item>
             </el-dropdown-menu>
         </el-dropdown>
 </template>
@@ -19,8 +21,12 @@ export default {
             if(v =="condition"){
                 this.$emit("addCondition");
 
-            }else{
+            }else if (v== "subCondition"){
+                this.$emit("addSubCondition")
+            }else if(v=="action"){
                 this.$emit("addAction")
+            }else if(v=="delete"){
+                this.$emit("doDelete")
             }
         }
     }
