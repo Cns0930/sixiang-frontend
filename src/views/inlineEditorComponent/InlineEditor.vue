@@ -468,10 +468,15 @@ export default {
         setHtmlToEditor() {
             let html = this.monacoEditor.getValue();
             let template = Handlebars.compile(html);
-            this.initRender();
             console.log(this.renderjson);
-            let result = template(this.renderjson);
-            this.editor.data.set({ [this.page]: result });
+            try{
+                let result = template(this.renderjson);
+                this.editor.data.set({ [this.page]: result });
+            }catch(e){
+                console.warn("编译错误",e)
+                this.editor.data.set({ [this.page]: html });
+            }
+            
         },
         async savePage() {
             const html = this.monacoEditor.getValue();
