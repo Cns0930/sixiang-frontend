@@ -30,8 +30,8 @@ import CustomComponents from "@/views/layoutComponents/index"
 Object.keys(CustomComponents).forEach(name=>{
     Vue.component(name,CustomComponents[name])
 })
-import Interface from "./views/test/Interface.vue"
-Vue.component("Interface",Interface)
+// import Interface from "./views/test/Interface.vue"
+// Vue.component("Interface",Interface)
 
 //所有未登录会话重定向到 /login
 router.beforeEach((to, from, next) => {

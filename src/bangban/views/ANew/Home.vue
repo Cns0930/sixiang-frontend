@@ -77,9 +77,11 @@ import store from "@/vuex/store"
 import { functionReviverRuntime, functionReviverEventRuntime, convertDefToConfigEventRuntime } from "@/views/formConstructor/util"
 import { deserializeTableData } from "@/views/attributeComponents/index";
 
+import CommonForm from "./components/CommonForm"
 export default {
     name: "Home",
     mixins: [CommonMixin, initMixin],
+    
     provide() {
         return {
             $itemState: () => {
@@ -111,7 +113,7 @@ export default {
             barcode: "",
         }
     },
-    components: { LeftSteper, ApprovalSelectContent, MaterialExtract, FormPage, IdCardInfo, CommonMaterial, BaseFormPage, BusinessFormPage, ContentCard },
+    components: { LeftSteper, ApprovalSelectContent, MaterialExtract, FormPage, IdCardInfo, CommonMaterial, BaseFormPage, BusinessFormPage, ContentCard,CommonForm },
     computed: {
 
         // ...mapGetters(['sid', "item_code"]),

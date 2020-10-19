@@ -302,7 +302,7 @@ export default {
 
 
                     this.doc.forEach((v, i) => {
-                        editor.data.set({ [i]: v.html })
+                        editor.data.set({ [i]: v.htmlContent })
                     })
                     document.querySelector(".material-mask").style.display = "none";
 

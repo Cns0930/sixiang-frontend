@@ -50,6 +50,8 @@
                             表格添加</el-radio>
                         <el-radio v-model="temp_page.stepObject.configType" :label="2" @change="handleSwitchConfigType">
                             逻辑添加</el-radio>
+                        <el-radio v-model="temp_page.stepObject.configType" :label="3" @change="handleSwitchConfigType">
+                            UI交互添加</el-radio>
                     </div>
                     <div v-if="temp_page.stepObject.configType ==1">
                         <!-- config 配置 字段 或者 材料 -->
@@ -85,9 +87,12 @@
                             </el-table>
                         </div>
                     </div>
-                    <div v-else>
+                    <div v-else-if="temp_page.stepObject.configType ==2">
 
                         <div ref="configEdit" style="width:100%;height:300px"></div>
+                    </div>
+                    <div v-else>
+                        <UiCompilerComponent></UiCompilerComponent>
                     </div>
                 </div>
                 <el-divider></el-divider>
@@ -202,8 +207,12 @@ import {
 } from "../attributeComponents/index";
 import {convertDefToConfigBundle,functionReviverBundle} from "./util"
 import axios from 'axios';
+import UiCompilerComponent from "@/views/uiCompilerComponent/Index"
+
+
 export default {
     name: "PageConfigure",
+    components:{UiCompilerComponent},
     data() {
         return {
             // 创建页面用

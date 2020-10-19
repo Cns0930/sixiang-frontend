@@ -14,7 +14,7 @@ import Run from "@/views/formConstructor/Run"
 import ItemManager from "@/views/formConstructor/ItemManager"
 import Login from "@/views/login/Login"
 import Setting from "@/views/setting/Setting"
-import Test from "@/views/test/Test"
+import UiCompilerComponent from "@/views/uiCompilerComponent/Index"
 Vue.use(VueRouter)
 import store from "@/vuex/store"
 import bangbanAxios from "@/api/ANew/config"
@@ -107,7 +107,7 @@ const routes = [
     {
         path: '/test',
         name: 'test',
-        component: Test
+        component: UiCompilerComponent
     },
 
 
