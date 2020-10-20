@@ -148,7 +148,7 @@ export default {
             selectOnLineNumbers: true,
             roundedSelection: false,
             cursorStyle: "line", // 光标样式
-            automaticLayout: true, // 自动布局
+            automaticLayout: false, // 自动布局
             glyphMargin: true, // 字形边缘
             useTabStops: false,
             fontSize: 16, // 字体大小
