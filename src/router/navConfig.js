@@ -33,14 +33,14 @@ const originList = [
     },
     {
         path: "/basic",
-        label: "基础信息管理",
+        label: "调研信息管理",
         authKey: ["admin","developer","researcher","test"],
         iconImg: product,
         activeImg: act_product,
         children: [
             {
                 path: '/basic',
-                label: '基础信息',
+                label: '调研信息',
             }
         ],
         order: 1
