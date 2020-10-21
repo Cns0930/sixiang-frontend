@@ -46,7 +46,7 @@
                     ></el-table-column>
                     <el-table-column prop="materialId" label="事项(小项)办事材料编号" width="100" show-overflow-tooltip></el-table-column>-->
                     <el-table-column prop="materialCode" label="材料编码" width="100" show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="materialName" label="材料名称" width="160"></el-table-column>
+                    <el-table-column prop="materialName" label="材料名称" ></el-table-column>
                     <el-table-column prop="materialStatus" label="材料状态" width="80"></el-table-column>
                     <el-table-column prop="documentSeq" label="文档编号" width="80"></el-table-column>
                     <el-table-column
@@ -55,26 +55,26 @@
                         width="100"
                         show-overflow-tooltip
                     ></el-table-column>
-                    <el-table-column prop="docxTemplateName" label="超级帮办word模板命名" width="160"></el-table-column>
-                    <el-table-column prop="descriptionInfo" label="其他说明信息（调研填写）" sortable width="80"></el-table-column>
+                    <el-table-column prop="docxTemplateName" label="超级帮办word模板命名" width="200"></el-table-column>
+                    <el-table-column prop="descriptionInfo" label="其他说明信息（调研填写）" sortable ></el-table-column>
                     <el-table-column
                         prop="createTime"
                         label="创建时间"
                         :formatter="timeFormatter"
                         sortable
-                        width="140"
+                        width="160"
                     ></el-table-column>
                     <el-table-column
                         prop="updateTime"
                         label="最后修改时间"
-                        width="140"
+                        width="160"
                         :formatter="timeFormatter"
                         sortable
                         show-overflow-tooltip
                     ></el-table-column>
-                    <el-table-column label="操作" fixed="right">
+                    <el-table-column label="操作" fixed="right" width="200">
                         <template slot-scope="scope">
-                            <el-button size="mini" @click="materialVisible(scope.row)">编辑</el-button>
+                            <el-button size="mini" @click="EditmaterialVisible(scope.row)">编辑</el-button>
                             <el-button
                                 size="mini"
                                 type="danger"
@@ -111,23 +111,33 @@
             }" @input="inputs"></component>-->
         </section>
         <!-- 创建模板弹窗 -->
-        <el-dialog title="材料信息填写" :visible.sync="materialWriteVisible" width="50%" :close-on-click-modal="false">
-            <el-form>
+        <el-dialog title="新建材料信息" :visible.sync="materialWriteVisible" width="40%" :close-on-click-modal="false">
+            <el-form :model="materialT" label-width="30%" class="demo-ruleForm">
                 <div>
-                    <el-form-item label="材料编码(必填)">:<el-input v-model="materialT.materialCode"></el-input></el-form-item>
-                    <el-form-item label="材料名称(必填)">:<el-input v-model="materialT.materialName"></el-input></el-form-item>
-                    <el-form-item label="市证照编码(必填)"> :<el-input v-model="materialT.catMainCode"></el-input></el-form-item>
-                <div> <el-form-item label="产生来源(必填)">
+                    <el-form-item label="材料名称"><el-input v-model="materialT.materialName"></el-input></el-form-item>
+                    <el-form-item label="模板名称(自取)"><el-input v-model="materialT.templateName"></el-input></el-form-item>
+                    <el-form-item label="超级帮办word模板名称"><el-input v-model="materialT.docxTemplateName" @blur="writeDocumentNumber"></el-input></el-form-item>
+                    <el-form-item label="文档序号"><el-input v-model="materialT.documentSeq"></el-input></el-form-item>
+                    <el-form-item label="是否显示在左侧导航">
+                        <el-select v-model="materialT.isNavigation">
+                            <el-option label="是" value="1"></el-option>
+                            <el-option label="否" value="0"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="导航顺序"><el-input v-model="materialT.navigationOrder" placeholder="请输入数字"></el-input></el-form-item>
+                    <el-form-item label="材料逻辑"><el-input  type="textarea"
+                        :rows="3" v-model="materialT.descriptionInfo"></el-input></el-form-item>
+                <div> <el-form-item label="产生方式">
                     <el-select v-model="materialT.produceSource" placeholder="材料的产生来源">
                         <el-option label="用户自带" value="用户自带"></el-option>
-                        <el-option label="当场制作" value="当场制作"></el-option>
+                        <el-option label="现场制作" value="当场制作"></el-option>
                     </el-select></el-form-item>
                 </div>
-
-                    <el-form-item label="超级帮办word模板名称(必填)">:<el-input v-model="materialT.docxTemplateName"></el-input></el-form-item>
-                    <el-form-item label="文档编号(必填)">:<el-input v-model="materialT.documentSeq"></el-input></el-form-item>
-                    <el-form-item label="排序(必填)">:<el-input v-model="materialT.sort"></el-input></el-form-item>
-                    <el-form-item label="备注">:<el-input v-model="materialT.note"></el-input></el-form-item>
+                    <br>
+                    <el-form-item label="材料编码"><el-input v-model="materialT.materialCode"></el-input></el-form-item>
+                    <el-form-item label="市证照编码"> <el-input v-model="materialT.catMainCode"></el-input></el-form-item>
+                    <el-form-item label="备注"><el-input v-model="materialT.note"></el-input></el-form-item>
+                    <el-form-item label="排序"><el-input v-model="materialT.sort"></el-input></el-form-item>
                 </div>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -136,7 +146,41 @@
             </span>
         </el-dialog>
         <!-- 编辑窗口 -->
-         <!-- 导入自选材料 -->
+        <el-dialog title="编辑材料信息" :visible.sync="editMaterialWriteVisible" width="40%" :close-on-click-modal="false">
+            <el-form :model="materialTEdit" label-width="30%" class="demo-ruleForm">
+                <div>
+                    <el-form-item label="材料名称"><el-input v-model="materialTEdit.materialName"></el-input></el-form-item>
+                    <el-form-item label="模板名称(自取)"><el-input v-model="materialTEdit.templateName"></el-input></el-form-item>
+                    <el-form-item label="超级帮办word模板名称"><el-input v-model="materialTEdit.docxTemplateName" @blur="writeDocumentNumber"></el-input></el-form-item>
+                    <el-form-item label="文档序号"><el-input v-model="materialTEdit.documentSeq"></el-input></el-form-item>
+                    <el-form-item label="是否显示在左侧导航">
+                        <el-select v-model="materialTEdit.isNavigation">
+                            <el-option label="是" value="1"></el-option>
+                            <el-option label="否" value="0"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="导航顺序"><el-input v-model="materialTEdit.navigationOrder" placeholder="请输入数字"></el-input></el-form-item>
+                    <el-form-item label="材料逻辑"><el-input  type="textarea"
+                        :rows="3" v-model="materialTEdit.descriptionInfo"></el-input></el-form-item>
+                <div> <el-form-item label="产生方式">
+                    <el-select v-model="materialTEdit.produceSource" placeholder="材料的产生来源">
+                        <el-option label="用户自带" value="用户自带"></el-option>
+                        <el-option label="现场制作" value="当场制作"></el-option>
+                    </el-select></el-form-item>
+                </div>
+                    <br>
+                    <el-form-item label="材料编码"><el-input v-model="materialTEdit.materialCode"></el-input></el-form-item>
+                    <el-form-item label="市证照编码"> <el-input v-model="materialTEdit.catMainCode"></el-input></el-form-item>
+                    <el-form-item label="备注"><el-input v-model="materialTEdit.note"></el-input></el-form-item>
+                    <el-form-item label="排序"><el-input v-model="materialTEdit.sort"></el-input></el-form-item>
+                </div>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="editMaterialWriteVisible = false">取 消</el-button>
+                <el-button type="primary" @click="editMaterial();editMaterialWriteVisible = false">确 定</el-button>
+            </span>
+        </el-dialog>
+        <!-- 导入自选材料 -->
         <el-dialog title="导入自选材料" :visible.sync="importDialogVisible" width="80%" :close-on-click-modal="false">
 
             <el-form label="事项名称">
@@ -177,7 +221,7 @@
 <script>
 import basicMixin from "./basicMixin";
 import Vue from "vue";
-import { listMaterial, addMaterial,delMaterial,updateMaterial,getByMaterialId,copySelectedMaterial,getAllByApprovalItemId } from "../../api/basicInfo/material";
+import { listMaterial, addMaterial,delMaterial, getTemplateByMaterialId,updateMaterial,getByMaterialId,copySelectedMaterial,getAllByApprovalItemId } from "../../api/basicInfo/material";
 import { listApprovalItem } from "@/api/basicInfo/approval";
 export default {
     name: "Material",
@@ -193,8 +237,14 @@ export default {
             //   }
             // },
             type: "material",
-            materialT: {},
+            materialT: {
+                documentSeq: '',
+            },
+            materialTEdit: {
+                documentSeq: '',
+            },
             materialWriteVisible: false,
+            editMaterialWriteVisible: false,
             currentPageSelect: 1,
             pageSize: 10,
             selectData: [],
@@ -302,6 +352,19 @@ export default {
             
             this.materialT = item;
             this.materialWriteVisible = true;
+            // this.materialT.documentSeq = '0';
+        },
+        async EditmaterialVisible(item) {
+            let id = item.materialId;
+            if(!id){
+                item = item;
+            }else{
+                item = await getByMaterialId({materialId: id});
+                item = item.data;
+            }
+            
+            this.materialTEdit = item;
+            this.editMaterialWriteVisible = true;
         },
         //导入材料
         async handleImport(){
@@ -391,20 +454,48 @@ export default {
             }
             
         },
+        // 编辑材料
+        async editMaterial() {
+            let res;
+            res = await updateMaterial(this.materialTEdit);
+            if (!res.success) return;
+
+            this.$message.success('编辑成功');
+            this.editMaterialWriteVisible = false;
+            // this.materialT_item_id = '';
+            await this.materialSearch(); 
+        },
         // 删除
         async handleDeleteMaterial(v) {
             let param = {
                 materialId: v.materialId
             };
             let id = v.materialId;
-            try{
-                await this.$confirm('此操作将永久删除该, 是否继续?', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-                })
-            }catch(e){
-                return;
+            console.log('param');
+            console.log(param);
+            let isRelevance = await getTemplateByMaterialId(param);
+            console.log('isRelevance');
+            console.log(isRelevance);
+            if (isRelevance.data) {
+                try{
+                    await this.$confirm('材料已关联超级帮办事项开发模板，是否确定要删除?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                    })
+                }catch(e){
+                    return;
+                }
+            } else {
+                try{
+                    await this.$confirm('此操作将永久删除该, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                    })
+                }catch(e){
+                    return;
+                }
             }
     
             let result = await delMaterial(param);
@@ -416,6 +507,20 @@ export default {
                 // await this.materialSearch();
             // }
         },
+        // 自动填写文档编号
+        writeDocumentNumber() {
+            if (this.materialT.docxTemplateName) {
+                let index = this.materialT.docxTemplateName.indexOf('_');
+                let DocumentNumber = this.materialT.docxTemplateName.slice(index + 1);
+                index = DocumentNumber.indexOf('_');
+                DocumentNumber = DocumentNumber.slice(0, index);
+                this.materialT.documentSeq = DocumentNumber;
+                console.log('DocumentNumber');
+                console.log(DocumentNumber);
+                console.log('materialT.documentSeq');
+                console.log(this.materialT.documentSeq);
+            }
+        }
     },
 };
 </script>

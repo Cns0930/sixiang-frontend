@@ -18,6 +18,9 @@ export const addMaterial = params => { return axios.post(`/ss/material/addMateri
 // 删除某一份材料信息
 export const delMaterial = params => { return axios.delete(`/ss/material/delMaterial`, {params}).then(res=>res.data); };
 
+// 查询单个材料关联的模板
+export const getTemplateByMaterialId = params => { return axios.get(`/ss/material/getTemplateByMaterialId?materialId=${params.materialId}`).then(res=>res.data); };
+
 //修改材料信息
 export const updateMaterial = params => { return axios.post(`/ss/material/updateMaterial`, params).then(res=>res.data); };
 
