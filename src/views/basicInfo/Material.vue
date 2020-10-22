@@ -6,7 +6,7 @@
                 <el-input placeholder="筛选材料名称或者材料编号" v-model="valueM" clearable style="width: 200px;"></el-input>
                 <el-button @click="materialSearch()">搜索</el-button>
                 <div class="handle">
-                    <el-button type="primary" @click="materialVisible({})">新建材料</el-button>
+                    <el-button type="primary" @click="materialVisible(materialInit)">新建材料</el-button>
                     <!-- <el-button type="primary">导出</el-button> -->
                     <el-button type="primary" @click="handleImport()">导入材料</el-button>
                 </div>
@@ -116,7 +116,7 @@
                 <div>
                     <el-form-item label="材料名称"><el-input v-model="materialT.materialName"></el-input></el-form-item>
                     <el-form-item label="模板名称(自取)"><el-input v-model="materialT.templateName"></el-input></el-form-item>
-                    <el-form-item label="超级帮办word模板名称"><el-input v-model="materialT.docxTemplateName" @blur="writeDocumentNumber"></el-input></el-form-item>
+                    <el-form-item label="超级帮办word模板名称"><el-input v-model="materialT.docxTemplateName" @blur="writeDocumentNumberAdd"></el-input></el-form-item>
                     <el-form-item label="文档序号"><el-input v-model="materialT.documentSeq"></el-input></el-form-item>
                     <el-form-item label="是否显示在左侧导航">
                         <el-select v-model="materialT.isNavigation">
@@ -151,7 +151,7 @@
                 <div>
                     <el-form-item label="材料名称"><el-input v-model="materialTEdit.materialName"></el-input></el-form-item>
                     <el-form-item label="模板名称(自取)"><el-input v-model="materialTEdit.templateName"></el-input></el-form-item>
-                    <el-form-item label="超级帮办word模板名称"><el-input v-model="materialTEdit.docxTemplateName" @blur="writeDocumentNumber"></el-input></el-form-item>
+                    <el-form-item label="超级帮办word模板名称"><el-input v-model="materialTEdit.docxTemplateName" @blur="writeDocumentNumberEdit"></el-input></el-form-item>
                     <el-form-item label="文档序号"><el-input v-model="materialTEdit.documentSeq"></el-input></el-form-item>
                     <el-form-item label="是否显示在左侧导航">
                         <el-select v-model="materialTEdit.isNavigation">
@@ -238,6 +238,9 @@ export default {
             // },
             type: "material",
             materialT: {
+                documentSeq: '',
+            },
+            materialInit: {
                 documentSeq: '',
             },
             materialTEdit: {
@@ -342,6 +345,8 @@ export default {
             
         },
         async materialVisible(item) {
+            console.log('item');
+            console.log(item);
             let id = item.materialId;
             if(!id){
                 item = item;
@@ -351,19 +356,17 @@ export default {
             }
             
             this.materialT = item;
+            console.log('this.materialT');
+            console.log(this.materialT);
             this.materialWriteVisible = true;
-            // this.materialT.documentSeq = '0';
         },
         async EditmaterialVisible(item) {
             let id = item.materialId;
-            if(!id){
-                item = item;
-            }else{
-                item = await getByMaterialId({materialId: id});
-                item = item.data;
-            }
-            
+            item = await getByMaterialId({materialId: id});
+            item = item.data;
             this.materialTEdit = item;
+            console.log('this.materialTEdit');
+            console.log(this.materialTEdit);
             this.editMaterialWriteVisible = true;
         },
         //导入材料
@@ -456,14 +459,19 @@ export default {
         },
         // 编辑材料
         async editMaterial() {
-            let res;
-            res = await updateMaterial(this.materialTEdit);
+            let res = await updateMaterial(this.materialTEdit);
             if (!res.success) return;
 
             this.$message.success('编辑成功');
             this.editMaterialWriteVisible = false;
             // this.materialT_item_id = '';
-            await this.materialSearch(); 
+            if(!this.materialTEdit.materialId){
+                await this.search();
+            }else{
+                this.materialT.approvalItemId = this.materialTEdit.approvalItemId;
+                this.materialT.materialStatus = this.materialTEdit.materialStatus;
+                await this.materialSearch();
+            }
         },
         // 删除
         async handleDeleteMaterial(v) {
@@ -508,7 +516,7 @@ export default {
             // }
         },
         // 自动填写文档编号
-        writeDocumentNumber() {
+        writeDocumentNumberAdd() {
             if (this.materialT.docxTemplateName) {
                 let index = this.materialT.docxTemplateName.indexOf('_');
                 console.log('index');
@@ -526,7 +534,22 @@ export default {
                 console.log('materialT.documentSeq');
                 console.log(this.materialT.documentSeq);
             }
-        }
+        },
+        writeDocumentNumberEdit() {
+            if (this.materialTEdit.docxTemplateName) {
+                let index = this.materialTEdit.docxTemplateName.indexOf('_');
+                // console.log('index');
+                // console.log(index);
+                if (index === -1) return;
+                let DocumentNumber = this.materialTEdit.docxTemplateName.slice(index + 1);
+                index = DocumentNumber.indexOf('_');
+                // console.log('index2');
+                // console.log(index);
+                if (index === -1) return;
+                DocumentNumber = DocumentNumber.slice(0, index);
+                this.materialTEdit.documentSeq = DocumentNumber;
+            }
+        },
     },
 };
 </script>
