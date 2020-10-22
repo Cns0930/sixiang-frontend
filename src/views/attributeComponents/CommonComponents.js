@@ -20,7 +20,7 @@ class CommonComponents {
         // this.required = new Renderer('ElSingleCheckboxC', true,{options:[true]})
         // 是否隐藏
         this.hidden = new Renderer('ElSingleCheckboxC', false,{options:[true]},"是否隐藏")
-       
+        this.labelWidth =  new Renderer('ElInput', '')
         // // 事件
         this.onchange = new Renderer("CodeEditor",`
         // value是组件改变后的值

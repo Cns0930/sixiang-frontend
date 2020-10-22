@@ -2,7 +2,7 @@
   <div>
       <el-col  v-for="(v,i) in computedFields" :span="v.span || 12" v-if="!v.hidden" :key="i">
 
-            <el-form-item :key="i" :label="v.label" :prop="v.ruleKey || ''" :obj="v" @itemValidated="handleItemValidated($event,v)" :siblings="fields" :parent="parent">
+            <el-form-item :key="i" :label="v.label" :label-width="v.label?_.isNil(v.labelWidth)? '200px':v.labelWidth:'50px'" :prop="v.ruleKey || ''" :obj="v" @itemValidated="handleItemValidated($event,v)" :siblings="fields" :parent="parent">
                 <component :is="v.component" v-model="v.value" v-bind="v.attributes" :siblings="fields" :parent="parent"
                     @change="v.onchange && v.onchange($event,itemState,itemGetters,fields,parent)"
                     @input="v.oninput && v.oninput($event,itemState,itemGetters,fields,parent)">

@@ -21,7 +21,8 @@
                                 <div class="row-editor" v-for="(page,index) in doc" :key="index">
                                    
                                     <div class="x mini-scroll"
-                                        :class="{'direction-row':page.orient === 'row','text-padding':!!page.padding,'table-padding':!page.padding} "
+                                    
+                                        :class="{'direction-row':page.orient === 'row','text-padding':page.isTable==0,'table-padding':page.isTable==1} "
                                         :key="page.name+index">
 
                                     </div>
