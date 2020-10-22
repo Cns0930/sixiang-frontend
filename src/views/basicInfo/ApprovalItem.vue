@@ -333,7 +333,7 @@ export default {
         },
         async searchItem() {
            this.currentPage = 1;
-           this.list();
+           await this.list();
         },
         handleClickItem(item){
             this.$store.commit("changeApprovalItem", item);
@@ -368,7 +368,7 @@ export default {
                 params.startTime = this.timeRange[0];
                 params.endTime = this.timeRange[1];
             }
-            this.search(params);
+            await this.search(params);
         }   
     },
 };

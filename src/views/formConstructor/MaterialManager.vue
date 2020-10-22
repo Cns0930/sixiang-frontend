@@ -24,11 +24,12 @@
             <div>
             <el-button type="primary" @click="saveTemplate">保存修改</el-button>
             </div>
+            <div>{{temp_template.docxTemplateName}}:</div>
             <!-- 模板名称(必填)<el-input v-model="temp_template.docxTemplateName"></el-input>
             材料中文名(必填)<el-input v-model="temp_template.documentName"></el-input>
             材料序号(必填)<el-input v-model="temp_template.documentSeq"></el-input> -->
             备注<el-input type="textarea" :autosize="{ minRows: 1, maxRows: 15}" v-model="temp_template.notes"></el-input>
-            page配置<CodeEditor v-model="temp_template.script"></CodeEditor>
+            page配置<CodeEditor ref="scriptEditor" v-model="temp_template.script"></CodeEditor>
 
         </div>
         </div>
@@ -199,10 +200,11 @@ export default {
             });
         },
         openDetail(v) {
-            console.log('v');
-            console.log(v);
+            if(this.temp_template){
+                this.$refs.scriptEditor.open = false;
+            }
             this.temp_template = v.template;
-            this.temp_template.script || (this.temp_template.script = "")
+            this.temp_template.script || (this.temp_template.script = ".ck-content p{margin:0;white-space:pre-wrap;word-break:break-all;word-wrap:break-word;overflow-wrap:break-word;}.ck-content .table{margin:1em auto;display:table;}.ck-content .table table{margin-left:-1.6cm;width:17.84cm;border-collapse:collapse;border-spacing:0;height:100%;border:1px solid black;}#row-table > table{margin-left:-1.6cm;width:26.54cm;border-collapse:collapse;border-spacing:0;height:100%;border:1px solid black;}.ck-content .table table td,.ck-content .table table th{min-width:2em;padding:0;border:1px solid black;}.ck-content .custom-block-indent-2{text-indent:2em;}.ck-content .custom-block-indent-4{text-indent:4em;}.ck-content .custom-block-indent-6{text-indent:6em;}.ck-content .custom-block-indent-8{text-indent:8em;}.ck-content .custom-block-indent-10{text-indent:10em;}.image{display:inline-block;}.image img{width:7.9cm;}.ck-content p{margin:0;white-space:pre-wrap;word-break:break-all;word-wrap:break-word;overflow-wrap:break-word;}.ck-content .table{margin:1em auto;display:table;}.ck-content .table table{margin-left:-1.6cm;width:17.84cm;border-collapse:collapse;border-spacing:0;height:100%;border:1px solid black;}#row-table > table{margin-left:-1.6cm;width:26.54cm;border-collapse:collapse;border-spacing:0;height:100%;border:1px solid black;}.ck-content .table table td,.ck-content .table table th{min-width:2em;padding:0;border:1px solid black;}.ck-content .custom-block-indent-2{text-indent:2em;}.ck-content .custom-block-indent-4{text-indent:4em;}.ck-content .custom-block-indent-6{text-indent:6em;}.ck-content .custom-block-indent-8{text-indent:8em;}.ck-content .custom-block-indent-10{text-indent:10em;}.image{display:inline-block;}.image img{width:7.9cm;}")
         },
         async saveTemplate() {
             console.log(this.temp_template)
