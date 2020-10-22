@@ -511,8 +511,14 @@ export default {
         writeDocumentNumber() {
             if (this.materialT.docxTemplateName) {
                 let index = this.materialT.docxTemplateName.indexOf('_');
+                console.log('index');
+                console.log(index);
+                if (index === -1) return;
                 let DocumentNumber = this.materialT.docxTemplateName.slice(index + 1);
                 index = DocumentNumber.indexOf('_');
+                console.log('index2');
+                console.log(index);
+                if (index === -1) return;
                 DocumentNumber = DocumentNumber.slice(0, index);
                 this.materialT.documentSeq = DocumentNumber;
                 console.log('DocumentNumber');
