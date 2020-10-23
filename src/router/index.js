@@ -21,6 +21,8 @@ import Material from "@/views/basicInfo/Material"
 import ApprovalSubItem from "@/views/basicInfo/ApprovalSubItem"
 import Field from "@/views/basicInfo/Field"
 import Accessory from "@/views/basicInfo/Accessory"
+import AIdocument from "@/views/basicInfo/AIdocument"
+import singleWindow from "@/views/basicInfo/singleWindowMaterial"
 Vue.use(VueRouter)
 import store from "@/vuex/store"
 import bangbanAxios from "@/api/ANew/config"
@@ -126,6 +128,14 @@ const routes = [
                     {
                         path: '/basic/accessory',
                         component: Accessory
+                    },
+                    {
+                        path: '/basic/AIdocument',
+                        component: AIdocument
+                    },
+                    {
+                        path: '/basic/singleWindow',
+                        component: singleWindow
                     },
                 ]
             },            

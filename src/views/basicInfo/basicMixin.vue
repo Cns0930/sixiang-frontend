@@ -4,6 +4,9 @@
 <script>
 import { listApprovalItem , getByApprovalItemId } from "../../api/basicInfo/approval";
 import { listMaterial } from "../../api/basicInfo/material";
+import { listSinglewindow } from "../../api/basicInfo/singleWindow";
+import { listDocument } from "../../api/basicInfo/AIdocument";
+
 import _ from "lodash";
 import dayjs from "dayjs";
 export default {
@@ -21,6 +24,7 @@ export default {
             let result
             if(this.type === 'work') {
                 result = await listApprovalItem(params);
+                this.tableData = result.data.records;
             } else if(this.type === 'material') {
                 result = await listMaterial({pageNum: this.currentPage,
                 pageSize: this.pagesize,
@@ -30,12 +34,17 @@ export default {
                 this.tableData = result.data.records;
             } else if(this.type === 'pickUp') {
 
+            } else if(this.type === 'singleWindow') {
+                result = await listSinglewindow({approvalItemId: this.$route.query.itemId});
+                this.tableData = result.data;
+            } else if(this.type === 'AIdocument') {
+                result = await listDocument({approvalItemId: this.$route.query.itemId});
+                this.tableData = result.data;
             }
 
             if(!result.success) return;
 
             this.totalCount = result.data.total;
-            this.tableData = result.data.records;
             this.$message({ type: "success", message: "查询成功" });
         },
         indexMethod(index) {
@@ -43,6 +52,15 @@ export default {
         },
         timeFormatter(row, column, cellValue, index) {
             return dayjs(cellValue).format("YYYY-MM-DD HH:mm:ss")
+        },
+        isRequiredFormatter(row, column, cellValue, index) {
+            if (cellValue === 1) {
+                return '是';
+            } else if (cellValue === 0) {
+                return '否';
+            } else {
+                return '——';
+            }
         },
         handleSizeChange(val) {
             console.log(`每页 ${val} 条`);
