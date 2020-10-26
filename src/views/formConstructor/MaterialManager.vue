@@ -1,53 +1,77 @@
 <template>
     <div class="material-manager">
-        
         <div class="op-bar">
             <el-button @click="openAddDialog"> 新建材料</el-button>
             <el-button @click="getTemplate">载入材料</el-button>
             <el-button @click="downAllPages">下载所有材料文件</el-button>
-            <el-button @click="handleDownload" type="primary">下载最新word模板</el-button>
+            <el-button @click="handleDownload" type="primary"
+                >下载最新word模板</el-button
+            >
+            <el-button @click="transferAllTemplates"
+                >批量保存到超级帮办</el-button
+            >
         </div>
 
         <div class="main">
-        <!-- 模板列表 -->
-        <div class="material-list">
-            <div v-for="(v,i) in templates" :key="i" class="material-item">
-                <el-button type="text" style="color: orange;" @click="goTemplatemanager(v.template.id)">{{ v.template.docxTemplateName }}</el-button>
-                <el-button @click="openDetail(v)">编辑</el-button>
-                <el-button @click="deleteTemplate(v.template.id)">删除</el-button>
-                <el-button @click="transferTemplate(v)">保存到超级帮办</el-button>
+            <!-- 模板列表 -->
+            <div class="material-list">
+                <div v-for="(v, i) in templates" :key="i" class="material-item">
+                    <el-button
+                        type="text"
+                        style="color: orange"
+                        @click="goTemplatemanager(v.template.id)"
+                        >{{ v.template.docxTemplateName }}</el-button
+                    >
+                    <el-button @click="openDetail(v)">编辑</el-button>
+                    <el-button @click="deleteTemplate(v.template.id)"
+                        >删除</el-button
+                    >
+                    <el-button @click="transferTemplate(v)"
+                        >保存到超级帮办</el-button
+                    >
+                </div>
             </div>
-        </div>
 
-        <!-- 模板编辑 -->
-        <div class="material-detail" v-if="temp_template">
-            <div>
-            <el-button type="primary" @click="saveTemplate">保存修改</el-button>
-            </div>
-            <div>{{temp_template.docxTemplateName}}:</div>
-            <!-- 模板名称(必填)<el-input v-model="temp_template.docxTemplateName"></el-input>
+            <!-- 模板编辑 -->
+            <div class="material-detail" v-if="temp_template">
+                <div>
+                    <el-button type="primary" @click="saveTemplate"
+                        >保存修改</el-button
+                    >
+                </div>
+                <div>{{ temp_template.docxTemplateName }}:</div>
+                <!-- 模板名称(必填)<el-input v-model="temp_template.docxTemplateName"></el-input>
             材料中文名(必填)<el-input v-model="temp_template.documentName"></el-input>
             材料序号(必填)<el-input v-model="temp_template.documentSeq"></el-input> -->
-            备注<el-input type="textarea" :autosize="{ minRows: 1, maxRows: 15}" v-model="temp_template.notes"></el-input>
-            page配置<CodeEditor ref="scriptEditor" v-model="temp_template.script"></CodeEditor>
-
-        </div>
+                备注<el-input
+                    type="textarea"
+                    :autosize="{ minRows: 1, maxRows: 15 }"
+                    v-model="temp_template.notes"
+                ></el-input>
+                page配置<CodeEditor
+                    ref="scriptEditor"
+                    v-model="temp_template.script"
+                ></CodeEditor>
+            </div>
         </div>
         <!-- 创建模板弹窗 -->
-        <el-dialog title="创建模板" :visible.sync="templateCreateVisible" width="50%" :close-on-click-modal="false">
-             <div class="tableWrap">
+        <el-dialog
+            title="创建模板"
+            :visible.sync="templateCreateVisible"
+            width="50%"
+            :close-on-click-modal="false"
+        >
+            <div class="tableWrap">
                 <el-table
                     ref="multipleTable"
                     class="workTable"
                     :data="tableData"
-                    style="width: 95%;"
+                    style="width: 95%"
                     border
                     tooltip-effect="dark"
                     @selection-change="handleSelectionChange"
                 >
-                    <el-table-column
-                        type="selection"
-                        width="55">
+                    <el-table-column type="selection" width="55">
                     </el-table-column>
                     <!-- <el-table-column
                         prop="approvalItemId"
@@ -55,34 +79,81 @@
                         width="100"
                         show-overflow-tooltip
                     ></el-table-column> -->
-                    <el-table-column prop="docxTemplateName" label="超级帮办word模板命名" width="160"></el-table-column>
-                    <el-table-column prop="materialCode" label="材料编码" width="100" show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="materialName" label="材料名称" width="160"></el-table-column>
-                    <el-table-column prop="materialStatus" label="材料状态" width="80"></el-table-column>
-                    <el-table-column prop="documentSeq" label="文档编号" width="80"></el-table-column>
-                    <el-table-column prop="note" label="备注" width="100"></el-table-column>
-                    <el-table-column prop="proDocId" label="proDocId" width="100"></el-table-column>
-                    <el-table-column prop="produceSource" label="产生来源" width="100"></el-table-column>
-                    <el-table-column prop="descriptionInfo" label="其他说明信息（调研填写）"  width="180"></el-table-column>
+                    <el-table-column
+                        prop="docxTemplateName"
+                        label="超级帮办word模板命名"
+                        width="160"
+                    ></el-table-column>
+                    <el-table-column
+                        prop="materialCode"
+                        label="材料编码"
+                        width="100"
+                        show-overflow-tooltip
+                    ></el-table-column>
+                    <el-table-column
+                        prop="materialName"
+                        label="材料名称"
+                        width="160"
+                    ></el-table-column>
+                    <el-table-column
+                        prop="materialStatus"
+                        label="材料状态"
+                        width="80"
+                    ></el-table-column>
+                    <el-table-column
+                        prop="documentSeq"
+                        label="文档编号"
+                        width="80"
+                    ></el-table-column>
+                    <el-table-column
+                        prop="note"
+                        label="备注"
+                        width="100"
+                    ></el-table-column>
+                    <el-table-column
+                        prop="proDocId"
+                        label="proDocId"
+                        width="100"
+                    ></el-table-column>
+                    <el-table-column
+                        prop="produceSource"
+                        label="产生来源"
+                        width="100"
+                    ></el-table-column>
+                    <el-table-column
+                        prop="descriptionInfo"
+                        label="其他说明信息（调研填写）"
+                        width="180"
+                    ></el-table-column>
                 </el-table>
             </div>
 
             <span slot="footer" class="dialog-footer">
-                <el-button @click="templateCreateVisible = false">取 消</el-button>
-                <el-button type="primary" @click="addTemplateBatch">确 定</el-button>
+                <el-button @click="templateCreateVisible = false"
+                    >取 消</el-button
+                >
+                <el-button type="primary" @click="addTemplateBatch"
+                    >确 定</el-button
+                >
             </span>
         </el-dialog>
-        
     </div>
 </template>
 
 <script>
-import { getTemplate, addTemplate, deleteTemplate, getSingleTemplate, GetAddTable, batchSave } from '@/api/template/index'
+import {
+    getTemplate,
+    addTemplate,
+    deleteTemplate,
+    getSingleTemplate,
+    GetAddTable,
+    batchSave,
+} from "@/api/template/index";
 import { getById } from "@/api/item/index";
-import { mixin } from "@/mixin/mixin"
-import axios from 'axios';
+import { mixin } from "@/mixin/mixin";
+import axios from "axios";
 
-import { CodeEditor } from "@/views/attributeComponents/defRendererComponents/defRendererComponents"
+import { CodeEditor } from "@/views/attributeComponents/defRendererComponents/defRendererComponents";
 export default {
     name: "MaterialManager",
     mixins: [mixin],
@@ -93,16 +164,16 @@ export default {
 
             templateCreateVisible: false,
 
-            temp_template_name: '',
-            temp_document_seq: '',
-            temp_document_name: '',
-            temp_pro_doc_id: '',
+            temp_template_name: "",
+            temp_document_seq: "",
+            temp_document_name: "",
+            temp_pro_doc_id: "",
 
             temp_template: null,
             tableData: [],
             multipleSelection: [],
             hasSelectList: [],
-        }
+        };
     },
     // computed: {
     //     ...mapState({
@@ -121,9 +192,9 @@ export default {
             });
             if (!res.success) return;
             this.templates = res.data;
-            this.templates.forEach(item => {
+            this.templates.forEach((item) => {
                 this.hasSelectList.push(item.template.materialId);
-            })
+            });
             // console.log('this.hasSelectList');
             // console.log(this.hasSelectList);
         },
@@ -131,19 +202,19 @@ export default {
         async openAddDialog() {
             const res = await GetAddTable({
                 approvalItemId: this.$store.state.home.item.approvalItemId,
-            })
+            });
             if (!res.success) {
-                this.$message.warning('获取新增表格信息失败');
+                this.$message.warning("获取新增表格信息失败");
                 return;
             }
             this.tableData = res.data;
             this.$nextTick(() => {
-                this.tableData.forEach(row => {
+                this.tableData.forEach((row) => {
                     if (this.hasSelectList.indexOf(row.materialId) >= 0) {
                         this.$refs.multipleTable.toggleRowSelection(row, true);
                     }
-                })
-            })
+                });
+            });
             this.templateCreateVisible = true;
         },
         handleSelectionChange(val) {
@@ -152,24 +223,26 @@ export default {
 
         async addTemplateBatch() {
             let requestBatch = [];
-            this.multipleSelection.forEach(item => {
+            this.multipleSelection.forEach((item) => {
                 let requestBatchItem = {};
                 // requestBatchItem.id = item.approvalItemId;
                 requestBatchItem.materialId = item.materialId;
-                requestBatchItem.notes = '';
-                requestBatchItem.script = '';
-                if (this.hasSelectList.indexOf(requestBatchItem.materialId) < 0) {
+                requestBatchItem.notes = "";
+                requestBatchItem.script = "";
+                if (
+                    this.hasSelectList.indexOf(requestBatchItem.materialId) < 0
+                ) {
                     requestBatch.push(requestBatchItem);
                 }
-            })
-            console.log('requestBatch');
+            });
+            console.log("requestBatch");
             console.log(requestBatch);
             const res = await batchSave(requestBatch);
             if (!res.success) {
-                this.$message.warning('批量新增失败');
+                this.$message.warning("批量新增失败");
                 return;
             }
-            this.$message.success('新增模板成功');
+            this.$message.success("新增模板成功");
             this.templateCreateVisible = false;
             // this.temp_template_name = '';
 
@@ -185,14 +258,14 @@ export default {
 
                 if (!res.success) return;
 
-                this.$message.success('删除模板成功');
+                this.$message.success("删除模板成功");
                 this.getTemplate();
             }
         },
 
         goTemplatemanager(id) {
             this.$router.push({
-                path: '/templatemanager',
+                path: "/templatemanager",
                 query: {
                     itemId: this.$store.state.home.item.approvalItemId,
                     id: id,
@@ -200,28 +273,35 @@ export default {
             });
         },
         openDetail(v) {
-            if(this.temp_template){
+            if (this.temp_template) {
                 this.$refs.scriptEditor.open = false;
             }
             this.temp_template = v.template;
-            this.temp_template.script || (this.temp_template.script = ".ck-content p{margin:0;white-space:pre-wrap;word-break:break-all;word-wrap:break-word;overflow-wrap:break-word;}.ck-content .table{margin:1em auto;display:table;}.ck-content .table table{margin-left:-1.6cm;width:17.84cm;border-collapse:collapse;border-spacing:0;height:100%;border:1px solid black;}#row-table > table{margin-left:-1.6cm;width:26.54cm;border-collapse:collapse;border-spacing:0;height:100%;border:1px solid black;}.ck-content .table table td,.ck-content .table table th{min-width:2em;padding:0;border:1px solid black;}.ck-content .custom-block-indent-2{text-indent:2em;}.ck-content .custom-block-indent-4{text-indent:4em;}.ck-content .custom-block-indent-6{text-indent:6em;}.ck-content .custom-block-indent-8{text-indent:8em;}.ck-content .custom-block-indent-10{text-indent:10em;}.image{display:inline-block;}.image img{width:7.9cm;}.ck-content p{margin:0;white-space:pre-wrap;word-break:break-all;word-wrap:break-word;overflow-wrap:break-word;}.ck-content .table{margin:1em auto;display:table;}.ck-content .table table{margin-left:-1.6cm;width:17.84cm;border-collapse:collapse;border-spacing:0;height:100%;border:1px solid black;}#row-table > table{margin-left:-1.6cm;width:26.54cm;border-collapse:collapse;border-spacing:0;height:100%;border:1px solid black;}.ck-content .table table td,.ck-content .table table th{min-width:2em;padding:0;border:1px solid black;}.ck-content .custom-block-indent-2{text-indent:2em;}.ck-content .custom-block-indent-4{text-indent:4em;}.ck-content .custom-block-indent-6{text-indent:6em;}.ck-content .custom-block-indent-8{text-indent:8em;}.ck-content .custom-block-indent-10{text-indent:10em;}.image{display:inline-block;}.image img{width:7.9cm;}")
+            this.temp_template.script ||
+                (this.temp_template.script = "");
         },
         async saveTemplate() {
-            console.log(this.temp_template)
+            console.log(this.temp_template);
             let result1 = await addTemplate(this.temp_template);
             if (!result1.success) return;
 
-            this.$message.success('保存模板成功');
+            this.$message.success("保存模板成功");
         },
         async transferTemplate(v) {
             // TODO: 材料保存到超级帮办
             let serviceBaseUrl = this.$store.state.setting.bangbanUrl;
-            if (serviceBaseUrl.endsWith('/')) {
-                serviceBaseUrl = serviceBaseUrl.substring(0, serviceBaseUrl.length - 1)
+            if (serviceBaseUrl.endsWith("/")) {
+                serviceBaseUrl = serviceBaseUrl.substring(
+                    0,
+                    serviceBaseUrl.length - 1
+                );
             }
-            console.log(serviceBaseUrl)
-            if (serviceBaseUrl == null || serviceBaseUrl == '') {
-                this.$message({ type: "error", message: "请先设置超级帮办地址!" });
+            console.log(serviceBaseUrl);
+            if (serviceBaseUrl == null || serviceBaseUrl == "") {
+                this.$message({
+                    type: "error",
+                    message: "请先设置超级帮办地址!",
+                });
                 return;
             }
 
@@ -232,22 +312,30 @@ export default {
                 notes: v.template.notes,
                 sid: this.$store.state.home.item.itemNo,
                 script: v.template.script,
-                proDocId: v.template.proDocId
-            }
-            console.log(params)
+                proDocId: v.template.proDocId,
+            };
+            console.log(params);
 
             // 先输出材料
-            let result1 = await axios.post(serviceBaseUrl + "/api/sixiang/saveTemplate", params).then(res => res.data);
-            console.log(result1)
+            let result1 = await axios
+                .post(serviceBaseUrl + "/api/sixiang/saveTemplate", params)
+                .then((res) => res.data);
+            console.log(result1);
             if (result1.code == 200) {
-                this.$message({ type: "success", message: "材料导入成功 请查看数据库" });
+                this.$message({
+                    type: "success",
+                    message: "材料导入成功 请查看数据库",
+                });
             } else {
-                this.$message({ type: "error", message: result1.message + " " + result1.data });
+                this.$message({
+                    type: "error",
+                    message: result1.message + " " + result1.data,
+                });
             }
             // 获取材料下的所有分页 并输出
             let pageRes = await getSingleTemplate({
                 templateId: v.template.id,
-            })
+            });
             if (pageRes.success) {
                 let data = pageRes.data;
                 let pagelist = data.templatePagesList;
@@ -262,55 +350,198 @@ export default {
                         script: detail.script,
                         sid: this.$store.state.home.item.itemNo,
                         padding: detail.isTable == 1 ? "table" : "text",
-                        htmlPath: '/' + this.$store.state.home.item.itemNo + '/' + v.template.docxTemplateName + "_page" + detail.pageNum + ".html",
+                        htmlPath:
+                            "/" +
+                            this.$store.state.home.item.itemNo +
+                            "/" +
+                            v.template.docxTemplateName +
+                            "_page" +
+                            detail.pageNum +
+                            ".html",
                         html: detail.htmlContent,
-                    }
-                    console.log(para)
-                    let result2 = await axios.post(serviceBaseUrl + "/api/sixiang/saveHtml", para).then(res => res.data);
-                    console.log(result2)
+                    };
+                    console.log(para);
+                    let result2 = await axios
+                        .post(serviceBaseUrl + "/api/sixiang/saveHtml", para)
+                        .then((res) => res.data);
+                    console.log(result2);
                     if (result2.code == 200) {
-                        this.$message({ type: "success", message: "页面" + detail.pageNum + "导入成功 请查看数据库" });
+                        this.$message({
+                            type: "success",
+                            message:
+                                "页面" +
+                                detail.pageNum +
+                                "导入成功 请查看数据库",
+                        });
                     } else {
-                        this.$message({ type: "error", message: result2.message + " " + result2.data });
+                        this.$message({
+                            type: "error",
+                            message: result2.message + " " + result2.data,
+                        });
                     }
                 }
             }
-
         },
         async downAllPages() {
-            let downRequest = { approvalItemId: this.$store.state.home.item.approvalItemId };
-            await axios.post("/superform/template-pages/downloadAllPages", downRequest, { responseType: 'arraybuffer' })
-                .then(response => {
-                    let blob = new Blob([response.data], { type: 'application/zip' })
-                    let url = window.URL.createObjectURL(blob)
+            let downRequest = {
+                approvalItemId: this.$store.state.home.item.approvalItemId,
+            };
+            await axios
+                .post(
+                    "/superform/template-pages/downloadAllPages",
+                    downRequest,
+                    { responseType: "arraybuffer" }
+                )
+                .then((response) => {
+                    let blob = new Blob([response.data], {
+                        type: "application/zip",
+                    });
+                    let url = window.URL.createObjectURL(blob);
                     // url.pathname = this.$store.state.home.item.sid +".zip";
-                    window.location.href = url
-                }).catch(error => this.$message.error(error))
+                    window.location.href = url;
+                })
+                .catch((error) => this.$message.error(error));
         },
         // 下载最新word模板
         async handleDownload() {
-            let res = await axios({method: 'get', url:"/superform/additional/downloadWord", params: {approvalItemId: this.$store.state.home.item.approvalItemId, type: 'word'},  responseType: 'arraybuffer' });
+            let res = await axios({
+                method: "get",
+                url: "/superform/additional/downloadWord",
+                params: {
+                    approvalItemId: this.$store.state.home.item.approvalItemId,
+                    type: "word",
+                },
+                responseType: "arraybuffer",
+            });
             if (res.data.byteLength === 0) {
-                this.$message.warning('该事项下没有模板文件');
+                this.$message.warning("该事项下没有模板文件");
                 return;
             }
-            let blob = new Blob([res.data],{ type: 'application/zip'});
-            const a = document.createElement('a')
+            let blob = new Blob([res.data], { type: "application/zip" });
+            const a = document.createElement("a");
             // 生成文件路径
-            let href = window.URL.createObjectURL(blob)
-            a.href = href
+            let href = window.URL.createObjectURL(blob);
+            a.href = href;
             // let _fileName = _res.headers['Content-disposition'].split(';')[1].split('=')[1].split('.')[0]
-            let _fileName = res.headers['content-disposition'].split(';')[1].split('=')[1]
+            let _fileName = res.headers["content-disposition"]
+                .split(";")[1]
+                .split("=")[1];
             // 文件名中有中文 则对文件名进行转码
-            a.download = decodeURIComponent(_fileName)
+            a.download = decodeURIComponent(_fileName);
             // 利用a标签做下载
-            document.body.appendChild(a)
-            a.click()
-            document.body.removeChild(a)
-            window.URL.revokeObjectURL(href)
-        }
-    }
-}
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(href);
+        },
+        // TODO: 批量
+        async transferAllTemplates() {
+            let serviceBaseUrl = this.$store.state.setting.bangbanUrl;
+            if (serviceBaseUrl.endsWith("/")) {
+                serviceBaseUrl = serviceBaseUrl.substring(
+                    0,
+                    serviceBaseUrl.length - 1
+                );
+            }
+            console.log(serviceBaseUrl);
+            if (serviceBaseUrl == null || serviceBaseUrl == "") {
+                this.$message({
+                    type: "error",
+                    message: "请先设置超级帮办地址!",
+                });
+                return;
+            }
+            const res = await getTemplate({
+                approvalItemId: this.$store.state.home.item.approvalItemId,
+            });
+            if (!res.success) return;
+
+            if(res.data.length == 0){
+                this.$message({
+                    type: "warning",
+                    message: "无材料可输出",
+                });
+                return;
+            }
+
+            let templateBatchRequest = [];
+            let htmlBatchRequest = [];
+
+            // 先批量保存材料
+            res.data.forEach((v) => {
+                templateBatchRequest.push({
+                    documentName: v.template.materialName,
+                    documentSeq: v.template.documentSeq,
+                    docxTemplateName: v.template.docxTemplateName,
+                    notes: v.template.notes,
+                    sid: this.$store.state.home.item.itemNo,
+                    script: v.template.script,
+                    proDocId: v.template.proDocId,
+                });
+                let pagelist = v.templatePagesList;
+                for (let i in pagelist) {
+                    let detail = pagelist[i];
+                    htmlBatchRequest.push({
+                        contentCss: detail.contentCss,
+                        fileName: v.template.docxTemplateName,
+                        name: v.template.materialName,
+                        orient: detail.orient,
+                        pageNum: detail.pageNum,
+                        script: detail.script,
+                        sid: this.$store.state.home.item.itemNo,
+                        padding: detail.isTable == 1 ? "table" : "text",
+                        htmlPath:
+                            "/" +
+                            this.$store.state.home.item.itemNo +
+                            "/" +
+                            v.template.docxTemplateName +
+                            "_page" +
+                            detail.pageNum +
+                            ".html",
+                        html: detail.htmlContent,
+                    });
+                }
+            });
+            let result1 = await axios
+                .post(
+                    serviceBaseUrl + "/api/sixiang/saveTemplateBatch",
+                    templateBatchRequest
+                )
+                .then((res) => res.data);
+            if (result1.code == 200) {
+                this.$message({
+                    type: "success",
+                    message: "材料批量导入成功 请查看数据库",
+                });
+            } else {
+                this.$message({
+                    type: "error",
+                    message: result1.message + " " + result1.data,
+                });
+            }
+
+            // 再批量保存材料页面
+            let result2 = await axios
+                .post(
+                    serviceBaseUrl + "/api/sixiang/saveHtmlBatch",
+                    htmlBatchRequest
+                )
+                .then((res) => res.data);
+            console.log(result2);
+            if (result2.code == 200) {
+                this.$message({
+                    type: "success",
+                    message: "页面批量导入成功 请查看数据库",
+                });
+            } else {
+                this.$message({
+                    type: "error",
+                    message: result2.message + " " + result2.data,
+                });
+            }
+        },
+    },
+};
 </script>
 
 <style lang="scss" scoped>

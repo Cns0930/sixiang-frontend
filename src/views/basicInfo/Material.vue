@@ -1,6 +1,6 @@
 <template>
     <div class="workWrap">
-        <header>材料管理</header>
+        <header>帮办材料</header>
         <section class="workBox">
             <div class="searchBox">
                 <el-input placeholder="筛选材料名称或者材料编号" v-model="valueM" clearable style="width: 200px;"></el-input>
@@ -12,15 +12,8 @@
                 </div>
             </div>
             <div class="tableWrap">
-                <el-table
-                    ref="multipleTable"
-                    class="workTable"
-                    :data="tableData"
-                    style="width: 100%;"
-                    border
-                    tooltip-effect="dark"
-                    :default-sort="{prop: 'createTime', order: 'descending'}"
-                >
+                <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%;" border
+                    tooltip-effect="dark" :default-sort="{prop: 'createTime', order: 'descending'}">
                     <!-- <el-table-column
               type="selection"
               width="50">
@@ -45,41 +38,35 @@
                         show-overflow-tooltip
                     ></el-table-column>
                     <el-table-column prop="materialId" label="事项(小项)办事材料编号" width="100" show-overflow-tooltip></el-table-column>-->
-                    <el-table-column prop="materialCode" label="材料编码" width="100" show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="materialName" label="材料名称" ></el-table-column>
-                    <el-table-column prop="materialStatus" label="材料状态" width="80"></el-table-column>
+                    <!-- <el-table-column prop="materialCode" label="材料编码" width="100" show-overflow-tooltip></el-table-column> -->
+                    <el-table-column prop="materialName" label="材料名称"></el-table-column>
+                    <el-table-column prop="templateName" label="模板名称(自取)"></el-table-column>
+                    <!-- <el-table-column prop="materialStatus" label="材料状态" width="80"></el-table-column>
                     <el-table-column prop="documentSeq" label="文档编号" width="80"></el-table-column>
                     <el-table-column
                         prop="catMainCode"
                         label="市证照编码"
                         width="100"
                         show-overflow-tooltip
-                    ></el-table-column>
+                    ></el-table-column> -->
                     <el-table-column prop="docxTemplateName" label="超级帮办word模板命名" width="200"></el-table-column>
-                    <el-table-column prop="descriptionInfo" label="其他说明信息（调研填写）" sortable ></el-table-column>
-                    <el-table-column
-                        prop="createTime"
-                        label="创建时间"
-                        :formatter="timeFormatter"
-                        sortable
-                        width="160"
-                    ></el-table-column>
-                    <el-table-column
-                        prop="updateTime"
-                        label="最后修改时间"
-                        width="160"
-                        :formatter="timeFormatter"
-                        sortable
-                        show-overflow-tooltip
-                    ></el-table-column>
-                    <el-table-column label="操作" fixed="right" width="200">
+                    <el-table-column prop="documentSeq" label="文档序号" width="100" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="isNavigation" label="是否显示在左侧导航" width="100" :formatter="isRequiredFormatter">
+                    </el-table-column>
+                    <el-table-column prop="navigationOrder" label="导航顺序" width="100"></el-table-column>
+                    <el-table-column prop="descriptionInfo" label="材料逻辑"></el-table-column>
+                    <el-table-column prop="produceSource" label="产生方式" width="100" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable width="160">
+                    </el-table-column>
+                    <el-table-column prop="updateTime" label="最后修改时间" width="160" :formatter="timeFormatter" sortable
+                        show-overflow-tooltip></el-table-column>
+                    <el-table-column label="操作" fixed="right" width="230">
                         <template slot-scope="scope">
+                            <el-button size="mini" type="primary" >编辑word模板</el-button>
                             <el-button size="mini" @click="EditmaterialVisible(scope.row)">编辑</el-button>
-                            <el-button
-                                size="mini"
-                                type="danger"
-                                @click="handleDeleteMaterial(scope.row)"
-                            >删除</el-button>
+                            <el-button size="mini" type="danger" @click="handleDeleteMaterial(scope.row)">删除</el-button>
                         </template>
                     </el-table-column>
                     <!-- <el-table-column
@@ -96,14 +83,9 @@
                 </el-table>
             </div>
             <div class="tablePagination">
-                <el-pagination
-                    @size-change="handleSizeChange"
-                    @current-change="handleCurrentChange"
-                    :current-page.sync="currentPage"
-                    :page-size="pagesize"
-                    layout="total, prev, pager, next"
-                    :total="totalCount"
-                ></el-pagination>
+                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                    :current-page.sync="currentPage" :page-size="pagesize" layout="total, prev, pager, next"
+                    :total="totalCount"></el-pagination>
             </div>
             <!-- <component :is="model.type" v-model="model.val" v-bind="{
           type: 'textarea',
@@ -114,30 +96,51 @@
         <el-dialog title="新建材料信息" :visible.sync="materialWriteVisible" width="40%" :close-on-click-modal="false">
             <el-form :model="materialT" label-width="30%" class="demo-ruleForm">
                 <div>
-                    <el-form-item label="材料名称"><el-input v-model="materialT.materialName"></el-input></el-form-item>
-                    <el-form-item label="模板名称(自取)"><el-input v-model="materialT.templateName"></el-input></el-form-item>
-                    <el-form-item label="超级帮办word模板名称"><el-input v-model="materialT.docxTemplateName" @blur="writeDocumentNumberAdd"></el-input></el-form-item>
-                    <el-form-item label="文档序号"><el-input v-model="materialT.documentSeq"></el-input></el-form-item>
+                    <el-form-item label="材料名称">
+                        <el-input v-model="materialT.materialName"></el-input>
+                    </el-form-item>
+                    <el-form-item label="模板名称(自取)">
+                        <el-input v-model="materialT.templateName"></el-input>
+                    </el-form-item>
+                    <el-form-item label="超级帮办word模板名称">
+                        <el-input v-model="materialT.docxTemplateName" @change="writeDocumentNumberAdd"></el-input>
+                    </el-form-item>
+                    <el-form-item label="文档序号">
+                        <el-input v-model="materialT.documentSeq"></el-input>
+                    </el-form-item>
                     <el-form-item label="是否显示在左侧导航">
                         <el-select v-model="materialT.isNavigation">
-                            <el-option label="是" value="1"></el-option>
-                            <el-option label="否" value="0"></el-option>
+                            <el-option label="是" :value="Number(1)"></el-option>
+                            <el-option label="否" :value="Number(0)"></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="导航顺序"><el-input v-model="materialT.navigationOrder" placeholder="请输入数字"></el-input></el-form-item>
-                    <el-form-item label="材料逻辑"><el-input  type="textarea"
-                        :rows="3" v-model="materialT.descriptionInfo"></el-input></el-form-item>
-                <div> <el-form-item label="产生方式">
-                    <el-select v-model="materialT.produceSource" placeholder="材料的产生来源">
-                        <el-option label="用户自带" value="用户自带"></el-option>
-                        <el-option label="现场制作" value="当场制作"></el-option>
-                    </el-select></el-form-item>
-                </div>
+                    <el-form-item label="导航顺序">
+                        <el-input v-model="materialT.navigationOrder" placeholder="请输入数字"></el-input>
+                    </el-form-item>
+                    <el-form-item label="材料逻辑">
+                        <el-input type="textarea" :rows="3" v-model="materialT.descriptionInfo"></el-input>
+                    </el-form-item>
+                    <div>
+                        <el-form-item label="产生方式">
+                            <el-select v-model="materialT.produceSource" placeholder="材料的产生来源">
+                                <el-option label="用户自带" value="用户自带"></el-option>
+                                <el-option label="现场制作" value="当场制作"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </div>
                     <br>
-                    <el-form-item label="材料编码"><el-input v-model="materialT.materialCode"></el-input></el-form-item>
-                    <el-form-item label="市证照编码"> <el-input v-model="materialT.catMainCode"></el-input></el-form-item>
-                    <el-form-item label="备注"><el-input v-model="materialT.note"></el-input></el-form-item>
-                    <el-form-item label="排序"><el-input v-model="materialT.sort"></el-input></el-form-item>
+                    <el-form-item label="材料编码">
+                        <el-input v-model="materialT.materialCode"></el-input>
+                    </el-form-item>
+                    <el-form-item label="市证照编码">
+                        <el-input v-model="materialT.catMainCode"></el-input>
+                    </el-form-item>
+                    <el-form-item label="备注">
+                        <el-input v-model="materialT.note"></el-input>
+                    </el-form-item>
+                    <el-form-item label="排序">
+                        <el-input v-model="materialT.sort"></el-input>
+                    </el-form-item>
                 </div>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -149,30 +152,51 @@
         <el-dialog title="编辑材料信息" :visible.sync="editMaterialWriteVisible" width="40%" :close-on-click-modal="false">
             <el-form :model="materialTEdit" label-width="30%" class="demo-ruleForm">
                 <div>
-                    <el-form-item label="材料名称"><el-input v-model="materialTEdit.materialName"></el-input></el-form-item>
-                    <el-form-item label="模板名称(自取)"><el-input v-model="materialTEdit.templateName"></el-input></el-form-item>
-                    <el-form-item label="超级帮办word模板名称"><el-input v-model="materialTEdit.docxTemplateName" @blur="writeDocumentNumberEdit"></el-input></el-form-item>
-                    <el-form-item label="文档序号"><el-input v-model="materialTEdit.documentSeq"></el-input></el-form-item>
+                    <el-form-item label="材料名称">
+                        <el-input v-model="materialTEdit.materialName"></el-input>
+                    </el-form-item>
+                    <el-form-item label="模板名称(自取)">
+                        <el-input v-model="materialTEdit.templateName"></el-input>
+                    </el-form-item>
+                    <el-form-item label="超级帮办word模板名称">
+                        <el-input v-model="materialTEdit.docxTemplateName" @change="writeDocumentNumberEdit"></el-input>
+                    </el-form-item>
+                    <el-form-item label="文档序号">
+                        <el-input v-model="materialTEdit.documentSeq"></el-input>
+                    </el-form-item>
                     <el-form-item label="是否显示在左侧导航">
                         <el-select v-model="materialTEdit.isNavigation">
-                            <el-option label="是" value="1"></el-option>
-                            <el-option label="否" value="0"></el-option>
+                            <el-option label="是" :value="Number(1)"></el-option>
+                            <el-option label="否" :value="Number(0)"></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="导航顺序"><el-input v-model="materialTEdit.navigationOrder" placeholder="请输入数字"></el-input></el-form-item>
-                    <el-form-item label="材料逻辑"><el-input  type="textarea"
-                        :rows="3" v-model="materialTEdit.descriptionInfo"></el-input></el-form-item>
-                <div> <el-form-item label="产生方式">
-                    <el-select v-model="materialTEdit.produceSource" placeholder="材料的产生来源">
-                        <el-option label="用户自带" value="用户自带"></el-option>
-                        <el-option label="现场制作" value="当场制作"></el-option>
-                    </el-select></el-form-item>
-                </div>
+                    <el-form-item label="导航顺序">
+                        <el-input v-model="materialTEdit.navigationOrder" placeholder="请输入数字"></el-input>
+                    </el-form-item>
+                    <el-form-item label="材料逻辑">
+                        <el-input type="textarea" :rows="3" v-model="materialTEdit.descriptionInfo"></el-input>
+                    </el-form-item>
+                    <div>
+                        <el-form-item label="产生方式">
+                            <el-select v-model="materialTEdit.produceSource" placeholder="材料的产生来源">
+                                <el-option label="用户自带" value="用户自带"></el-option>
+                                <el-option label="现场制作" value="当场制作"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </div>
                     <br>
-                    <el-form-item label="材料编码"><el-input v-model="materialTEdit.materialCode"></el-input></el-form-item>
-                    <el-form-item label="市证照编码"> <el-input v-model="materialTEdit.catMainCode"></el-input></el-form-item>
-                    <el-form-item label="备注"><el-input v-model="materialTEdit.note"></el-input></el-form-item>
-                    <el-form-item label="排序"><el-input v-model="materialTEdit.sort"></el-input></el-form-item>
+                    <el-form-item label="材料编码">
+                        <el-input v-model="materialTEdit.materialCode"></el-input>
+                    </el-form-item>
+                    <el-form-item label="市证照编码">
+                        <el-input v-model="materialTEdit.catMainCode"></el-input>
+                    </el-form-item>
+                    <el-form-item label="备注">
+                        <el-input v-model="materialTEdit.note"></el-input>
+                    </el-form-item>
+                    <el-form-item label="排序">
+                        <el-input v-model="materialTEdit.sort"></el-input>
+                    </el-form-item>
                 </div>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -184,28 +208,30 @@
         <el-dialog title="导入自选材料" :visible.sync="importDialogVisible" width="80%" :close-on-click-modal="false">
 
             <el-form label="事项名称">
-                    <el-select clearable filterable placeholder="请选择事项名称或者输入关键词" v-model="idd" @change="selectOne" style="position:relative" 
-                    remote reserve-keyword :remote-method="remoteMethod" :loading="loading"> 
-                        <el-option v-for="(v,i) in typeSubItemOptions" :key="i" :label="v.itemName" :value="v.approvalItemId"> 
-                            
-                        </el-option>
-                   
+                <el-select clearable filterable placeholder="请选择事项名称或者输入关键词" v-model="idd" @change="selectOne"
+                    style="position:relative" remote reserve-keyword :remote-method="remoteMethod" :loading="loading">
+                    <el-option v-for="(v,i) in typeSubItemOptions" :key="i" :label="v.itemName"
+                        :value="v.approvalItemId">
+
+                    </el-option>
+
                     <div class="text-center" style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
-                            <a class="text-normal">
-                                <el-pagination @size-change="handleSizeChangeSelect" @current-change="handleCurrentChangeSelect"
-                                            :current-page="currentPageSelect" :total="totalAim"
-                                            :page-size="pageSize"
-                                            layout="prev, pager, next"/>
-                            </a>
-                            </div> </el-select>
+                        <a class="text-normal">
+                            <el-pagination @size-change="handleSizeChangeSelect"
+                                @current-change="handleCurrentChangeSelect" :current-page="currentPageSelect"
+                                :total="totalAim" :page-size="pageSize" layout="prev, pager, next" />
+                        </a>
+                    </div>
+                </el-select>
             </el-form>
 
-            <el-table :data="tableDataSS" border row-key="materialId" ref="checkTable" @selection-change="handleSelectionChange">
-                <el-table-column prop="materialCode" label="材料编码" ></el-table-column>
+            <el-table :data="tableDataSS" border row-key="materialId" ref="checkTable"
+                @selection-change="handleSelectionChange">
+                <el-table-column prop="materialCode" label="材料编码"></el-table-column>
                 <el-table-column prop="materialName" label="材料名称"></el-table-column>
                 <el-table-column type="selection" reserve-selection label="选择">
                 </el-table-column>
-            </el-table> 
+            </el-table>
 
             <p>已选中{{temp_selected_fields.length}}个材料</p>
             <el-button type="primary" @click="importSubApproval">确认导入</el-button>
@@ -221,7 +247,7 @@
 <script>
 import basicMixin from "./basicMixin";
 import Vue from "vue";
-import { listMaterial, addMaterial,delMaterial, getTemplateByMaterialId,updateMaterial,getByMaterialId,copySelectedMaterial,getAllByApprovalItemId } from "../../api/basicInfo/material";
+import { listMaterial, addMaterial, delMaterial, getTemplateByMaterialId, updateMaterial, getByMaterialId, copySelectedMaterial, getAllByApprovalItemId } from "../../api/basicInfo/material";
 import { listApprovalItem } from "@/api/basicInfo/approval";
 export default {
     name: "Material",
@@ -301,33 +327,33 @@ export default {
             this.tableData = result.data.records;
         },
         //下拉框带分页
-        async handleSizeChangeSelect(size){
+        async handleSizeChangeSelect(size) {
             this.selectData = [];
             this.pageSize = size;
-            let result = await listApprovalItem({pageNum: this.currentPageSelect,pageSize: this.pageSize});
+            let result = await listApprovalItem({ pageNum: this.currentPageSelect, pageSize: this.pageSize });
             this.typeSubItemOptions = result.data.records;
         },
-        async handleCurrentChangeSelect(current){
+        async handleCurrentChangeSelect(current) {
             this.selectData = [];
             this.currentPageSelect = current;
-            let result = await listApprovalItem({pageNum: this.currentPageSelect,pageSize: this.pageSize});
+            let result = await listApprovalItem({ pageNum: this.currentPageSelect, pageSize: this.pageSize });
             this.typeSubItemOptions = result.data.records;
         },
         //远程搜索
-        async remoteMethod(query){
-            if(query !== ''){
-                let result = await listApprovalItem({keyword:query, pageNum: this.currentPageSelect,pageSize: this.pageSize});
+        async remoteMethod(query) {
+            if (query !== '') {
+                let result = await listApprovalItem({ keyword: query, pageNum: this.currentPageSelect, pageSize: this.pageSize });
                 this.loading = true;
                 setTimeout(() => {
                     this.loading = false;
-                    
+
                     this.totalAim = result.data.total;
                     this.typeSubItemOptions = result.data.records;
-                    
+
                 })
             }
         },
-        async materialSearch(){
+        async materialSearch() {
             this.currentPage = 1;
             let result = await listMaterial({
                 keyword: this.valueM,
@@ -337,32 +363,32 @@ export default {
                 materialStatus: this.materialT.materialStatus,
             });
 
-            if(!result.success) return;
+            if (!result.success) return;
             this.totalCount = result.data.total;
             this.tableData = result.data.records;
-            
+
             this.$message({ type: "success", message: "查询成功" });
-            
+
         },
         async materialVisible(item) {
-            console.log('item');
-            console.log(item);
+            // console.log('item');
+            // console.log(item);
             let id = item.materialId;
-            if(!id){
+            if (!id) {
                 item = item;
-            }else{
-                item = await getByMaterialId({materialId: id});
+            } else {
+                item = await getByMaterialId({ materialId: id });
                 item = item.data;
             }
-            
+
             this.materialT = item;
-            console.log('this.materialT');
-            console.log(this.materialT);
+            // console.log('this.materialT');
+            // console.log(this.materialT);
             this.materialWriteVisible = true;
         },
         async EditmaterialVisible(item) {
             let id = item.materialId;
-            item = await getByMaterialId({materialId: id});
+            item = await getByMaterialId({ materialId: id });
             item = item.data;
             this.materialTEdit = item;
             console.log('this.materialTEdit');
@@ -370,51 +396,51 @@ export default {
             this.editMaterialWriteVisible = true;
         },
         //导入材料
-        async handleImport(){
-            let result = await listApprovalItem({pageNum: this.currentPageSelect,pageSize: this.pageSize});
+        async handleImport() {
+            let result = await listApprovalItem({ pageNum: this.currentPageSelect, pageSize: this.pageSize });
             this.totalAim = result.data.total;
             this.typeSubItemOptions = result.data.records;
-            console.log("resulthhh:",this.typeSubItemOptions);
+            console.log("resulthhh:", this.typeSubItemOptions);
             this.importDialogVisible = true;
         },
-        async selectOne(){
+        async selectOne() {
             this.tableDataSS = [];
-            let result = await getAllByApprovalItemId({approvalItemId: this.idd});
+            let result = await getAllByApprovalItemId({ approvalItemId: this.idd });
             if (!result.success) return;
             this.total = result.data.total;
             this.tableDataSS = result.data;
         },
-        handleSelectionChange(sel){
+        handleSelectionChange(sel) {
             this.temp_selected_fields = sel;
         },
-        async importSubApproval(){
-            console.log("this.temp_selected_fields:",this.temp_selected_fields);
-            if(this.temp_selected_fields.length > 0){
-            // 进行materialName是否重复的检查
-            let a = this.temp_selected_fields.map(v => v.materialName);
-            console.log("a",a);
-            for (let index = 0; index < this.temp_selected_fields.length; index++){
-                let field = this.temp_selected_fields[index];
-                console.log("field.materialName:",field.materialName);
-                if(this.temp_selected_fields.map(v => v.materialName).indexOf(field.materialName) !== index){
-                    this.$message({ type: "warning", message: "重复材料:"+field.materialName});
-                    return;
+        async importSubApproval() {
+            console.log("this.temp_selected_fields:", this.temp_selected_fields);
+            if (this.temp_selected_fields.length > 0) {
+                // 进行materialName是否重复的检查
+                let a = this.temp_selected_fields.map(v => v.materialName);
+                console.log("a", a);
+                for (let index = 0; index < this.temp_selected_fields.length; index++) {
+                    let field = this.temp_selected_fields[index];
+                    console.log("field.materialName:", field.materialName);
+                    if (this.temp_selected_fields.map(v => v.materialName).indexOf(field.materialName) !== index) {
+                        this.$message({ type: "warning", message: "重复材料:" + field.materialName });
+                        return;
+                    }
                 }
-            }
 
-            let selectIds = this.temp_selected_fields.map(f => f.materialId);
-            let param = {};
-            param["aimsItemId"]=this.itemId;
-            param["sourceMaterialIds"]=selectIds;
-            let result = await copySelectedMaterial(JSON.stringify(param))
-            if (!result.success) return;
-            this.$message({ type: "success", message: "导入成功"});
+                let selectIds = this.temp_selected_fields.map(f => f.materialId);
+                let param = {};
+                param["aimsItemId"] = this.itemId;
+                param["sourceMaterialIds"] = selectIds;
+                let result = await copySelectedMaterial(JSON.stringify(param))
+                if (!result.success) return;
+                this.$message({ type: "success", message: "导入成功" });
                 this.clearSelected();
                 this.search();
                 this.importDialogVisible = false;
             }
         },
-        clearSelected(){
+        clearSelected() {
             this.$refs.checkTable.clearSelection();
             this.temp_selected_fields = [];
         },
@@ -429,33 +455,33 @@ export default {
             });
             if (!res.success) return;
             this.totalCount = result.data.total;
-            console.log("dadathis.current:",this.current," dathis.pagesize",this.pagesize," dathis.totalCount",this.totalCount)
+            console.log("dadathis.current:", this.current, " dathis.pagesize", this.pagesize, " dathis.totalCount", this.totalCount)
             this.tableData = res.data.records;
             await this.search();
         },
         //增加材料
         async addMaterial() {
             let res;
-            if(!this.materialT.materialId){
-                this.materialT["materialStatus"]= "Y";
+            if (!this.materialT.materialId) {
+                this.materialT["materialStatus"] = "Y";
                 this.materialT["approvalItemId"] = this.$route.query.itemId;
-                console.log("this.materialT ",this.materialT)
+                console.log("this.materialT ", this.materialT)
                 res = await addMaterial(this.materialT);
-            }else{
+            } else {
                 res = await updateMaterial(this.materialT);
             }
-            
+
             if (!res.success) return;
 
             this.$message.success('保存成功');
             this.materialWriteVisible = false;
             // this.materialT_item_id = '';
-            if(!this.materialT.materialId){
+            if (!this.materialT.materialId) {
                 await this.search();
-            }else{
+            } else {
                 await this.materialSearch();
             }
-            
+
         },
         // 编辑材料
         async editMaterial() {
@@ -465,9 +491,9 @@ export default {
             this.$message.success('编辑成功');
             this.editMaterialWriteVisible = false;
             // this.materialT_item_id = '';
-            if(!this.materialTEdit.materialId){
+            if (!this.materialTEdit.materialId) {
                 await this.search();
-            }else{
+            } else {
                 this.materialT.approvalItemId = this.materialTEdit.approvalItemId;
                 this.materialT.materialStatus = this.materialTEdit.materialStatus;
                 await this.materialSearch();
@@ -485,34 +511,34 @@ export default {
             console.log('isRelevance');
             console.log(isRelevance);
             if (isRelevance.data) {
-                try{
+                try {
                     await this.$confirm('材料已关联超级帮办事项开发模板，是否确定要删除?', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
                     })
-                }catch(e){
+                } catch (e) {
                     return;
                 }
             } else {
-                try{
-                    await this.$confirm('此操作将永久删除该, 是否继续?', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
+                try {
+                    await this.$confirm('此操作将永久删除该材料, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
                     })
-                }catch(e){
+                } catch (e) {
                     return;
                 }
             }
-    
+
             let result = await delMaterial(param);
             if (!result.success) return;
-            
+
             // if(!id){
-                await this.search();
+            await this.search();
             // }else{
-                // await this.materialSearch();
+            // await this.materialSearch();
             // }
         },
         // 自动填写文档编号

@@ -684,28 +684,49 @@ export default {
                 this.$message({ type: "error", message: "请先设置超级帮办地址!" });
                 return;
             }
-            // output
-            await this.output();
-            let output = this.outputEditor.getValue();
 
-            // state
-            await this.getState();
-            let state = this.outputEditor.getValue();
+            // 修改输出方式
 
-            // getters
-            await this.getGetters();
-            let getters = this.outputEditor.getValue();
+            // 获取事项下的步骤
+            // 获取事项下的字段
+            let result0 = await Promise.all([
+                getStep({approvalItemId: this.itemId}),
+                getFieldAll({ approvalItemId: this.itemId }),
+            ])
+            if (result0.some(v => !v.success)) return;
+
+            let stepRes = result0[0]
+            let fieldRes = result0[1]
 
             let params = {
-                pageStepJs: output,
-                getterJs: getters,
+                stepJson: stepRes.data,
+                fieldsJson: fieldRes.data,
                 sid: this.$store.state.home.item.itemNo,
-                sixiangUserName: "admin",
-                stateJs: state,
+                sixiangUserName: localStorage.getItem('username'),
             };
+
+            // // output
+            // await this.output();
+            // let output = this.outputEditor.getValue();
+
+            // // state
+            // await this.getState();
+            // let state = this.outputEditor.getValue();
+
+            // // getters
+            // await this.getGetters();
+            // let getters = this.outputEditor.getValue();
+
+            // let params = {
+            //     pageStepJs: output,
+            //     getterJs: getters,
+            //     sid: this.$store.state.home.item.itemNo,
+            //     sixiangUserName: "admin",
+            //     stateJs: state,
+            // };
             console.log(params)
 
-            // 步骤保存到超级帮办
+            // // 步骤保存到超级帮办
             let result = await axios.post(serviceBaseUrl+"/api/sixiang/saveJavaScript", params).then(res => res.data);
             console.log(result)
             if(result.code == 200){
