@@ -37,6 +37,7 @@ export default {
     watch: {
         gettersList: {
             handler(v) {
+                console.log("gettersList 变化")
                 let that = this
                 let props = v.reduce((result, item) => {
                     result[item] = {

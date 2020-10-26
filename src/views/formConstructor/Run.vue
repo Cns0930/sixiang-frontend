@@ -92,6 +92,7 @@ export default {
         await this.init();
 
         let result = await this.loadAll();
+        
         this.stepsData = result[0].data.map(v => {
 
             if (typeof v.stepObject.configFn == "string" && v.stepObject.configFn.indexOf('function') > -1) {
@@ -133,7 +134,7 @@ export default {
             state: itemState,
             getters: itemGetters
         };
-
+        
         if (this.$store.hasModule("run")) {
             this.$store.unregisterModule("run");
         }
