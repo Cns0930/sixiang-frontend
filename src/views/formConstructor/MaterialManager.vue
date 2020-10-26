@@ -15,7 +15,35 @@
         <div class="main">
             <!-- 模板列表 -->
             <div class="material-list">
-                <div v-for="(v, i) in templates" :key="i" class="material-item">
+                <el-table :data="templates">
+                    <el-table-column label="word模板命令">
+                        <template slot-scope="scope">
+                            <el-button
+                        type="text"
+                        style="color: orange"
+                        @click="goTemplatemanager(scope.row.template.id)"
+                        >{{ scope.row.template.docxTemplateName }}</el-button
+                    >
+                    </template>
+                    </el-table-column>
+                    
+                    <el-table-column prop="template.materialName" label="材料名称"></el-table-column>
+                    <el-table-column prop="template.templateName" label="模板名称(自取)"></el-table-column>
+                    <el-table-column label="操作" width="300px">
+                        <template slot-scope="scope">
+                            <el-button @click="openDetail(scope.row)">编辑</el-button>
+                    <el-button @click="deleteTemplate(scope.row.template.id)"
+                        >删除</el-button
+                    >
+                    <el-button @click="transferTemplate(scope.row)"
+                        >保存到超级帮办</el-button
+                    >
+                        </template>
+                    </el-table-column>
+
+                </el-table>
+
+                <!-- <div v-for="(v, i) in templates" :key="i" class="material-item">
                     <el-button
                         type="text"
                         style="color: orange"
@@ -29,7 +57,7 @@
                     <el-button @click="transferTemplate(v)"
                         >保存到超级帮办</el-button
                     >
-                </div>
+                </div> -->
             </div>
 
             <!-- 模板编辑 -->
@@ -554,7 +582,7 @@ export default {
         display: flex;
         flex-direction: row;
         .material-list {
-            width: 500px;
+            width: 800px;
             margin-top: 10px;
             padding: 20px;
             border: 1px solid green;
