@@ -52,12 +52,7 @@ let ElSingleCheckboxC = {
 
     render() {
         return <span>
-            {
-                this.options.map(option =>
-                    <el-checkbox value={this.value} onInput={(e) => this.$emit("input", e)} label={option}></el-checkbox>
-                )
-            }
-
+            <el-checkbox  onInput={(e) => this.$emit("input", e)}  label={this.value}></el-checkbox>
         </span>
 
     }

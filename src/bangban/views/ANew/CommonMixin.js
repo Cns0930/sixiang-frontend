@@ -27,11 +27,11 @@ export default {
          
     watch: {
         gettersList: {
-            handler() {
-                if(!this.getterList) return;
+            handler(v) {
+
                 console.log("更改 itemGetters")
                 let that = this
-                let props = this.getterList.reduce((result, item) => {
+                let props = v.reduce((result, item) => {
                     result[item] = {
                         get() {
                             return that.getters[`${that.item_code}/${item}`]
@@ -41,7 +41,7 @@ export default {
                 }, {})
                 this.itemGetters={}
                 Object.defineProperties(this.itemGetters, props)
-                
+                console.log(this.itemGetters)
             },
             immediate: true
         }
