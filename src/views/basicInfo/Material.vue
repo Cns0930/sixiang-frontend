@@ -64,7 +64,7 @@
                         show-overflow-tooltip></el-table-column>
                     <el-table-column label="操作" fixed="right" width="230">
                         <template slot-scope="scope">
-                            <el-button size="mini" type="primary" >编辑word模板</el-button>
+                            <el-button size="mini" type="primary"  @click="goOnlineDocumentEditor(scope.row)">编辑word模板</el-button>
                             <el-button size="mini" @click="EditmaterialVisible(scope.row)">编辑</el-button>
                             <el-button size="mini" type="danger" @click="handleDeleteMaterial(scope.row)">删除</el-button>
                         </template>
@@ -576,6 +576,13 @@ export default {
                 this.materialTEdit.documentSeq = DocumentNumber;
             }
         },
+        // 跳转到在线文档编辑界面
+        goOnlineDocumentEditor(row) {
+            console.log('row');
+            console.log(row);
+            let routeUrl = this.$router.resolve({ name: "OnlineDocumentEditor", query:{'materialId': row.materialId }});
+            window.open(routeUrl.href, '_blank');
+        }
     },
 };
 </script>

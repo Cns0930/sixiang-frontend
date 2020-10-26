@@ -23,6 +23,7 @@ import Field from "@/views/basicInfo/Field"
 import Accessory from "@/views/basicInfo/Accessory"
 import AIdocument from "@/views/basicInfo/AIdocument"
 import singleWindow from "@/views/basicInfo/singleWindowMaterial"
+import OnlineDocumentEditor from "@/views/basicInfo/OnlineDocumentEditor"
 Vue.use(VueRouter)
 import store from "@/vuex/store"
 import bangbanAxios from "@/api/ANew/config"
@@ -136,6 +137,11 @@ const routes = [
                     {
                         path: '/basic/singleWindow',
                         component: singleWindow
+                    },
+                    {
+                        path: '/basic/onlineDocumentEditor',
+                        name: 'OnlineDocumentEditor',
+                        component: OnlineDocumentEditor
                     },
                 ]
             },            

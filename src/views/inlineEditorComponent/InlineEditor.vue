@@ -208,6 +208,7 @@ export default {
                 },
                 {}
             );
+            console.log('sourceEl', sourceEl);
             CKEditor.create(sourceEl, {
                 lineHeight: {
                     // specify your otions in the lineHeight config object. Default values are [ 0, 0.5, 1, 1.5, 2 ]
