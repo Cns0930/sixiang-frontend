@@ -395,7 +395,7 @@ export default {
         background: #fff;
         .upload-box {
             padding: 10px 12px 12px 12px;
-            width: 250px;
+            width: 230px;
             background: #F0F2F5;
             display: flex;
             flex-direction: row;

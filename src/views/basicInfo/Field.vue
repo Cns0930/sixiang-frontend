@@ -439,7 +439,7 @@ export default {
     height: calc(100% - 22px);
     .upload-box {
         padding: 10px 12px 12px 12px;
-        width: 250px;
+        width: 230px;
         background: #f0f2f5;
         display: flex;
         flex-direction: row;
