@@ -3,7 +3,17 @@
         <header>材料字段管理</header>
         <el-button @click="addDialogVisible = true" type="primary" style="margin-bottom:10px">添加</el-button>
         <el-button @click="openImportDialog" type="primary" style="margin-bottom:10px">导入</el-button>
-        <el-table :data="tableData" border>
+        <div class="upload-box">
+        <el-upload class="upload-demo" ref="upload" :action="url" :limit="1" accept=".xlsx" :with-credentials="true"
+            :on-success="upFile" :on-remove="handleRemove" :on-exceed="handleExceed" :auto-upload="false"
+            :before-upload="customUpload">
+            <el-button type="primary">选择材料字段数据Excel</el-button>
+            <el-button type="success" @click="upload()">导入</el-button>
+            <div slot="tip" class="el-upload__tip">只能上传Excel文件</div>
+        </el-upload>
+        
+        </div>
+        <el-table :data="tableData" border style="margin-top: 10px;">
             <el-table-column prop="materialName" label="材料名称"></el-table-column>
             <el-table-column prop="fieldName" label="字段名称"></el-table-column>
             <el-table-column prop="note" label="备注"></el-table-column>
@@ -19,12 +29,12 @@
             </el-table-column>
         </el-table>
         <div class="tablePagination">
-            <el-pagination  @current-change="handleCurrentChange"
-                :current-page.sync="currentPage" :page-size="pageSize" layout="total, prev, pager, next"
-                :total="total"></el-pagination>
+            <el-pagination @current-change="handleCurrentChange" :current-page.sync="currentPage" :page-size="pageSize"
+                layout="total, prev, pager, next" :total="total"></el-pagination>
         </div>
         <div class="right-bar">
-            <el-button class="button" size="medium" @click="goFormconstructor" round>前端字段管理<i class="el-icon-edit"></i>帮办工具模块<i class="el-icon-right el-icon--right"></i></el-button>
+            <el-button class="button" size="medium" @click="goFormconstructor" round>前端字段管理<i
+                    class="el-icon-edit"></i>帮办工具模块<i class="el-icon-right el-icon--right"></i></el-button>
         </div>
         <!--添加字段-->
         <el-dialog title="添加材料字段" :visible.sync="addDialogVisible" width="50%" :close-on-click-modal="false">
@@ -32,7 +42,8 @@
             <el-form label-width="80px" :model="addForm">
                 <el-form-item label="材料名称" prop="materialName">
                     <el-select v-model="addForm.materialW" clearable placeholder="请选择材料名称" @focus="changeMaterialValue">
-                        <el-option v-for="(v,i) in typeMaterialOptions" :key="i" :label="v.materialName" :value="v.materialId"> </el-option>
+                        <el-option v-for="(v,i) in typeMaterialOptions" :key="i" :label="v.materialName"
+                            :value="v.materialId"> </el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="字段名称" required prop="fieldName">
@@ -50,15 +61,16 @@
         <!--编辑字段-->
         <el-dialog title="编辑材料字段" :visible.sync="editDialogVisible" width="50%" :close-on-click-modal="false">
             <el-form label-width="80px" :model="editForm">
-            <el-form-item label="材料名称" prop="materialName">
-                <el-select v-model="editForm.materialId" clearable placeholder="请选择材料名称">
-                    <el-option v-for="(v,i) in typeMaterialOptions" :key="i" :label="v.materialName" :value="v.materialId"> </el-option>
-                </el-select>
-            </el-form-item>
+                <el-form-item label="材料名称" prop="materialName">
+                    <el-select v-model="editForm.materialId" clearable placeholder="请选择材料名称">
+                        <el-option v-for="(v,i) in typeMaterialOptions" :key="i" :label="v.materialName"
+                            :value="v.materialId"> </el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item label="字段名称" required prop="fieldName">
                     <el-input v-model="editForm.fieldName"></el-input>
                 </el-form-item>
-                
+
                 <el-form-item label="备注">
                     <el-input v-model="editForm.note"></el-input>
                 </el-form-item>
@@ -71,72 +83,49 @@
         <!-- 导入字段 -->
         <el-dialog title="导入材料字段" :visible.sync="importDialogVisible" width="75%" :close-on-click-modal="false">
             <div class="searchBox">
-                <el-input placeholder="筛选事项名称/材料名称/材料编码" v-model="reloadTableItem.keyword" clearable style="width: 250px;" @keyup.native.enter='materialSearch' @change="materialSearch"></el-input>
+                <el-input placeholder="筛选事项名称/材料名称/材料编码" v-model="reloadTableItem.keyword" clearable
+                    style="width: 250px;" @keyup.native.enter='materialSearch' @change="materialSearch"></el-input>
                 <el-button @click="materialSearch">搜索</el-button>
             </div>
 
-            <el-table
-                ref="multipleTable"
-                class="workTable"
-                :data="tableDataImport"
-                style="width: 100%;"
-                border
-                tooltip-effect="dark"
-            >
-                    <el-table-column label="序号" type="index" width="45" :index="indexMethod"></el-table-column>
-                    <el-table-column
-                        prop="approvalItemId"
-                        label="审批事项编号"
-                        width="100"
-                        show-overflow-tooltip
-                    ></el-table-column>
-                    <el-table-column prop="itemName" label="审批事项名称"></el-table-column>
-                    <el-table-column prop="materialCode" label="材料编码" width="100" show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="materialId" label="材料ID" width="100" show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="materialName" label="材料名称"></el-table-column>
+            <el-table ref="multipleTable" class="workTable" :data="tableDataImport" style="width: 100%;" border
+                tooltip-effect="dark">
+                <el-table-column label="序号" type="index" width="45" :index="indexMethod"></el-table-column>
+                <el-table-column prop="approvalItemId" label="审批事项编号" width="100" show-overflow-tooltip>
+                </el-table-column>
+                <el-table-column prop="itemName" label="审批事项名称"></el-table-column>
+                <el-table-column prop="materialCode" label="材料编码" width="100" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="materialId" label="材料ID" width="100" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="materialName" label="材料名称"></el-table-column>
 
-                    <el-table-column
-                        label="是否关联"
-                        fixed="right"
-                        width="80"
-                    >
-                        <template slot-scope="scope">
-                            <el-switch
-                                v-model="scope.row.isRelevance"
-                            >
-                                <span style="display: none;">{{scope.$index}}</span>
-                            </el-switch>
-                        </template>
-                    </el-table-column>
+                <el-table-column label="是否关联" fixed="right" width="80">
+                    <template slot-scope="scope">
+                        <el-switch v-model="scope.row.isRelevance">
+                            <span style="display: none;">{{scope.$index}}</span>
+                        </el-switch>
+                    </template>
+                </el-table-column>
 
-                    <el-table-column
-                        prop="materialName"
-                        label="关联材料名称"
-                        fixed="right"
-                        width="200"
-                    >
-                        <template slot-scope="scope">
-                            <el-select v-model="scope.row.aimsMaterialId" clearable placeholder="请选择材料名称">
-                                <el-option v-for="(v,i) in typeMaterialOptions" :key="i" :label="v.materialName" :value="v.materialId"> </el-option>
-                            </el-select>
-                        </template>
-                    </el-table-column>
-                
-                    <el-table-column label="操作" fixed="right" width="200">
-                        <template slot-scope="scope">
-                            <el-button  type='text' @click="LookMaterial(scope.row)">查看该材料字段</el-button>
-                            <el-button  type='text' @click="importMaterial(scope.row)">导入字段</el-button>
-                        </template>
-                    </el-table-column>
+                <el-table-column prop="materialName" label="关联材料名称" fixed="right" width="200">
+                    <template slot-scope="scope">
+                        <el-select v-model="scope.row.aimsMaterialId" clearable placeholder="请选择材料名称">
+                            <el-option v-for="(v,i) in typeMaterialOptions" :key="i" :label="v.materialName"
+                                :value="v.materialId"> </el-option>
+                        </el-select>
+                    </template>
+                </el-table-column>
+
+                <el-table-column label="操作" fixed="right" width="200">
+                    <template slot-scope="scope">
+                        <el-button type='text' @click="LookMaterial(scope.row)">查看该材料字段</el-button>
+                        <el-button type='text' @click="importMaterial(scope.row)">导入字段</el-button>
+                    </template>
+                </el-table-column>
             </el-table>
             <div class="tablePagination">
-                <el-pagination
-                    @current-change="handleCurrentChangeImport"
-                    :current-page.sync="currentPageImport"
-                    :page-size="reloadTableItem.pagesize"
-                    layout="total, prev, pager, next"
-                    :total="totalImport"
-                ></el-pagination>
+                <el-pagination @current-change="handleCurrentChangeImport" :current-page.sync="currentPageImport"
+                    :page-size="reloadTableItem.pagesize" layout="total, prev, pager, next" :total="totalImport">
+                </el-pagination>
             </div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="importDialogVisible = false">取 消</el-button>
@@ -144,14 +133,19 @@
         </el-dialog>
 
         <!-- 查看字段 -->
-        <el-dialog :title="getMaterialName" :visible.sync="lookFieldsDialogVisible" width="50%" :close-on-click-modal="false">
+        <el-dialog :title="getMaterialName" :visible.sync="lookFieldsDialogVisible" width="50%"
+            :close-on-click-modal="false">
             <div v-if="this.lookFieldsData.length !== 0">
-            <el-row :gutter="20" v-for="(item,index) in lookFieldsData" :key="index">
-                <el-col :span="6" v-for="fieldName in item" :key="fieldName"><div class="grid-content bg-purple">{{fieldName}}</div></el-col>
-            </el-row>
-            <el-row>
-                <el-col :span="24"><div class="grid-content bg-purple">{{noLookFieldsData}}</div></el-col>
-            </el-row>
+                <el-row :gutter="20" v-for="(item,index) in lookFieldsData" :key="index">
+                    <el-col :span="6" v-for="fieldName in item" :key="fieldName">
+                        <div class="grid-content bg-purple">{{fieldName}}</div>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="24">
+                        <div class="grid-content bg-purple">{{noLookFieldsData}}</div>
+                    </el-col>
+                </el-row>
             </div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="lookFieldsDialogVisible = false">取 消</el-button>
@@ -163,11 +157,14 @@
 
 <script>
 import basicMixin from "./basicMixin";
-import { getField, addField, updateField, deleteField, 
-    getAllByApprovalItemId, listField, 
-    listFieldUnionMaterial, listAllMaterial, importfields, lookfields } from "@/api/basicInfo/field";
+import {
+    getField, addField, updateField, deleteField,
+    getAllByApprovalItemId, listField,
+    listFieldUnionMaterial, listAllMaterial, importfields, lookfields
+} from "@/api/basicInfo/field";
 import dayjs from "dayjs";
 import { getRolelist } from '@/api/item';
+import axios from "axios";
 export default {
     name: "FieldItem",
     mixins: [basicMixin],
@@ -219,6 +216,9 @@ export default {
             lookFieldsData: [],
             getMaterialName: null,
             noLookFieldsData: null,
+            // 文件上传
+            fileList: [],
+            url: process.env.VUE_APP_BASE_IP + "/ss/Import/ssFieldImportData",
         };
     },
     async created() {
@@ -246,9 +246,9 @@ export default {
             this.typeMaterialOptions = result.data;
         },
         // 添加字段的导入材料字段
-        changeMaterialValue(){
-            this.typeMaterialOptions.forEach(v =>{
-                if(v.materialName === null){
+        changeMaterialValue() {
+            this.typeMaterialOptions.forEach(v => {
+                if (v.materialName === null) {
                     v.materialName = v.docxTemplateName;
                 }
             })
@@ -361,7 +361,7 @@ export default {
                 this.getMaterialName = '无材料名';
             }
             this.materialRow = row;
-            let result = await lookfields({materialId: row.materialId});
+            let result = await lookfields({ materialId: row.materialId });
             let fieldData = [];
             if (result.data.length === 0) {
                 this.noLookFieldsData = '该材料下无对应的字段';
@@ -369,10 +369,10 @@ export default {
                 this.noLookFieldsData = null;
             }
             let y = 0;
-            for(let i = 0; i < result.data.length; i += 1){
+            for (let i = 0; i < result.data.length; i += 1) {
                 fieldData.push(result.data[i].fieldName);
                 y += 1;
-                if ( y === 4 ) {
+                if (y === 4) {
                     this.lookFieldsData.push(fieldData);
                     y = 0;
                     fieldData = [];
@@ -383,10 +383,51 @@ export default {
         },
         // 跳转到帮办工具模块并打开新标签页
         goFormconstructor() {
-            let routeUrl = this.$router.resolve({ name: "FormConstructor", query:{'itemId': this.$route.query.itemId }});
+            let routeUrl = this.$router.resolve({ name: "FormConstructor", query: { 'itemId': this.$route.query.itemId } });
             window.open(routeUrl.href, '_blank');
             // this.$router.push({ name: "FormConstructor", query:{'itemId': this.$route.query.itemId }});
-        }
+        },
+        // 上传文件
+        customUpload(file) {
+            let fd = new FormData();
+            fd.append("file", file);
+            console.log('fd');
+            console.log(fd);
+            axios.post(
+                this.url,
+                fd
+            )
+                .then(
+                    (res) => {
+                        console.log('res');
+                        console.log(res);
+                        if (res.data.success) {
+                            this.$message.success('上传成功');
+                            this.reloadTable();
+                            this.$refs.upload.clearFiles();
+                        } else {
+                            this.$message.warning('上传失败,请重新上传');
+                        }
+                    },
+                );
+            return false;
+        },
+        upload() {
+            this.$refs.upload.submit();
+        },
+        // 成功上传文件
+        upFile(res, file) {
+            if (res.status == 200) {
+                this.$message.success(res);
+            }
+        },
+        // 上传文件超出个数
+        handleExceed(files, fileList) {
+            this.$message.warning(`只能选择上传 1 个文件`);
+        },
+        //  移除文件
+        handleRemove(file, fileList) {
+        },
     }
 };
 </script>
@@ -396,6 +437,13 @@ export default {
 .workWrap {
     width: 99.9%;
     height: calc(100% - 22px);
+    .upload-box {
+        padding: 10px 12px 12px 12px;
+        width: 250px;
+        background: #f0f2f5;
+        display: flex;
+        flex-direction: row;
+    }
     header {
         font-size: 20px;
         font-weight: 700;
@@ -409,40 +457,41 @@ export default {
         flex-direction: row;
         background: #fff;
     }
-     .el-row {
-    margin-bottom: 20px;
-    &:last-child {
-      margin-bottom: 0;
+    .el-row {
+        margin-bottom: 20px;
+        &:last-child {
+            margin-bottom: 0;
+        }
     }
-  }
-  .el-col {
-    border-radius: 4px;
-  }
-  .bg-purple-dark {
-    background: #ffffff;
-  }
-  .bg-purple {
-    background: #ffffff;
-  }
-  .bg-purple-light {
-    background: #ffffff;
-  }
-  .grid-content {
-    border-radius: 4px;
-    min-height: 36px;
-  }
-  .row-bg {
-    padding: 10px 0;
-    background-color: #f9fafc;
-  }
-  .right-bar {
-      .button {
-        //   width: 60px;
-        //   height: 20px;
-        font-size: 18px;
-        font-weight: 600;
-        font-family:  Tahoma,Helvetica,"Arial","Microsoft YaHei", "宋体",sans-serif;
-      }
-  }
+    .el-col {
+        border-radius: 4px;
+    }
+    .bg-purple-dark {
+        background: #ffffff;
+    }
+    .bg-purple {
+        background: #ffffff;
+    }
+    .bg-purple-light {
+        background: #ffffff;
+    }
+    .grid-content {
+        border-radius: 4px;
+        min-height: 36px;
+    }
+    .row-bg {
+        padding: 10px 0;
+        background-color: #f9fafc;
+    }
+    .right-bar {
+        .button {
+            //   width: 60px;
+            //   height: 20px;
+            font-size: 18px;
+            font-weight: 600;
+            font-family: Tahoma, Helvetica, "Arial", "Microsoft YaHei", "宋体",
+                sans-serif;
+        }
+    }
 }
 </style>

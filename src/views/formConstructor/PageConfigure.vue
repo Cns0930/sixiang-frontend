@@ -34,6 +34,12 @@
                     <el-input v-model="temp_page.stepPagenum"></el-input>
                 </div>
                 <div>
+                页面组件:
+                <el-select v-model="temp_page.stepComponent">
+                    <el-option v-for="(v,i) in componentOptions" :key="i" :label="v.label" :value="v.name"></el-option>
+                </el-select>
+            </div>
+                <div>
                     <h3>设置页面类型</h3>
                     <el-select v-model="temp_page.stepPageType">
                         <el-option label="表单" value="field"></el-option>
@@ -445,11 +451,13 @@ export default {
             this.temp_page.stepObject.beforeEnterFn = this.aceForBeforeEnter && this.aceForBeforeEnter.getValue();
             this.temp_page.stepObject.afterEnterFn = this.aceForAfterEnter && this.aceForAfterEnter.getValue();
             this.temp_page.stepObject.title = this.temp_page.stepTitle;
+            this.temp_page.stepObject.component = this.temp_page.stepComponent;
             let data = {
                 id: this.temp_page.id,
                 stepTitle: this.temp_page.stepTitle,
                 stepPagenum: this.temp_page.stepPagenum,
                 stepPageType: this.temp_page.stepPageType,
+                stepComponent: this.temp_page.stepComponent,
                 stepObject: this.temp_page.stepObject,
                 beforeEnterFn:this.temp_page.stepObject.beforeEnterFn,
                 useBeforeEnter:!!this.temp_page.stepObject.useBeforeEnter,

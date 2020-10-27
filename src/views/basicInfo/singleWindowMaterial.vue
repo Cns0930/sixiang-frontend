@@ -2,6 +2,15 @@
     <div class="workWrap">
         <header>单窗材料</header>
         <section class="workBox">
+            <div class="upload-box">
+                <el-upload class="upload-demo" ref="upload" :action="url" :limit="1" accept=".xlsx"
+                    :with-credentials="true" :on-success="upFile" :on-remove="handleRemove" :on-exceed="handleExceed"
+                    :auto-upload="false" :before-upload="customUpload">
+                    <el-button type="primary">选择材料字段数据Excel</el-button>
+                    <el-button type="success" @click="upload()">导入</el-button>
+                    <div slot="tip" class="el-upload__tip">只能上传Excel文件</div>
+                </el-upload>
+            </div>
             <div class="searchBox">
                 <el-input placeholder="筛选文档名称或者文档编号" v-model="valueM" clearable style="width: 200px"></el-input>
                 <el-button @click="materialSearch()">搜索</el-button>
@@ -15,13 +24,14 @@
                     tooltip-effect="dark" :default-sort="{ prop: 'createTime', order: 'descending' }">
                     <el-table-column label="序号" type="index" width="45" :index="indexMethod"></el-table-column>
 
-                    <el-table-column prop="singlewindowMaterialName" label="单窗材料名称"  show-overflow-tooltip>
+                    <el-table-column prop="singlewindowMaterialName" label="单窗材料名称" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="proDocId" label="proDocId" width="100"></el-table-column>
-                    <el-table-column prop="isRequired" label="是否必须" :formatter="isRequiredFormatter" width="100"></el-table-column>
+                    <el-table-column prop="isRequired" label="是否必须" :formatter="isRequiredFormatter" width="100">
+                    </el-table-column>
                     <el-table-column prop="sort" label="排序" width="100"></el-table-column>
                     <el-table-column prop="notes" label="备注"></el-table-column>
-                    <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable >
+                    <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable>
                     </el-table-column>
                     <el-table-column prop="updateTime" label="更新时间" :formatter="timeFormatter" sortable
                         show-overflow-tooltip>
@@ -81,7 +91,7 @@
         <!-- 编辑窗口 -->
         <el-dialog title="编辑单窗材料" :visible.sync="EditDialogVisible" width="40%" :close-on-click-modal="false">
             <el-form :model="editInfo" label-width="20%" class="demo-ruleForm">
-                 <div>
+                <div>
                     <el-form-item label="单窗材料名称">
                         <el-input v-model="editInfo.singlewindowMaterialName"></el-input>
                     </el-form-item>
@@ -121,6 +131,7 @@ import Vue from "vue";
 import { listSinglewindow, addSinglewindow, getBySinglewindowId, updateSinglewindow, delSinglewindow } from "../../api/basicInfo/singleWindow";
 import { listApprovalItem } from "@/api/basicInfo/approval";
 import { log } from 'handlebars';
+import axios from "axios";
 export default {
     name: "singleWindowMaterial",
     mixins: [basicMixin],
@@ -153,15 +164,18 @@ export default {
             },
 
             // 可删
-            
-          
-            
+
+
+
             currentPageSelect: 1,
             pageSize: 10,
             selectData: [],
             importDialogVisible: false,
             idd: "",
             itemId: this.$route.query.itemId,
+            // 文件上传
+            fileList: [],
+            url: process.env.VUE_APP_BASE_IP + "/ss/Import/ssSinglewindowImportData",
         };
     },
     computed: {},
@@ -317,6 +331,47 @@ export default {
                 this.editInfo.documentSeq = DocumentNumber;
             }
         },
+        // 上传文件
+        customUpload(file) {
+            let fd = new FormData();
+            fd.append("file", file);
+            console.log('fd');
+            console.log(fd);
+            axios.post(
+                this.url,
+                fd
+            )
+                .then(
+                    (res) => {
+                        console.log('res');
+                        console.log(res);
+                        if (res.data.success) {
+                            this.$message.success('上传成功');
+                            this.search();
+                            this.$refs.upload.clearFiles();
+                        } else {
+                            this.$message.warning('上传失败,请重新上传');
+                        }
+                    },
+                );
+            return false;
+        },
+        upload() {
+            this.$refs.upload.submit();
+        },
+        // 成功上传文件
+        upFile(res, file) {
+            if (res.status == 200) {
+                this.$message.success(res);
+            }
+        },
+        // 上传文件超出个数
+        handleExceed(files, fileList) {
+            this.$message.warning(`只能选择上传 1 个文件`);
+        },
+        //  移除文件
+        handleRemove(file, fileList) {
+        },
     },
 };
 </script>
@@ -338,6 +393,13 @@ export default {
         padding: 6px 12px 12px 12px;
         box-sizing: border-box;
         background: #fff;
+        .upload-box {
+            padding: 10px 12px 12px 12px;
+            width: 250px;
+            background: #F0F2F5;
+            display: flex;
+            flex-direction: row;
+        }
     }
     .searchBox {
         margin-top: 10px;

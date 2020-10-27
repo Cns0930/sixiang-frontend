@@ -194,6 +194,8 @@ export default {
             baseFields:[],
             computedFields:[],
 
+            defaultCss: ".ck-content p{margin:0;white-space:pre-wrap;word-break:break-all;word-wrap:break-word;overflow-wrap:break-word;}.ck-content .table{margin:1em auto;display:table;}.ck-content .table table{margin-left:-1.6cm;width:17.84cm;border-collapse:collapse;border-spacing:0;height:100%;border:1px solid black;}#row-table > table{margin-left:-1.6cm;width:26.54cm;border-collapse:collapse;border-spacing:0;height:100%;border:1px solid black;}.ck-content .table table td,.ck-content .table table th{min-width:2em;padding:0;border:1px solid black;}.ck-content .custom-block-indent-2{text-indent:2em;}.ck-content .custom-block-indent-4{text-indent:4em;}.ck-content .custom-block-indent-6{text-indent:6em;}.ck-content .custom-block-indent-8{text-indent:8em;}.ck-content .custom-block-indent-10{text-indent:10em;}.image{display:inline-block;}.image img{width:7.9cm;}.ck-content p{margin:0;white-space:pre-wrap;word-break:break-all;word-wrap:break-word;overflow-wrap:break-word;}.ck-content .table{margin:1em auto;display:table;}.ck-content .table table{margin-left:-1.6cm;width:17.84cm;border-collapse:collapse;border-spacing:0;height:100%;border:1px solid black;}#row-table > table{margin-left:-1.6cm;width:26.54cm;border-collapse:collapse;border-spacing:0;height:100%;border:1px solid black;}.ck-content .table table td,.ck-content .table table th{min-width:2em;padding:0;border:1px solid black;}.ck-content .custom-block-indent-2{text-indent:2em;}.ck-content .custom-block-indent-4{text-indent:4em;}.ck-content .custom-block-indent-6{text-indent:6em;}.ck-content .custom-block-indent-8{text-indent:8em;}.ck-content .custom-block-indent-10{text-indent:10em;}.image{display:inline-block;}.image img{width:7.9cm;}",
+
         }
     },
     // computed: {
@@ -252,7 +254,7 @@ export default {
                 isTable: 0, // 是否表格
                 pageNum: length, // 第几页
                 templateType: "",
-                contentCss: "",
+                contentCss: this.defaultCss,
             })
             // this.currentPagenum = length;
         },
@@ -282,7 +284,7 @@ export default {
                 isTable: this.temp_page.isTable,
                 pageNum: this.currentPagenum,
                 templateType: this.temp_page.templateType,
-                contentCss: this.temp_page.contentCss,
+                contentCss: this.temp_page.contentCss ? this.temp_page.contentCss : this.defaultCss,
                 script:this.temp_page.script,
             })
 
@@ -294,6 +296,29 @@ export default {
             this.getTemplate();
         },
         async transferHtml(html){
+            // 先保存
+            const res = await addEditPage({
+                id: this.temp_page.id,
+                approvalItemId: this.temp_page.approvalItemId,
+                // itemName: this.temp_page.itemName,
+                htmlContent: html,
+                templateId: this.temp_page.templateId,
+                orient: this.temp_page.orient,
+                isTable: this.temp_page.isTable,
+                pageNum: this.currentPagenum,
+                templateType: this.temp_page.templateType,
+                contentCss: this.temp_page.contentCss ? this.temp_page.contentCss : this.defaultCss,
+                script:this.temp_page.script,
+            })
+
+            if (!res.success) return;
+            // 把返回的值放进去
+            this.temp_page = res.data;
+
+            this.$message.success('保存页面成功');
+            this.getTemplate();
+
+            // 再传输
             let serviceBaseUrl = this.$store.state.setting.bangbanUrl;
             if(serviceBaseUrl.endsWith('/')){
                 serviceBaseUrl = serviceBaseUrl.substring(0, serviceBaseUrl.length-1)
@@ -370,6 +395,8 @@ export default {
         },
         editPage(){
             this.templateEditVisible = true;
+            this.temp_page.contentCss ||
+                (this.temp_page.contentCss = this.defaultCss);
         },
     }
 }
