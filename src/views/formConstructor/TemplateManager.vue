@@ -296,6 +296,29 @@ export default {
             this.getTemplate();
         },
         async transferHtml(html){
+            // 先保存
+            const res = await addEditPage({
+                id: this.temp_page.id,
+                approvalItemId: this.temp_page.approvalItemId,
+                // itemName: this.temp_page.itemName,
+                htmlContent: html,
+                templateId: this.temp_page.templateId,
+                orient: this.temp_page.orient,
+                isTable: this.temp_page.isTable,
+                pageNum: this.currentPagenum,
+                templateType: this.temp_page.templateType,
+                contentCss: this.temp_page.contentCss ? this.temp_page.contentCss : this.defaultCss,
+                script:this.temp_page.script,
+            })
+
+            if (!res.success) return;
+            // 把返回的值放进去
+            this.temp_page = res.data;
+
+            this.$message.success('保存页面成功');
+            this.getTemplate();
+
+            // 再传输
             let serviceBaseUrl = this.$store.state.setting.bangbanUrl;
             if(serviceBaseUrl.endsWith('/')){
                 serviceBaseUrl = serviceBaseUrl.substring(0, serviceBaseUrl.length-1)

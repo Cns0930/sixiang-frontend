@@ -493,10 +493,10 @@ export default {
         },
         async transfer(){
             const html = this.monacoEditor.getValue();
-            // 保存
-            this.$emit("saveTemplate", html);
-            // 传输
-            this.$emit("transferHtml", html);
+            // // 保存
+            // await this.$emit("saveTemplate", html);
+            // 保存并传输
+            await this.$emit("transferHtml", html);
         },
         async initRender(){
             let result = await getFieldAll({ approvalItemId: this.$store.state.home.item.approvalItemId});
