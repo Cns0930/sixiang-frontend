@@ -1,95 +1,30 @@
 <template>
     <div class="main">
+        <div class="mainBox">
+            <el-button type="primary" plain style="margin-bottom: 10px" @click="saveMaterialTemplate">保存材料模板</el-button>
+            <div style="width:30cm">
+                <!-- <div ref="toolbar" style="position:fixed;top:32px;z-index:30"></div> -->
+                <div ref="toolbar" style="width: 70%;"></div>
 
-        <!-- template -->
-        <div class="computed-field" v-show="isListShown">
-            <div style="margin-top: 10px;">
-                <el-button type="text" @click="handleClickTemplate(templates)"
-                    style="width:100px;margin:0;color:orange">
-                    {{templates.template.docxTemplateName}}
-                </el-button>
-                <el-button-group>
-                    <el-button style="width:45px;" @click="addPage(templates)" icon="el-icon-plus"></el-button>
-                    <!-- <el-button style="width:45px;" @click="handleDelete(i)">删除</el-button> -->
-                </el-button-group>
-                <div style="margin-left:40px;">
-                    <div v-for="(page,pageIndex) in templates.templatePagesList" :key='pageIndex'
-                        style="margin-top: 2px;" :class="{'active':temp_page && page.id == temp_page.id}">
-                        - <el-button type="text" style="width:50px;margin:0" @click="handleClickPage(page,pageIndex)">
-                            {{page.pageNum}} 页
-                        </el-button>
-                        <el-button-group>
-                            <el-button style="width:40px;" @click="savePage(page,pageIndex)" icon="el-icon-upload2"
-                                :disabled="!temp_page || page.id != temp_page.id">
-                            </el-button>
-                            <el-button style="width:40px;" @click="editPage(page,pageIndex)" icon="el-icon-edit"
-                                :disabled="!temp_page || page.id != temp_page.id">
-                            </el-button>
-                            <el-button style="width:40px;" @click="deletePage(page)" icon="el-icon-delete"></el-button>
-                        </el-button-group>
+                <div>
+                    <!-- 纵向 -->
+                    <div class="row-editor">
+                        <div class="x" :class="{
+                            'page-portrait': true,
+                            'page-landscape': false,
+                            'table-padding': false,
+                            'text-padding': true
+                        }"></div>
                     </div>
+
+                    <!-- 横向 -->
+                    <!-- <div class="row-editor">
+                    <div class="x" style="width: 29.7cm;height:21cm;padding: 2.54cm 1.17cm"></div>
+                        </div>-->
                 </div>
+                <div ref="container" style="width: 29.7cm;height:720px;top:0px;position:relative;margin-top:0px"></div>
             </div>
-
-        </div>
-        <!-- 渲染字段 -->
-        <!-- <div class="computed-field">
-                <div v-for="(v,i) in baseJSON" :key="i">
-
-                    ({{v.fieldNo}}){{v.label}}：{{v.sample}}
-
-                </div>
-                <el-divider v-if="Object.keys(computedJSON).length > 0" />
-                <div v-for="(v,i) in computedJSON" :key="i">
-
-                    ({{v.fieldNo}}){{v.label}}:{{v.sample}}
-
-                </div>
-
-            </div> -->
-        <!-- <div class="computed-field computed-field-direction">
-                <div v-if="temp_page">
-                    <el-select v-model="temp_page.orient" placeholder="">
-                        <el-option label="横向" value="row" ></el-option>
-                        <el-option label="纵向" value="column" ></el-option>
-                    </el-select>
-                    <el-select v-model="temp_page.isTable" placeholder="">
-                        <el-option label="表格" :value="1" ></el-option>
-                        <el-option label="纯文本" :value="0" ></el-option>
-                    </el-select>
-                    
-                    <el-input v-model="currentPagenum" placeholder="请输入页码"></el-input>
-                    <CodeEditor v-model="temp_page.script"></CodeEditor>
-                </div>
-
-            </div> -->
-        <!-- 模板制作 -->
-        <div class="attribute-content">
-            <!-- <div class="row-editor" v-if="temp_page">
-                    <div :class="{'page-portrait':temp_page.orientation=='portrait','page-landscape':temp_page.orientation=='landscape','table-padding':temp_page.paddingType=='table','text-padding':temp_page.paddingType=='text'}">
-                        <h2 v-pre>{{1_1}}</h2>
-                        如果 参数a==参数b
-                        <span v-pre>{{#equal 1 1}} 等于{{else}}不等于{{/equal}}</span>
-                        <div v-pre>{{#if true}} true{{else}}false{{/if}}</div>
-                    </div>
-                </div> -->
-
-            <inlineEditor ref="inlineEditor" v-if="temp_page" :temp_page="temp_page" :currentPagenum="currentPagenum"
-                @saveTemplate="saveTemplate" @transferHtml="transferHtml" />
-        </div>
-        <div class="ckeditor" data-editor='DecoupledDocumentEditor'>
-            <!-- <button @click="exportHtml">导出html模板</button>
-            <button @click="importHtml">导入html模板</button>
-            <button @click="exportHtmlWithStyle">导出html带样式</button>
-            <button @click="printPreview">打印预览</button> -->
-            <!-- <button @click="convertToPdf">转pdf</button> -->
-            <div id="toolbar-container"></div>
-            <div class="row-editor">
-                <div id="editor">
-                    <h2>Bilingual Personality Disorder</h2>
-                </div>
-            </div>
-            <iframe id="print-data-container" tabindex="-1" :class="ifShow?'iframe-show':'iframe-off'"></iframe>
+        
         </div>
 
     </div>
@@ -99,6 +34,9 @@
 import CKEditor from '@/assets/js/ckeditor.js';
 import contentCss from "@/assets/js/contentStyle.js"
 import html2canvas from 'html2canvas'
+import Handlebars from "@/utils/handlebarsHelper";
+import _ from "lodash";
+import { mergeFieldAttr } from "../formConstructor/util";
 import jsPDF from 'jspdf'
 import { getByMaterialId, updateMaterial } from '@/api/basicInfo/material'
 export default {
@@ -111,9 +49,19 @@ export default {
             myEditor: null,
             isListShown: true,
             sourceEl: [],
+            DecoupledEditor: null,
+            page: "0",
+            htmlTemplate: null,
+            baseFields:[],
+            computedFields:[],
+            // temp_page: {
+            //     isTable: 0,
+            //     orient: "column",
+            //     pageNum: 1,
+            // },
 
             // 可删
-             templates: {
+            templates: {
                 template: {},
                 templatePagesList: [],
             },
@@ -141,22 +89,59 @@ export default {
 
             fieldVisible: false,
 
-            templateEditVisible:false,
+            templateEditVisible: false,
 
-            isListShown:true,
-
-            baseFields:[],
-            computedFields:[],
+            isListShown: true,
 
         }
     },
-    mounted() {
-        this.init();
-        // this.getTemplate();
+    computed: {
+        renderjson() {
+            let baseJSON = this.baseFields.reduce(mergeFieldAttr, {});
+            let computedJSON = this.computedFields.reduce(mergeFieldAttr, {});
 
-        let myEditor = CKEditor.create(document.querySelector( '#editor' ), 
-        {
-                initialData: '<h2>Initial data</h2><p>Foo bar.</p>',
+            return {
+                ..._.mapValues(baseJSON, "sample"),
+                ..._.mapValues(computedJSON, "sample"),
+                _repeatNo: 0,
+            };
+        },
+    },
+    created() {
+        this.init();
+    },
+    mounted() {
+        this.initEditor();
+    },
+    methods: {
+        async init() {
+            console.log('materialId', this.materialId);
+            let result = await getByMaterialId({ materialId: this.materialId });
+            if (!result.success) {
+                return;
+            }
+            this.htmlTemplate = result.data.docxTemplateHtml;
+            console.log('this.htmlTemplate INIT');
+            console.log(this.htmlTemplate);
+            // this.htmlTemplate = Handlebars.compile(this.htmlTemplate);
+            // console.log('this.htmlTemplate TWO');
+            // console.log(this.htmlTemplate);
+        },
+        async initEditor() {
+            if (this.editor) {
+                await this.editor.destroy();
+                this.editor = null;
+            }
+
+            let sourceEl = Array.from(document.querySelectorAll(".x")).reduce(
+                (result, item, i) => {
+                    result[i] = item;
+                    return result;
+                },
+                {}
+            );
+            console.log('sourceEl', sourceEl);
+            CKEditor.create(sourceEl, {
                 lineHeight: {
                     // specify your otions in the lineHeight config object. Default values are [ 0, 0.5, 1, 1.5, 2 ]
                     options: [
@@ -290,145 +275,91 @@ export default {
                 },
                 licenseKey: "",
             })
-            .then(editor => {
-                console.log(editor)
-                window.editor = editor;
-                this.editor = editor;
-                const toolbarContainer = document.querySelector('#toolbar-container');
+                .then((editor) => {
+                    window.editor = editor;
+                    this.editor = editor;
+                    const toolbarContainer = this.$refs.toolbar;
 
-                toolbarContainer.appendChild(editor.ui.view.toolbar.element);
+                    toolbarContainer.innerHTML = "";
 
-                // 监听事件
+                    toolbarContainer.appendChild(
+                        editor.ui.view.toolbar.element
+                    );
 
-                editor.plugins.get('PasteFromOffice').on("change:isEnabled", (d) => {
-                    console.log(d)
-                })
-                console.log(editor.plugins.get('PasteFromOffice'))
+                    editor.editing.view.change((writer) => {
+                        let roots = writer.document.roots;
 
-            })
-            .catch(error => {
-                console.log(error);
-            });
-    },
-    methods: {
-        async init() {
-            console.log('materialId', this.materialId);
-            let result = await getByMaterialId({materialId: this.materialId});
-            if(!result.success) {
-                return;
-            }
-        },
-        exportHtml() {
-            let html = this.editor.getData();
-
-            this.downloadFile(html, "模板.html")
-        },
-        exportHtmlWithStyle() {
-            let html = this.editor.getData();
-            let str = `<html>
-                <head>
-                    <title>${document.title}</title>
-                    ${contentCss}
-                </head>
-                <body style="margin:0">
-                <div class="ck-content">
-                    ${html}
-                </div>
-                </body>
-            </html>`
-            this.downloadFile(str, "样式.html")
-        },
-        importHtml() {
-            let html = prompt("粘贴html", "");
-            if (html != null && html != "") {
-                this.editor.setData(html)
-            } else {
-                alert("未输入")
-            }
-        },
-        downloadFile(string, filename) {
-            var a = document.createElement('a');
-            a.download = filename;
-            a.style.display = 'none';
-
-            var blob = new Blob([string], { type: 'text/html' });
-            // var blob = new Blob(string);
-            a.href = URL.createObjectURL(blob);
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-
-        },
-        /* eslint-disable*/
-        printPreview() {
-            const iframeElement = document.querySelector('#print-data-container');
-            let html = this.editor.getData()
-
-            iframeElement.srcdoc = `<html>
-                <head>
-                    <title>${document.title}</title>
-                    ${contentCss}
-                </head>
-                <body style="margin:0">
-                <div class="ck-content">
-                    ${html}
-                    <script>
-                        window.addEventListener( \'DOMContentLoaded\', () => { window.print(); } );
-                    <\/script>
-                </div>
-                </body>
-            </html>`
-
-        },
-        convertToPdf() {
-
-            html2canvas(document.querySelector('#editor'), {
-                scale: 2,
-
-            }).then(canvas => {
-                //  document.body.appendChild(canvas);
-                console.log(canvas)
-                var contentWidth = canvas.width
-                var contentHeight = canvas.height
-                // 一页pdf显示html页面生成的canvas高度;
-                var pageHeight = contentWidth / 592.28 * 841.89
-                // 未生成pdf的html页面高度
-                var leftHeight = contentHeight
-                // pdf页面偏移
-                var position = 0
-                // a4纸的尺寸[595.28,841.89]，html页面生成的canvas在pdf中图片的宽高
-                var imgWidth = 595.28
-                var imgHeight = 592.28 / contentWidth * contentHeight
-                var pageData = canvas.toDataURL('image/jpeg', 1.0)
-
-                var pdf = new jsPDF('', 'pt', 'a4')
-                // 有两个高度需要区分，一个是html页面的实际高度，和生成pdf的页面高度(841.89)
-                // 当内容未超过pdf一页显示的范围，无需分页
-                if (leftHeight < pageHeight) {
-                    pdf.addImage(pageData, 'JPEG', 0, 0, imgWidth, imgHeight)
-                } else {
-                    while (leftHeight > 0) {
-                        pdf.addImage(pageData, 'JPEG', 0, position, imgWidth, imgHeight)
-                        leftHeight -= pageHeight
-                        position -= 841.89
-                        // 避免添加空白页
-                        if (leftHeight > 0) {
-                            pdf.addPage()
+                        for (let root of roots) {
+                            writer.removeClass(
+                                "ck-editor__editable_inline",
+                                root
+                            );
+                            // writer.removeClass( 'ck-content', root );
                         }
-                    }
-                }
-                // 导出pdf文件命名
-                pdf.save('report_pdf_' + new Date().getTime() + '.pdf')
+                    });
 
-            })
+                    // this.monacoEditor.setValue(this.temp_page.htmlContent);
+                    // beautify.beautify(this.ace.session);
+                    // this.setHtmlToEditor();
+                    console.log('this.htmlTemplate');
+                    console.log(this.htmlTemplate);
+                    editor.data.set(this.htmlTemplate);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        },
+        // setHtmlToEditor() {
+        //     try {
+        //         let result = this.htmlTemplate(this.renderjson);
+        //         this.editor.data.set({ [this.page]: result });
+        //     } catch (e) {
+        //         console.warn("编译错误", e)
+        //         this.editor.data.set({ [this.page]: html });
+        //     }
+        // },
+        async saveMaterialTemplate() {
+            let html = this.editor.model.document
+                .getRootNames()
+                .map((v) => editor.getData({ rootName: v }))
+                .join("");
+            let request = {
+                materialId: this.materialId,
+                docxTemplateHtml : html,
+            }
+            console.log('request');
+            console.log(request);
+            let result = await updateMaterial(request);
+            if (!result.success) {
+                this.$message.warning('保存材料模板失败');
+                return;
+            } else {
+                this.$message.success('保存材料模板成功');
+            }
         }
-
-
     }
 }
 </script>
 
 <style scoped lang="scss">
+.page-portrait {
+    width: 21cm;
+    height: 29.7cm;
+    margin-top: 10px;
+    &.table-padding {
+        padding: 2.54cm 1.5cm;
+    }
+    &.text-padding {
+        padding: 2.54cm 3.18cm;
+    }
+}
+
+.page-landscape {
+    width: 29.7cm;
+    height: 21cm;
+    margin-top: 10px;
+    padding: 2.54cm 1.17cm;
+}
 .iframe-off {
     position: absolute;
     width: 100px;
@@ -447,5 +378,13 @@ export default {
 }
 .ckeditor {
     width: 45%;
+    .toolbar-container {
+        height: 500px;
+        width: 80%;
+        #firstname {
+            height: 500px;
+            width: 80%;
+        }
+    }
 }
 </style>
