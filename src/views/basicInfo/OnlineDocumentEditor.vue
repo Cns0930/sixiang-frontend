@@ -108,21 +108,22 @@ export default {
         },
     },
     created() {
-        this.init();
+        
     },
-    mounted() {
+    async mounted() {
+        await this.init();
         this.initEditor();
     },
     methods: {
         async init() {
-            console.log('materialId', this.materialId);
+            // console.log('materialId', this.materialId);
             let result = await getByMaterialId({ materialId: this.materialId });
             if (!result.success) {
                 return;
             }
             this.htmlTemplate = result.data.docxTemplateHtml;
-            console.log('this.htmlTemplate INIT');
-            console.log(this.htmlTemplate);
+            // console.log('this.htmlTemplate INIT');
+            // console.log(this.htmlTemplate);
             // this.htmlTemplate = Handlebars.compile(this.htmlTemplate);
             // console.log('this.htmlTemplate TWO');
             // console.log(this.htmlTemplate);
@@ -301,9 +302,9 @@ export default {
                     // this.monacoEditor.setValue(this.temp_page.htmlContent);
                     // beautify.beautify(this.ace.session);
                     // this.setHtmlToEditor();
-                    console.log('this.htmlTemplate');
-                    console.log(this.htmlTemplate);
-                    editor.data.set(this.htmlTemplate);
+                    // console.log('this.htmlTemplate');
+                    // console.log(this.htmlTemplate);
+                    editor.data.set({ 0:this.htmlTemplate });
                 })
                 .catch((error) => {
                     console.log(error);
@@ -327,14 +328,16 @@ export default {
                 materialId: this.materialId,
                 docxTemplateHtml : html,
             }
-            console.log('request');
-            console.log(request);
+            // console.log('request');
+            // console.log(request);
             let result = await updateMaterial(request);
             if (!result.success) {
                 this.$message.warning('保存材料模板失败');
                 return;
             } else {
                 this.$message.success('保存材料模板成功');
+                await this.init();
+                this.initEditor();
             }
         }
     }
