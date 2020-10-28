@@ -4,14 +4,14 @@
         <el-button @click="addDialogVisible = true" type="primary" style="margin-bottom:10px">添加</el-button>
         <el-button @click="openImportDialog" type="primary" style="margin-bottom:10px">导入</el-button>
         <div class="upload-box">
-        <el-upload class="upload-demo" ref="upload" :action="url" :limit="1" accept=".xlsx" :with-credentials="true"
-            :on-success="upFile" :on-remove="handleRemove" :on-exceed="handleExceed" :auto-upload="false"
-            :before-upload="customUpload">
-            <el-button type="primary">选择材料字段数据Excel</el-button>
-            <div slot="tip" class="el-upload__tip">只能上传Excel文件</div>
-        </el-upload>
-        <el-button type="success" @click="upload()" class="upload-input">导入</el-button>
-        
+            <el-upload class="upload-demo" ref="upload" :action="url" :limit="1" accept=".xlsx" :with-credentials="true"
+                :on-success="upFile" :on-remove="handleRemove" :on-exceed="handleExceed" :auto-upload="false"
+                :before-upload="customUpload">
+                <el-button type="primary">选择材料字段数据Excel</el-button>
+                <div slot="tip" class="el-upload__tip">只能上传Excel文件</div>
+            </el-upload>
+            <el-button type="success" @click="upload()" class="upload-input">导入</el-button>
+
         </div>
         <el-table :data="tableData" border style="margin-top: 10px;">
             <el-table-column prop="materialName" label="材料名称"></el-table-column>
@@ -158,6 +158,20 @@
                 <el-button type="primary" @click="importMaterial(materialRow)">导 入</el-button>
             </span>
         </el-dialog>
+
+        <!-- 上传提示信息 -->
+        <el-dialog title="上传信息提示" :visible.sync="uploadDialogVisible" width="30%" center>
+            <span class="uploadBackInfo-title">关联材料不存在：</span>
+            <br>
+            <p>{{ uploadBackInfo.关联材料不存在 }}</p>
+            <br><br>
+            <span class="uploadBackInfo-title">同情形下名称相同：</span>
+            <br>
+            <p>{{ uploadBackInfo.同情形下名称相同 }}</p>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="uploadDialogVisible = false">确 认</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -225,6 +239,11 @@ export default {
             // 文件上传
             fileList: [],
             url: process.env.VUE_APP_BASE_IP + "/ss/Import/ssFieldImportData",
+            uploadDialogVisible: false,
+            uploadBackInfo: {
+                关联材料不存在: null,
+                同情形下名称相同: null,
+            },
         };
     },
     async created() {
@@ -411,6 +430,8 @@ export default {
                             this.$message.success('上传成功');
                             this.reloadTable();
                             this.$refs.upload.clearFiles();
+                            this.uploadBackInfo = res.data.data;
+                            this.uploadDialogVisible = true;
                         } else {
                             this.$message.warning('上传失败,请重新上传');
                         }
@@ -504,6 +525,12 @@ export default {
             font-family: Tahoma, Helvetica, "Arial", "Microsoft YaHei", "宋体",
                 sans-serif;
         }
+    }
+    .uploadBackInfo-title {
+        font-size: 18px;
+        margin: 20px auto;
+        font-weight: bold;
+        line-height: 20px;
     }
 }
 </style>

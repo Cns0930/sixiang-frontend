@@ -120,6 +120,20 @@
                     ">确 定</el-button>
             </span>
         </el-dialog>
+
+        <!-- 上传提示信息 -->
+        <el-dialog title="上传信息提示" :visible.sync="uploadDialogVisible" width="30%" center>
+            <span class="uploadBackInfo-title">与数据库重复的字段名：</span>
+            <br>
+            <p>{{ uploadBackInfo.dbRepeatMap.MATERIAL_NAME }}</p>
+            <br><br>
+            <span class="uploadBackInfo-title">与Excel表重复的字段名：</span>
+            <br>
+            <p>{{ uploadBackInfo.excelRepeatMap.MATERIAL_NAME }}</p>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="uploadDialogVisible = false">确 认</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -176,6 +190,11 @@ export default {
             // 文件上传
             fileList: [],
             url: process.env.VUE_APP_BASE_IP + "/ss/Import/ssSinglewindowImportData",
+            uploadDialogVisible: false,
+            uploadBackInfo: {
+                dbRepeatMap: { MATERIAL_NAME: null },
+                excelRepeatMap: { MATERIAL_NAME: null },
+            },
         };
     },
     computed: {},
@@ -349,6 +368,10 @@ export default {
                             this.$message.success('上传成功');
                             this.search();
                             this.$refs.upload.clearFiles();
+                            this.uploadBackInfo = res.data.data;
+                            this.uploadBackInfo.dbRepeatMap.MATERIAL_NAME = this.uploadBackInfo.dbRepeatMap.MATERIAL_NAME.replace(/;/g,'; \t');
+                            this.uploadBackInfo.excelRepeatMap.MATERIAL_NAME = this.uploadBackInfo.excelRepeatMap.MATERIAL_NAME.replace(/;/g,'; \t');
+                            this.uploadDialogVisible = true;
                         } else {
                             this.$message.warning('上传失败,请重新上传');
                         }
@@ -396,7 +419,7 @@ export default {
         .upload-box {
             padding: 10px 12px 12px 12px;
             width: 230px;
-            background: #F0F2F5;
+            background: #f0f2f5;
             display: flex;
             flex-direction: row;
             .upload-demo {
@@ -432,6 +455,12 @@ export default {
         .workTable {
             width: 100%;
         }
+    }
+    .uploadBackInfo-title {
+        font-size: 18px;
+        margin: 20px auto;
+        font-weight: bold;
+        line-height: 20px;
     }
 }
 </style>
