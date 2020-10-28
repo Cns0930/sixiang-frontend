@@ -8,14 +8,20 @@
             :on-success="upFile" :on-remove="handleRemove" :on-exceed="handleExceed" :auto-upload="false"
             :before-upload="customUpload">
             <el-button type="primary">选择材料字段数据Excel</el-button>
-            <el-button type="success" @click="upload()">导入</el-button>
             <div slot="tip" class="el-upload__tip">只能上传Excel文件</div>
         </el-upload>
+        <el-button type="success" @click="upload()" class="upload-input">导入</el-button>
         
         </div>
         <el-table :data="tableData" border style="margin-top: 10px;">
             <el-table-column prop="materialName" label="材料名称"></el-table-column>
             <el-table-column prop="fieldName" label="字段名称"></el-table-column>
+            <el-table-column prop="isRequired" label="是否必填" width="100"></el-table-column>
+            <el-table-column prop="label" label="前端字段名称"></el-table-column>
+            <el-table-column prop="fieldNo" label="字段编号" width="100"></el-table-column>
+            <el-table-column prop="valueSource" label="字段值来源"></el-table-column>
+            <el-table-column prop="defaultValue" label="默认值"></el-table-column>
+            <el-table-column prop="descriptionInfo" label="字段逻辑描述"></el-table-column>
             <el-table-column prop="note" label="备注"></el-table-column>
             <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter"></el-table-column>
             <el-table-column prop="updateTime" label="更新时间" :formatter="timeFormatter"></el-table-column>
@@ -443,6 +449,12 @@ export default {
         background: #f0f2f5;
         display: flex;
         flex-direction: row;
+        .upload-demo {
+            width: 160px;
+        }
+        .upload-input {
+            height: 26px;
+        }
     }
     header {
         font-size: 20px;

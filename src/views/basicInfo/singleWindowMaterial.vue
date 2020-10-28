@@ -7,9 +7,9 @@
                     :with-credentials="true" :on-success="upFile" :on-remove="handleRemove" :on-exceed="handleExceed"
                     :auto-upload="false" :before-upload="customUpload">
                     <el-button type="primary">选择材料字段数据Excel</el-button>
-                    <el-button type="success" @click="upload()">导入</el-button>
                     <div slot="tip" class="el-upload__tip">只能上传Excel文件</div>
                 </el-upload>
+                <el-button type="success" @click="upload()" class="upload-input">导入</el-button>
             </div>
             <div class="searchBox">
                 <el-input placeholder="筛选文档名称或者文档编号" v-model="valueM" clearable style="width: 200px"></el-input>
@@ -399,6 +399,12 @@ export default {
             background: #F0F2F5;
             display: flex;
             flex-direction: row;
+            .upload-demo {
+                width: 160px;
+            }
+            .upload-input {
+                height: 26px;
+            }
         }
     }
     .searchBox {
