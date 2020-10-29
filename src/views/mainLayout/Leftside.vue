@@ -26,7 +26,7 @@
                     <i class="el-icon-location"></i>
                     <span>{{item.label}}</span>
                 </template>
-                <el-menu-item v-for="(t,i) of item.children" @click="setCrumbList([...t])" :index="t.path" :key="i" v-if="item.children.length">{{t.label}}</el-menu-item>
+                <el-menu-item v-for="(t,i) of item.children" @click="setCrumbList([...t]);changeCrumbListSecond()" :index="t.path" :key="i" v-if="item.children.length">{{t.label}}</el-menu-item>
             </el-submenu>
         </el-menu>
     </div>
@@ -63,6 +63,11 @@ export default {
             console.log(key, keyPath);
         },
         ...mapMutations('config',['setCrumbList']),
+        changeCrumbListSecond() {
+            sessionStorage.setItem('activeName', 'subitem');
+            sessionStorage.setItem('activeTab', 'formconstructor');
+            this.$store.commit("config/setCrumbListSecond",[{path: "", label:'' }]);
+        },
     },
 };
 </script>

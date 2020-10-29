@@ -154,6 +154,7 @@ export default {
         // }
     },
     async created() {
+        await this.init();
         this.reloadTable();
     },
     methods: {

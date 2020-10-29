@@ -9,20 +9,9 @@
                 <el-tab-pane label="帮办材料" name="material"></el-tab-pane>
                 <el-tab-pane label="单窗材料" name="singleWindow"></el-tab-pane>
                 <el-tab-pane label="材料字段" name="field"></el-tab-pane>
-                <el-tab-pane label="前端字段" name=""></el-tab-pane>
+                <el-tab-pane label="前端字段" name="" disabled></el-tab-pane>
                 <el-tab-pane label="附件管理" name="accessory"></el-tab-pane>
             </el-tabs>
-
-            <!-- <el-button
-                @click="$router.push({path:'/formconstructor', query:{'itemId':$store.state.home.item.approvalItemId}})"
-            >字段管理</el-button>
-            <el-button
-                @click="$router.push({path:'/materialmanager', query:{'itemId':$store.state.home.item.approvalItemId}})"
-            >材料管理</el-button>
-            <el-button
-                @click="$router.push({path:'/pageconfigure', query:{'itemId':$store.state.home.item.approvalItemId}})"
-            >步骤页面管理</el-button>
-            <el-button @click="$router.push({path:'/setting'})">设置</el-button>-->
         </div>
 
         <router-view></router-view>
@@ -30,6 +19,9 @@
 </template>
 
 <script>
+import store from "@/vuex/store"
+import { mapState, mapMutations } from 'vuex';
+import { log } from 'handlebars';
 export default {
     name: "BasicHome",
     components: {},
@@ -38,40 +30,65 @@ export default {
             activeName: "",
         };
     },
+    created() {
+        this.activeName = sessionStorage.getItem('activeName');
+        console.log('this.activeName');
+        console.log(this.activeName);
+        if (this.activeName === null) {
+            this.activeName = 'subitem';
+        }
+    },
     methods: {
         handleClick(tab, event) {
-            
-                if (this.activeName === "subitem") {
-                    this.$router.push({
-                        path: "/basic/subitem",
-                        query: { itemId: this.$route.query.itemId },
-                    });
-                } else if (this.activeName === "material") {
-                    this.$router.push({
-                        path: "/basic/material",
-                        query: { itemId: this.$route.query.itemId },
-                    });
-                } else if (this.activeName === "field") {
-                    this.$router.push({
-                        path: "/basic/field",
-                        query: { itemId: this.$route.query.itemId },
-                    });
-                } else if (this.activeName === "accessory") {
-                    this.$router.push({
-                        path: "/basic/accessory",
-                        query: { itemId: this.$route.query.itemId },
-                    });
-                } else if (this.activeName === "AIdocument") {
-                    this.$router.push({
-                        path: "/basic/AIdocument",
-                        query: { itemId: this.$route.query.itemId },
-                    });
-                } else if (this.activeName === "singleWindow") {
-                    this.$router.push({
-                        path: "/basic/singleWindow",
-                        query: { itemId: this.$route.query.itemId },
-                    });
-                } 
+            if (this.activeName === "subitem") {
+                this.$router.push({
+                    path: "/basic/subitem",
+                    query: { itemId: this.$route.query.itemId },
+                });
+                sessionStorage.setItem('activeName', 'subitem');
+                this.$store.commit("config/setCrumbList", [{ path: `/basic/subitem?itemId=${this.$route.query.itemId}`, label: '调研信息' }])
+                this.$store.commit("config/setCrumbListSecond", [{ path: "/basic/subitem", label: '情形管理' }])
+            } else if (this.activeName === "material") {
+                this.$router.push({
+                    path: "/basic/material",
+                    query: { itemId: this.$route.query.itemId },
+                });
+                sessionStorage.setItem('activeName', 'material');
+                this.$store.commit("config/setCrumbList", [{ path: `/basic/subitem?itemId=${this.$route.query.itemId}`, label: '调研信息' }])
+                this.$store.commit("config/setCrumbListSecond", [{ path: "/basic/material", label: '帮办材料' }])
+            } else if (this.activeName === "field") {
+                this.$router.push({
+                    path: "/basic/field",
+                    query: { itemId: this.$route.query.itemId },
+                });
+                sessionStorage.setItem('activeName', 'field');
+                this.$store.commit("config/setCrumbList", [{ path: `/basic/subitem?itemId=${this.$route.query.itemId}`, label: '调研信息' }])
+                this.$store.commit("config/setCrumbListSecond", [{ path: "/basic/field", label: '材料字段' }])
+            } else if (this.activeName === "accessory") {
+                this.$router.push({
+                    path: "/basic/accessory",
+                    query: { itemId: this.$route.query.itemId },
+                });
+                sessionStorage.setItem('activeName', 'accessory');
+                this.$store.commit("config/setCrumbList", [{ path: `/basic/subitem?itemId=${this.$route.query.itemId}`, label: '调研信息' }])
+                this.$store.commit("config/setCrumbListSecond", [{ path: "/basic/accessory", label: '附件管理' }])
+            } else if (this.activeName === "AIdocument") {
+                this.$router.push({
+                    path: "/basic/AIdocument",
+                    query: { itemId: this.$route.query.itemId },
+                });
+                sessionStorage.setItem('activeName', 'AIdocument');
+                this.$store.commit("config/setCrumbList", [{ path: `/basic/subitem?itemId=${this.$route.query.itemId}`, label: '调研信息' }])
+                this.$store.commit("config/setCrumbListSecond", [{ path: "/basic/AIdocument", label: 'AI文档' }])
+            } else if (this.activeName === "singleWindow") {
+                this.$router.push({
+                    path: "/basic/singleWindow",
+                    query: { itemId: this.$route.query.itemId },
+                });
+                sessionStorage.setItem('activeName', 'singleWindow');
+                this.$store.commit("config/setCrumbList", [{ path: `/basic/subitem?itemId=${this.$route.query.itemId}`, label: '调研信息' }])
+                this.$store.commit("config/setCrumbListSecond", [{ path: "/basic/singleWindow", label: '单窗材料' }])
+            }
         },
     },
 };

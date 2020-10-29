@@ -294,6 +294,7 @@ export default {
     },
     computed: {},
     async created() {
+        await this.init();
         await this.search();
     },
     methods: {

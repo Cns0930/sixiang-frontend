@@ -69,14 +69,14 @@ export default {
             console.log(`当前页: ${val}`);
         },
         async init(){
-            if(this.$store.state.basic.approvalItem.approvalItemId == null){
+            if(this.$store.state.home.item.approvalItemId == null){
                 let itemId = this.$route.query.itemId;
                 let result = await getByApprovalItemId({approvalItemId: itemId});
                 if (!result.success) {
                 this.$message({ type: "warning", message: "获取初始事项信息失败" });
                 return;
                 }
-                this.$store.commit("changeApprovalItem", result.data);
+                this.$store.commit("changeItem", result.data);
             }
         }
     }

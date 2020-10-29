@@ -107,7 +107,8 @@
                     ></el-table-column>
                     <el-table-column label="操作" fixed="right">
                         <template slot-scope="scope">
-                            <el-button size="mini" @click="handleClickItem(scope.row)">管理详情</el-button>
+                            <el-button size="mini" @click="handleClickItem(scope.row)">调研信息</el-button>
+                            <el-button size="mini" @click="handleClickItemBangBan(scope.row)">帮办工具</el-button>
                             <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                             <el-button size="mini" type="danger" @click="handleClose(scope.row)">关闭</el-button>
                         </template>
@@ -268,6 +269,15 @@ export default {
     async created() {
         await this.searchItem();
         await this.loadOptions();
+        
+        let itemInfo = this.$store.state.home.item;
+        itemInfo.approvalItemId = null;
+        itemInfo.itemName = null;
+        itemInfo.itemNo = null;
+        this.$store.commit("changeItem", itemInfo);
+        sessionStorage.removeItem('itemInfo');
+        console.log('this.$store.state.home.item');
+        console.log(this.$store.state.home.item);
     },
     methods: {
         // inputs(val) {
@@ -336,9 +346,20 @@ export default {
            await this.list();
         },
         handleClickItem(item){
-            this.$store.commit("changeApprovalItem", item);
+            this.$store.commit("changeItem", item);
+            sessionStorage.setItem("itemInfo",item);
+            sessionStorage.setItem('activeName', 'subitem');
             this.$router.push({
                 path: "/basic/subitem",
+                query: { itemId: item.approvalItemId },
+            });
+        },
+        handleClickItemBangBan(item){
+            this.$store.commit("changeItem", item);
+            sessionStorage.setItem("itemInfo",item);
+            sessionStorage.setItem('activeTab', 'formconstructor');
+            this.$router.push({
+                path: "/formconstructor",
                 query: { itemId: item.approvalItemId },
             });
         },

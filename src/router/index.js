@@ -34,13 +34,14 @@ const routes = [
         path: '/',
         component: Home,
         redirect: to=> {
-            let hasAdmin = store.state['config'].roles.includes('admin');
-            let hasResearcher = store.state['config'].roles.includes('researcher');
-            if(hasAdmin || hasResearcher) {
-                return '/basic'
-            } else {
-                return '/subhome'
-            }
+            // let hasAdmin = store.state['config'].roles.includes('admin');
+            // let hasResearcher = store.state['config'].roles.includes('researcher');
+            // if(hasAdmin || hasResearcher) {
+            //     return '/basic'
+            // } else {
+            //     return '/subhome'
+            // }
+            return '/basic';
         },
         children: [
             {

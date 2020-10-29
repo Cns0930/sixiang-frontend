@@ -18,6 +18,10 @@ const mutations = {
       state.crumbList = [];
       state.crumbList = data;
     },
+    setCrumbListSecond(state,data) {
+      state.crumbListSecond = [];
+      state.crumbListSecond = data;
+    },
     setRoles(state,data) {
       console.log(data,'state')
       state.roles = data;

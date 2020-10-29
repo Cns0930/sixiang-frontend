@@ -247,7 +247,7 @@ export default {
         };
     },
     async created() {
-        // await this.init();
+        await this.init();
         this.materialList();
         this.reloadTable();
     },

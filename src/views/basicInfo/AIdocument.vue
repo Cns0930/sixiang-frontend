@@ -184,6 +184,7 @@ export default {
     },
     computed: {},
     async created() {
+        await this.init();
         await this.search();
         await this.initSingleWindowMaterials();
     },
