@@ -4,7 +4,7 @@
 <script>
 import { listApprovalItem , getByApprovalItemId } from "../../api/basicInfo/approval";
 import { listMaterial } from "../../api/basicInfo/material";
-import { listSinglewindow } from "../../api/basicInfo/singleWindow";
+import { listitemNoSinglewindow } from "../../api/basicInfo/singleWindow";
 import { listDocument } from "../../api/basicInfo/AIdocument";
 
 import _ from "lodash";
@@ -35,7 +35,7 @@ export default {
             } else if(this.type === 'pickUp') {
 
             } else if(this.type === 'singleWindow') {
-                result = await listSinglewindow({approvalItemId: this.$route.query.itemId});
+                result = await listitemNoSinglewindow({itemNo: this.$store.state.home.item.itemNo});
                 this.tableData = result.data;
             } else if(this.type === 'AIdocument') {
                 result = await listDocument({approvalItemId: this.$route.query.itemId});
@@ -59,7 +59,7 @@ export default {
             } else if (cellValue === 0) {
                 return '否';
             } else {
-                return '——';
+                return '-';
             }
         },
         handleSizeChange(val) {

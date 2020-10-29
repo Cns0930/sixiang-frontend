@@ -150,7 +150,7 @@ import basicMixin from "./basicMixin";
 import Vue from "vue";
 import { listMaterial, getTemplateByMaterialId, copySelectedMaterial, getAllByApprovalItemId } from "../../api/basicInfo/material";
 import { addDocument, updateDocument, getByDocumentId, delDocument } from "../../api/basicInfo/AIdocument";
-import { listSinglewindow } from "../../api/basicInfo/singleWindow";
+import { listitemNoSinglewindow } from "../../api/basicInfo/singleWindow";
 export default {
     name: "AIdocument",
     mixins: [basicMixin],
@@ -190,7 +190,7 @@ export default {
     },
     methods: {
         async initSingleWindowMaterials() {
-            let result = await listSinglewindow({approvalItemId: this.$route.query.itemId});
+            let result = await listitemNoSinglewindow({itemNo: this.$store.state.home.item.itemNo});
             if (!result.success) return;
             result.data.forEach(element => {
                 let material = {
