@@ -74,7 +74,7 @@ const originList = [
         order: 2
     },
     {
-        path: "/basic",
+        path: "/basic_",
         label: "事项管理",
         authKey: ["admin","developer","researcher","test"],
         iconImg: product,
