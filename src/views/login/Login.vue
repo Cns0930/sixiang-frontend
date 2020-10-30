@@ -67,11 +67,11 @@ export default {
 
             let hasAdmin = result.data.roles.includes('admin');
             let hasResearcher = result.data.roles.includes('researcher');
-            if(hasAdmin || hasResearcher) {
+            // if(hasAdmin || hasResearcher) {
                 this.$router.push('/basic')
-            } else {
-                this.$router.push("/subhome");
-            }
+            // } else {
+            //     this.$router.push("/subhome");
+            // }
         },
         async getAuth(userName, password,rememberMe) {
             // if (userName === "admin" && password === "Hg9s$ixuVe*x4J2X") {

@@ -109,8 +109,8 @@
                         <template slot-scope="scope">
                             <el-button size="mini" @click="handleClickItem(scope.row)">调研信息</el-button>
                             <el-button size="mini" @click="handleClickItemBangBan(scope.row)">帮办工具</el-button>
-                            <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-                            <el-button size="mini" type="danger" @click="handleClose(scope.row)">关闭</el-button>
+                            <el-button size="mini" @click="handleEdit(scope.$index, scope.row)" :disabled="!hasManagePermission()">编辑</el-button>
+                            <el-button size="mini" type="danger" @click="handleClose(scope.row)" :disabled="!hasManagePermission()">关闭</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -413,7 +413,15 @@ export default {
                 params.endTime = this.timeRange[1];
             }
             await this.search(params);
-        }   
+        },
+        hasManagePermission(){
+            let hasAdmin = this.$store.state['config'].roles.includes('admin');
+            let hasResearcher = this.$store.state['config'].roles.includes('researcher');
+            if(hasAdmin || hasResearcher) {
+                return true;
+            }
+            return false;
+        }
     },
 };
 </script>
