@@ -14,3 +14,6 @@ export const getBySinglewindowId = params => { return axios.get(`/ss/singlewindo
 
 // 删除单窗材料
 export const delSinglewindow = params => { return axios.delete(`/ss/singlewindow-material/delSinglewindow`, {params}).then(res=>res.data); };
+
+// 事项编号查询单窗材料列表
+export const listitemNoSinglewindow = params => { return axios.get(`/ss/singlewindow-material/listitemNoSinglewindow?itemNo=${params.itemNo}`).then(res=>res.data); };

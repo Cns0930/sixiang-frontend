@@ -69,12 +69,12 @@
                     <el-form-item label="proDocId">
                         <el-input v-model="documentAdd.proDocId"></el-input>
                     </el-form-item>
-                    <el-form-item label="单窗材料是否必须">
+                    <!-- <el-form-item label="单窗材料是否必须">
                         <el-select v-model="documentAdd.singlewindowMateriaIsRequired">
                             <el-option label="是" :value="Number(1)"></el-option>
                             <el-option label="否" :value="Number(0)"></el-option>
                         </el-select>
-                    </el-form-item>
+                    </el-form-item> -->
                     <el-form-item label="关联单窗材料名">
                         <el-select v-model="documentAdd.singlewindowMaterialId" placeholder="关联单窗材料">
                             <el-option v-for="item in singleWindowMaterials" :key="item.value" :label="item.label"
@@ -117,12 +117,12 @@
                     <el-form-item label="proDocId">
                         <el-input v-model="documentEdit.proDocId"></el-input>
                     </el-form-item>
-                    <el-form-item label="单窗材料是否必须">
+                    <!-- <el-form-item label="单窗材料是否必须">
                         <el-select v-model="documentEdit.singlewindowMateriaIsRequired">
                             <el-option label="是" :value="Number(1)"></el-option>
                             <el-option label="否" :value="Number(0)"></el-option>
                         </el-select>
-                    </el-form-item>
+                    </el-form-item> -->
                     <el-form-item label="关联单窗材料名">
                         <el-select v-model="documentEdit.singlewindowMaterialId" placeholder="关联单窗材料">
                             <el-option v-for="item in singleWindowMaterials" :key="item.value" :label="item.label"
@@ -150,7 +150,7 @@ import basicMixin from "./basicMixin";
 import Vue from "vue";
 import { listMaterial, getTemplateByMaterialId, copySelectedMaterial, getAllByApprovalItemId } from "../../api/basicInfo/material";
 import { addDocument, updateDocument, getByDocumentId, delDocument } from "../../api/basicInfo/AIdocument";
-import { listSinglewindow } from "../../api/basicInfo/singleWindow";
+import { listitemNoSinglewindow } from "../../api/basicInfo/singleWindow";
 export default {
     name: "AIdocument",
     mixins: [basicMixin],
@@ -190,7 +190,7 @@ export default {
     },
     methods: {
         async initSingleWindowMaterials() {
-            let result = await listSinglewindow({approvalItemId: this.$route.query.itemId});
+            let result = await listitemNoSinglewindow({itemNo: this.$store.state.home.item.itemNo});
             if (!result.success) return;
             result.data.forEach(element => {
                 let material = {
