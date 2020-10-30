@@ -26,7 +26,7 @@
                     <i class="el-icon-location"></i>
                     <span>{{item.label}}</span>
                 </template>
-                <el-menu-item v-for="(t,i) of item.children" @click="setCrumbList([...t]);changeCrumbListSecond()" :index="t.path" :key="i" v-if="item.children.length">{{t.label}}</el-menu-item>
+                <el-menu-item v-for="(t,i) of item.children" @click="setCrumbList([...t]);changeCrumbListSecond(t)" :index="t.path" :key="i" v-if="item.children.length">{{t.label}}</el-menu-item>
             </el-submenu>
         </el-menu>
     </div>
@@ -34,6 +34,7 @@
 
 
 <script>
+import store from "@/vuex/store"
 import { mapState,mapMutations } from 'vuex';
 import {generaterNavList} from '../../router/navConfig';
 export default {
@@ -64,10 +65,14 @@ export default {
             console.log(key, keyPath);
         },
         ...mapMutations('config',['setCrumbList']),
-        changeCrumbListSecond() {
+        changeCrumbListSecond(t) {
             sessionStorage.setItem('activeName', 'subitem');
             sessionStorage.setItem('activeTab', 'formconstructor');
             this.$store.commit("config/setCrumbListSecond",[{path: "", label:'' }]);
+            if (t.label === '帮办工具'|| t.label === '调研信息' )
+            this.$router.push({
+                query: { itemId: store.state.home.item.approvalItemId },
+            });
         },
     },
 };
