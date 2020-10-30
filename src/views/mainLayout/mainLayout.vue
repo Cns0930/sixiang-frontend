@@ -3,10 +3,12 @@
         <span class="crumbWrap">
             <el-breadcrumb separator="/">
                 <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-                <el-breadcrumb-item v-for="(item,index) of crumbList" :key="index" :to="{ path: item.path }">{{item.label}}</el-breadcrumb-item>
-                <el-breadcrumb-item v-for="(item,index) of crumbListSecond" :key="index + '^-^' "  :to="{ path: item.path }">{{item.label}}</el-breadcrumb-item>
+                <el-breadcrumb-item v-for="(item,index) of crumbList" :key="index" :to="{ path: item.path }">
+                    {{item.label}}</el-breadcrumb-item>
+                <el-breadcrumb-item v-for="(item,index) of crumbListSecond" :key="index + '^-^' "
+                    :to="{ path: item.path }">{{item.label}}</el-breadcrumb-item>
             </el-breadcrumb>
-            <div class="itemInfo-box">
+            <div class="itemInfo-box" v-if="isShow()">
                 <span class="itemInfo-title">事项信息<i class="el-icon-document"></i> </span>
                 <span class="itemInfo-text">事项编号：<span class="itemInfo-text-in">{{ itemInfo.itemNo }}</span> </span>
                 <span class="itemInfo-text">事项名称：<span class="itemInfo-text-in">{{ itemInfo.itemName }}</span> </span>
@@ -22,38 +24,45 @@
 import { mapGetters } from 'vuex';
 import store from "@/vuex/store"
 export default {
-  name: "Main",
-  data() {
-    return {
+    name: "Main",
+    data() {
+        return {
 
-    };
-  },
-  computed: {
-      ...mapGetters('config',{
-          crumbList: 'getCrumbList',
-          crumbListSecond: 'getCrumbListSecond'
-      }),
-      itemInfo() {
-        //   console.log('store.state.home.item');
-        //   console.log(store.state.home.item);
-          return store.state.home.item;
-      }
+        };
+    },
+    computed: {
+        ...mapGetters('config', {
+            crumbList: 'getCrumbList',
+            crumbListSecond: 'getCrumbListSecond'
+        }),
+        itemInfo() {
+            //   console.log('store.state.home.item');
+            //   console.log(store.state.home.item);
+            return store.state.home.item;
+        }
 
-  },
-  created() {
-     
-  },
-  mounted() {
+    },
+    created() {
+
+    },
+    mounted() {
         // this.itemInfo = store.state.home.item
         // console.log('提示itemInfo');
         // console.log(this.itemInfo);
         console.log('this.crumbList');
         console.log(this.crumbList);
 
-  },
-  methods: {
-    
-  }
+    },
+    methods: {
+        isShow() {
+            if (this.$route.path === '/user' || this.$route.path === '/basic') {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+    }
 };
 </script>
 
@@ -89,10 +98,10 @@ export default {
         }
     }
     .slide-fade-enter-active {
-        transition: all .3s ease-in-out;
+        transition: all 0.3s ease-in-out;
     }
     .slide-fade-leave-active {
-        transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+        transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
     }
     .slide-fade-enter, .slide-fade-leave-to
     /* .slide-fade-leave-active for below version 2.1.8 */ {
