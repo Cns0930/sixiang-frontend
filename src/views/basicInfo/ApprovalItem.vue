@@ -75,7 +75,7 @@
                     <el-table-column label="事项名称" width="200">
                         <template slot-scope="scope">
                         <el-button
-                            @click="handleClickItem(scope.row)"
+                            @click="handleClickItemDefault(scope.row)"
                             type="text"
                             style="color: orange;"
                         >{{scope.row.itemName}}</el-button>
@@ -344,6 +344,29 @@ export default {
         async searchItem() {
            this.currentPage = 1;
            await this.list();
+        },
+        handleClickItemDefault(item) {
+            console.log(item)
+            this.$store.commit("changeItem", item);
+            sessionStorage.setItem("itemInfo",item);
+            sessionStorage.setItem('activeName', 'subitem');
+            // this.$router.push({
+            //     path: "/basic/subitem",
+            //     query: { itemId: item.approvalItemId },
+            // });
+            let hasAdmin = this.$store.state['config'].roles.includes('admin');
+            let hasResearcher = this.$store.state['config'].roles.includes('researcher');
+            if(hasAdmin || hasResearcher) {
+                this.$router.push({
+                path: "/basic/subitem",
+                query: { itemId: item.approvalItemId },
+            });
+            } else {
+                this.$router.push({
+                path: "/formconstructor",
+                query: { itemId: item.approvalItemId },
+                });
+            }
         },
         handleClickItem(item){
             this.$store.commit("changeItem", item);

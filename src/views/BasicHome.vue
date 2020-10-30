@@ -28,15 +28,26 @@ export default {
     data() {
         return {
             activeName: "",
+            nowUrl: null,
         };
     },
     created() {
-        this.activeName = sessionStorage.getItem('activeName');
-        console.log('this.activeName');
-        console.log(this.activeName);
-        if (this.activeName === null) {
-            this.activeName = 'subitem';
-        }
+        // this.activeName = sessionStorage.getItem('activeName');
+        // if (this.activeName === null) {
+        //     this.activeName = 'subitem';
+        // }
+    },
+    beforeUpdate() {
+        console.log('this.$route.path');
+        console.log(this.$route.path);
+        this.nowUrl = this.$route.path;
+        let urlName = this.nowUrl;
+        // console.log(urlName);
+        let lastIndex = urlName.lastIndexOf('/');
+        let name = urlName.slice(lastIndex + 1);
+        // console.log('name');
+        // console.log(name);
+        this.activeName = name;
     },
     methods: {
         handleClick(tab, event) {

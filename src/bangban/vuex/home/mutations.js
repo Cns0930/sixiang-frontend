@@ -4,6 +4,7 @@ const mutations = {
         state.itemName = data;
     },
     changeItem(state,data){
+        console.log(data)
         state.item=data;
     },
     // changeItemOptions(state,data){

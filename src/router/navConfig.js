@@ -27,7 +27,7 @@ const originList = [
         activeImg: act_product,
         children: [
             {
-                path: '/formconstructor',
+                path: `/formconstructor?itemId=${store.state.home.item.approvalItemId}`,
                 label: '帮办工具',
             },
         ],
@@ -41,7 +41,7 @@ const originList = [
         activeImg: act_product,
         children: [
             {
-                path: '/basic/subitem',
+                path: `/basic/subitem?itemId=${store.state.home.item.approvalItemId}`,
                 label: '调研信息',
                 children: [
                     {

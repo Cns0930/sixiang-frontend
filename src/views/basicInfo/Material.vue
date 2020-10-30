@@ -581,7 +581,7 @@ export default {
         goOnlineDocumentEditor(row) {
             console.log('row');
             console.log(row);
-            let routeUrl = this.$router.resolve({ name: "OnlineDocumentEditor", query:{'materialId': row.materialId }});
+            let routeUrl = this.$router.resolve({ name: "OnlineDocumentEditor", query:{'materialId': row.materialId, 'itemId': this.itemId }});
             window.open(routeUrl.href, '_blank');
         }
     },
