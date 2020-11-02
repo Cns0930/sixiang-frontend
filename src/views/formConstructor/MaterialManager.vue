@@ -29,15 +29,15 @@
                     
                     <el-table-column prop="template.materialName" label="材料名称"></el-table-column>
                     <el-table-column prop="template.templateName" label="模板名称(自取)"></el-table-column>
-                    <el-table-column label="操作" width="300px">
+                    <el-table-column label="操作" width="150px">
                         <template slot-scope="scope">
                             <el-button @click="openDetail(scope.row)">编辑</el-button>
                     <el-button @click="deleteTemplate(scope.row.template.id)"
                         >删除</el-button
                     >
-                    <el-button @click="transferTemplate(scope.row)"
+                    <!-- <el-button @click="transferTemplate(scope.row)"
                         >保存到超级帮办</el-button
-                    >
+                    > -->
                         </template>
                     </el-table-column>
 
@@ -315,101 +315,101 @@ export default {
 
             this.$message.success("保存模板成功");
         },
-        async transferTemplate(v) {
-            // TODO: 材料保存到超级帮办
-            let serviceBaseUrl = this.$store.state.setting.bangbanUrl;
-            if (serviceBaseUrl.endsWith("/")) {
-                serviceBaseUrl = serviceBaseUrl.substring(
-                    0,
-                    serviceBaseUrl.length - 1
-                );
-            }
-            console.log(serviceBaseUrl);
-            if (serviceBaseUrl == null || serviceBaseUrl == "") {
-                this.$message({
-                    type: "error",
-                    message: "请先设置超级帮办地址!",
-                });
-                return;
-            }
+        // async transferTemplate(v) {
+        //     // 材料保存到超级帮办
+        //     let serviceBaseUrl = this.$store.state.setting.bangbanUrl;
+        //     if (serviceBaseUrl.endsWith("/")) {
+        //         serviceBaseUrl = serviceBaseUrl.substring(
+        //             0,
+        //             serviceBaseUrl.length - 1
+        //         );
+        //     }
+        //     console.log(serviceBaseUrl);
+        //     if (serviceBaseUrl == null || serviceBaseUrl == "") {
+        //         this.$message({
+        //             type: "error",
+        //             message: "请先设置超级帮办地址!",
+        //         });
+        //         return;
+        //     }
 
-            let params = {
-                documentName: v.template.materialName,
-                documentSeq: v.template.documentSeq,
-                docxTemplateName: v.template.docxTemplateName,
-                notes: v.template.notes,
-                sid: this.$store.state.home.item.itemNo,
-                script: v.template.script,
-                proDocId: v.template.proDocId,
-            };
-            console.log(params);
+        //     let params = {
+        //         documentName: v.template.materialName,
+        //         documentSeq: v.template.documentSeq,
+        //         docxTemplateName: v.template.docxTemplateName,
+        //         notes: v.template.notes,
+        //         sid: this.$store.state.home.item.itemNo,
+        //         script: v.template.script,
+        //         proDocId: v.template.proDocId,
+        //     };
+        //     console.log(params);
 
-            // 先输出材料
-            let result1 = await axios
-                .post(serviceBaseUrl + "/api/sixiang/saveTemplate", params)
-                .then((res) => res.data);
-            console.log(result1);
-            if (result1.code == 200) {
-                this.$message({
-                    type: "success",
-                    message: "材料导入成功 请查看数据库",
-                });
-            } else {
-                this.$message({
-                    type: "error",
-                    message: result1.message + " " + result1.data,
-                });
-            }
-            // 获取材料下的所有分页 并输出
-            let pageRes = await getSingleTemplate({
-                templateId: v.template.id,
-            });
-            if (pageRes.success) {
-                let data = pageRes.data;
-                let pagelist = data.templatePagesList;
-                for (let i in pagelist) {
-                    let detail = pagelist[i];
-                    let para = {
-                        contentCss: detail.contentCss,
-                        fileName: v.template.docxTemplateName,
-                        name: v.template.materialName,
-                        orient: detail.orient,
-                        pageNum: detail.pageNum,
-                        script: detail.script,
-                        sid: this.$store.state.home.item.itemNo,
-                        padding: detail.isTable == 1 ? "table" : "text",
-                        htmlPath:
-                            "/" +
-                            this.$store.state.home.item.itemNo +
-                            "/" +
-                            v.template.docxTemplateName +
-                            "_page" +
-                            detail.pageNum +
-                            ".html",
-                        html: detail.htmlContent,
-                    };
-                    console.log(para);
-                    let result2 = await axios
-                        .post(serviceBaseUrl + "/api/sixiang/saveHtml", para)
-                        .then((res) => res.data);
-                    console.log(result2);
-                    if (result2.code == 200) {
-                        this.$message({
-                            type: "success",
-                            message:
-                                "页面" +
-                                detail.pageNum +
-                                "导入成功 请查看数据库",
-                        });
-                    } else {
-                        this.$message({
-                            type: "error",
-                            message: result2.message + " " + result2.data,
-                        });
-                    }
-                }
-            }
-        },
+        //     // 先输出材料
+        //     let result1 = await axios
+        //         .post(serviceBaseUrl + "/api/sixiang/saveTemplate", params)
+        //         .then((res) => res.data);
+        //     console.log(result1);
+        //     if (result1.code == 200) {
+        //         this.$message({
+        //             type: "success",
+        //             message: "材料导入成功 请查看数据库",
+        //         });
+        //     } else {
+        //         this.$message({
+        //             type: "error",
+        //             message: result1.message + " " + result1.data,
+        //         });
+        //     }
+        //     // 获取材料下的所有分页 并输出
+        //     let pageRes = await getSingleTemplate({
+        //         templateId: v.template.id,
+        //     });
+        //     if (pageRes.success) {
+        //         let data = pageRes.data;
+        //         let pagelist = data.templatePagesList;
+        //         for (let i in pagelist) {
+        //             let detail = pagelist[i];
+        //             let para = {
+        //                 contentCss: detail.contentCss,
+        //                 fileName: v.template.docxTemplateName,
+        //                 name: v.template.materialName,
+        //                 orient: detail.orient,
+        //                 pageNum: detail.pageNum,
+        //                 script: detail.script,
+        //                 sid: this.$store.state.home.item.itemNo,
+        //                 padding: detail.isTable == 1 ? "table" : "text",
+        //                 htmlPath:
+        //                     "/" +
+        //                     this.$store.state.home.item.itemNo +
+        //                     "/" +
+        //                     v.template.docxTemplateName +
+        //                     "_page" +
+        //                     detail.pageNum +
+        //                     ".html",
+        //                 html: detail.htmlContent,
+        //             };
+        //             console.log(para);
+        //             let result2 = await axios
+        //                 .post(serviceBaseUrl + "/api/sixiang/saveHtml", para)
+        //                 .then((res) => res.data);
+        //             console.log(result2);
+        //             if (result2.code == 200) {
+        //                 this.$message({
+        //                     type: "success",
+        //                     message:
+        //                         "页面" +
+        //                         detail.pageNum +
+        //                         "导入成功 请查看数据库",
+        //                 });
+        //             } else {
+        //                 this.$message({
+        //                     type: "error",
+        //                     message: result2.message + " " + result2.data,
+        //                 });
+        //             }
+        //         }
+        //     }
+        // },
         async downAllPages() {
             let downRequest = {
                 approvalItemId: this.$store.state.home.item.approvalItemId,
@@ -582,7 +582,7 @@ export default {
         display: flex;
         flex-direction: row;
         .material-list {
-            width: 800px;
+            width: 600px;
             margin-top: 10px;
             padding: 20px;
             border: 1px solid green;
