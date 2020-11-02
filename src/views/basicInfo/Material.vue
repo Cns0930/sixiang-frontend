@@ -418,16 +418,16 @@ export default {
             console.log("this.temp_selected_fields:", this.temp_selected_fields);
             if (this.temp_selected_fields.length > 0) {
                 // 进行materialName是否重复的检查
-                let a = this.temp_selected_fields.map(v => v.materialName);
-                console.log("a", a);
-                for (let index = 0; index < this.temp_selected_fields.length; index++) {
-                    let field = this.temp_selected_fields[index];
-                    console.log("field.materialName:", field.materialName);
-                    if (this.temp_selected_fields.map(v => v.materialName).indexOf(field.materialName) !== index) {
-                        this.$message({ type: "warning", message: "重复材料:" + field.materialName });
-                        return;
-                    }
-                }
+                // let a = this.temp_selected_fields.map(v => v.materialName);
+                // console.log("a", a);
+                // for (let index = 0; index < this.temp_selected_fields.length; index++) {
+                //     let field = this.temp_selected_fields[index];
+                //     console.log("field.materialName:", field.materialName);
+                //     if (this.temp_selected_fields.map(v => v.materialName).indexOf(field.materialName) !== index) {
+                //         this.$message({ type: "warning", message: "重复材料:" + field.materialName });
+                //         return;
+                //     }
+                // }
 
                 let selectIds = this.temp_selected_fields.map(f => f.materialId);
                 let param = {};
