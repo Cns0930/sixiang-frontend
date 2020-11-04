@@ -1,8 +1,13 @@
 <template>
     <div class="workWrap">
         <header>材料字段管理</header>
-        <el-button @click="addDialogVisible = true" type="primary" style="margin-bottom:10px">添加</el-button>
-        <el-button @click="openImportDialog" type="primary" style="margin-bottom:10px">导入</el-button>
+        <div class="operation-box">
+            <el-button @click="addDialogVisible = true" type="primary">添加</el-button>
+            <el-button class="operation-item" @click="openImportDialog" type="primary">导入</el-button>
+            <el-input class="operation-item" placeholder="筛选材料名称或者模板名称" v-model="materialKeyword" clearable style="width: 200px;" @change="reloadTable"></el-input>
+            <el-input class="operation-item" placeholder="筛选字段名称或者字段编号" v-model="fieldKeyword" clearable style="width: 200px;" @change="reloadTable"></el-input>
+            <el-button class="operation-item" @click="reloadTable">搜索</el-button>
+        </div>
         <div class="upload-box">
             <el-upload class="upload-demo" ref="upload" :action="url" :limit="1" accept=".xlsx" :with-credentials="true"
                 :on-success="upFile" :on-remove="handleRemove" :on-exceed="handleExceed" :auto-upload="false"
@@ -194,6 +199,9 @@ export default {
             type: "field",
             itemId: this.$route.query.itemId,
             addDialogVisible: false,
+            // 搜索
+            materialKeyword: '',
+            fieldKeyword: '',
             tableData: [],
             material_change: "",
             pageSize: 10,
@@ -255,7 +263,7 @@ export default {
         // 查询表格
         async reloadTable() {
             console.log("this.itemId:", this.$route.query.itemId)
-            let result = await listFieldUnionMaterial({ approvalItemId: this.itemId, pageNum: this.currentPage, pageSize: this.pageSize });
+            let result = await listFieldUnionMaterial({ approvalItemId: this.itemId, pageNum: this.currentPage, pageSize: this.pageSize, materialKeyword: this.materialKeyword, fieldKeyword: this.fieldKeyword });
             if (!result.success) return;
             this.tableData = result.data.records;
             this.total = result.data.total;
@@ -464,6 +472,14 @@ export default {
 .workWrap {
     width: 99.9%;
     height: calc(100% - 22px);
+    .operation-box {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        .operation-item {
+            margin-right: 15px;
+        }
+    }
     .upload-box {
         padding: 10px 12px 12px 12px;
         width: 230px;
