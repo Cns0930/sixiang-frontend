@@ -198,7 +198,7 @@ import { mapState } from "vuex";
 import { getStep, saveStep, deleteStep, saveStepBatch, transferJs } from "@/api/step/index";
 import { getFieldAll } from "@/api/superForm/index";
 import { getTemplate } from '@/api/template/index'
-import { getById } from "@/api/item/index";
+import { getById, addSysTransferLog } from "@/api/item/index";
 import ace from "ace-builds";
 import beautify from "ace-builds/src-noconflict/ext-beautify";
 import pageComponents from "../pageComponents/index"
@@ -741,7 +741,17 @@ export default {
                 this.$message({ type: "success", message: "导入成功 请查看数据库" });
             }else{
                 this.$message({ type: "error", message: result.message + " "+ result.data });
+                return;
             }
+
+            // 保存传输日志
+            let result3 = await addSysTransferLog(
+                {
+                    approvalItemId: this.$store.state.home.item.approvalItemId,
+                    description: "step",
+                    transferData: JSON.stringify(params)
+                }
+            );
        }
     }
 };

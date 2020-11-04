@@ -123,9 +123,6 @@
 import {
     listAll,
     saveItem,
-    listDepartment,
-    deleteItem,
-    filterDateItem,
 } from "@/api/item/index";
 import { listApprovalItem } from "@/api/basicInfo/approval";
 import axios from "../../api/config";
@@ -176,15 +173,6 @@ export default {
                 message: "保存成功 请重新筛选时间后查看数据",
             });
             this.list();
-        },
-        async handleDeleteItem(v) {
-            let message = "确定要删除" + v.name + "吗";
-            if (confirm(message) == true) {
-                let result = await deleteItem({ itemId: v.id });
-                if (!result.success) return;
-                this.$message({ type: "success", message: "删除成功" });
-                this.list();
-            }
         },
         handleClickItem(item) {
             console.log("item:", item);

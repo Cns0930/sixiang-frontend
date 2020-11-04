@@ -144,6 +144,7 @@ import { mergeFieldAttr } from "./util"
 
 import { getSingleTemplate, addTemplate, addEditPage, deletePage } from '@/api/template/index'
 import { getFieldAll } from '@/api/superForm/index'
+import { addSysTransferLog, getUptoDateSysTransferLog } from "@/api/item/index";
 import defs, { deserializeComputedField, deserializeBaseField } from "../attributeComponents/index"
 import inlineEditor from "@/views/inlineEditorComponent/InlineEditor"
 
@@ -351,7 +352,20 @@ export default {
                 this.$message({ type: "success", message: "导入成功 请查看数据库" });
             }else{
                 this.$message({ type: "error", message: result.message + " "+ result.data });
+                return;
             }
+
+            // 最后保存传输日志
+            let result3 = await addSysTransferLog(
+                {
+                    approvalItemId: this.$store.state.home.item.approvalItemId,
+                    description: "templatePage",
+                    transferData: JSON.stringify({
+                        params
+                    })
+                }
+            );
+
         },
         async deletePage(page) {
             let message = "确定要删除吗";
