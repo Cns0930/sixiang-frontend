@@ -15,9 +15,9 @@
         </div>
         <el-table :data="tableData" border style="margin-top: 10px;">
             <el-table-column prop="materialName" label="材料名称"></el-table-column>
-            <el-table-column prop="docxTemplateName" label="模板名称"></el-table-column>
-            <el-table-column prop="fieldName" label="字段名称" width="300"></el-table-column>
-            <el-table-column prop="isRequired" label="是否必填" width="100"></el-table-column>
+            <el-table-column prop="docxTemplateName" label="模板名称" width="100"></el-table-column>
+            <el-table-column prop="fieldName" label="字段名称" width="200" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column prop="isRequired" label="是否必填" width="75"></el-table-column>
             <el-table-column prop="label" label="前端字段名称"></el-table-column>
             <el-table-column prop="fieldNo" label="字段编号" width="70"></el-table-column>
             <el-table-column prop="valueSource" label="字段值来源"></el-table-column>

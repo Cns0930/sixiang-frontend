@@ -7,9 +7,9 @@
                 <el-tab-pane label="情形管理" name="subitem"></el-tab-pane>
                 <el-tab-pane label="AI文档" name="AIdocument"></el-tab-pane>
                 <el-tab-pane label="帮办材料" name="material"></el-tab-pane>
-                <el-tab-pane label="单窗材料" name="singleWindow"></el-tab-pane>
                 <el-tab-pane label="材料字段" name="field"></el-tab-pane>
                 <el-tab-pane label="前端字段" name="" disabled></el-tab-pane>
+                <el-tab-pane label="单窗材料" name="singleWindow"></el-tab-pane>
                 <el-tab-pane label="附件管理" name="accessory"></el-tab-pane>
             </el-tabs>
         </div>
