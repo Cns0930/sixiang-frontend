@@ -15,16 +15,17 @@
         </div>
         <el-table :data="tableData" border style="margin-top: 10px;">
             <el-table-column prop="materialName" label="材料名称"></el-table-column>
-            <el-table-column prop="fieldName" label="字段名称"></el-table-column>
+            <el-table-column prop="docxTemplateName" label="模板名称"></el-table-column>
+            <el-table-column prop="fieldName" label="字段名称" width="300"></el-table-column>
             <el-table-column prop="isRequired" label="是否必填" width="100"></el-table-column>
             <el-table-column prop="label" label="前端字段名称"></el-table-column>
-            <el-table-column prop="fieldNo" label="字段编号" width="100"></el-table-column>
+            <el-table-column prop="fieldNo" label="字段编号" width="70"></el-table-column>
             <el-table-column prop="valueSource" label="字段值来源"></el-table-column>
-            <el-table-column prop="defaultValue" label="默认值"></el-table-column>
+            <el-table-column prop="defaultValue" label="默认值" width="100"></el-table-column>
             <el-table-column prop="descriptionInfo" label="字段逻辑描述"></el-table-column>
             <el-table-column prop="note" label="备注"></el-table-column>
-            <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter"></el-table-column>
-            <el-table-column prop="updateTime" label="更新时间" :formatter="timeFormatter"></el-table-column>
+            <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter"  width="140"></el-table-column>
+            <el-table-column prop="updateTime" label="更新时间" :formatter="timeFormatter" width="140"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
                     <el-button-group>
@@ -67,9 +68,9 @@
         <!--编辑字段-->
         <el-dialog title="编辑材料字段" :visible.sync="editDialogVisible" width="50%" :close-on-click-modal="false">
             <el-form label-width="80px" :model="editForm">
-                <el-form-item label="材料名称" prop="materialName">
+                <el-form-item label="模板名称" prop="docxTemplateName">
                     <el-select v-model="editForm.materialId" clearable placeholder="请选择材料名称">
-                        <el-option v-for="(v,i) in typeMaterialOptions" :key="i" :label="v.materialName"
+                        <el-option v-for="(v,i) in typeMaterialOptions" :key="i" :label="v.docxTemplateName"
                             :value="v.materialId"> </el-option>
                     </el-select>
                 </el-form-item>

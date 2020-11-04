@@ -24,6 +24,9 @@ export const getTemplateByMaterialId = params => { return axios.get(`/ss/materia
 //修改材料信息
 export const updateMaterial = params => { return axios.post(`/ss/material/updateMaterial`, params).then(res=>res.data); };
 
+//其他-根据材料id与事项id将对应材料模板html解析到材料字段
+export const ssFieldImportData = params => { return axios.get(`/ss/Import/ssFieldImportData`, {params}).then(res=>res.data); };
+
 //查询某一份材料
 export const getByMaterialId = params => { return axios.get(`/ss/material/getByMaterialId`, {params}).then(res=>res.data); };
 
