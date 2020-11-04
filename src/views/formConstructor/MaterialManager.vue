@@ -177,7 +177,7 @@ import {
     GetAddTable,
     batchSave,
 } from "@/api/template/index";
-import { getById } from "@/api/item/index";
+import { addSysTransferLog, getUptoDateSysTransferLog } from "@/api/item/index";
 import { mixin } from "@/mixin/mixin";
 import axios from "axios";
 
@@ -566,7 +566,20 @@ export default {
                     type: "error",
                     message: result2.message + " " + result2.data,
                 });
+                return;
             }
+
+            // 保存传输日志
+            let result3 = await addSysTransferLog(
+                {
+                    approvalItemId: this.$store.state.home.item.approvalItemId,
+                    description: "templateBatch",
+                    transferData: JSON.stringify({
+                        templateBatchRequest: templateBatchRequest,
+                        htmlBatchRequest: htmlBatchRequest
+                    })
+                }
+            );
         },
     },
 };
