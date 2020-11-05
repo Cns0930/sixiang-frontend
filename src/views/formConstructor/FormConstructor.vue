@@ -28,7 +28,16 @@
                         <el-option label="基本字段" value="1"></el-option>
                         <el-option label="合成字段" value="2"></el-option>
                     </el-select>
-                <el-button style="margin-left: 210px;" @click="fieldSearch()">搜索</el-button>
+                <el-button style="margin-left: 210px; margin-right: 30px;" @click="fieldSearch()">搜索</el-button>
+                <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page.sync="currentPage"
+                    :page-sizes="[15, 30, 50, 100, 200, 300]"
+                    :page-size="pagesize"
+                    layout="total, sizes, prev, pager, next"
+                    :total="totalCount"
+                ></el-pagination>
         </div>
         <div class="main">
        
@@ -58,19 +67,18 @@
                 </el-table>
                 <div class="tablePagination">
                     <el-pagination
-                    @size-change="handleSizeChange"
-                    @current-change="handleCurrentChange"
-                    :current-page.sync="currentPage"
-                    :page-size="pagesize"
-                    layout="total, prev, pager, next"
-                    :total="totalCount"
-                ></el-pagination>
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        :current-page.sync="currentPage"
+                        :page-sizes="[15, 30, 50, 100, 200, 300]"
+                        :page-size="pagesize"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="totalCount"
+                    ></el-pagination>
+                </div>
             </div>
-            </div>
-             
         </div>
-            
-
+        
         <!-- 编辑 -->
         <el-dialog title="字段组件属性填写" :visible.sync="editDialogVisible" width="80%" :close-on-click-modal="false" >
             <div class="attribute-content">
@@ -278,6 +286,7 @@ export default {
     data() {
         return {
             defRenderers,
+            pageSize: 30,
             // 添加 fieldNo 的dialog 用
             dialogVisible: false,
             editDialogVisible: false,
@@ -312,7 +321,7 @@ export default {
             searchCurrentPage: 1,
             searchPageSize: 15,
             searchTotal: 0,
-            pagesize: 30,
+            pagesize: 15,
             totalCount: 0,
             temp_selected_fields: [],
             // 展示用
@@ -352,15 +361,18 @@ export default {
             this.temp_fieldObj = scope.row;
             this.dialogChangeTypeVisible = true;
         },
-         indexMethod(index) {
+        indexMethod(index) {
             return (this.currentPage - 1) * this.pagesize + (index + 1);
         },
-        async handleSizeChange(val) {
-            console.log(`每页 ${val} 条`);
+        handleSizeChange(val) {
+            // console.log(`每页 ${val} 条`);
+            this.pagesize = val;
+            this.currentPage = 1;
             this.load();
         },
         async handleCurrentChange(val) {
-            console.log(`当前页: ${val}`);
+            // console.log(`当前页: ${val}`);
+            this.currentPage = val;
             this.load();
         },
         //条件查询
@@ -890,6 +902,13 @@ export default {
             width: 100%;
             height: 100%;
             padding: 0 !important;
+            .tablePagination {
+                // display: flex;
+                // align-items: center;
+                // flex-wrap: wrap;
+                text-align: center;
+                margin-bottom: 20px;
+            }
         }
     }
     // .main::-webkit-scrollbar {
