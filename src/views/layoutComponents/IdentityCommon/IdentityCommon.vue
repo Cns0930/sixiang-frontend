@@ -1,6 +1,6 @@
 <template>
     <div class="idendity-home">
-        <template v-if="env==='development'" class="bar">
+        <template  class="bar">
             <el-button type="primary" size="mini" class="btn" style="margin-left: 20px" @click="getTestIdCard">
                 测试 >>> 获取身份证正反面
             </el-button>
@@ -325,7 +325,7 @@ export default {
             let res = {
                 "code": 200,
                 "message": "SUCCESS",
-                "data": ["http://192.168.2.195/sjtu_image/202005/19/88c7caba1750481b9491082cfcfc84f7.jpg", "http://192.168.2.195/sjtu_image/202005/19/70c38b5102a64da5b3f67ce069e2deb3.jpg"]
+                "data": ["http://172.16.2.195/sjtu_image/202005/19/88c7caba1750481b9491082cfcfc84f7.jpg", "http://172.16.2.195/sjtu_image/202005/19/70c38b5102a64da5b3f67ce069e2deb3.jpg"]
             }
             const { code, message, data } = res;
             if (code === 200 && data) {
