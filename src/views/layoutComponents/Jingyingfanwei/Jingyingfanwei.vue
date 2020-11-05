@@ -104,11 +104,9 @@
 
 <script>
 
-import { scopes, getMatter,scopeWithMatter } from "./businessConfig"
 import _ from "lodash"
-import hightlightJingyingfanwei from "./hilightJingyingfanwei"
-let ops = scopes.map(v => ({ value: v, label: v }));
-let opsXuke = scopeWithMatter.map(v => ({ value: v.scopes, label: v.scopes }));
+import {getListHighlighterScopes} from "./hilightJingyingfanwei"
+import {getScopes, getScopesRelation} from "./businessConfig"
 import CommonMixin from "@/views/pageComponents/CommonMixin"
 import TestFormItem from '@/components/TestFormItem'
 export default {
@@ -120,14 +118,16 @@ export default {
     data() {
         return {
             // addList: [{ fanwei: { value: "" }, shixiang: { value: "",options:[] } }],
-            ops,
-            opsXuke,
+            ops: [],
+            scopeWithMatter: [],
+            opsXuke: [],//有许可的和ops区分
             meta: { fanwei: { value: "" }, shixiang: { value: "", options: [] } ,forbid: false},
             showTroubleMask: false,
             troubleMsg: '',
             addList: [],
             nowAddList: [],//当前页面添加的经营范围
             emptyValue: '',
+            hightlightJingyingfanwei: [],
         }
     },
     computed: {
@@ -172,8 +172,12 @@ export default {
             return result
         },
     },
-    created() {
-        
+    async created() {
+        this.hightlightJingyingfanwei = await getListHighlighterScopes();
+        let ops = await getScopes();
+        this.ops = ops.map(v => ({ value: v, label: v }));
+        this.scopeWithMatter = await getScopesRelation();
+        this.opsXuke = this.scopeWithMatter.map(v => ({ value: v.scopes, label: v.scopes }));
         if(this.value.jingyingfanwei.textArray.length == 0) {
             this.value.addList = []
             this.addList = this.value.addList;
@@ -185,6 +189,16 @@ export default {
         this.$set(this.resultBlock, "htmlValue", this.valueToHtmlValue(this.resultBlock.value))
     },
     methods: {
+        getMatter(scopes) {
+            if (!scopes) {
+                return []
+            }
+            let find = this.scopeWithMatter.find(s => s.scopes == scopes)
+            if (find) {
+                return find.matter.map(s => ({value:s,label:s}))
+            }
+            return []
+        },
         handleAdd() {
             this.value.addList.push(_.cloneDeep(this.meta))
         },
@@ -194,7 +208,7 @@ export default {
         handleChangeFanwei(e, data) {
             // console.log(e,data,'edata');
             let shixiang = data.shixiang;
-            shixiang.options = getMatter(e);
+            shixiang.options = this.getMatter(e);
             if (shixiang.options.length > 0) {
                 shixiang.value = shixiang.options[0].value
             } else {
@@ -205,7 +219,7 @@ export default {
         handleChangeConfirm(e, data) {
             console.log(e,data,'edata');
             let shixiang = data.shixiang;
-            shixiang.options = getMatter(e);
+            shixiang.options = this.getMatter(e);
             if (shixiang.options.length > 0) {
                 shixiang.value = shixiang.options[0].value
             } else {
@@ -280,9 +294,15 @@ export default {
             valueArr.splice(0, 1);
             let restValue = "。" + valueArr.join("。")
             let realValueArr = realValue.split("，")
-            let htmlValue = realValueArr.reduce((result, item) => {
+            let  totalValueArr = realValueArr.map(v => {
+                if(v.includes('；')) {
+                    return v.split('；');
+                }
+                return v
+            }).flat();
+            let htmlValue = totalValueArr.reduce((result, item) => {
                 // if (hightlightJingyingfanwei.includes(item) && !this.nowAddList.includes(item)) {
-                if (hightlightJingyingfanwei.includes(item)) {
+                if (this.hightlightJingyingfanwei.includes(item)) {
                     return `${result}，<span style="color:#00C3FF">${item}</span>`
                 } else {
                     return result + "，" + item
@@ -311,15 +331,21 @@ export default {
             let valueArr = value.split("。")
             let realValue = valueArr[0];
             let realValueArr = realValue.split("，")
-            let htmlValue = realValueArr.forEach((result, item) => {
+            let totalValueArr = realValueArr.map(v => {
+                if(v.includes('；')) {
+                    return v.split('；');
+                }
+                return v
+            }).flat();
+            let htmlValue = totalValueArr.forEach((result, item) => {
                 this.addAdJust(result);
             });
         },
         addAdJust(value) {
-            if(getMatter(value).length > 0) {
+            if(this.getMatter(value).length > 0) {
                 let msg = _.cloneDeep(this.meta);
                 msg.fanwei.value = value;
-                msg.shixiang.options = getMatter(value);
+                msg.shixiang.options = this.getMatter(value);
                 if(msg.shixiang.options.length > 0) {
                     msg.shixiang.value = msg.shixiang.options[0].value;
                 } else {

@@ -171,3 +171,12 @@ export const sendAllData = (params)=>axios.post('/api/selfservice/insertHistory'
  * 查询历史记录
  */
 export const searchHistory = (params)=>axios.get('/api/selfservice/historyByCompanyName',{params}).then(res => res.data)
+
+//获取高亮经营范围数据
+export const listHighlighterScopes = (params) => axios.get('/api/user/listHilightScopes',{ params }).then(res => res.data)
+
+//获取经营范围对应关系
+export const listScopesRelation = (params) => axios.get('/api/user/listScopesRelation',{ params }).then(res => res.data)
+
+//获取经营范围数据
+export const listScopes = (params) => axios.get('/api/user/listScopes',{ params }).then(res => res.data)
