@@ -2,6 +2,7 @@
     <div class="main">
         <div class="mainBox">
             <el-button type="primary" plain style="margin-bottom: 10px" @click="saveMaterialTemplate">保存材料模板</el-button>
+            <el-button type="primary" plain style="margin-bottom: 10px" @click="saveMaterialTemplateAndExport">保存并输出材料字段</el-button>
             <div style="width:30cm">
                 <!-- <div ref="toolbar" style="position:fixed;top:32px;z-index:30"></div> -->
                 <div ref="toolbar" style="width: 70%;"></div>
@@ -38,7 +39,7 @@ import Handlebars from "@/utils/handlebarsHelper";
 import _ from "lodash";
 import { mergeFieldAttr } from "../formConstructor/util";
 import jsPDF from 'jspdf'
-import { getByMaterialId, updateMaterial } from '@/api/basicInfo/material'
+import { getByMaterialId, updateMaterial, ssFieldImportData } from '@/api/basicInfo/material'
 export default {
     name: "OnlineDocumentEditor",
     data() {
@@ -336,6 +337,34 @@ export default {
                 return;
             } else {
                 this.$message.success('保存材料模板成功');
+                await this.init();
+                this.initEditor();
+            }
+        },
+        async saveMaterialTemplateAndExport() {
+            let html = this.editor.model.document
+                .getRootNames()
+                .map((v) => editor.getData({ rootName: v }))
+                .join("");
+            let request = {
+                materialId: this.materialId,
+                docxTemplateHtml : html,
+            }
+            // console.log('request');
+            // console.log(request);
+            let result = await updateMaterial(request);
+            if (!result.success) {
+                this.$message.warning('保存材料模板失败');
+                return;
+            } else {
+                this.$message.success('保存材料模板成功');
+                let res = await ssFieldImportData({ approvalItemId: this.$route.query.itemId, materialId: this.materialId});
+                if (!res.success) {
+                    this.$message.warning('输出材料字段失败');
+                    return;
+                } else {
+                    this.$message.success('保存并输出材料字段成功');
+                }
                 await this.init();
                 this.initEditor();
             }
