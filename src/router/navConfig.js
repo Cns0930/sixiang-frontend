@@ -9,8 +9,9 @@ const originList = [
         label: "用户管理",
         authKey: ["admin"],
         group: "用户管理",
-        iconImg: product,
-        activeImg: act_product,
+        // iconImg: product,
+        // activeImg: act_product,
+        iconClass:"el-icon-s-custom",
         children: [
             {
                 path: '/user',
@@ -23,8 +24,9 @@ const originList = [
         path: "/formconstructor",
         label: "超级帮办开发管理",
         authKey: ["admin","developer","researcher","test"],
-        iconImg: product,
-        activeImg: act_product,
+        // iconImg: product,
+        // activeImg: act_product,
+        iconClass:"el-icon-data-line",
         children: [
             {
                 path: `/formconstructor`,
@@ -37,8 +39,9 @@ const originList = [
         path: "/basic",
         label: "调研信息管理",
         authKey: ["admin","developer","researcher","test"],
-        iconImg: product,
-        activeImg: act_product,
+        // iconImg: product,
+        // activeImg: act_product,
+        iconClass:"el-icon-magic-stick",
         children: [
             {
                 path: `/basic/subitem`,
@@ -77,8 +80,9 @@ const originList = [
         path: "/basic_",
         label: "事项管理",
         authKey: ["admin","developer","researcher","test"],
-        iconImg: product,
-        activeImg: act_product,
+        // iconImg: product,
+        // activeImg: act_product,
+        iconClass:"el-icon-s-home",
         children: [
             {
                 path: '/basic',

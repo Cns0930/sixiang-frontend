@@ -19,11 +19,11 @@
             @open="handleOpen"
             @close="handleClose"
             :collapse="isCollapse"
-            collapse-transition
+            
         >
             <el-submenu v-for="(item,index) of navList" :index="item.path" :key="index">
                 <template slot="title">
-                    <i class="el-icon-location"></i>
+                    <i :class="item.iconClass"></i>
                     <span>{{item.label}}</span>
                 </template>
                 <el-menu-item v-for="(t,i) of item.children" @click="setCrumbList([...t]);changeCrumbListSecond(t)" :index="t.path" :key="i" v-if="item.children.length">{{t.label}}</el-menu-item>

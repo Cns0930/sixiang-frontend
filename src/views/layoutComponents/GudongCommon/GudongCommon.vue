@@ -8,6 +8,7 @@
             <div class="tab-list-title">
                 {{title || "股东列表"}}
             </div>
+
             <!-- tab -->
             <div class="tab-list">
                 <!-- tab item -->
@@ -22,14 +23,16 @@
 
                     </div>
 
-                    <el-tooltip v-if="!deleteOrigin || gudongIndex > (originNum - 1)" class="remove-btn remove-on-tab" effect="dark" content="删除" placement="right-start">
+                    <el-tooltip v-if="!deleteOrigin || gudongIndex > (originNum - 1)" class="remove-btn remove-on-tab"
+                        effect="dark" content="删除" placement="right-start">
                         <i class="delete-btn el-icon-close" @click.stop="handelRemove(gudongIndex)"></i>
                     </el-tooltip>
 
                 </div>
 
                 <!-- tab 添加按钮 -->
-                <el-button type="primary" size="small" icon="el-icon-plus" style="width:100px" @click="addGudongDialog" v-if="!canAdd">
+                <el-button type="primary" size="small" icon="el-icon-plus" style="width:100px" @click="addGudongDialog"
+                    v-if="!canAdd">
                     添加
                 </el-button>
             </div>
@@ -43,16 +46,20 @@
                 <!-- 移除按钮 -->
 
                 <PureComponents :fields="gudongActive" :key="'active'+active"
-                    @itemValidated="handleItemValidated($event,gudongActive)"> </PureComponents>
+                    @itemValidated="handleItemValidated($event,gudongActive)" ref="active"> </PureComponents>
                 <template v-for="(gudongPassive,gudongPassiveIndex) in gudongPassiveList">
-                    <PureComponents v-show="false" :fields="gudongPassive" :key="gudongPassiveIndex"
-                        @itemValidated="handleItemValidated($event,gudongPassive)"></PureComponents>
+                    <PureComponents v-show="false" :fields="gudongPassive" :key="'passive'+gudongPassiveIndex"
+                        @itemValidated="handleItemValidated($event,gudongPassive)" ref="passive"></PureComponents>
                 </template>
 
             </div>
 
         </div>
-
+        <!-- 无表单的验证 —— 验证 本身 -->
+        <el-col :span=" 24" key="listself">
+            <el-form-item :prop="listContext.ruleKey || ''" :obj="listContext" ref="listFormItem">
+            </el-form-item>
+        </el-col>
         <el-dialog title="系统提示" :visible.sync="dialogVisible" width="45%" append-to-body :close-on-click-modal="false"
             class="message-dialog">
             <el-form ref="form" :model="form" label-width="250px" @submit.native.prevent>
@@ -74,19 +81,30 @@
 <script>
 
 
-import {getEnterpriseInfo,getEnterpriseInfoLike} from "@/api/ANew/index"
+import { getEnterpriseInfo, getEnterpriseInfoLike } from "@/api/ANew/index"
 import PureComponents from "../PureComponents"
+import TestFormItem from '@/components/TestFormItem'
 export default {
     name: "GudongCommon",
-    props: ['value', 'children', 'meta', 'labelFieldNo', "gudongNameFieldNo", "gudongCodeFieldNo","deleteOrigin","canAdd","originNum","title"],
-    components: { PureComponents },
+    props: ['value', 'children', 'meta', 'labelFieldNo', "gudongNameFieldNo", "gudongCodeFieldNo", "deleteOrigin", "canAdd", "originNum", "title", "ruleKey", "validateFn"],
+    components: { PureComponents, ElFormItem: TestFormItem, },
     data() {
         return {
             active: 0,
             dialogVisible: false,
             form: {},
             temp_GudongName: "",
+            emptyValue: "",
         };
+    },
+    watch: {
+        "children": {
+            handler: async function (v) {
+                await this.$nextTick();
+                await this.validate();
+            },
+            immediate: true
+        }
     },
     computed: {
 
@@ -98,17 +116,48 @@ export default {
             return this.children.filter((v, i) => i != this.active)
         },
         validatedStatus() {
+
             return this.children.map(gudong => {
-               
-                return Object.values(gudong).filter(v => !v.hidden && v.type!='computedText').map(v => v.validateStatus).every(Boolean)
+
+                return Object.values(gudong).filter(v => !v.hidden && v.type != 'computedText').map(v => v.validateStatus).every(Boolean)
             })
-
-            
-
-        }
+        },
+        listContext() {
+            return {
+                value: this.value,
+                ruleKey: this.ruleKey,
+                validateFn: (value, state, getters) => {
+                    return this.validateFn(state, getters)
+                }
+            }
+        },
 
     },
     methods: {
+        async validate() {
+
+            let fields = [this.$refs.active ? this.$refs.active.$refs.formItem : [], ...(this.$refs.passive ? this.$refs.passive.map(v => v.$refs.formItem) : []),this.$refs.listFormItem].flat()
+
+            let promises = fields.map(field => {
+                return new Promise((resolve, reject) => {
+                    field.validate('', '', (message, field) => {
+
+                        if (message) {
+                            resolve(false)
+
+                        } else {
+                            resolve(true)
+                        }
+
+                    })
+                })
+            })
+            let result = await Promise.all(promises)
+
+            return result.every(Boolean)
+
+        },
+
         addGudongDialog() {
             this.temp_GudongName = ""
 
@@ -127,16 +176,15 @@ export default {
             // let result = item._temp.pushGroup(item);
         },
         handleItemValidated({ success = true, context = {} }, gudong,) {
-
             let fieldNo = context.fieldNo;
             this.$set(gudong[fieldNo], "validateStatus", success)
 
         },
 
         async querySearchAsync(queryString, cb) {
-            let res = await getEnterpriseInfoLike({value:queryString});
-            if(res.message == "SUCCESS" && res.data.length > 0) {
-                cb(res.data.map(v=>({value: v.corporateName})))
+            let res = await getEnterpriseInfoLike({ value: queryString });
+            if (res.message == "SUCCESS" && res.data.length > 0) {
+                cb(res.data.map(v => ({ value: v.corporateName })))
             } else {
                 cb([])
             }
