@@ -1,5 +1,6 @@
 import CommonComponents from "./CommonComponents"
 import Renderer,{rendererBuilder} from "./Renderer"
+import {rulesList} from "@/utils/ruleConfig"
 class Collection {
     constructor(){
         
@@ -18,6 +19,20 @@ class Collection {
         function(state,getters,siblings,parent){
             
         }`,null,"添加钩子函数");
+
+        this.ruleKey = new Renderer("ElSelectC","none",{options:rulesList},"验证方式")
+        this.validateFn = new Renderer("CodeEditor",`
+        // value 是组件对象； value.value 是组件值
+        // helper.CheckSocialCreditCode(code) 判断是否统一社会信用代码
+        // helper.IdentityCodeValid(code) 判断是否身份证
+        // helper.CheckPhone(code) 判断是否手机号
+        // helper.CheckFixedTelephone(code) 判断是否固定电话
+        // helper.CheckPostCode(code) 判断是否邮政编码
+        // helper.CheckMail(code) 判断是否电子邮箱
+        // return {success:false,msg:"验证错误提示"}
+        function(value,state,getters,siblings,parent){
+            
+        }`,null,"自定义验证方法");
     }
     getAttributes(meta){
         
@@ -28,7 +43,9 @@ class Collection {
             removeBtnStyle:this.removeBtnStyle.value,
             title:this.title.value,
             isLengthFixed:this.isLengthFixed.value,
-            addHook:this.addHook.value
+            addHook:this.addHook.value,
+            ruleKey:this.ruleKey.value,
+            validateFn:this.validateFn.value,
         }
     }
 }

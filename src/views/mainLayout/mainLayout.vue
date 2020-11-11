@@ -8,11 +8,7 @@
                 <el-breadcrumb-item v-for="(item,index) of crumbListSecond" :key="index + '^-^' "
                     :to="{ path: item.path }">{{item.label}}</el-breadcrumb-item>
             </el-breadcrumb>
-            <div class="itemInfo-box" v-if="isShow()">
-                <span class="itemInfo-title">事项信息<i class="el-icon-document"></i> </span>
-                <span class="itemInfo-text">事项编号：<span class="itemInfo-text-in">{{ itemInfo.itemNo }}</span> </span>
-                <span class="itemInfo-text">事项名称：<span class="itemInfo-text-in">{{ itemInfo.itemName }}</span> </span>
-            </div>
+            
         </span>
         <transition name="slide-fade" mode="out-in">
             <router-view></router-view>
@@ -70,43 +66,18 @@ export default {
 @import "../../assets/css/common.scss";
 .mainLayout {
     margin: 0 14px;
-    width: calc(100% - 28px);
-    height: calc(100vh - #{$header-height});
+    // width: calc(100% - 28px);
+    // height: calc(100vh - #{$header-height});
     padding: 10px 0 0 0;
     box-sizing: border-box;
     border-radius: 8px 8px 0 0;
     .crumbWrap {
-        display: inline-block;
-        .itemInfo-box {
-            font-size: 15px;
-            padding: 10px;
-            width: 100%;
-            background: #f0f2f5;
-            display: flex;
-            flex-direction: row;
-            .itemInfo-title {
-                font-size: 15px;
-                font-weight: bold;
-                margin-right: 25px;
-            }
-            .itemInfo-text {
-                margin-right: 20px;
-                .itemInfo-text-in {
-                    color: rgb(0, 3, 204);
-                }
-            }
-        }
+        display:flex;
+        justify-content:space-between;
+        align-items: center;
+        margin-top:4px;
+        margin-bottom:8px;
     }
-    .slide-fade-enter-active {
-        transition: all 0.3s ease-in-out;
-    }
-    .slide-fade-leave-active {
-        transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
-    }
-    .slide-fade-enter, .slide-fade-leave-to
-    /* .slide-fade-leave-active for below version 2.1.8 */ {
-        transform: translateX(5px);
-        opacity: 0;
-    }
+
 }
 </style>

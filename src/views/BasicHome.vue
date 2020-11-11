@@ -1,7 +1,7 @@
 <template>
     <div class="basichome">
         <div class="menu">
-            <el-divider></el-divider>
+           
 
             <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
                 <el-tab-pane label="情形管理" name="subitem"></el-tab-pane>
@@ -110,7 +110,7 @@ export default {
     width: 100%;
     height: calc(100% - 20px);
     .menu {
-        display: inline-flex;
+      
         font-size: 8px;
     }
 }

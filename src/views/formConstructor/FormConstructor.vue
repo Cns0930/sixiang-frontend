@@ -947,8 +947,8 @@ export default {
     .main {
         margin-top: 20px;
         display: flex;
-        height: calc(100vh - 206px);
-        overflow-y: scroll;
+        // height: calc(100vh - 206px);
+        // overflow-y: scroll;
         .fields-table {
             width: 100%;
             height: 100%;
