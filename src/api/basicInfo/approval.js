@@ -26,3 +26,6 @@ export const copyApprovalSub = params => { return axios.get(`/ss/approvalSub/cop
 
 // 关闭事项
 export const shutApprovalItem = params => { return axios.get(`/ss/approvalItem/shutApprovalItem`, {params}).then(res=>res.data); };
+
+// 查询所有公共事项
+export const listPublicApprovalItem = params => { return axios.get(`/ss/approvalItem/listPublicApprovalItem`, {params}).then(res=>res.data); };

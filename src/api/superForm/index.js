@@ -13,7 +13,7 @@ export const saveOne = params => axios.post('/superform/fields/saveOne', params)
 export const deleteOne = params => axios.post('/superform/fields/deleteOne', params).then(res => res.data);
 
 // 导入公共字段
-export const forkPublicFields = params => axios.post('/superform/fields/forkPublicFields', params).then(res => res.data);
+// export const forkPublicFields = params => axios.post('/superform/fields/forkPublicFields', params).then(res => res.data);
 
 // 根据id 获取字段
 export const getFieldById = params => axios.get('/superform/fields/getById', {params}).then(res => res.data);
@@ -23,3 +23,9 @@ export const searchFields = params => axios.post('/superform/fields/searchFields
 
 // 导入选择的字段
 export const forkSelectedFields = params => axios.post('/superform/fields/forkSelectedFields', params).then(res => res.data);
+
+// 搜索公共事项字段
+export const searchPublic = params => axios.get('/superform/fields/searchPublic', {params}).then(res => res.data);
+
+// 导入选择的公共事项字段
+export const forkPublic = params => axios.post('/superform/fields/forkPublic', params).then(res => res.data);
