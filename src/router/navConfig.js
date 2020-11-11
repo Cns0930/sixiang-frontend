@@ -95,8 +95,7 @@ const originList = [
         path: "/public",
         label: "公共事项",
         authKey: ["admin","developer","researcher","test"],
-        iconImg: product,
-        activeImg: act_product,
+        iconClass:"el-icon-copy-document",
         children: [
             {
                 path: '/public',
