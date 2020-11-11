@@ -23,7 +23,7 @@
                     <div class="x" style="width: 29.7cm;height:21cm;padding: 2.54cm 1.17cm"></div>
                         </div>-->
                 </div>
-                <div ref="container" style="width: 29.7cm;height:720px;top:0px;position:relative;margin-top:0px"></div>
+                <div ref="container" style="width: 29.7cm;top:0px;position:relative;margin-top:0px"></div>
             </div>
         
         </div>
