@@ -1,12 +1,13 @@
 <template>
     <div class="workWrap">
-        <header>材料字段管理</header>
+        <!-- <header>材料字段管理</header> -->
         <div class="operation-box">
             <el-button @click="addDialogVisible = true" type="primary">添加</el-button>
             <el-button class="operation-item" @click="openImportDialog" type="primary">导入</el-button>
             <el-input class="operation-item" placeholder="筛选材料名称或者模板名称" v-model="materialKeyword" clearable style="width: 200px;" @change="reloadTable"></el-input>
             <el-input class="operation-item" placeholder="筛选字段名称或者字段编号" v-model="fieldKeyword" clearable style="width: 200px;" @change="reloadTable"></el-input>
             <el-button class="operation-item" @click="reloadTable">搜索</el-button>
+            
         </div>
         <div class="upload-box">
             <el-upload class="upload-demo" ref="upload" :action="url" :limit="1" accept=".xlsx" :with-credentials="true"
@@ -20,17 +21,17 @@
         </div>
         <el-table :data="tableData" border style="margin-top: 10px;">
             <el-table-column prop="materialName" label="材料名称"></el-table-column>
-            <el-table-column prop="docxTemplateName" label="模板名称" width="100"></el-table-column>
-            <el-table-column prop="fieldName" label="字段名称" width="200" :show-overflow-tooltip="true"></el-table-column>
-            <el-table-column prop="isRequired" label="是否必填" width="75"></el-table-column>
+            <el-table-column prop="docxTemplateName" label="模板名称" ></el-table-column>
+            <el-table-column prop="fieldName" label="字段名称"  :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column prop="isRequired" label="是否必填" ></el-table-column>
             <el-table-column prop="label" label="前端字段名称"></el-table-column>
-            <el-table-column prop="fieldNo" label="字段编号" width="70"></el-table-column>
+            <el-table-column prop="fieldNo" label="字段编号" ></el-table-column>
             <el-table-column prop="valueSource" label="字段值来源"></el-table-column>
-            <el-table-column prop="defaultValue" label="默认值" width="100"></el-table-column>
+            <el-table-column prop="defaultValue" label="默认值" ></el-table-column>
             <el-table-column prop="descriptionInfo" label="字段逻辑描述"></el-table-column>
             <el-table-column prop="note" label="备注"></el-table-column>
-            <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter"  width="140"></el-table-column>
-            <el-table-column prop="updateTime" label="更新时间" :formatter="timeFormatter" width="140"></el-table-column>
+            <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter"  ></el-table-column>
+            <el-table-column prop="updateTime" label="更新时间" :formatter="timeFormatter"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
                     <el-button-group>
@@ -44,10 +45,7 @@
             <el-pagination @current-change="handleCurrentChange" :current-page.sync="currentPage" :page-size="pageSize"
                 layout="total, prev, pager, next" :total="total"></el-pagination>
         </div>
-        <div class="right-bar">
-            <el-button class="button" size="medium" @click="goFormconstructor" round>前端字段管理<i
-                    class="el-icon-edit"></i>帮办工具模块<i class="el-icon-right el-icon--right"></i></el-button>
-        </div>
+      
         <!--添加字段-->
         <el-dialog title="添加材料字段" :visible.sync="addDialogVisible" width="50%" :close-on-click-modal="false">
 

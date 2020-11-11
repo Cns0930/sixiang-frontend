@@ -12,21 +12,15 @@
                 </router-link>
             </div>
         </transition-group> -->
-        <el-menu
-            class="el-menu-vertical-demo"
-            router
-            :default-active="$route.path"
-            @open="handleOpen"
-            @close="handleClose"
-            :collapse="isCollapse"
-            
-        >
+        <el-menu  router :default-active="$route.path" @open="handleOpen"
+            @close="handleClose" :collapse="isCollapse">
             <el-submenu v-for="(item,index) of navList" :index="item.path" :key="index">
                 <template slot="title">
                     <i :class="item.iconClass"></i>
                     <span>{{item.label}}</span>
                 </template>
-                <el-menu-item v-for="(t,i) of item.children" @click="setCrumbList([...t]);changeCrumbListSecond(t)" :index="t.path" :key="i" v-if="item.children.length">{{t.label}}</el-menu-item>
+                <el-menu-item v-for="(t,i) of item.children" @click="setCrumbList([...t]);changeCrumbListSecond(t)"
+                    :index="t.path" :key="i" v-if="item.children.length">{{t.label}}</el-menu-item>
             </el-submenu>
         </el-menu>
     </div>
@@ -35,8 +29,8 @@
 
 <script>
 import store from "@/vuex/store"
-import { mapState,mapMutations } from 'vuex';
-import {generaterNavList} from '../../router/navConfig';
+import { mapState, mapMutations } from 'vuex';
+import { generaterNavList } from '../../router/navConfig';
 export default {
     name: 'Leftside',
     props: {},
@@ -51,8 +45,8 @@ export default {
         // const authList = roles;
         // this.navList = generaterNavList(authList);
     },
-    computed:{
-        ...mapState('config',["isCollapse","roles"]),
+    computed: {
+        ...mapState('config', ["isCollapse", "roles"]),
         navList() {
             return generaterNavList(JSON.stringify(this.roles))
         }
@@ -64,15 +58,15 @@ export default {
         handleClose(key, keyPath) {
             console.log(key, keyPath);
         },
-        ...mapMutations('config',['setCrumbList']),
+        ...mapMutations('config', ['setCrumbList']),
         changeCrumbListSecond(t) {
             sessionStorage.setItem('activeName', 'subitem');
             sessionStorage.setItem('activeTab', 'formconstructor');
-            this.$store.commit("config/setCrumbListSecond",[{path: "", label:'' }]);
-            if (t.label === '帮办工具'|| t.label === '调研信息' )
-            this.$router.push({
-                query: { itemId: store.state.home.item.approvalItemId },
-            });
+            this.$store.commit("config/setCrumbListSecond", [{ path: "", label: '' }]);
+            if (t.label === '帮办工具' || t.label === '调研信息')
+                this.$router.push({
+                    query: { itemId: store.state.home.item.approvalItemId },
+                });
         },
     },
 };
@@ -93,7 +87,7 @@ export default {
     width: 100%;
     height: calc(100% - #{$header-height});
     margin-top: $header-height;
-    background: #fff;
+    background: #53628a;
     .sideBar-router {
         cursor: pointer;
         padding: 20px 0;
@@ -103,39 +97,17 @@ export default {
             // opacity: 0.8;
             font-weight: normal;
             line-height: 22px;
-            color:white;
+            color: white;
             i {
                 font-size: 18px;
             }
         }
     }
     .el-menu .el-submenu .el-submenu__title {
-        padding-left: 8px !important;
-    }
-    .el-submenu.is-active {
-        .el-submenu__title {
-            color: #00adff;
-        }
+        padding-left: 12px !important;
     }
     .el-menu-item {
         min-width: auto !important;
-    }
-    .el-menu-item.is-active {
-        position: relative;
-        background: #d9f0fb;
-        &:after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 2px;
-            height: 100%;
-            background: #00adff;
-        }
-    }
-    .el-menu-vertical-demo:not(.el-menu--collapse) {
-        width: 200px;
-        min-height: 200px;
     }
 }
 </style>

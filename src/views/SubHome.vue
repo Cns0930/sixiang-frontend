@@ -99,9 +99,9 @@ export default {
 <style scoped lang="scss">
 .subhome {
     width: 100%;
-    height: calc(100% - 20px);
+   
     .menu{
-        display: inline-flex;
+        
         font-size: 8px;
     }
 }

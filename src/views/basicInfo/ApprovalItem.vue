@@ -32,53 +32,53 @@
             <div class="tableWrap">
                 <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%;" border
                     tooltip-effect="dark" :default-sort="{prop: 'createTime', order: 'descending'}">
-                    <el-table-column label="序号" type="index" width="45" :index="indexMethod">
+                    <el-table-column label="序号" type="index" :index="indexMethod">
                     </el-table-column>
-                    <el-table-column prop="projectName" label="项目" sortable width="80">
+                    <el-table-column prop="projectName" label="项目" sortable >
                     </el-table-column>
-                    <el-table-column prop="approvalName" label="大项" show-overflow-tooltip sortable width="80">
+                    <el-table-column prop="approvalName" label="大项" show-overflow-tooltip sortable>
                     </el-table-column>
-                    <el-table-column prop="itemInternalNo" label="内部事项编号" width="100" show-overflow-tooltip>
+                    <el-table-column prop="itemInternalNo" label="内部事项编号" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="itemNo" label="事项编号" width="100" show-overflow-tooltip>
+                    <el-table-column prop="itemNo" label="事项编号" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column label="事项名称" width="200" show-overflow-tooltip>
+                    <el-table-column label="事项名称"  show-overflow-tooltip>
                         <template slot-scope="scope">
                             <el-button @click="handleClickItemDefault(scope.row)" type="text" style="color: orange;">
                                 {{scope.row.itemName}}
                             </el-button>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="itemType" label="事项类型" width="80">
+                    <el-table-column prop="itemType" label="事项类型" >
                     </el-table-column>
-                    <el-table-column prop="itemCode" label="事项实施编码" width="100" show-overflow-tooltip>
+                    <el-table-column prop="itemCode" label="事项实施编码"  show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="createBy" label="创建人" width="80">
+                    <el-table-column prop="createBy" label="创建人" >
                     </el-table-column>
-                    <el-table-column prop="itemStatus" label="状态" sortable width="80">
+                    <el-table-column prop="itemStatus" label="状态" sortable  width="50">
                     </el-table-column>
-                    <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable width="140">
+                    <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable >
                     </el-table-column>
-                    <el-table-column prop="updateTime" label="最后修改时间" width="140" :formatter="timeFormatter" sortable
+                    <el-table-column prop="updateTime" label="最后修改时间" :formatter="timeFormatter" sortable
                         show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column label="操作" fixed="right">
+                    <el-table-column label="操作" fixed="right" width="300">
                         <template slot-scope="scope">
                             <el-button-group>
-                            <el-button size="mini" @click="handleClickItem(scope.row)">
-                                调研信息
-                            </el-button>
-                            <el-button size="mini" @click="handleClickItemBangBan(scope.row)">
-                                帮办工具
-                            </el-button>
-                            <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
-                                :disabled="!hasManagePermission()">
-                                编辑
-                            </el-button>
-                            <el-button size="mini" type="danger" @click="handleClose(scope.row)"
-                                :disabled="!hasManagePermission()">
-                                关闭
-                            </el-button>
+                                <el-button size="mini" @click="handleClickItem(scope.row)">
+                                    调研信息
+                                </el-button>
+                                <el-button size="mini" @click="handleClickItemBangBan(scope.row)">
+                                    帮办工具
+                                </el-button>
+                                <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
+                                    :disabled="!hasManagePermission()">
+                                    编辑
+                                </el-button>
+                                <el-button size="mini" type="danger" @click="handleClose(scope.row)"
+                                    :disabled="!hasManagePermission()">
+                                    关闭
+                                </el-button>
                             </el-button-group>
                         </template>
                     </el-table-column>
