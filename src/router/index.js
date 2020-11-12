@@ -17,6 +17,7 @@ import Login from "@/views/login/Login"
 import Setting from "@/views/setting/Setting"
 import Test from "@/views/test/Test"
 import ApprovalItem from "@/views/basicInfo/ApprovalItem"
+import PublicApprovalItem from "@/views/basicInfo/PublicApprovalItem"
 import Material from "@/views/basicInfo/Material"
 import ApprovalSubItem from "@/views/basicInfo/ApprovalSubItem"
 import Field from "@/views/basicInfo/Field"
@@ -145,7 +146,12 @@ const routes = [
                         component: OnlineDocumentEditor
                     },
                 ]
-            },            
+            }, 
+            {
+                path: '/public',
+                name: 'PublicApprovalItem',
+                component: PublicApprovalItem,
+            },    
         ]
     },
     {

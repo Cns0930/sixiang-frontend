@@ -2,7 +2,7 @@
     
 </template>
 <script>
-import { listApprovalItem , getByApprovalItemId } from "../../api/basicInfo/approval";
+import { listApprovalItem , getByApprovalItemId, listPublicApprovalItem } from "../../api/basicInfo/approval";
 import { listMaterial } from "../../api/basicInfo/material";
 import { listitemNoSinglewindow } from "../../api/basicInfo/singleWindow";
 import { listDocument } from "../../api/basicInfo/AIdocument";
@@ -40,6 +40,9 @@ export default {
             } else if(this.type === 'AIdocument') {
                 result = await listDocument({approvalItemId: this.$route.query.itemId});
                 this.tableData = result.data;
+            } else if(this.type === 'public'){
+                result = await listPublicApprovalItem(params)
+                this.tableData = result.data.records;
             }
 
             if(!result.success) return;

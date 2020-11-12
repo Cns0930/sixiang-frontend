@@ -13,8 +13,8 @@
 
             <div class="right-bar">
                 <el-button @click="handleSelect">导入自选字段</el-button>
-                <!-- <el-button :disabled="itemId==-1" @click="handleImportPublic">导入全部公共字段</el-button>
-                <el-button :disabled="itemId==-1" @click="handleManagePublic">管理公共字段</el-button> -->
+                <el-button @click="handleImportPublic">导入公共字段</el-button>
+                <!-- <el-button :disabled="itemId==-1" @click="handleManagePublic">管理公共字段</el-button> -->
             </div>
             
         </div>
@@ -74,7 +74,7 @@
                         @size-change="handleSizeChange"
                         @current-change="handleCurrentChange"
                         :current-page.sync="currentPage"
-                        :page-sizes="[15, 30, 50, 100, 200, 300]"
+                        :page-sizes="[10, 15, 30, 50, 100, 200, 300]"
                         :page-size="pagesize"
                         layout="total, sizes, prev, pager, next, jumper"
                         :total="totalCount"
@@ -147,11 +147,11 @@
                         <component class="attribute-value" :is="v.renderTemplateName" v-model="v.value"
                             v-bind="v.attributes" :key="temp_fieldObj.fieldNo+v.renderTemplateName"></component>
                     </div> -->
-                    <!-- TODO: 关联审批点 -->
-                    <div class="attribute">
+                    <!-- 关联审批点 -->
+                    <!-- <div class="attribute">
                         <span class="attribute-key">关联材料审批点</span>
                         <el-cascader placeholder="选择材料审批点" :options="basicFieldOptions" filterable v-model="temp_relate_fieldId" clearable></el-cascader>
-                    </div>
+                    </div> -->
 
                 </div>
             </div>
@@ -253,14 +253,51 @@
                 </el-table-column>
             </el-table>
 
-            <el-pagination style="margin: 40px auto 30px 500px;" background layout="prev, pager, next" :page-size="searchPageSize" 
-            :current-page="searchCurrentPage" :total="searchTotal" @current-change="tablePageChange">
+            <el-pagination style="margin: 40px auto 30px 500px;" background layout="total, sizes, prev, pager, next" 
+            :page-size="searchPageSize" 
+            :current-page="searchCurrentPage" :total="searchTotal" @current-change="tablePageChange"
+            @size-change="handleSearchSizeChange" 
+            :page-sizes="[10, 15, 30, 50, 100, 200, 300]"
+            >
             </el-pagination>
 
             <p>已选中{{temp_selected_fields.length}}个字段</p>
 
             <el-button type="primary" @click="forkSelected">确认导入</el-button>
             <el-button type="text" @click="clearSelected">清除所有选择</el-button>
+
+        </el-dialog>
+
+        <!-- 导入公共字段 -->
+        <el-dialog title="导入公共字段" :visible.sync="dialogPublicVisible" width="80%" :close-on-click-modal="false">
+            <el-select v-model="publicApprovalItemId" clearable style="width: 200px;">
+                    <el-option v-for="(v,i) in publicApprovalItemList" :key="i" :label="v.itemName" :value="v.approvalItemId" placeholder="选择需要的公共事项"></el-option>
+                </el-select>
+
+           <el-input style="width: 240px;margin: 10px; 10px" placeholder="输入关键词（fieldNo/label）" clearable v-model="fieldKeyword" @change="searchPublicField"></el-input>
+            <el-button icon="el-icon-search" circle @click="searchPublicField"></el-button>
+
+            <el-table ref="checkTable1" :data="searchPublicResult" border style="width: 100%" row-key="id" @selection-change="handlePublicSelectionChange">
+                <el-table-column prop="itemName" label="事项名称" ></el-table-column>
+                <el-table-column prop="fieldNo" label="fieldNo" width="160"></el-table-column>
+                <el-table-column prop="label" label="label" width="240"></el-table-column>
+                <el-table-column prop="fieldComponentName" label="组件名" width="160"></el-table-column>
+                <el-table-column type="selection" reserve-selection label="选择">
+                </el-table-column>
+            </el-table>
+
+            <el-pagination style="margin: 40px auto 30px 500px;" background layout="total, sizes, prev, pager, next" 
+            :page-size="publicPagesize" 
+            :current-page="publicCurrentpage" :total="publicTotal" @current-change="publicPageChange"
+            @size-change="handlePublicSizeChange" 
+            :page-sizes="[10, 15, 30, 50, 100, 200, 300]"
+            >
+            </el-pagination>
+
+            <p>已选中{{selected_public_fields.length}}个字段</p>
+
+            <el-button type="primary" @click="forkPublic">确认导入</el-button>
+            <el-button type="text" @click="clearPublic">清除所有选择</el-button>
 
         </el-dialog>
     </div>
@@ -276,8 +313,10 @@ import { getById } from "@/api/item/index";
 import { mapState } from "vuex";
 import _ from "lodash";
 import defRenderers from "@/views/attributeComponents/defRendererComponents/index";
-import { getField, saveOne, deleteOne, forkPublicFields,getFieldById,searchFields,forkSelectedFields, getFieldAll } from "@/api/superForm/index";
+import { getField, saveOne, deleteOne, getFieldById,searchFields,forkSelectedFields, getFieldAll,
+ searchPublic, forkPublic } from "@/api/superForm/index";
 import { listMaterialFieldLayer } from "@/api/basicInfo/field";
+import { listPublicApprovalItem } from "../../api/basicInfo/approval";
 import { functionReviverEventRuntime, convertDefToConfigEventRuntime, functionReviverRuntime } from "./util"
 import { log } from 'handlebars';
 import { mixin } from "@/mixin/mixin"
@@ -331,8 +370,18 @@ export default {
             // 展示用
             temp_field_info: null,
             // 关联审批点
-            basicFieldOptions: [],
-            temp_relate_fieldId: null,
+            // basicFieldOptions: [],
+            // temp_relate_fieldId: null,
+            // 公共字段
+            dialogPublicVisible: false,
+            searchPublicResult: [],
+            selected_public_fields: [],
+            publicPagesize: 15,
+            publicCurrentpage: 1,
+            publicTotal: 0,
+            publicApprovalItemId: null,
+            publicKeyword: "",
+            publicApprovalItemList: []
         };
     },
     computed: {
@@ -391,7 +440,6 @@ export default {
             }else{
                 return true;
             }
-            
         },
         handleDisabledKF(){
             if(this.roles.includes("admin") || this.roles.includes("developer")){
@@ -399,7 +447,6 @@ export default {
             }else{
                 return true;
             }
-            
         },
         // 添加子项
         handleClickAddChild(row) {
@@ -587,21 +634,6 @@ export default {
             }); 
             this.temp_fieldObj = newFieldObj;
             delete this.temp_fieldObj.list;
-            // 初始化关联选项
-            await this.initBasicFieldOptions();
-            // 初始化关联数据
-            let ssFieldId = result.data.ssFieldId
-            if(ssFieldId == null){
-                this.temp_relate_fieldId = [];
-            }else{
-            let parent = this.basicFieldOptions.find(function(item){
-                let children = item.children;
-                return children.findIndex(function(child){return child.value == ssFieldId}) !== -1;
-            })
-            if(typeof(parent) !== "undefined"){
-                this.temp_relate_fieldId = [parent.value, ssFieldId];
-            }
-            }
             this.editDialogVisibleDY = true;
         },
         // 删除 fieldNo
@@ -715,7 +747,6 @@ export default {
         },
         // 调研编辑的保存 有些字段不用改
         async handleSaveFieldReseacher(v){
-            // TODO: 保存关联
             let param = {
                 id: v.id,
                 fieldNo: v.fieldNo,
@@ -726,9 +757,9 @@ export default {
                 fieldComponentName: v.componentDefs?.type?.value,
                 fieldType: v.fieldType,
             };
-            if(this.temp_relate_fieldId != null && this.temp_relate_fieldId.length > 0){
-                param.ssFieldId = this.temp_relate_fieldId[this.temp_relate_fieldId.length -1];
-            }
+            // if(this.temp_relate_fieldId != null && this.temp_relate_fieldId.length > 0){
+            //     param.ssFieldId = this.temp_relate_fieldId[this.temp_relate_fieldId.length -1];
+            // }
             let result = await saveOne(param);
 
             if (!result.success) return;
@@ -778,21 +809,10 @@ export default {
             return "其他"
         },
         async handleImportPublic() {
-            // TODO: 修改导入方式
-            let message = "确认导入吗？\n提示：\n1.已存在的字段不会被覆盖 \n2.导入后如公共字段有修改，不会自动更新";
-            if (confirm(message) == true) {
-                let result = await forkPublicFields({ itemId: this.itemId, itemName: this.itemName })
-                if (result.success) {
-                    this.$message({ type: "success", message: "导入成功！新增" + result.data + "条数据" });
-                    this.load();
-                } else {
-                    this.$message({ type: "warning", message: "导入失败，请查看错误信息或联系管理员" });
-                }
-            }
-        },
-        handleManagePublic() {
-            // TODO: 
-            window.open('#/formconstructor?itemId=-1', '_blank')
+            this.dialogPublicVisible = true;
+            // 初始化公共事项列表
+            let result = await listPublicApprovalItem({pageSize: 100});
+            this.publicApprovalItemList = result.data.records;
         },
         handleSelect(){
             this.dialogSelectVisible = true;
@@ -806,6 +826,12 @@ export default {
             if (this.searchCurrentPage != n) {
                 this.searchCurrentPage = n;
             }
+            this.loadSearch();
+        },
+        handleSearchSizeChange(val) {
+            // console.log(`每页 ${val} 条`);
+            this.searchPageSize = val;
+            this.searchCurrentPage = 1;
             this.loadSearch();
         },
         async loadSearch(){
@@ -844,29 +870,54 @@ export default {
             }
             }
         },
+        // 公共字段导入相关
         clearSelected(){
             this.$refs.checkTable.clearSelection();
             this.temp_selected_fields = [];
         },
-        // TODO: 审批点数据处理
-        async initBasicFieldOptions(){
-            let result = await listMaterialFieldLayer({approvalItemId: this.itemId});
-            if(!result.success){
-                return;
+        handlePublicSizeChange(val){
+            this.publicPagesize = val;
+            this.publicCurrentpage = 1;
+            this.loadPublicSearch();
+        },
+        handlePublicSelectionChange(sel){
+            this.selected_public_fields = sel;
+        },
+        publicPageChange(n){
+            if (this.searchCurrentPage != n) {
+                this.searchCurrentPage = n;
             }
-            let initData = result.data;
-            // 遍历数组
-            for(let v of initData){
-                // 获取材料名和id, 在basicFieldOptions里找到
-                let material = this.basicFieldOptions.find(function(item){return item.value === v.materialId});
-                // 如果为空 则新建
-                if(typeof(material) == "undefined"){
-                    let newM = {value: v.materialId, label: v.materialName, children: [{value: v.fieldId, label: v.fieldName}]}
-                    this.basicFieldOptions.push(newM);
-                }else {
-                // 如果不为空 则添加到children
-                material.children.push({value: v.fieldId, label: v.fieldName})
-                }
+            this.loadPublicSearch();
+        },
+        clearPublic(){
+            this.selected_public_fields = [];
+        },
+        searchPublicField(){
+            this.publicCurrentpage = 1;
+            this.loadPublicSearch();
+        },
+        async forkPublic(){
+            if(this.selected_public_fields.length > 0){
+            let selectIds = this.selected_public_fields.map(f => f.id);
+            let params = { approvalItemId: this.itemId, sourceFieldIds: selectIds};
+            let result = await forkPublic(params);
+            if(result.success){
+                this.$message({ type: "success", message: "导入成功"});
+                this.clearPublic();
+                this.load();
+                this.dialogPublicVisible = false;
+            }
+            }
+        },
+        async loadPublicSearch(){
+            let params = {approvalItemId: this.publicApprovalItemId, keyword: this.publicKeyword, pageNum: this.publicCurrentpage, pageSize: this.publicPagesize};
+            let result = await searchPublic(params);
+            if(result.success){
+                // 页码
+                this.publicTotal = result.data.total
+                this.searchPublicResult = result.data.records;
+            }else{
+                this.$message({ type: "error", message: "查询出错"});
             }
         }
     }

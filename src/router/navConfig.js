@@ -91,6 +91,19 @@ const originList = [
         ],
         order: 1
     },
+    {
+        path: "/public",
+        label: "公共事项",
+        authKey: ["admin","developer","researcher","test"],
+        iconClass:"el-icon-copy-document",
+        children: [
+            {
+                path: '/public',
+                label: '公共事项',
+            }
+        ],
+        order: 5
+    },
 ]
 // 对于导航列表处理函数
 const showList = (authList, originList) => {
