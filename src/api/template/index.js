@@ -27,3 +27,6 @@ export const GetAddTable = params => axios.get('/ss/material/getAllByApprovalIte
 
 // 批量新增模板
 export const batchSave = params => axios.post('/superform/template/batchSave', params).then(res => res.data);
+
+// 查询最新保存材料时间
+export const getSaveMaxTimeTemplateBatch = params => axios.get('/superform/template/getSaveMaxTime', {params}).then(res => res.data);

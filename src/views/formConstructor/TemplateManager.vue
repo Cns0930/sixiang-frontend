@@ -4,37 +4,51 @@
 
             <!-- <el-button @click="templateCreateVisible = true"> 新建材料</el-button> -->
             <el-button @click="loadAllField"> 载入字段</el-button>
-            <el-button @click="$router.push('/')"> -> 字段管理</el-button>
-            <el-button @click="isListShown=false" v-show="isListShown">收起侧栏</el-button>
-            <el-button @click="isListShown=true" v-show="!isListShown">展开侧栏</el-button>
-
+            <!-- <el-button @click="$router.push('/')"> -> 字段管理</el-button> -->
+            <el-button @click="isListShown = !isListShown">展开/收起侧栏</el-button>
+            <span style="display:inline-block">
+                <<{{templates.template.docxTemplateName}}>>
+            </span>
+            <el-button-group>
+                <el-button @click="addPage(templates)" icon="el-icon-plus">添加</el-button>
+                <!-- <el-button style="width:45px;" @click="handleDelete(i)">删除</el-button> -->
+            </el-button-group>
         </div>
         <div class="main">
 
             <!-- template -->
             <div class="computed-field" v-show="isListShown">
-                <div style="margin-top: 10px;">
-                    <el-button type="text" @click="handleClickTemplate(templates)"
+                <div>
+                    <!-- <el-button type="text" @click="handleClickTemplate(templates)"
                         style="width:100px;margin:0;color:orange">
                         {{templates.template.docxTemplateName}}
-                    </el-button>
-                    <el-button-group>
-                        <el-button style="width:45px;" @click="addPage(templates)" icon="el-icon-plus"></el-button>
-                        <!-- <el-button style="width:45px;" @click="handleDelete(i)">删除</el-button> -->
-                    </el-button-group>
-                    <div style="margin-left:40px;">
-                        <div v-for="(page,pageIndex) in templates.templatePagesList" :key='pageIndex' style="margin-top: 2px;" :class="{'active':temp_page && page.id == temp_page.id}">
-                            - <el-button type="text" style="width:50px;margin:0"
-                                @click="handleClickPage(page,pageIndex)">{{page.pageNum}} 页
-                            </el-button>
+                    </el-button> -->
+
+                    <div>
+
+                        <div v-for="(page,pageIndex) in renderPages" :key='pageIndex' style="margin-top: 2px;"
+                            :class="{'active':temp_page && page.id == temp_page.id}" class="page-card"
+                            @click="handleClickPage(page,pageIndex)">
+
+                            <span>{{page.pageNum}} 页</span>
+
+                            <div class="list">
+                                保存时间：{{page.updateTime | formatTime}}
+                            </div>
+                            <div class="list">
+                                <el-badge :is-dot="!page.isLast">
+                                    输出时间：{{page.outputTime}}
+                                </el-badge>
+
+                            </div>
                             <el-button-group>
-                                <el-button style="width:40px;" @click="savePage(page,pageIndex)" icon="el-icon-upload2"
-                                :disabled="!temp_page || page.id != temp_page.id">
-                                </el-button>
+
                                 <el-button style="width:40px;" @click="editPage(page,pageIndex)" icon="el-icon-edit"
-                                :disabled="!temp_page || page.id != temp_page.id">
+                                    :disabled="!temp_page || page.id != temp_page.id" type="primary">
                                 </el-button>
-                                <el-button style="width:40px;" @click="deletePage(page)" icon="el-icon-delete"></el-button>
+                                <el-button style="width:40px;" @click="deletePage(page)" icon="el-icon-delete"
+                                    type="danger">
+                                </el-button>
                             </el-button-group>
                         </div>
                     </div>
@@ -84,7 +98,7 @@
                 </div> -->
 
                 <inlineEditor ref="inlineEditor" v-if="temp_page" :temp_page="temp_page"
-                    :currentPagenum="currentPagenum" @saveTemplate="saveTemplate" @transferHtml="transferHtml"/>
+                    :currentPagenum="currentPagenum" @saveTemplate="saveTemplate" @transferHtml="transferHtml" />
             </div>
 
         </div>
@@ -100,39 +114,38 @@
             </span>
         </el-dialog> -->
 
-        <el-dialog title="载入字段" :visible.sync="fieldVisible" width="30" :close-on-click-modal="false" 
-        postition="fixed">
-            <div v-for="(v,i) in baseJSON" :key="i">    
+        <el-dialog title="载入字段" :visible.sync="fieldVisible" width="30" :close-on-click-modal="false" postition="fixed">
+            <div v-for="(v,i) in baseJSON" :key="i">
 
-                    ({{v.fieldNo}}){{v.label}}：{{v.sample}}
+                ({{v.fieldNo}}){{v.label}}：{{v.sample}}
 
-                </div>
-                <el-divider v-if="Object.keys(computedJSON).length > 0" />
-                <div v-for="(v,i) in computedJSON" :key="i">
+            </div>
+            <el-divider v-if="Object.keys(computedJSON).length > 0" />
+            <div v-for="(v,i) in computedJSON" :key="i">
 
-                    ({{v.fieldNo}}){{v.label}}:{{v.sample}}
+                ({{v.fieldNo}}){{v.label}}:{{v.sample}}
 
-                </div>
+            </div>
         </el-dialog>
 
         <!-- 编辑模板弹窗 -->
         <el-dialog title="编辑详情" :visible.sync="templateEditVisible" width="50%" :close-on-click-modal="false">
-             <div v-if="temp_page">
-                    <el-select v-model="temp_page.orient" placeholder="">
-                        <el-option label="横向" value="row" ></el-option>
-                        <el-option label="纵向" value="column" ></el-option>
-                    </el-select>
-                    <el-select v-model="temp_page.isTable" placeholder="">
-                        <el-option label="表格" :value="1" ></el-option>
-                        <el-option label="纯文本" :value="0" ></el-option>
-                    </el-select>
-                    
-                    <el-input v-model="currentPagenum" placeholder="请输入页码"></el-input>
-                    <div>
+            <div v-if="temp_page">
+                <el-select v-model="temp_page.orient" placeholder="">
+                    <el-option label="横向" value="row"></el-option>
+                    <el-option label="纵向" value="column"></el-option>
+                </el-select>
+                <el-select v-model="temp_page.isTable" placeholder="">
+                    <el-option label="表格" :value="1"></el-option>
+                    <el-option label="纯文本" :value="0"></el-option>
+                </el-select>
+
+                <el-input v-model="currentPagenum" placeholder="请输入页码"></el-input>
+                <div>
                     <!-- script配置<CodeEditor v-model="temp_page.script"></CodeEditor> -->
                     css配置<CSSEditor v-model="temp_page.contentCss"></CSSEditor>
-                    </div>
                 </div>
+            </div>
         </el-dialog>
     </div>
 </template>
@@ -142,28 +155,33 @@ import _ from "lodash"
 import { mapState } from "vuex"
 import { mergeFieldAttr } from "./util"
 
-import { getSingleTemplate, addTemplate, addEditPage, deletePage } from '@/api/template/index'
+import { getSingleTemplate, addTemplate, addEditPage, deletePage, } from '@/api/template/index'
 import { getFieldAll } from '@/api/superForm/index'
 import { addSysTransferLog, getUptoDateSysTransferLog } from "@/api/item/index";
 import defs, { deserializeComputedField, deserializeBaseField } from "../attributeComponents/index"
 import inlineEditor from "@/views/inlineEditorComponent/InlineEditor"
 
-import {mixin} from "@/mixin/mixin"
-import {CodeEditor,CSSEditor} from "@/views/attributeComponents/defRendererComponents/defRendererComponents"
+import { mixin } from "@/mixin/mixin"
+import { CodeEditor, CSSEditor } from "@/views/attributeComponents/defRendererComponents/defRendererComponents"
 import axios from 'axios';
-
+import dayjs from "dayjs"
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
+dayjs.extend(isSameOrBefore)
 export default {
     name: "TemplateManager",
     components: {
-        inlineEditor,CodeEditor,CSSEditor
+        inlineEditor, CodeEditor, CSSEditor
     },
-    mixins:[mixin],
+    mixins: [mixin],
     data() {
         return {
+            itemId: this.$route.query.itemId,
             templates: {
                 template: {},
                 templatePagesList: [],
             },
+            //  每页输出时间 数组
+            lastPagesOutputTime: [],
 
             templateCreateVisible: false,
 
@@ -188,36 +206,62 @@ export default {
 
             fieldVisible: false,
 
-            templateEditVisible:false,
+            templateEditVisible: false,
 
-            isListShown:true,
+            isListShown: true,
 
-            baseFields:[],
-            computedFields:[],
+            baseFields: [],
+            computedFields: [],
 
             defaultCss: ".ck-content p{margin:0;white-space:pre-wrap;word-break:break-all;word-wrap:break-word;overflow-wrap:break-word;}.ck-content .table{margin:1em auto;display:table;}.ck-content .table table{margin-left:-1.6cm;width:17.84cm;border-collapse:collapse;border-spacing:0;height:100%;border:1px solid black;}#row-table > table{margin-left:-1.6cm;width:26.54cm;border-collapse:collapse;border-spacing:0;height:100%;border:1px solid black;}.ck-content .table table td,.ck-content .table table th{min-width:2em;padding:0;border:1px solid black;}.ck-content .custom-block-indent-2{text-indent:2em;}.ck-content .custom-block-indent-4{text-indent:4em;}.ck-content .custom-block-indent-6{text-indent:6em;}.ck-content .custom-block-indent-8{text-indent:8em;}.ck-content .custom-block-indent-10{text-indent:10em;}.image{display:inline-block;}.image img{width:7.9cm;}.ck-content p{margin:0;white-space:pre-wrap;word-break:break-all;word-wrap:break-word;overflow-wrap:break-word;}.ck-content .table{margin:1em auto;display:table;}.ck-content .table table{margin-left:-1.6cm;width:17.84cm;border-collapse:collapse;border-spacing:0;height:100%;border:1px solid black;}#row-table > table{margin-left:-1.6cm;width:26.54cm;border-collapse:collapse;border-spacing:0;height:100%;border:1px solid black;}.ck-content .table table td,.ck-content .table table th{min-width:2em;padding:0;border:1px solid black;}.ck-content .custom-block-indent-2{text-indent:2em;}.ck-content .custom-block-indent-4{text-indent:4em;}.ck-content .custom-block-indent-6{text-indent:6em;}.ck-content .custom-block-indent-8{text-indent:8em;}.ck-content .custom-block-indent-10{text-indent:10em;}.image{display:inline-block;}.image img{width:7.9cm;}",
 
         }
     },
-    // computed: {
-    //     ...mapState({
-    //         baseFields: state => state.fieldModel.baseFields,
-    //         computedFields: state => state.fieldModel.computedFields,
-    //         // templates: state => state.fieldModel.templates,
-    //     })
-    // },
+    computed: {
+        renderPages() {
+            return this.templates.templatePagesList.map(page => {
+                let outputTimeInfo = this.lastPagesOutputTime.find(v => v.id == page.id)
+
+                let outputTime = outputTimeInfo ? dayjs(outputTimeInfo.time).format("YYYY-MM-DD HH:mm:ss") : ""
+                let isLast = dayjs(page.updateTime).isSameOrBefore(dayjs(outputTime))
+                return {
+                    ...page,
+                    outputTime,
+                    isLast
+                }
+            })
+
+        },
+    },
     mounted() {
         this.init()
         this.getTemplate()
     },
+    filters: {
+        formatTime(v) {
+            return dayjs(v).format("YYYY-MM-DD HH:mm:ss")
+        },
+
+    },
     methods: {
         async getTemplate() {
             if (!this.$route.query.id) return;
+
+
             const res = await getSingleTemplate({
                 templateId: this.$route.query.id,
             })
             if (!res.success) return;
             this.templates = res.data;
+
+            const updateInfoRes = await Promise.all(
+                this.templates.templatePagesList.map(v => getUptoDateSysTransferLog({ approvalItemId: this.itemId, description: "templatePage", templatePagesId: v.id }))
+            )
+            if (updateInfoRes.some(v => !v.success)) return;
+            this.lastPagesOutputTime = updateInfoRes.map(v => v.data).filter(v => !!v).map(v => ({ id: v.templatePagesId, time: v.createTime }))
+            console.log(updateInfoRes)
+
+
         },
         // async addTemplate() {
         //     if (!this.temp_template_name) return;
@@ -259,22 +303,24 @@ export default {
             })
             // this.currentPagenum = length;
         },
-        async savePage(page, pageIndex) {
+        async savePage(page) {
             let res
             if (this.temp_page && this.temp_page.id === page.id) {
-                 res = await this.$refs.inlineEditor.savePage();
+                this.$refs.inlineEditor.savePage();
+                return;
             } else {
 
                 res = await addEditPage(page);
 
 
             }
+
             if (!res.success) return;
 
             this.$message.success('保存页面成功');
             this.getTemplate();
         },
-        async saveTemplate(html){
+        async saveTemplate(html) {
             const res = await addEditPage({
                 id: this.temp_page.id,
                 approvalItemId: this.temp_page.approvalItemId,
@@ -286,7 +332,7 @@ export default {
                 pageNum: this.currentPagenum,
                 templateType: this.temp_page.templateType,
                 contentCss: this.temp_page.contentCss ? this.temp_page.contentCss : this.defaultCss,
-                script:this.temp_page.script,
+                script: this.temp_page.script,
             })
 
             if (!res.success) return;
@@ -296,7 +342,7 @@ export default {
             this.$message.success('保存页面成功');
             this.getTemplate();
         },
-        async transferHtml(html){
+        async transferHtml(html) {
             // 先保存
             const res = await addEditPage({
                 id: this.temp_page.id,
@@ -309,7 +355,7 @@ export default {
                 pageNum: this.currentPagenum,
                 templateType: this.temp_page.templateType,
                 contentCss: this.temp_page.contentCss ? this.temp_page.contentCss : this.defaultCss,
-                script:this.temp_page.script,
+                script: this.temp_page.script,
             })
 
             if (!res.success) return;
@@ -317,15 +363,15 @@ export default {
             this.temp_page = res.data;
 
             this.$message.success('保存页面成功');
-            this.getTemplate();
+
 
             // 再传输
             let serviceBaseUrl = this.$store.state.setting.bangbanUrl;
-            if(serviceBaseUrl.endsWith('/')){
-                serviceBaseUrl = serviceBaseUrl.substring(0, serviceBaseUrl.length-1)
+            if (serviceBaseUrl.endsWith('/')) {
+                serviceBaseUrl = serviceBaseUrl.substring(0, serviceBaseUrl.length - 1)
             }
             console.log(serviceBaseUrl)
-            if(serviceBaseUrl == null || serviceBaseUrl == ''){
+            if (serviceBaseUrl == null || serviceBaseUrl == '') {
                 this.$message({ type: "error", message: "请先设置超级帮办地址!" });
                 return;
             }
@@ -339,25 +385,26 @@ export default {
                 pageNum: this.currentPagenum,
                 script: this.temp_page.script,
                 sid: this.$store.state.home.item.itemNo,
-                padding: this.temp_page.isTable == 1? "table": "text",
+                padding: this.temp_page.isTable == 1 ? "table" : "text",
                 // TODO: 拼接htmlPath: /sid/fileName_"page"pageNum.html
-                htmlPath: '/'+ this.$store.state.home.item.itemNo + '/' + this.templates.template.docxTemplateName +"_page" + this.currentPagenum + ".html",
+                htmlPath: '/' + this.$store.state.home.item.itemNo + '/' + this.templates.template.docxTemplateName + "_page" + this.currentPagenum + ".html",
                 // documentSeq: this.templates.template.documentSeq // 不需要传
                 html: this.temp_page.htmlContent,
             }
             console.log(params)
-            let result = await axios.post(serviceBaseUrl+"/api/sixiang/saveHtml", params).then(res => res.data);
+            let result = await axios.post(serviceBaseUrl + "/api/sixiang/saveHtml", params).then(res => res.data);
             console.log(result)
-            if(result.code == 200){
+            if (result.code == 200) {
                 this.$message({ type: "success", message: "导入成功 请查看数据库" });
-            }else{
-                this.$message({ type: "error", message: result.message + " "+ result.data });
+            } else {
+                this.$message({ type: "error", message: result.message + " " + result.data });
                 return;
             }
 
             // 最后保存传输日志
             let result3 = await addSysTransferLog(
                 {
+                    templatePagesId: this.temp_page.id,
                     approvalItemId: this.$store.state.home.item.approvalItemId,
                     description: "templatePage",
                     transferData: JSON.stringify({
@@ -366,26 +413,28 @@ export default {
                 }
             );
 
+            this.getTemplate();
+
         },
         async deletePage(page) {
             let message = "确定要删除吗";
             if (confirm(message) == true) {
-            const res = await deletePage({
-                templatePageId: page.id,
-            })
-            if (!res.success) return;
-            this.$message.success('删除页面成功');
-            this.getTemplate();
+                const res = await deletePage({
+                    templatePageId: page.id,
+                })
+                if (!res.success) return;
+                this.$message.success('删除页面成功');
+                this.getTemplate();
             }
         },
         handleClickPage(page) {
             this.temp_page = page;
-            if(!this.temp_page.script){
-                
-                this.temp_page.script=`function(state,getters){
-                    return 1
-                }`
-            }
+            // if(!this.temp_page.script){
+
+            //     this.temp_page.script=`function(state,getters){
+            //         return 1
+            //     }`
+            // }
             this.currentPagenum = page.pageNum;
         },
         // handleDelete(i) {
@@ -407,7 +456,7 @@ export default {
             // this.renderJSON = { ..._.mapValues(this.baseJSON), ..._.mapValues(this.computedJSON) }
 
         },
-        editPage(){
+        editPage() {
             this.templateEditVisible = true;
             this.temp_page.contentCss ||
                 (this.temp_page.contentCss = this.defaultCss);
@@ -443,12 +492,12 @@ export default {
 .computed-field {
     width: 200px;
     flex: none;
-    border: green 1px solid;
+    border: #f3e4e4 1px solid;
     .el-input {
         width: 100%;
     }
-    overflow : hidden;
-    text-overflow : ellipsis;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .computed-field-direction {
     width: 120px;
@@ -457,13 +506,38 @@ export default {
 .attribute-content {
     width: 1800px;
     flex: none;
-    border: blue 1px solid;
+    border: #f3e4e4 1px solid;
     // overflow:auto;
     // .attribute {
     //     margin: 4px 0;
     // }
 }
-.active{
-    background:rgba(88,99,236,0.1)
+// .active {
+//     background: rgba(88, 99, 236, 0.1);
+// }
+.page-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid #fff;
+
+    background: #9897e6;
+    cursor: pointer;
+    color: #fff;
+
+    &:hover {
+        background: #7472ef;
+    }
+    &.active {
+        background: #7472ef;
+    }
+    .list {
+        font-size: 12px;
+        width: 100%;
+        padding-left: 10px;
+    }
+    & > * {
+        margin: 4px 0;
+    }
 }
 </style>

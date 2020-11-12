@@ -4,12 +4,12 @@
             <el-button @click="openAddDialog"> 新建材料</el-button>
             <el-button @click="getTemplate">载入材料</el-button>
             <el-button @click="downAllPages">下载所有材料文件</el-button>
-            <el-button @click="handleDownload" type="primary"
-                >下载最新word模板</el-button
-            >
-            <el-button @click="transferAllTemplates"
-                >批量保存到超级帮办</el-button
-            >
+            <el-button @click="handleDownload" type="primary">下载最新word模板</el-button>
+
+            <el-badge :is-dot="!isLast" >
+                <el-button @click="transferAllTemplates">批量保存到超级帮办</el-button>
+            </el-badge>
+
         </div>
 
         <div class="main">
@@ -18,24 +18,19 @@
                 <el-table :data="templates">
                     <el-table-column label="word模板命令">
                         <template slot-scope="scope">
-                            <el-button
-                        type="text"
-                        style="color: orange"
-                        @click="goTemplatemanager(scope.row.template.id)"
-                        >{{ scope.row.template.docxTemplateName }}</el-button
-                    >
-                    </template>
+                            <el-button type="text" style="color: orange"
+                                @click="goTemplatemanager(scope.row.template.id)">
+                                {{ scope.row.template.docxTemplateName }}</el-button>
+                        </template>
                     </el-table-column>
-                    
+
                     <el-table-column prop="template.materialName" label="材料名称"></el-table-column>
                     <el-table-column prop="template.templateName" label="模板名称(自取)"></el-table-column>
                     <el-table-column label="操作" width="150px">
                         <template slot-scope="scope">
                             <el-button @click="openDetail(scope.row)">编辑</el-button>
-                    <el-button @click="deleteTemplate(scope.row.template.id)"
-                        >删除</el-button
-                    >
-                    <!-- <el-button @click="transferTemplate(scope.row)"
+                            <el-button @click="deleteTemplate(scope.row.template.id)">删除</el-button>
+                            <!-- <el-button @click="transferTemplate(scope.row)"
                         >保存到超级帮办</el-button
                     > -->
                         </template>
@@ -63,42 +58,22 @@
             <!-- 模板编辑 -->
             <div class="material-detail" v-if="temp_template">
                 <div>
-                    <el-button type="primary" @click="saveTemplate"
-                        >保存修改</el-button
-                    >
+                    <el-button type="primary" @click="saveTemplate">保存修改</el-button>
                 </div>
                 <div>{{ temp_template.docxTemplateName }}:</div>
                 <!-- 模板名称(必填)<el-input v-model="temp_template.docxTemplateName"></el-input>
             材料中文名(必填)<el-input v-model="temp_template.documentName"></el-input>
             材料序号(必填)<el-input v-model="temp_template.documentSeq"></el-input> -->
-                备注<el-input
-                    type="textarea"
-                    :autosize="{ minRows: 1, maxRows: 15 }"
-                    v-model="temp_template.notes"
-                ></el-input>
-                page配置<CodeEditor
-                    ref="scriptEditor"
-                    v-model="temp_template.script"
-                ></CodeEditor>
+                备注<el-input type="textarea" :autosize="{ minRows: 1, maxRows: 15 }" v-model="temp_template.notes">
+                </el-input>
+                page配置<CodeEditor ref="scriptEditor" v-model="temp_template.script"></CodeEditor>
             </div>
         </div>
         <!-- 创建模板弹窗 -->
-        <el-dialog
-            title="创建模板"
-            :visible.sync="templateCreateVisible"
-            width="50%"
-            :close-on-click-modal="false"
-        >
+        <el-dialog title="创建模板" :visible.sync="templateCreateVisible" width="50%" :close-on-click-modal="false">
             <div class="tableWrap">
-                <el-table
-                    ref="multipleTable"
-                    class="workTable"
-                    :data="tableData"
-                    style="width: 95%"
-                    border
-                    tooltip-effect="dark"
-                    @selection-change="handleSelectionChange"
-                >
+                <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 95%" border
+                    tooltip-effect="dark" @selection-change="handleSelectionChange">
                     <el-table-column type="selection" width="55">
                     </el-table-column>
                     <!-- <el-table-column
@@ -107,62 +82,22 @@
                         width="100"
                         show-overflow-tooltip
                     ></el-table-column> -->
-                    <el-table-column
-                        prop="docxTemplateName"
-                        label="超级帮办word模板命名"
-                        width="160"
-                    ></el-table-column>
-                    <el-table-column
-                        prop="materialCode"
-                        label="材料编码"
-                        width="100"
-                        show-overflow-tooltip
-                    ></el-table-column>
-                    <el-table-column
-                        prop="materialName"
-                        label="材料名称"
-                        width="160"
-                    ></el-table-column>
-                    <el-table-column
-                        prop="materialStatus"
-                        label="材料状态"
-                        width="80"
-                    ></el-table-column>
-                    <el-table-column
-                        prop="documentSeq"
-                        label="文档编号"
-                        width="80"
-                    ></el-table-column>
-                    <el-table-column
-                        prop="note"
-                        label="备注"
-                        width="100"
-                    ></el-table-column>
-                    <el-table-column
-                        prop="proDocId"
-                        label="proDocId"
-                        width="100"
-                    ></el-table-column>
-                    <el-table-column
-                        prop="produceSource"
-                        label="产生来源"
-                        width="100"
-                    ></el-table-column>
-                    <el-table-column
-                        prop="descriptionInfo"
-                        label="其他说明信息（调研填写）"
-                        width="180"
-                    ></el-table-column>
+                    <el-table-column prop="docxTemplateName" label="超级帮办word模板命名" width="160"></el-table-column>
+                    <el-table-column prop="materialCode" label="材料编码" width="100" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="materialName" label="材料名称" width="160"></el-table-column>
+                    <el-table-column prop="materialStatus" label="材料状态" width="80"></el-table-column>
+                    <el-table-column prop="documentSeq" label="文档编号" width="80"></el-table-column>
+                    <el-table-column prop="note" label="备注" width="100"></el-table-column>
+                    <el-table-column prop="proDocId" label="proDocId" width="100"></el-table-column>
+                    <el-table-column prop="produceSource" label="产生来源" width="100"></el-table-column>
+                    <el-table-column prop="descriptionInfo" label="其他说明信息（调研填写）" width="180"></el-table-column>
                 </el-table>
             </div>
 
             <span slot="footer" class="dialog-footer">
-                <el-button @click="templateCreateVisible = false"
-                    >取 消</el-button
-                >
-                <el-button type="primary" @click="addTemplateBatch"
-                    >确 定</el-button
-                >
+                <el-button @click="templateCreateVisible = false">取 消</el-button>
+                <el-button type="primary" @click="addTemplateBatch">确 定</el-button>
             </span>
         </el-dialog>
     </div>
@@ -177,11 +112,17 @@ import {
     GetAddTable,
     batchSave,
 } from "@/api/template/index";
-import { addSysTransferLog, getUptoDateSysTransferLog } from "@/api/item/index";
+import { addSysTransferLog, getUptoDateSysTransferLog, } from "@/api/item/index";
+import { getSaveMaxTimeTemplateBatch } from "@/api/template/index";
 import { mixin } from "@/mixin/mixin";
 import axios from "axios";
-
+import { mapState } from "vuex"
 import { CodeEditor } from "@/views/attributeComponents/defRendererComponents/defRendererComponents";
+
+import dayjs from "dayjs"
+import  isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
+dayjs.extend(isSameOrBefore)
+
 export default {
     name: "MaterialManager",
     mixins: [mixin],
@@ -201,16 +142,19 @@ export default {
             tableData: [],
             multipleSelection: [],
             hasSelectList: [],
+            // 是否需要输出到超级帮办
+            isLast:true,
         };
     },
-    // computed: {
-    //     ...mapState({
-    //         itemId: state => state.home.item.approvalItemId,
-    //     })
-    // },
+    computed: {
+        ...mapState({
+            itemId: state => state.home.item.approvalItemId,
+        })
+    },
     async mounted() {
         await this.init();
         await this.getTemplate();
+        this.getLastUpdateInfo();
     },
     methods: {
         async getTemplate() {
@@ -226,7 +170,20 @@ export default {
             // console.log('this.hasSelectList');
             // console.log(this.hasSelectList);
         },
+        // 比对 最新的更新 和 最新的输出
+        async getLastUpdateInfo() {
+            let res = await Promise.all([
 
+                getSaveMaxTimeTemplateBatch({ approvalItemId: this.itemId }),
+                getUptoDateSysTransferLog({ approvalItemId: this.itemId, description: "templatePage" }),
+            ])
+            if (!res[0].success || !res[1].success) return;
+            let maxUpdateTime = res[0].data.maxUpdateTime;
+            let maxOutputTime = res[1].data.createTime;
+            this.isLast = dayjs(maxUpdateTime).isSameOrBefore(dayjs(maxOutputTime));
+
+
+        },
         async openAddDialog() {
             const res = await GetAddTable({
                 approvalItemId: this.$store.state.home.item.approvalItemId,
@@ -484,7 +441,7 @@ export default {
             });
             if (!res.success) return;
 
-            if(res.data.length == 0){
+            if (res.data.length == 0) {
                 this.$message({
                     type: "warning",
                     message: "无材料可输出",

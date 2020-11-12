@@ -19,17 +19,20 @@
             
         </div>
         <div class="searchBox">
-                <el-input placeholder="筛选字段名称或者字段编号" v-model="valueF" clearable style="width: 200px;margin-left: 0px"></el-input>
-                <el-select v-model="temp_type_search" clearable style="width: 200px;">
-                    <el-option v-for="(v,i) in typeOptions" :key="i" :label="v.label" :value="v.value" placeholder="筛选组件类型"></el-option>
+            <div class="left">
+                <el-input placeholder="筛选字段名称或者字段编号" v-model="valueF" clearable style="width:240px"></el-input>
+                <el-select v-model="temp_type_search" clearable placeholder="筛选组件类型" style="width:240px">
+                    <el-option v-for="(v,i) in typeOptions" :key="i" :label="v.label" :value="v.value" ></el-option>
                 </el-select>
                 
-                <el-select v-model="field_type" placeholder="筛选字段类型" clearable style="width: 200px;margin-left: 210px;">
+                <el-select v-model="field_type" placeholder="筛选字段类型" clearable >
                         <el-option label="基本字段" value="1"></el-option>
                         <el-option label="合成字段" value="2"></el-option>
                     </el-select>
-                <el-button style="margin-left: 210px; margin-right: 30px;" @click="fieldSearch()">搜索</el-button>
-                <el-pagination
+                <el-button @click="fieldSearch()">搜索</el-button>
+                </div>
+                <div class="right">
+                <el-pagination 
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
                     :current-page.sync="currentPage"
@@ -38,6 +41,7 @@
                     layout="total, sizes, prev, pager, next"
                     :total="totalCount"
                 ></el-pagination>
+                </div>
         </div>
         <div class="main">
        
@@ -88,18 +92,18 @@
                 </div>
                 <el-divider></el-divider>
 
-                <div v-if="temp_fieldObj">
+                <div v-if="temp_fieldObj && editDialogVisible">
                     <div class="attribute">
                         <span class="attribute-key">fieldNo</span>
-                        <el-input v-model="temp_fieldObj.fieldNo"></el-input>
+                        <el-input class="attribute-value" v-model="temp_fieldObj.fieldNo"></el-input>
                     </div>
                     <div class="attribute">
                         <span class="attribute-key">label</span>
-                        <el-input v-model="temp_fieldObj.label"></el-input>
+                        <el-input class="attribute-value" v-model="temp_fieldObj.label"></el-input>
                     </div>
                     <div class="attribute">
                         <span class="attribute-key">备注(以此为准)</span>
-                        <el-input v-model="temp_fieldObj.remark"></el-input>
+                        <el-input class="attribute-value" v-model="temp_fieldObj.remark"></el-input>
                     </div>
                     <div class="attribute" v-for="(v,i) in temp_fieldObj.componentDefs" :key="i">
                         <span class="attribute-key">{{v.label || i}} </span>
@@ -873,15 +877,15 @@ export default {
  .searchBox {
         margin-top: 10px;
         display: flex;
-        flex-direction: row;
-        background: #fff;
-        & > * {
-            margin-left: 10px;
+        justify-content: space-between;
+        align-items: center;
+        .left{
+            display:flex;
+            & > * {
+                margin-left: 10px;
+            }
         }
-        .handle {
-            margin-left: auto;
-            margin-top: -55px;
-        }
+        
     }
 .form-constructor {
     ::v-deep .el-dialog{
@@ -914,12 +918,12 @@ export default {
     // .main::-webkit-scrollbar {
     //     display:none;
     // }
-    ::v-deep .el-input {
-        width: 400px;
-    }
-    .el-textarea {
-        width: 400px;
-    }
+    // ::v-deep .el-input {
+    //     width: 400px;
+    // }
+    // .el-textarea {
+    //     width: 400px;
+    // }
 }
 .base-field-list {
     width: 200px;
