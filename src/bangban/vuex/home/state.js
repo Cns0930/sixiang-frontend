@@ -13,6 +13,8 @@ const state = {
     },
     companyName:"",
     barcodeInfo:{}, 
-    currentSelfServiceRecordId:""
+    currentSelfServiceRecordId:"",
+    allFieldNoGetter:[],
+    allFieldNo:[],
 };
 export default state

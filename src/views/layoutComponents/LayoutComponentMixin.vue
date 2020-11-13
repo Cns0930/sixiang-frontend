@@ -40,7 +40,7 @@ export default {
             handler(v) {
                 
                 if(!this.gettersList) return;
-                console.log("更改 itemGetters")
+                // console.log("更改 itemGetters")
                 let that = this
                 let props = v.reduce((result, item) => {
                     result[item] = {
@@ -52,8 +52,8 @@ export default {
                 }, {})
                 this.itemGetters={}
                 Object.defineProperties(this.itemGetters, props)
-                console.log("=====",this.itemGetters['gudongList_new_arr'])
-                console.log(this.getters['run/gudongList_new_arr'])
+                // console.log("=====",this.itemGetters['gudongList_new_arr'])
+                // console.log(this.getters['run/gudongList_new_arr'])
 
 
                 

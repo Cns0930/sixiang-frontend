@@ -25,6 +25,9 @@ const mutations = {
     putAllFieldNo(state,data){
         state.allFieldNo = data;
     },
+    putAllFieldNoGetter(state,data){
+        state.allFieldNoGetter = data;
+    },
     putQingxingItem(state,data){
         state.shixiangForm.checkList = data;
     },

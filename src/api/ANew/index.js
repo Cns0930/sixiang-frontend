@@ -180,3 +180,5 @@ export const listScopesRelation = (params) => axios.get('/api/user/listScopesRel
 
 //获取经营范围数据
 export const listScopes = (params) => axios.get('/api/user/listScopes',{ params }).then(res => res.data)
+
+export const updateRecordIsBatchPrint = (params) => axios.get('/api/selfservice/record/isBatchPrint', { params }).then(res => res.data)

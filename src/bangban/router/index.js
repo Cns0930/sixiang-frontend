@@ -5,6 +5,7 @@ import BangbanRuning from "@/bangban/views/ANew/Home"
 Vue.use(VueRouter)
 import store from "@/vuex/store"
 import bangbanAxios from "@/api/ANew/config"
+import PrintSelect from "@/bangban/views/print/PrintSelect"
 const routes = [
     {
         path: '/',
@@ -15,10 +16,17 @@ const routes = [
             next();
         },
         children: [
-           
+            
 
         ]
-    },{
+    },
+    {
+        path: '/selectprint',
+        name: 'print',
+      
+        component: PrintSelect
+    },
+    {
         path: '/login',
         name: 'login',
         component: Login

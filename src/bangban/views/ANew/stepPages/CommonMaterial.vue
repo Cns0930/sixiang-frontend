@@ -168,6 +168,7 @@ export default {
         });
         this.$store.commit("putDocList",this.docList);
         this.$store.commit("putAllFieldNo",this.templateObj)
+        this.$store.commit("putAllFieldNoGetter",getters)
     },
     methods: {
         async beforeEnter() {

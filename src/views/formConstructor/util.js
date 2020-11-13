@@ -201,16 +201,16 @@ export function convertDefToConfigEventRuntime(fields, metaName = "meta", childr
 
 
                         })
-                        Object.values(child).forEach(comp => {
+                        // Object.values(child).forEach(comp => {
 
-                            if (comp.type == "computedText") {
+                        //     if (comp.type == "computedText") {
 
-                                Object.defineProperty(comp, "value", {
-                                    get: comp.getter.bind(null, comp, state, null, child, value.attributes.children),
-                                })
+                        //         Object.defineProperty(comp, "value", {
+                        //             get: comp.getter.bind(null, comp, state, null, child, value.attributes.children),
+                        //         })
 
-                            }
-                        })
+                        //     }
+                        // })
 
 
                         value.attributes.children.push(child)

@@ -12,7 +12,7 @@
                 <component  v-if="index == active" :is="step.component" :config="step.configType ==1 ? step.config:step.configFn(itemState,itemGetters)" @goNext="goNext" @goPrev="goPrevious" :stepData="step" ref="components"></component>
             </template> -->
             <component v-if="step" :is="step.component"
-                :config="step.configType ==1 ? step.config:step.configFn(itemState,itemGetters)" @goNext="goNext"
+                :config="getStepConfig()" @goNext="goNext"
                 @goPrev="goPrevious" :stepData="step" ref="components" :isLastStep="active==stepsData.length-1">
             </component>
         </div>
@@ -62,8 +62,10 @@ import MaterialExtract from "./stepPages/MaterialExtract"
 import FormPage from "./stepPages/FormPage"
 import IdCardInfo from "./stepPages/IdCardInfo"
 import CommonMaterial from "./stepPages/CommonMaterial"
+import LastStep from "./stepPages/LastStep"
 import BaseFormPage from "./stepPages/BaseFormPage"
 import BusinessFormPage from "./stepPages/BusinessFormPage"
+import processing from "./components/Processing"
 // minxin
 import CommonMixin from "@/bangban/views/ANew/CommonMixin"
 import { mixin as initMixin } from "@/mixin/mixin"
@@ -112,7 +114,7 @@ export default {
             // itemId: this.$route.query.itemId,
         }
     },
-    components: { LeftSteper, ApprovalSelectContent, MaterialExtract, FormPage, IdCardInfo, CommonMaterial, BaseFormPage, BusinessFormPage, ContentCard },
+    components: { LeftSteper, ApprovalSelectContent, MaterialExtract, FormPage, IdCardInfo, CommonMaterial, BaseFormPage, BusinessFormPage, ContentCard,LastStep,processing },
     computed: {
 
         // ...mapGetters(['sid', "item_code"]),
@@ -149,7 +151,8 @@ export default {
         this.stepsData = result[0].data.map(v => {
 
             if (typeof v.stepObject.configFn == "string" && v.stepObject.configFn.indexOf('function') > -1) {
-                v.stepObject.configFn = functionReviverRuntime(v.stepObject.configFn, v.component);
+           
+                v.stepObject.configFn = functionReviverRuntime(v.stepObject.configFn, v.stepObject.component);
             }
             if (v.stepObject.useBeforeEnter) {
                 v.stepObject.beforeEnterFn = functionReviverRuntime(`(${v.stepObject.beforeEnterFn})`)
@@ -215,6 +218,10 @@ export default {
 
 
         // },
+        getStepConfig(){
+            console.log("计算config",this.itemState,this.itemGetters)
+            return this.step.configType ==1 ? this.step.config:this.step.configFn(this.itemState,this.itemGetters)
+        },
         async init() {
 
             let itemId = this.$route.query.itemId;

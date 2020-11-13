@@ -4,11 +4,10 @@ import _ from "lodash"
 const getters = {
     // sid
     // sid: state=>state.itemForm.item[1],
-    // item_code:(state,getters,)=>{
+    item_code:(state,getters,)=>{
        
-    //     let itemCodeObj = _.flatMap(approvalConfig,"children").find(v=>v.value ==getters.sid)
-    //     if(!itemCodeObj) return null;
-    //     return itemCodeObj.item_code
-    // }
+        
+        return "run"
+    }
 };
 export default getters

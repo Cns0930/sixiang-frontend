@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import ContentCard from '../../components/ContentCard'
+import ContentCard from '../components/ContentCard'
 
 export default {
     name: 'LastStep',
@@ -39,7 +39,7 @@ export default {
     height: calc(100% - 120px);
 
     .finished {
-        background-image: url("../../assets/svg/last-step.svg");
+        background-image: url("~@/assets/svg/last-step.svg");
         background-repeat: no-repeat;
         background-position: center;
         background-size: contain;
