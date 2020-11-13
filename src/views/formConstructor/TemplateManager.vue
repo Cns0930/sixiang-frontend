@@ -234,8 +234,8 @@ export default {
 
         },
     },
-    mounted() {
-        this.init()
+    async mounted() {
+        await this.init()
         this.getTemplate()
         this.getFieldAll();
     },
@@ -451,6 +451,7 @@ export default {
 
         },
         async getFieldAll(){
+            
             this.laodingField=true
             const result = await getFieldAll({
                 approvalItemId: this.$store.state.home.item.approvalItemId,

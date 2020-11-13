@@ -240,7 +240,7 @@
                 // }, 3000)
             },
             skipScan () {
-                this.$emit('goNext');
+                // this.$emit('goNext');
                 // 如果有记录编号，暂存记录编号，防止重复提交
                 // let currentSelfServiceRecordId = sessionStorage.getItem('currentSelfServiceRecordId');
                 // let currentSelfServiceRecordId =this.$store.state.home.currentSelfServiceRecordId;
@@ -253,31 +253,31 @@
                 //     return;
                 // }
 
-                // let baseInfo = this.baseInfo;
+                let baseInfo = this.baseInfo;
                 // // let sub = JSON.parse(sessionStorage.getItem('sub'))
                 // // let sub = this.$store.getters.getQingxingIds;
-                // const params = {
-                //     baseInfo,
-                //     sid: this.sid,
-                //     approval_item: _.isArray(this.qingxingItems) ? this.qingxingItems : [this.qingxingItems],
-                //     docs: this.imgList,
-                //     userId:this.getUserId,
-                // }
+                const params = {
+                    baseInfo,
+                    sid: this.sid,
+                    approval_item: _.isArray(this.qingxingItems) ? this.qingxingItems : [this.qingxingItems],
+                    docs: [],
+                    userId:this.getUserId,
+                }
 
-                // SkipScanApi(params).then(res => {
-                //     const {code, data} = res;
-                //     if (code === 200) {
-                //          this.$store.commit("putCurrentSelfServiceRecordId",data.selfServiceRecordId)
-                //         // sessionStorage.setItem('currentSelfServiceRecordId', data.selfServiceRecordId);
-                //         this.$emit('goNext', data);
-                //     } else {
-                //         this.$message.warning({
-                //             message: '创建记录失败!',
-                //             duration: 5000,
-                //             showClose: true,
-                //         });
-                //     }
-                // });
+                SkipScanApi(params).then(res => {
+                    const {code, data} = res;
+                    if (code === 200) {
+                         this.$store.commit("putCurrentSelfServiceRecordId",data.selfServiceRecordId)
+                        // sessionStorage.setItem('currentSelfServiceRecordId', data.selfServiceRecordId);
+                        this.$emit('goNext', data);
+                    } else {
+                        this.$message.warning({
+                            message: '创建记录失败!',
+                            duration: 5000,
+                            showClose: true,
+                        });
+                    }
+                });
             },
             checkErrorStringWithErrorCode (errorCode, errorString, responseString) {
                 // 这里驱动回调有问题，其实这里是成功的回调
