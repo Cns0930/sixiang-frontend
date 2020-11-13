@@ -7,5 +7,6 @@ const state = {
    tableData:[],
    templateList:[],
    gettersList:[],
+   renderJSON:[],
 };
 export default state

@@ -118,12 +118,12 @@ export default {
         //     // templates: state => state.fieldModel.templates,
         // }),
         renderjson() {
-            let baseJSON = this.baseFields.reduce(mergeFieldAttr, {});
-            let computedJSON = this.computedFields.reduce(mergeFieldAttr, {});
-
+            // let baseJSON = this.baseFields.reduce(mergeFieldAttr, {});
+            // let computedJSON = this.computedFields.reduce(mergeFieldAttr, {});
+            let renderJSON=this.$store.state.fieldModel.renderJSON;
+            
             return {
-                ..._.mapValues(baseJSON, "sample"),
-                ..._.mapValues(computedJSON, "sample"),
+                ..._.mapValues(renderJSON, "sample"),
                 _repeatNo:0,
             };
         },
@@ -469,7 +469,7 @@ export default {
         setHtmlToEditor() {
             let html = this.monacoEditor.getValue();
             let template = Handlebars.compile(html);
-            console.log(this.renderjson);
+            
             try{
                 let result = template(this.renderjson);
                 this.editor.data.set({ [this.page]: result });

@@ -175,11 +175,11 @@ export default {
             let res = await Promise.all([
 
                 getSaveMaxTimeTemplateBatch({ approvalItemId: this.itemId }),
-                getUptoDateSysTransferLog({ approvalItemId: this.itemId, description: "templatePage" }),
+                getUptoDateSysTransferLog({ approvalItemId: this.itemId, description: "templateBatch" }),
             ])
             if (!res[0].success || !res[1].success) return;
             let maxUpdateTime = res[0].data.maxUpdateTime;
-            let maxOutputTime = res[1].data.createTime;
+            let maxOutputTime = res[1].data? res[1].data.createTime:"";
             this.isLast = dayjs(maxUpdateTime).isSameOrBefore(dayjs(maxOutputTime));
 
 

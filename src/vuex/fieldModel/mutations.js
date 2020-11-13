@@ -46,6 +46,9 @@ const mutations = {
     },
     putGettersList(state,data){
         state.gettersList = data;
+    },
+    putRenderJSON(state,data){
+        state.renderJSON=data
     }
 }
 

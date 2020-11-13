@@ -9,7 +9,11 @@
             <el-button @click="handleOutput">输出</el-button>
             <el-link :href="`bangban.html#/?itemId=${itemId}&barcode=${barcode}`" target="_blank">超级帮办模拟运行</el-link>barcode<el-input v-model="barcode" style="width:100px"></el-input>
 
-            <el-divider direction="vertical"></el-divider><el-button @click="transferOutput">保存输出到超级帮办</el-button>
+            <el-divider direction="vertical"></el-divider>
+            <el-badge :is-dot="!isLast">
+                 <el-button @click="transferOutput">保存输出到超级帮办</el-button>
+            </el-badge>
+           
         </div>
         <div class="main">
             <!-- 页面 -->
@@ -196,9 +200,9 @@
 <script>
 import { mapState } from "vuex";
 import { getStep, saveStep, deleteStep, saveStepBatch, transferJs } from "@/api/step/index";
-import { getFieldAll } from "@/api/superForm/index";
+import { getFieldAll,getSaveMaxTimeStep } from "@/api/superForm/index";
 import { getTemplate } from '@/api/template/index'
-import { getById, addSysTransferLog } from "@/api/item/index";
+import { getById, addSysTransferLog,getUptoDateSysTransferLog } from "@/api/item/index";
 import ace from "ace-builds";
 import beautify from "ace-builds/src-noconflict/ext-beautify";
 import pageComponents from "../pageComponents/index"
@@ -209,6 +213,9 @@ import {
 } from "../attributeComponents/index";
 import {convertDefToConfigBundle,functionReviverBundle} from "./util"
 import axios from 'axios';
+import dayjs from "dayjs"
+import  isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
+dayjs.extend(isSameOrBefore)
 export default {
     name: "PageConfigure",
     mixins: [mixin],
@@ -255,6 +262,8 @@ export default {
             outputEditor: null,
             outputContent: "",
             barcode:"test",
+            // 输出是否最新
+            isLast:true,
         };
     },
     computed: {
@@ -280,6 +289,7 @@ export default {
     async mounted() {
         await this.init();
         await this.loadAll();
+        this.getLastUpdateInfo();
     },
     methods: {
         // async init(){
@@ -294,6 +304,19 @@ export default {
         //     }
         //     this.loadAll();
         // },
+        async getLastUpdateInfo() {
+            let res = await Promise.all([
+
+                getSaveMaxTimeStep({ approvalItemId: this.itemId }),
+                getUptoDateSysTransferLog({ approvalItemId: this.itemId, description: "step" }),
+            ])
+            if (!res[0].success || !res[1].success) return;
+            let maxUpdateTime = res[0].data.maxUpdateTime;
+            let maxOutputTime = res[1].data?res[1].data.createTime:"";
+            this.isLast = dayjs(maxUpdateTime).isSameOrBefore(dayjs(maxOutputTime));
+
+
+        },
         createStepPage() {
             this.stepPageCreateVisible = true;
         },

@@ -29,3 +29,6 @@ export const searchPublic = params => axios.get('/superform/fields/searchPublic'
 
 // 导入选择的公共事项字段
 export const forkPublic = params => axios.post('/superform/fields/forkPublic', params).then(res => res.data);
+
+//  获取最新的step配置保存时间
+export const getSaveMaxTimeStep = params => axios.get('/superform/steps/getSaveMaxTime', {params}).then(res => res.data);

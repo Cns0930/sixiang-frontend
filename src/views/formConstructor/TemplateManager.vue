@@ -3,7 +3,7 @@
         <div class="op-bar">
 
             <!-- <el-button @click="templateCreateVisible = true"> 新建材料</el-button> -->
-            <el-button @click="loadAllField"> 载入字段</el-button>
+            <el-button @click="loadAllField" :loading="laodingField"> 载入字段</el-button>
             <!-- <el-button @click="$router.push('/')"> -> 字段管理</el-button> -->
             <el-button @click="isListShown = !isListShown">展开/收起侧栏</el-button>
             <span style="display:inline-block">
@@ -214,6 +214,7 @@ export default {
             computedFields: [],
 
             defaultCss: ".ck-content p{margin:0;white-space:pre-wrap;word-break:break-all;word-wrap:break-word;overflow-wrap:break-word;}.ck-content .table{margin:1em auto;display:table;}.ck-content .table table{margin-left:-1.6cm;width:17.84cm;border-collapse:collapse;border-spacing:0;height:100%;border:1px solid black;}#row-table > table{margin-left:-1.6cm;width:26.54cm;border-collapse:collapse;border-spacing:0;height:100%;border:1px solid black;}.ck-content .table table td,.ck-content .table table th{min-width:2em;padding:0;border:1px solid black;}.ck-content .custom-block-indent-2{text-indent:2em;}.ck-content .custom-block-indent-4{text-indent:4em;}.ck-content .custom-block-indent-6{text-indent:6em;}.ck-content .custom-block-indent-8{text-indent:8em;}.ck-content .custom-block-indent-10{text-indent:10em;}.image{display:inline-block;}.image img{width:7.9cm;}.ck-content p{margin:0;white-space:pre-wrap;word-break:break-all;word-wrap:break-word;overflow-wrap:break-word;}.ck-content .table{margin:1em auto;display:table;}.ck-content .table table{margin-left:-1.6cm;width:17.84cm;border-collapse:collapse;border-spacing:0;height:100%;border:1px solid black;}#row-table > table{margin-left:-1.6cm;width:26.54cm;border-collapse:collapse;border-spacing:0;height:100%;border:1px solid black;}.ck-content .table table td,.ck-content .table table th{min-width:2em;padding:0;border:1px solid black;}.ck-content .custom-block-indent-2{text-indent:2em;}.ck-content .custom-block-indent-4{text-indent:4em;}.ck-content .custom-block-indent-6{text-indent:6em;}.ck-content .custom-block-indent-8{text-indent:8em;}.ck-content .custom-block-indent-10{text-indent:10em;}.image{display:inline-block;}.image img{width:7.9cm;}",
+            laodingField:false,
 
         }
     },
@@ -236,6 +237,7 @@ export default {
     mounted() {
         this.init()
         this.getTemplate()
+        this.getFieldAll();
     },
     filters: {
         formatTime(v) {
@@ -445,16 +447,23 @@ export default {
         },
         async loadAllField() {
             this.fieldVisible = true
+            await this.getFieldAll();
+
+        },
+        async getFieldAll(){
+            this.laodingField=true
             const result = await getFieldAll({
                 approvalItemId: this.$store.state.home.item.approvalItemId,
             })
+            this.laodingField=false;
             if (!result.success) return;
             this.baseFields = result.data.filter(v => v.fieldType == 1).map(v => v.object).map(deserializeBaseField)
             this.computedFields = result.data.filter(v => v.fieldType == 2).map(v => v.object).map(deserializeComputedField)
             this.baseJSON = this.baseFields.reduce(mergeFieldAttr, {})
             this.computedJSON = this.computedFields.reduce(mergeFieldAttr, {})
-            // this.renderJSON = { ..._.mapValues(this.baseJSON), ..._.mapValues(this.computedJSON) }
-
+            this.renderJSON = { ..._.mapValues(this.baseJSON), ..._.mapValues(this.computedJSON) }
+            
+            this.$store.commit("putRenderJSON",this.renderJSON)
         },
         editPage() {
             this.templateEditVisible = true;
@@ -496,7 +505,7 @@ export default {
     .el-input {
         width: 100%;
     }
-    overflow: hidden;
+    
     text-overflow: ellipsis;
 }
 .computed-field-direction {
