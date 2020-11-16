@@ -37,8 +37,9 @@ axios.interceptors.response.use(
         }
         if (response.data.code === 4000) {
             sessionStorage.clear();
-            router.push('/login');
-            source.cancel('Operation canceled by the user.');
+            // router.push('/login');
+            // source.cancel('Operation canceled by the user.');
+            throttleMessage("登录超时，请自行保存数据、退出登录并重新登录");
         }
         return response;
     },

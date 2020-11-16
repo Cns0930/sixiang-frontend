@@ -59,6 +59,9 @@
                 <el-form-item label="字段名称" required prop="fieldName">
                     <el-input v-model="addForm.fieldName"></el-input>
                 </el-form-item>
+                <el-form-item label="字段编号" required prop="fieldNo">
+                    <el-input v-model="addForm.fieldNo"></el-input>
+                </el-form-item>
                 <el-form-item label="备注">
                     <el-input v-model="addForm.note"></el-input>
                 </el-form-item>
@@ -80,7 +83,9 @@
                 <el-form-item label="字段名称" required prop="fieldName">
                     <el-input v-model="editForm.fieldName"></el-input>
                 </el-form-item>
-
+                <el-form-item label="字段编号" required prop="fieldNo">
+                    <el-input v-model="editForm.fieldNo"></el-input>
+                </el-form-item>
                 <el-form-item label="备注">
                     <el-input v-model="editForm.note"></el-input>
                 </el-form-item>

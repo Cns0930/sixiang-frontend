@@ -18,7 +18,7 @@
                             style="width:24px;height:24px;display:inline-block;vertical-align: middle;" />
                     </div>
                     <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item command="logout">退出登陆</el-dropdown-item>
+                        <el-dropdown-item command="logout">退出登录</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
             </div>
