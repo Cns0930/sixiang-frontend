@@ -43,7 +43,7 @@ import CommonMixin from "@/bangban/views/ANew/CommonMixin"
 export default {
     name: 'IdCardInfo',
     components: { ContentCard, CommonForm, Identity },
-    props: ['active', 'config'],
+    props: ['active', 'config',"stepData"],
     mixins: [CommonMixin],
     data() {
         return {
@@ -92,6 +92,10 @@ export default {
         }
         if (this.itemState['jingbanren_idNum']) {
             this.$set(this.itemState['jingbanren_idNum'], 'value', this.getJingbanrenIdCard);
+        }
+
+        if(this.stepData.useAfterEnter){
+            this.stepData.afterEnterFn(this.itemState,this.itemGetters)
         }
     },
     methods: {
