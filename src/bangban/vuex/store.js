@@ -8,9 +8,9 @@ import createPersistedState from "vuex-persistedstate";
 
 Vue.use(Vuex)
 
-const persist = createPersistedState({
-    paths: ['setting']
-  })
+// const persist = createPersistedState({
+//     paths: ['setting','config']
+//   })
 
 // 创建 store 实例
 export default new Vuex.Store({
@@ -21,5 +21,5 @@ export default new Vuex.Store({
         setting,
         ANew:ANewModule,
     },
-    plugins: [persist]
+    // plugins: [persist]
 })
