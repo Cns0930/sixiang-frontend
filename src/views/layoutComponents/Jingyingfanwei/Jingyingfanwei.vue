@@ -139,7 +139,7 @@ export default {
             return typeof this.value.showShixiang == "undefined"? false : this.value.showShixiang;
         },
         resultBlock() {
-            this.value.jingyingfanwei.value = this.value.jingyingfanwei.value.replace(/\,/g,'，');
+            this.value.jingyingfanwei.value = this.value.jingyingfanwei.value.replace(/\,/g,'，').replace(/\s*/g,"");
             return this.value.jingyingfanwei;
         },
         jingyingfanweiContext() {
