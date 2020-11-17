@@ -5,7 +5,7 @@ class IdentityCommonDef extends CommonComponents{
         super({type:"identityCommon"})
         this.component = rendererBuilder("text","IdentityCommon")
         this.$isShowRecognise = new Renderer('ElSingleCheckboxC', true,{options:[true]},"是否显示识别结果")
-        this.$isZhengzhao = new Renderer('ElSingleCheckboxC', true,{options:[true]},"是否可以获取证照")
+        this.$isZhengzhao = new Renderer('ElSingleCheckboxC', false,{options:[true]},"是否可以获取证照")
         this.span = rendererBuilder("text",24)
         this.value = rendererBuilder("text",{idPositive:"",idNagetive:""})
         this.labelWidth =  new Renderer('ElInput', '0')
