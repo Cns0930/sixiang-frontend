@@ -11,7 +11,9 @@ import "@/assets/css/global.scss"
 
 
 import ElementUI from 'element-ui'
-import "ace-builds/webpack-resolver";
+// import "ace-builds/webpack-resolver";
+import ace from "ace-builds"
+ace.config.set('basePath', 'view')
 
 import '@/api/config'
 
