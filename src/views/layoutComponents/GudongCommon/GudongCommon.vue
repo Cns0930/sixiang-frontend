@@ -83,10 +83,12 @@
 
 import { getEnterpriseInfo, getEnterpriseInfoLike } from "@/api/ANew/index"
 import PureComponents from "../PureComponents"
+import CommonMixin from "@/views/pageComponents/CommonMixin"
 import TestFormItem from '@/components/TestFormItem'
 export default {
     name: "GudongCommon",
-    props: ['value', 'children', 'meta', 'labelFieldNo', "gudongNameFieldNo", "gudongCodeFieldNo", "deleteOrigin", "canAdd", "originNum", "title", "ruleKey", "validateFn"],
+    props: ['value', 'children', 'meta', 'labelFieldNo', "gudongNameFieldNo", "gudongCodeFieldNo", "deleteOrigin", "canAdd",'addHook',"originNum", "title", "ruleKey", "validateFn"],
+    mixins: [CommonMixin],
     components: { PureComponents, ElFormItem: TestFormItem, },
     data() {
         return {
@@ -172,6 +174,9 @@ export default {
             child[this.gudongNameFieldNo].value = this.temp_GudongName;
 
             this.children.push(child)
+            if (this.addHook && typeof this.addHook == 'function') {
+                this.addHook(this.itemState, this.itemGetters, child, this.children)
+            }
             this.dialogVisible = false
             // let result = item._temp.pushGroup(item);
         },
