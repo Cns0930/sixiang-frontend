@@ -33,7 +33,7 @@
                 <!-- tab 添加按钮 -->
                 <el-button type="primary" size="small" icon="el-icon-plus" style="width:100px" @click="addGudongDialog"
                     v-if="!canAdd">
-                    添加
+                    {{addBtnContent || '添加'}}
                 </el-button>
             </div>
 
@@ -63,7 +63,7 @@
         <el-dialog title="系统提示" :visible.sync="dialogVisible" width="45%" append-to-body :close-on-click-modal="false"
             class="message-dialog">
             <el-form ref="form" :model="form" label-width="250px" @submit.native.prevent>
-                <el-form-item label="股东名称 ">
+                <el-form-item :label="addNameLabel || 股东名称 ">
                     <el-autocomplete :debounce='0' :fetch-suggestions="querySearchAsync" v-model="temp_GudongName">
                     </el-autocomplete>
                 </el-form-item>
@@ -86,7 +86,7 @@ import PureComponents from "../PureComponents"
 import TestFormItem from '@/components/TestFormItem'
 export default {
     name: "GudongCommon",
-    props: ['value', 'children', 'meta', 'labelFieldNo', "gudongNameFieldNo", "gudongCodeFieldNo", "deleteOrigin", "canAdd", "originNum", "title", "ruleKey", "validateFn"],
+    props: ['value', 'children', 'meta', 'labelFieldNo', "gudongNameFieldNo",  "deleteOrigin", "canAdd", "originNum", "title", "ruleKey", "validateFn","addNameLabel","addBtnContent"],
     components: { PureComponents, ElFormItem: TestFormItem, },
     data() {
         return {

@@ -10,8 +10,14 @@ class GudongCommon {
         this.meta=new Renderer("text",[])
         this.span = rendererBuilder("text",24)
         this.labelFieldNo = new Renderer('ElInput', '',null,"tab标签的fieldNo")
-        this.gudongNameFieldNo = new Renderer('ElInput', '',null,"股东名称的fieldNo")
-        this.gudongCodeFieldNo = new Renderer('ElInput', '',null,"股东代码的fieldNo")
+        this.gudongNameFieldNo = new Renderer('ElInput', '',null,"名称的fieldNo")
+        // this.gudongCodeFieldNo = new Renderer('ElInput', '',null,"股东代码的fieldNo")
+        // 添加时的显示label
+        this.addNameLabel = new Renderer('ElInput', '股东名称',null,"添加时名称的label")
+        
+        // addBtnLabel
+        this.addBtnContent = new Renderer('ElInput', '添加',null,"添加按钮的显示文本")
+
         this.deleteOrigin = new Renderer('ElSingleCheckboxC',false,{options:[true]},"不可删除")
         this.canAdd = new Renderer('ElSingleCheckboxC',false,{options:[true]},"不可新增")
         this.title = new Renderer('ElInput', '股东列表',null,"股东列表标题")
@@ -40,8 +46,15 @@ class GudongCommon {
             children:[meta],
             meta,
             gudongNameFieldNo:this.gudongNameFieldNo.value,
-            gudongCodeFieldNo:this.gudongCodeFieldNo.value,
+            // gudongCodeFieldNo:this.gudongCodeFieldNo.value,
             labelFieldNo:this.labelFieldNo.value,
+
+            addNameLabel:this.addNameLabel.value,
+        
+           
+          
+            addBtnContent :this.addBtnContent.value,
+
             title:this.title.value,
             ruleKey:this.ruleKey.value,
             validateFn:this.validateFn.value,
