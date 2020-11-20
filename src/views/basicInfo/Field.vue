@@ -23,7 +23,7 @@
             <el-table-column prop="materialName" label="材料名称"></el-table-column>
             <el-table-column prop="docxTemplateName" label="模板名称" ></el-table-column>
             <el-table-column prop="fieldName" label="字段名称"  :show-overflow-tooltip="true"></el-table-column>
-            <el-table-column prop="isRequired" label="是否必填" ></el-table-column>
+            <el-table-column prop="isRequired" label="是否必填" :formatter="isRequiredFormatter"></el-table-column>
             <el-table-column prop="label" label="前端字段名称"></el-table-column>
             <el-table-column prop="fieldNo" label="字段编号" ></el-table-column>
             <el-table-column prop="valueSource" label="字段值来源"></el-table-column>
@@ -49,21 +49,43 @@
         <!--添加字段-->
         <el-dialog title="添加材料字段" :visible.sync="addDialogVisible" width="50%" :close-on-click-modal="false">
 
-            <el-form label-width="80px" :model="addForm">
+            <el-form label-width="90px" :model="addForm">
                 <el-form-item label="材料名称" prop="materialName">
                     <el-select v-model="addForm.materialW" clearable placeholder="请选择材料名称" @focus="changeMaterialValue">
                         <el-option v-for="(v,i) in typeMaterialOptions" :key="i" :label="v.materialName"
                             :value="v.materialId"> </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="字段名称" required prop="fieldName">
+                <el-form-item label="字段名称" required >
                     <el-input v-model="addForm.fieldName"></el-input>
                 </el-form-item>
-                <el-form-item label="字段编号" required prop="fieldNo">
+                <el-form-item label="字段编号" required >
                     <el-input v-model="addForm.fieldNo"></el-input>
                 </el-form-item>
-                <el-form-item label="字段逻辑描述" required prop="descriptionInfo">
+                <el-form-item label="前端字段名称" >
+                    <el-input v-model="addForm.label"></el-input>
+                </el-form-item>
+                <el-form-item label="字段逻辑描述" >
                     <el-input v-model="addForm.descriptionInfo"></el-input>
+                </el-form-item>
+                <el-form-item label="是否必填" >
+                    <el-select v-model="addForm.isRequired" clearable placeholder="是否必填">
+                        <el-option label="是" :value="Number(1)"></el-option>
+                        <el-option label="否" :value="Number(0)"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="字段值来源" >
+                    <el-select v-model="addForm.valueSource" 
+                    filterable allow-create clearable placeholder="字段值来源">
+                        <el-option label="前端字段" value="前端字段"></el-option>
+                        <el-option label="企业数据" value="企业数据"></el-option>
+                        <el-option label="票号数据" value="票号数据"></el-option>
+                        <el-option label="默认值" value="默认值"></el-option>
+                        <el-option label="系统日期" value="系统日期"></el-option>          
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="默认值">
+                    <el-input v-model="addForm.defaultValue"></el-input>
                 </el-form-item>
                 <el-form-item label="备注">
                     <el-input v-model="addForm.note"></el-input>
@@ -86,11 +108,33 @@
                 <el-form-item label="字段名称" required prop="fieldName">
                     <el-input v-model="editForm.fieldName"></el-input>
                 </el-form-item>
-                <el-form-item label="字段编号" required prop="fieldNo">
+                <el-form-item label="字段编号" required >
                     <el-input v-model="editForm.fieldNo"></el-input>
                 </el-form-item>
-                 <el-form-item label="字段逻辑描述" required prop="descriptionInfo">
+                <el-form-item label="前端字段名称" >
+                    <el-input v-model="editForm.label"></el-input>
+                </el-form-item>
+                 <el-form-item label="字段逻辑描述" >
                     <el-input v-model="editForm.descriptionInfo"></el-input>
+                </el-form-item>
+                <el-form-item label="是否必填" >
+                    <el-select v-model="editForm.isRequired" clearable placeholder="是否必填">
+                        <el-option label="是" :value="Number(1)"></el-option>
+                        <el-option label="否" :value="Number(0)"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="字段值来源" >
+                    <el-select v-model="editForm.valueSource" 
+                    filterable allow-create clearable placeholder="字段值来源">
+                        <el-option label="前端字段" value="前端字段"></el-option>
+                        <el-option label="企业数据" value="企业数据"></el-option>
+                        <el-option label="票号数据" value="票号数据"></el-option>
+                        <el-option label="默认值" value="默认值"></el-option>
+                        <el-option label="系统日期" value="系统日期"></el-option>          
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="默认值">
+                    <el-input v-model="editForm.defaultValue"></el-input>
                 </el-form-item>
                 <el-form-item label="备注">
                     <el-input v-model="editForm.note"></el-input>

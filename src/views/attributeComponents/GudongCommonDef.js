@@ -22,7 +22,10 @@ class GudongCommon {
         this.canAdd = new Renderer('ElSingleCheckboxC',false,{options:[true]},"不可新增")
         this.title = new Renderer('ElInput', '股东列表',null,"股东列表标题")
         
-        
+        this.addHook = new Renderer("CodeEditor",`
+        function(state,getters,siblings,parent){
+            
+        }`,null,"添加钩子函数");
         this.ruleKey = new Renderer("ElSelectC","none",{options:rulesList},"验证方式")
         this.validateFn = new Renderer("CodeEditor",`
         // value 是组件对象； value.value 是组件值
@@ -56,6 +59,7 @@ class GudongCommon {
             addBtnContent :this.addBtnContent.value,
 
             title:this.title.value,
+            addHook:this.addHook.value,
             ruleKey:this.ruleKey.value,
             validateFn:this.validateFn.value,
         }
