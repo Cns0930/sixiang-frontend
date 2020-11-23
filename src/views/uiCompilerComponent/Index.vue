@@ -1,8 +1,9 @@
 <template>
     <div>
         <button @click="addConditionBlock">添加条件块</button>
-        <button>添加行为</button>
-        <button @click="compile">编译</button>
+        <!-- <button>添加行为</button> -->
+        <button @click="compile">查看/关闭编译</button>
+        <div ref="codeEditor" style="width:100%;height:300px" v-if="codeEditorOpen"></div>
         <div class="statement">
             <Interface v-for="model,i in models" :key="i" :model="model" :list="tableDataWithOptions" class="statement"
                 @deleteConditionBlock="deleteConditionBlock(i)"></Interface>
@@ -11,44 +12,31 @@
 </template>
 
 <script>
-import DropDown from "./DropDown"
+
 import { mapState } from "vuex"
 import compiler from "./compiler/compiler"
+import Interface from "./Interface"
+import beautify from "ace-builds/src-noconflict/ext-beautify";
 export default {
-    name: "Test",
+    name: "UiCompilerComponent",
     components: {
-        DropDown
+        Interface
+    },
+    props:{
+        models:{
+            default(){
+                return []
+            }
+        }
     },
     data() {
         return {
-            baseFunctionAst: {
-                "type": "FunctionDeclaration",
-                "params": [{
-                    "type": "Identifier",
-                    "name": "state"
-                },
-                {
-                    "type": "Identifier",
-                    "name": "getters"
-                }
-                ],
-                "body": {
-                    "type": "BlockStatement",
-                    "body": []
-                }
-            },
-            models: [],
-            fields: [{ fieldNo: "compnayName", }, { fieldNo: "code" }],
-            predicateOptions: [
-                {
-                    label: "包含",
-                    value: "includes",
-                },
-                {
-                    label: "等于",
-                    value: "==",
-                }
-            ]
+            // models: [],
+            code:"",
+            // 开关 configFn
+            codeEditorOpen:false,
+            codeEditor:null,
+
         }
     },
     computed: {
@@ -107,12 +95,36 @@ export default {
         addAction() {
 
         },
-        compile(){
+        async compile(){
             console.log(this.models);
-            console.log(compiler(this.models));
-            
-        }
+            if(this.codeEditorOpen){
+                this.codeEditorOpen=false;
+                return;
+            }
+            this.codeEditorOpen = true;
+            await this.$nextTick();
 
+            
+            try{
+               this.code= compiler(this.models)
+               
+            }catch(e){
+                console.warn(e);
+                this.code="配置错误"
+            }
+            this.initEditForConfig(this.code)
+            console.log(this.code);
+            
+        },
+        // 初始化 配置 编辑器
+        initEditForConfig() {
+            this.codeEditor = ace.edit(this.$refs.codeEditor);
+            this.codeEditor.setTheme("ace/theme/monokai");
+            this.codeEditor.session.setMode("ace/mode/javascript");
+            this.codeEditor.setOption("wrap", "free")
+            this.codeEditor.setValue(this.code)
+            beautify.beautify(this.codeEditor.session)
+        },
     }
 
 

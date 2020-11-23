@@ -79,9 +79,11 @@ import store from "@/vuex/store"
 import { functionReviverRuntime, functionReviverEventRuntime, convertDefToConfigEventRuntime } from "@/views/formConstructor/util"
 import { deserializeTableData } from "@/views/attributeComponents/index";
 
+import CommonForm from "./components/CommonForm"
 export default {
     name: "Home",
     mixins: [CommonMixin, initMixin],
+    
     provide() {
         return {
             $itemState: () => {

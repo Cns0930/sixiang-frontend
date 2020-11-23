@@ -15,7 +15,7 @@ import Run from "@/views/formConstructor/Run"
 import ItemManager from "@/views/formConstructor/ItemManager"
 import Login from "@/views/login/Login"
 import Setting from "@/views/setting/Setting"
-import Test from "@/views/test/Test"
+
 import ApprovalItem from "@/views/basicInfo/ApprovalItem"
 import PublicApprovalItem from "@/views/basicInfo/PublicApprovalItem"
 import Material from "@/views/basicInfo/Material"
@@ -25,6 +25,7 @@ import Accessory from "@/views/basicInfo/Accessory"
 import AIdocument from "@/views/basicInfo/AIdocument"
 import singleWindow from "@/views/basicInfo/singleWindowMaterial"
 import OnlineDocumentEditor from "@/views/basicInfo/OnlineDocumentEditor"
+import UiCompilerComponent from "@/views/uiCompilerComponent/Index"
 Vue.use(VueRouter)
 import store from "@/vuex/store"
 import bangbanAxios from "@/api/ANew/config"
@@ -162,7 +163,7 @@ const routes = [
     {
         path: '/test',
         name: 'test',
-        component: Test
+        component: UiCompilerComponent
     },
 
 

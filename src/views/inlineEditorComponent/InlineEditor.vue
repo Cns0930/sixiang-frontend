@@ -470,6 +470,7 @@ export default {
             let html = this.monacoEditor.getValue();
             let template = Handlebars.compile(html);
             
+            console.log(this.renderjson);
             try{
                 let result = template(this.renderjson);
                 this.editor.data.set({ [this.page]: result });

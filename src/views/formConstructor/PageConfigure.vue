@@ -61,7 +61,7 @@
                         <el-radio v-model="temp_page.stepObject.configType" :label="2" @change="handleSwitchConfigType">
                             逻辑添加</el-radio>
                         <el-radio v-model="temp_page.stepObject.configType" :label="3" @change="handleSwitchConfigType">
-                            交互编译器</el-radio>
+                            UI交互添加</el-radio>
                     </div>
                     <div v-if="temp_page.stepObject.configType ==1">
                         <!-- config 配置 字段 或者 材料 -->
@@ -103,8 +103,9 @@
                     </div>
                     <div v-else="temp_page.stepObject.configType ==3">
 
-                        <div ref="configEdit" style="width:100%;height:300px"></div>
+                      <UiCompilerComponent></UiCompilerComponent>
                     </div>
+                    
                 </div>
                 <el-divider></el-divider>
 
@@ -221,10 +222,12 @@ import {convertDefToConfigBundle,functionReviverBundle} from "./util"
 import axios from 'axios';
 import dayjs from "dayjs"
 import  isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
+import UiCompilerComponent from "@/views/uiCompilerComponent/Index"
 dayjs.extend(isSameOrBefore)
 export default {
     name: "PageConfigure",
     mixins: [mixin],
+    components:{UiCompilerComponent},
     data() {
         return {
             // 创建页面用
