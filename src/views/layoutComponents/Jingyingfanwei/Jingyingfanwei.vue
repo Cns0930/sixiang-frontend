@@ -275,6 +275,8 @@ export default {
                 // 句号后面加上
                 if(textarea.value.includes('【')) {
                     lastFullStopIndex = textarea.value.lastIndexOf("。【")
+                } else if(textarea.value.includes('（')) {
+                    lastFullStopIndex = textarea.value.lastIndexOf("。（")
                 } else {
                     lastFullStopIndex = textarea.value.lastIndexOf("。")
                 }
