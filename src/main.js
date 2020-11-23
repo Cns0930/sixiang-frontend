@@ -11,7 +11,10 @@ import "@/assets/css/global.scss"
 
 
 import ElementUI from 'element-ui'
-// import "ace-builds/webpack-resolver";
+if(process.env.NODE_ENV === 'development'){
+    require("ace-builds/webpack-resolver");
+}
+
 // import ace from "ace-builds"
 // ace.config.set('basePath', 'view')
 
