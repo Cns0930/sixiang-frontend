@@ -156,6 +156,10 @@ export default {
            
                 v.stepObject.configFn = functionReviverRuntime(v.stepObject.configFn, v.stepObject.component);
             }
+            if (v.stepObject.configType==3  && typeof v.stepObject.configFnFromUiCompiler == "string" && v.stepObject.configFnFromUiCompiler.indexOf('function') > -1) {
+           
+                v.stepObject.configFnFromUiCompiler = functionReviverRuntime(v.stepObject.configFnFromUiCompiler, v.stepObject.component);
+            }
             if (v.stepObject.useBeforeEnter) {
                 v.stepObject.beforeEnterFn = functionReviverRuntime(`(${v.stepObject.beforeEnterFn})`)
             }
@@ -222,7 +226,14 @@ export default {
         // },
         getStepConfig(){
             console.log("计算config",this.itemState,this.itemGetters)
-            return this.step.configType ==1 ? this.step.config:this.step.configFn(this.itemState,this.itemGetters)
+            if(this.step.configType ==1){
+                return this.step.config
+            }else if(this.step.configType ==2){
+                return this.step.configFn(this.itemState,this.itemGetters)
+            }else{
+                return this.step.configFnFromUiCompiler(this.itemState,this.itemGetters)
+            }
+            
         },
         async init() {
 

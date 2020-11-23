@@ -46,7 +46,9 @@ export default {
             return this.itemState["fact1"].value
         },
         fields() {
-         
+            if (this.config.every(v => !_.isString(v))) {
+                return this.config.map(block=>block.fields).flat().map(fieldNo => this.itemState[fieldNo])
+            }
             return this.config.map(fieldNo => this.itemState[fieldNo])
         }
     },

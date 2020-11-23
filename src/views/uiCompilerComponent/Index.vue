@@ -3,9 +3,9 @@
         <button @click="addConditionBlock">添加条件块</button>
         <!-- <button>添加行为</button> -->
         <button @click="compile">查看/关闭编译</button>
-        <div ref="codeEditor" style="width:100%;height:300px" v-if="codeEditorOpen"></div>
+        <div ref="codeEditor" style="width:100%;height:300px" v-show="codeEditorOpen"></div>
         <div class="statement">
-            <Interface v-for="model,i in models" :key="i" :model="model" :list="tableDataWithOptions" class="statement"
+            <Interface v-for="model,i in models" :key="i" :model="model" :list="fieldsWithOptions" class="statement"
                 @deleteConditionBlock="deleteConditionBlock(i)"></Interface>
         </div>
     </div>
@@ -27,6 +27,18 @@ export default {
             default(){
                 return []
             }
+        },
+        fields:{
+            default(){
+                return []
+            }
+        }
+    },
+    provide() {
+        return {
+            $fields: () => {
+                return this.fields
+            },
         }
     },
     data() {
@@ -40,20 +52,21 @@ export default {
         }
     },
     computed: {
-        ...mapState({
-            baseFields: state => state.fieldModel.baseFields,
-            computedFields: state => state.fieldModel.computedFields,
-            tableData: state =>
-                state.fieldModel.tableData
-        }),
-        tableDataWithOptions() {
-            return this.tableData.map(data => {
+        // ...mapState({
+        //     tableData: state =>
+        //         state.fieldModel.tableData
+        // }),
+        fieldsWithOptions() {
+            return this.fields.map(data => {
                 if (data.componentDefs.getDSLOptions) {
                     return { ...data, subjectOptions: data.componentDefs.getDSLOptions() }
                 }
                 return data;
             })
         },
+
+    },
+    mounted(){
 
     },
     methods: {
@@ -96,7 +109,7 @@ export default {
 
         },
         async compile(){
-            console.log(this.models);
+            // console.log(this.models);
             if(this.codeEditorOpen){
                 this.codeEditorOpen=false;
                 return;
@@ -125,6 +138,20 @@ export default {
             this.codeEditor.setValue(this.code)
             beautify.beautify(this.codeEditor.session)
         },
+        getCompilerValue(){
+            try{
+               this.code= compiler(this.models)
+               
+            }catch(e){
+                console.warn(e);
+                this.code="配置错误"
+            }
+            this.initEditForConfig(this.code)
+            return this.codeEditor.getValue();
+        },
+        getModels(){
+            return this.models
+        }
     }
 
 

@@ -103,7 +103,7 @@
                     </div>
                     <div v-else="temp_page.stepObject.configType ==3">
 
-                      <UiCompilerComponent></UiCompilerComponent>
+                      <UiCompilerComponent :fields="fields" ref="uiCompiler" :models="temp_page.stepObject.UiCompilerModels"></UiCompilerComponent>
                     </div>
                     
                 </div>
@@ -484,6 +484,8 @@ export default {
             this.temp_page.stepObject.afterEnterFn = this.aceForAfterEnter && this.aceForAfterEnter.getValue();
             this.temp_page.stepObject.title = this.temp_page.stepTitle;
             this.temp_page.stepObject.component = this.temp_page.stepComponent;
+            this.temp_page.stepObject.configFnFromUiCompiler = this.$refs.uiCompiler?.getCompilerValue();
+            this.temp_page.stepObject.UiCompilerModels=this.$refs.uiCompiler?.getModels();
             let data = {
                 id: this.temp_page.id,
                 stepTitle: this.temp_page.stepTitle,

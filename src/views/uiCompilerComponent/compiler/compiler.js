@@ -4,21 +4,20 @@
  * @param {*} data 
  */
 import escodegen from "escodegen"
-import {
-    action as stepPageAction
-} from "./stepPageCompiler"
+import {action as stepPageAction} from "./stepPageCompiler"
+
 
 function generateBaseWrapper() {
     return {
         "type": "FunctionDeclaration",
         "params": [{
-                "type": "Identifier",
-                "name": "state"
-            },
-            {
-                "type": "Identifier",
-                "name": "getters"
-            }
+            "type": "Identifier",
+            "name": "state"
+        },
+        {
+            "type": "Identifier",
+            "name": "getters"
+        }
         ],
         "body": {
             type: "BlockStatement",
