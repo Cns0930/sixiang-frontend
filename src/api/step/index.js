@@ -11,3 +11,15 @@ export const deleteStep = params => axios.get('/superform/steps/delete', {params
 
 // 批量保存步骤
 export const saveStepBatch = params => axios.post('/superform/steps/batchSave', params).then(res => res.data);
+
+// 获取步骤
+export const getStepResearcher = params => axios.post('/superform/steps-researcher/list', params).then(res => res.data);
+
+// 保存单个步骤
+export const saveStepResearcher = params => axios.post('/superform/steps-researcher/save', params).then(res => res.data);
+
+// 删除单个步骤
+export const deleteStepResearcher = params => axios.get('/superform/steps-researcher/delete', {params}).then(res => res.data);
+
+// 批量保存步骤
+export const saveStepBatchResearcher = params => axios.post('/superform/steps-researcher/batchSave', params).then(res => res.data);

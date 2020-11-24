@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { getStep, } from "@/api/step/index";
+import { getStep, getStepResearcher} from "@/api/step/index";
 import { getFieldAll } from "@/api/superForm/index";
 import { getTemplate } from '@/api/template/index'
 import { getById } from '@/api/item/index'
@@ -66,6 +66,7 @@ export default {
             // itemGetters: {}
             allFields: [],
             // itemGetters:{},
+            type: this.$route.query.type,
         }
     },
     computed: {
@@ -161,11 +162,20 @@ export default {
 
         // },
         async loadAll() {
-            let result = await Promise.all([
+            let result;
+            if(this.type === 'researcher'){
+                result = await Promise.all([
+                getStepResearcher({ approvalItemId: this.itemId  }),
+                getFieldAll({ approvalItemId: this.itemId  }),
+                getTemplate({ approvalItemId: this.itemId  })
+                ]);
+            } else{
+                result = await Promise.all([
                 getStep({ approvalItemId: this.itemId  }),
                 getFieldAll({ approvalItemId: this.itemId  }),
                 getTemplate({ approvalItemId: this.itemId  })
             ])
+            }
             if (result.some(v => !v.success)) return;
             return result;
         },

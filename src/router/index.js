@@ -9,6 +9,7 @@ import Editor from "../views/editor/Editor"
 import FormConstructor from "@/views/formConstructor/FormConstructor"
 import Preview from "@/views/formConstructor/PreviewLayout"
 import PageConfigure from "@/views/formConstructor/PageConfigure"
+import PageConfigureResearcher from "@/views/formConstructor/PageConfigureResearcher"
 import TemplateManager from "@/views/formConstructor/TemplateManager"
 import MaterialManager from "@/views/formConstructor/MaterialManager"
 import Run from "@/views/formConstructor/Run"
@@ -78,6 +79,11 @@ const routes = [
                         path:"/pageconfigure",
                         name:"PageConfigure",
                         component:PageConfigure
+                    },
+                    {
+                        path:"/pageconfigureresearcher",
+                        name:"PageConfigureResearcher",
+                        component:PageConfigureResearcher
                     },
                     {
                         path:"/templatemanager",

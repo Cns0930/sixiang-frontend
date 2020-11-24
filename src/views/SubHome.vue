@@ -25,6 +25,7 @@
                 <el-tab-pane label="字段管理" name="formconstructor"></el-tab-pane>
                 <el-tab-pane label="材料管理" name="materialmanager"></el-tab-pane>
                 <el-tab-pane label="步骤页面管理" name="pageconfigure"></el-tab-pane>
+                <el-tab-pane label="步骤页面-调研" name="pageconfigure2"></el-tab-pane>
                 <el-tab-pane label="设置" name="setting"></el-tab-pane>
             </el-tabs>
         </div>
@@ -81,6 +82,14 @@ export default {
                 sessionStorage.setItem('activeTab', 'pageconfigure');
                 this.$store.commit("config/setCrumbList", [{ path: "/formconstructor", label: '帮办工具' }])
                 this.$store.commit("config/setCrumbListSecond", [{ path: "/pageconfigure", label: '步骤页面管理' }])
+            } else if (this.activeTab === "pageconfigure2") {
+                this.$router.push({
+                    path: "/pageconfigureresearcher",
+                    query: { itemId: this.$route.query.itemId },
+                });
+                sessionStorage.setItem('activeTab', 'pageconfigure2');
+                this.$store.commit("config/setCrumbList", [{ path: "/formconstructor", label: '帮办工具' }])
+                this.$store.commit("config/setCrumbListSecond", [{ path: "/pageconfigureresearcher", label: '步骤页面-调研' }])
             } else if (this.activeTab === "setting") {
                 this.$router.push({
                     path: "/setting",

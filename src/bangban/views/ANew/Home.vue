@@ -49,7 +49,7 @@ import _ from "lodash"
 // img
 import stepIcon from '@/assets/png/step-icon.png'
 // api
-import { getStep, } from "@/api/step/index";
+import { getStep, getStepResearcher} from "@/api/step/index";
 import { getFieldAll } from "@/api/superForm/index";
 import { getTemplate } from '@/api/template/index'
 import { getById } from '@/api/item/index'
@@ -114,6 +114,7 @@ export default {
             dev_barcode: this.$route.query.barcode,
             barcode: "",
             // itemId: this.$route.query.itemId,
+            type:this.$route.query.type,
         }
     },
     components: { LeftSteper, ApprovalSelectContent, MaterialExtract, FormPage, IdCardInfo, CommonMaterial, BaseFormPage, BusinessFormPage, ContentCard,LastStep,processing },
@@ -146,10 +147,18 @@ export default {
         await this.init();
         await this.fetchBookInfo();
         // 获取 step data 和 field
-        let result = await Promise.all([
+        let result;
+        if(type === 'researcher'){
+            result = await Promise.all([
+            getStepResearcher({ approvalItemId: this.itemId  }),
+            getFieldAll({ approvalItemId: this.itemId  }),
+        ])
+        }else{
+        result = await Promise.all([
             getStep({ approvalItemId: this.itemId  }),
             getFieldAll({ approvalItemId: this.itemId  }),
         ])
+        }
         this.stepsData = result[0].data.map(v => {
 
             if (typeof v.stepObject.configFn == "string" && v.stepObject.configFn.indexOf('function') > -1) {
