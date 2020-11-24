@@ -63,7 +63,7 @@
         <el-dialog title="系统提示" :visible.sync="dialogVisible" width="45%" append-to-body :close-on-click-modal="false"
             class="message-dialog">
             <el-form ref="form" :model="form" label-width="250px" @submit.native.prevent>
-                <el-form-item :label="addNameLabel || 股东名称 ">
+                <el-form-item :label="addNameLabel || '股东名称' ">
                     <el-autocomplete :debounce='0' :fetch-suggestions="querySearchAsync" v-model="temp_GudongName">
                     </el-autocomplete>
                 </el-form-item>
