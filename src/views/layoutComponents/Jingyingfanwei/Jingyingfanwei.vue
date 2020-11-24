@@ -399,7 +399,7 @@ export default {
 .remove-btn {
     position: absolute;
     left: 6px;
-    top: 4px;
+    top: 0px;
     z-index: 10;
     margin-left: 5px;
     width: 25px;

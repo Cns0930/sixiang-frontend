@@ -127,7 +127,7 @@ export default {
 }
 .remove-btn {
     position: absolute;
-    left: 6px;
+    left: 0px;
     top: 4px;
     z-index: 10;
     margin-left: 5px;
