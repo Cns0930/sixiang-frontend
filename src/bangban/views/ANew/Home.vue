@@ -148,7 +148,7 @@ export default {
         await this.fetchBookInfo();
         // 获取 step data 和 field
         let result;
-        if(type === 'researcher'){
+        if(this.type === 'researcher'){
             result = await Promise.all([
             getStepResearcher({ approvalItemId: this.itemId  }),
             getFieldAll({ approvalItemId: this.itemId  }),
