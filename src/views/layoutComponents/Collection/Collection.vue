@@ -10,7 +10,7 @@
         <!-- <el-divider></el-divider> -->
         <template v-for="(list,index) in children">
             <el-col :span="24"></el-col>
-            <el-col :style="removeBtnStyle" class="position" v-if="!isLengthFixed">
+            <el-col :style="removeBtnStyle" class="position" v-if="!isLengthFixed && !list.$unremoveable">
                 <div class="remove-btn remove-btn-position" @click="handleRemove(index)">
                     <span class="minus"></span>
                 </div>
@@ -43,7 +43,7 @@ export default {
     name: "Collection",
     mixins: [CommonMixin],
     components: { PureComponents, ElFormItem: TestFormItem, },
-    props: ['value', 'children', 'meta', "removeBtnStyle", "addBtnStyle", "title", "isLengthFixed", "addHook", "ruleKey", "validateFn"],
+    props: ['value', 'children', 'meta', "removeBtnStyle", "addBtnStyle", "title", "isLengthFixed", "addHook", "ruleKey", "validateFn","appendHead"],
     data() {
         return {
 
@@ -106,8 +106,12 @@ export default {
 
                 }
             })
-
-            this.children.push(newChild);
+            if(this.appendHead === true){
+                 this.children.unshift(newChild);
+            }else{
+                 this.children.push(newChild);
+            }
+           
             if (this.addHook && typeof this.addHook == 'function') {
                 this.addHook(this.itemState, this.itemGetters, newChild, this.children)
             }

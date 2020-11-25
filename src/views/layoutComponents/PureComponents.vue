@@ -31,8 +31,15 @@ export default {
     components: { ElFormItem: TestFormItem, },
     computed: {
         computedFields() {
-
-            return Object.values(this.fields).sort((a, b) => a.sort - b.sort)
+             Object.keys(this.fields).filter(key => !key.startsWith("$")).forEach(fieldNo => {
+                if (!this.fields[fieldNo]) {
+                    console.warn(`fieldNo不存在的：${fieldNo}`)
+                }
+            })
+            return Object.keys(this.fields)
+            .filter(key=>!key.startsWith("$"))
+            .map(key=>this.fields[key])
+            .sort((a, b) => a.sort - b.sort)
         }
     },
     methods: {

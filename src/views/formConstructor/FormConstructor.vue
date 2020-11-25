@@ -455,6 +455,10 @@ export default {
         },
         // 确定添加子项
         async addChildFieldConfirm() {
+            if(this.temp_fieldNo.startsWith('$')){
+                this.$message({type:"warning",message:"fieldNo不能以$开头"})
+                return;
+            }
             let ComponentDefClass = defs.find(v => v.value == this.temp_type)?.componentDef
             let v = {
                 fieldNo: this.temp_fieldNo,
@@ -530,6 +534,11 @@ export default {
         },
         // 确定添加字段
         async addFieldConfirm() {
+            
+            if(this.temp_fieldNo.startsWith('$')){
+                this.$message({type:"warning",message:"fieldNo不能以$开头"})
+                return;
+            }
             console.log("defs:",defs)
             let def = defs.find(v => v.value == this.temp_type);
             console.log("def:",def)

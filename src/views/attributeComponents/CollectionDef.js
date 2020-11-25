@@ -12,10 +12,13 @@ class Collection {
         this.title = new Renderer('ElInput', '')
         this.addBtnStyle=new Renderer('ElInput', '')
         this.removeBtnStyle = new Renderer('ElInput', '')
-        this.isLengthFixed = new Renderer('ElSingleCheckboxC', false,{options:[true]},"不可添加/删除")
+        this.isLengthFixed = new Renderer('ElSingleCheckboxC', false,{options:[true]},"全部不可添加/删除")
         this.hidden = new Renderer('ElSingleCheckboxC', false,{options:[true]},"是否隐藏")
-        
+        this.appendHead = new Renderer('ElSingleCheckboxC', false,{options:[true]},"从头部添加（默认尾部）")
+
         this.addHook = new Renderer("CodeEditor",`
+        // siblings 有隐藏属性 $removeable
+        // siblings.$unremoveable = true 本次添加的child 不可移除
         function(state,getters,siblings,parent){
             
         }`,null,"添加钩子函数");
@@ -46,6 +49,7 @@ class Collection {
             addHook:this.addHook.value,
             ruleKey:this.ruleKey.value,
             validateFn:this.validateFn.value,
+            appendHead:this.appendHead.value,
         }
     }
 }
