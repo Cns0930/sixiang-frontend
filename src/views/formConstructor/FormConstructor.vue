@@ -639,7 +639,8 @@ export default {
                 fieldName: result.data.fieldName,
                 descriptionInfo: result.data.descriptionInfo,
                 validationInfo: result.data.validationInfo, 
-                children: result.data.children, ... result.data.object 
+                children: result.data.children, 
+                ... result.data.object 
             }); 
             this.temp_fieldObj = newFieldObj;
             delete this.temp_fieldObj.list;
@@ -736,6 +737,10 @@ export default {
                     }
                 })
             }
+            let vsimple = _.cloneDeep(v)
+            delete vsimple.descriptionInfo
+            delete vsimple.validationInfo
+
             let param = {
                 id: v.id,
                 fieldNo: v.fieldNo,
@@ -743,7 +748,7 @@ export default {
                 label: v.label,
                 fieldComponentName: v.componentDefs?.type?.value,
                 fieldType: v.fieldType,
-                object: v,
+                object: vsimple,
                 remark: v.remark
             };
             console.log(param)
@@ -756,6 +761,9 @@ export default {
         },
         // 调研编辑的保存 有些字段不用改
         async handleSaveFieldReseacher(v){
+            let vsimple = _.cloneDeep(v)
+            delete vsimple.descriptionInfo
+            delete vsimple.validationInfo
             let param = {
                 id: v.id,
                 fieldNo: v.fieldNo,
@@ -763,8 +771,9 @@ export default {
                 descriptionInfo: v.descriptionInfo,
                 validationInfo: v.validationInfo,
                 label: v.label,
-                fieldComponentName: v.componentDefs?.type?.value,
-                fieldType: v.fieldType,
+                // fieldComponentName: v.componentDefs?.type?.value,
+                // fieldType: v.fieldType,
+                object: vsimple,
             };
             // if(this.temp_relate_fieldId != null && this.temp_relate_fieldId.length > 0){
             //     param.ssFieldId = this.temp_relate_fieldId[this.temp_relate_fieldId.length -1];
