@@ -342,12 +342,11 @@ export default {
         },
         // 添加
         async addField() {
-            let result = await addField({
-                "materialId": this.addForm.materialW,
-                "approvalItemId": this.itemId,
-                "note": this.addForm.note,
-                "fieldName": this.addForm.fieldName
-            })
+            this.addForm.approvalItemId = this.itemId
+            this.addForm.materialId = this.addForm.materialW
+            let result = await addField(
+                this.addForm
+            )
             if (!result.success) return;
             this.addDialogVisible = false;
             this.reloadTable();
