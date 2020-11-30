@@ -249,6 +249,7 @@ export default {
         },
         handleCopy(data,flag = 'Fanwei') {
             // console.log(data,'vvv',flag);
+            let allFanweiList = this.getAllFanweiList(this.resultBlock.value);
             if(flag == 'Xuke') {
                 this.adjustXuke();
                 return;
@@ -258,7 +259,7 @@ export default {
                 this.troubleMsg = '请填写完整信息';
                 this.showTroubleMask = true;
                 return;
-            } else if (this.resultBlock.value.includes(context.value)) {
+            } else if (allFanweiList.includes(context.value)) {
                 this.troubleMsg = '已经存在当前经营范围';
                 this.showTroubleMask = true;
                 return;
@@ -296,7 +297,7 @@ export default {
             valueArr.splice(0, 1);
             let restValue = "。" + valueArr.join("。")
             let realValueArr = realValue.split("，")
-            let  totalValueArr = realValueArr.map(v => {
+            let totalValueArr = realValueArr.map(v => {
                 if(v.includes('；')) {
                     return v.split('；');
                 }
@@ -310,7 +311,7 @@ export default {
                     return result + "，" + item
                 }
             }, '');
-            htmlValue = htmlValue.substring(1, htmlValue.length) + restValue;;
+            htmlValue = htmlValue.substring(1, htmlValue.length) + restValue;
             return htmlValue
         },
         handleBlur(){
@@ -330,18 +331,22 @@ export default {
         *目的:循环逗号切割的经营范围数组每一项判断它是否有许可事项，有则在B区展示
         */
         advanceAdjuct(value) {
+            let totalValueArr = this.getAllFanweiList(value);
+            let htmlValue = totalValueArr.forEach((result, item) => {
+                this.addAdJust(result);
+            });
+        },
+        getAllFanweiList(value) {
             let valueArr = value.split("。")
             let realValue = valueArr[0];
-            let realValueArr = realValue.split("，")
+            let realValueArr = realValue.split("，");
             let totalValueArr = realValueArr.map(v => {
                 if(v.includes('；')) {
                     return v.split('；');
                 }
                 return v
             }).flat();
-            let htmlValue = totalValueArr.forEach((result, item) => {
-                this.addAdJust(result);
-            });
+            return totalValueArr;
         },
         addAdJust(value) {
             if(this.getMatter(value).length > 0) {
