@@ -28,6 +28,7 @@ import singleWindow from "@/views/basicInfo/singleWindowMaterial"
 import OnlineDocumentEditor from "@/views/basicInfo/OnlineDocumentEditor"
 import UiCompilerComponent from "@/views/uiCompilerComponent/Index"
 import PublicDocument from "@/views/publicManagement/PublicDocument"
+import PublicSubDocument from "@/views/publicManagement/PublicSubDocument"
 Vue.use(VueRouter)
 import store from "@/vuex/store"
 import bangbanAxios from "@/api/ANew/config"
@@ -170,7 +171,12 @@ const routes = [
                 path: '/publicdocument',
                 name: 'PublicDocument',
                 component: PublicDocument,
-            },   
+            },
+            {
+                path: '/publicsubdocument',
+                name: 'PublicSubDocument',
+                component: PublicSubDocument,
+            },
         ]
     },
     {

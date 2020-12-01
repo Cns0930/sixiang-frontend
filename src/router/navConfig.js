@@ -61,7 +61,10 @@ const topMenuList=[
                 path: "/publicdocument",
                 label: "材料",
             },
-            
+            {
+                path: "/publicsubdocument",
+                label: "材料子文档",
+            },
             
         ],
         order: 3

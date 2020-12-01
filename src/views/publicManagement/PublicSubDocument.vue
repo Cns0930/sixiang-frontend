@@ -1,7 +1,7 @@
 <template>
     <div class="public-document">
         <header>
-            <span class="title">材料</span>
+            <span class="title">材料子文档</span>
             <el-button icon="el-icon-plus" @click="handleAdd">新增</el-button>
         </header>
         <div class="filter-box">
@@ -21,11 +21,14 @@
             <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%;" border
                 tooltip-effect="dark" :default-sort="{prop: 'createTime', order: 'descending'}">
 
-                <el-table-column prop="globalDocumentCode" label="文档编号" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="globalDocumentName" label="文档名称" show-overflow-tooltip></el-table-column>
-               
-                <el-table-column prop="isStandard" label="是否标准文档" :formatter="standardFormatter" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="produceSource" label="来源" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="globalDocumentSubId" label="材料id" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="globalDocumentSubCode" label="子文档编号" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="globalDocumentSubName" label="子文档名称" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="description" label="描述" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="globalDocumentType" label="材料类型" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="isMultiplePage" label="是否多页" :formatter="multipageFormatter" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="subType" label="类型" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="category" label="类别" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="updateTime" label="更新时间" :formatter="timeFormatter" show-overflow-tooltip>
                 </el-table-column>
 
@@ -117,10 +120,12 @@
 
 <script>
 import { mixin } from "@/mixin/mixin"
-import { addGlobalDcument, deleteDcument, getByGlobalDcumentId, updateGlobalDcument, listGlobalDcument } from '@/api/basicInfo/publicDocument'
+import { addGlobalDcument, deleteDcument, getByGlobalDcumentId, updateGlobalDcument, listGlobalDcument,addGlobalDcumentSub,delDcumentSub,getByGlobalDcumentSubId,
+listGlobalDcumentSub , } from '@/api/basicInfo/publicDocument'
+
 import { mapGetters } from "vuex"
 export default {
-    name: "PublicDocument",
+    name: "PublicSubDocument",
     mixins: [mixin],
     data() {
         return {
@@ -157,20 +162,20 @@ export default {
     methods: {
         async search() {
             let params = {
-                globalDocumentName: this.filterKeyword,
-                isStandard: this.standardFilter,
+                globalDocumentSubName: this.filterKeyword,
+               
                 pageNum: this.currentPage,
                 pageSize: this.pagesize,
-                produceSource: this.sourceFilter,
+               
             }
-            let result = await listGlobalDcument(params);
+            let result = await listGlobalDcumentSub(params);
 
             this.tableData = result.data.records;
             this.totalCount = result.data.total
         },
-        standardFormatter(row, column, cellValue ){
+        multipageFormatter(row, column, cellValue ){
    
-            return cellValue==1?"标准文档":"非标文档"
+            return cellValue==1?"是":"否"
         },
         async edit(){
             this.editBtnLoading=true;

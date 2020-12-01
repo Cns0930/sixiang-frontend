@@ -4,15 +4,18 @@ class CascaderDef extends CommonComponents{
     constructor(){
         super({type:"cascader"})
 
-        this.options = new Renderer("CodeEditor","");
+        this.options = new Renderer("CodeEditor","",null,"选项");
 
         this.component = rendererBuilder("text","ElCascader")
         this.value = new Renderer("text",[])
+        this.multiple=  new Renderer('ElSingleCheckboxC', false,{options:[true]},"是否多选")
     }
     getAttributes(){
         return {
             options:eval(`${this.options.value}`),
-            placeholder:"请输入内容"
+            placeholder:"请输入内容",
+            props:{ multiple: this.multiple.value },
+           "collapse-tags":true
         }
     }
 }

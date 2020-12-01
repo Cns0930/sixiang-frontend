@@ -231,6 +231,7 @@ export default {
             tempItem: {},
             projectOptions: [],
             approvalOptions: [],
+            currentPage: 1,
             pagesize: 15,
             totalCount: 0,
         };
@@ -384,7 +385,9 @@ export default {
                 params.endTime = this.timeRange[1];
             }
             let result = await listApprovalItem(params);
+             if(!result.success) return;
             this.tableData = result.data.records;
+            this.totalCount = result.data.total;
         },
         
     },

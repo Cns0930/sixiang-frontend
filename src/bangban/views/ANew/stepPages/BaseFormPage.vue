@@ -199,6 +199,10 @@ export default {
         async beforeEnter() {
 
         },
+        handleFocus(v) {
+           
+            v.hasConfirmed = true;
+        },
         async validate() {
             let promises = this.$refs.form.fields.map(field => {
                 return new Promise((resolve, reject) => {

@@ -58,7 +58,7 @@ export default {
             sessionStorage.setItem('activeName', 'subitem');
             sessionStorage.setItem('activeTab', 'formconstructor');
             this.$store.commit("config/setCrumbListSecond", [{ path: "", label: '' }]);
-            if (t.label === '帮办工具' || t.label === '调研信息')
+            
                 this.$router.push({
                     query: { itemId: store.state.home.item.approvalItemId },
                 });
