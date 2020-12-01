@@ -7,9 +7,59 @@
                     <span class="text">基本信息</span>
                 </div>
 
-                <div class="form-section">
+                <!-- <div class="form-section">
                     <CommonForm :fields="fields" :rules="rules" ref="form"></CommonForm>
-                </div>
+                </div> -->
+                <el-form label-position="right" label-suffix="：" label-width="200px" hide-required-asterisk
+                    class="form-detail" :rules="rules" ref="form" :validate-on-rule-change="false"
+                    @submit.native.prevent :class="{'marinTopGap':hasMarginTop}">
+                    <el-row>
+                        <template v-for="(group,groupIndex) in fieldsGroup">
+
+                            <el-col class="sub-title-n" v-if="group.fact">
+                                <div class="tag"></div>
+                                <span class="text">{{group.fact}}</span>
+                            </el-col>
+
+                            <template v-for="(v,i) in group.fields">
+                                <el-col :span="24" v-if="v.wrapStart"></el-col>
+                                <template v-if="v.hidden"></template>
+                                <el-col v-else :span="v.span || 12" :key="''+groupIndex+i">
+                                    <!-- if 列表组件 -->
+                                    <component v-if="v.isList" :is="v.component" v-bind="v.attributes" :value="v.value"
+                                        @change="v.onchange && v.onchange($event,itemState)"
+                                        @input="v.oninput && v.oninput($event,itemState)"></component>
+                                    <!-- if 独立组件 -->
+                                    <component v-else-if="v.independent" :is="v.component" v-bind="v.attributes"
+                                        @change="v.onchange && v.onchange($event,itemState)"
+                                        @input="v.oninput && v.oninput($event,itemState)" v-model="v.value">
+                                    </component>
+                                    <!-- if 普通组件 -->
+                                    <el-form-item v-else :key="i" :label="v.label"
+                                        :label-width="v.label?_.isNil(v.labelWidth)? '200px':v.labelWidth:'50px'"
+                                        :prop="v.ruleKey || ''" :obj="v">
+                                        <component :is="v.component" v-model="v.value" v-bind="v.attributes"
+                                            @change="v.onchange && v.onchange($event,itemState,itemGetters)"
+                                            @input="v.oninput && v.oninput($event,itemState,itemGetters)"
+                                            :class="{'default-text-color':v.hasConfirmed === false}"
+                                            @focus="handleFocus(v)"></component>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="24" v-if="v.wrapEnd"></el-col>
+                                <!-- <el-form-item :key="i" :label="v.label"
+                                    :label-width="v.label?_.isNil(v.labelWidth)? '200px':v.labelWidth:'50px'"
+                                    :prop="v.ruleKey || ''" :obj="v">
+
+                                    <component :is="v.component" v-model="v.value" v-bind="v.attributes"
+                                        @change="v.onchange && v.onchange($event,itemState,itemGetters)"
+                                        @input="v.oninput && v.oninput($event,itemState,itemGetters)"
+                                        :class="{'default-text-color':v.hasConfirmed === false}"></component>
+                                </el-form-item> -->
+                            </template>
+
+                        </template>
+                    </el-row>
+                </el-form>
             </div>
         </content-card>
         <div class="operate-btn">
@@ -22,7 +72,8 @@
             <div class="message-dialog-content">
                 <div class="info">请填写完整信息</div>
                 <div slot="footer" class="dialog-footer" style="display: flex;justify-content: space-around">
-                    <el-button type="warning" class="dialog-warn-btn" @click="showBaseValidation = false">确 定</el-button>
+                    <el-button type="warning" class="dialog-warn-btn" @click="showBaseValidation = false">确 定
+                    </el-button>
                 </div>
             </div>
         </el-dialog>
@@ -30,18 +81,69 @@
 </template>
 
 <script>
-import FormPage from "@/bangban/views/ANew/stepPages/FormPage"
+// import FormPage from "@/bangban/views/ANew/stepPages/FormPage"
+import CommonMixin from "@/bangban/views/ANew/CommonMixin"
+import ContentCard from '../components/ContentCard';
+import TestFormItem from "@/components/TestFormItem"
 import { queryDefault } from "@/api/ANew/newA"
 import { mapGetters, mapState } from "vuex"
 import _ from "lodash"
 export default {
     name: "BaseFormPage",
-    mixins: [FormPage],
+    // mixins: [FormPage],
+    mixins: [CommonMixin],
+    props: {
+        config:{
+            default(){
+                return []
+            }
+        }
+    },
+    components: {
+        ContentCard,
+        ElFormItem: TestFormItem ,
+    },
     computed: {
+
         ...mapGetters(['getCompanyName', 'getCurrentSelfServiceRecordId']),
         ...mapState({
             hasQueryDefaultInfo: state => state.ANew.hasQueryDefaultInfo,
-        })
+        }),
+        fact1() {
+            return this.itemState["fact1"].value
+        },
+        fieldsGroup() {
+
+            if (this.config.every(v => _.isString(v))) {
+                return [{
+                    fact: '',
+                    fields: this.config.map(fieldNo => this.itemState[fieldNo]).sort((a, b) => a.sort - b.sort)
+                }]
+            }
+            return this.config.map(group => {
+
+                return {
+                    fact: group.fact,
+                    fields: group.fields.map(fieldNo => this.itemState[fieldNo]).sort((a, b) => a.sort - b.sort)
+                }
+            })
+        },
+        fields(){
+             
+            return this.fieldsGroup.map(block=>block.fields).flat();
+            
+          
+        },
+        hasMarginTop(){
+            if(this.fieldsGroup.length<1) return false;
+            let firstGroup = this.fieldsGroup[0]
+            let firstFields = firstGroup.fields[0]
+            let hasFirstListTitle =firstFields.isList && firstFields.title;
+            if(!firstGroup.fact && !hasFirstListTitle){
+                return true
+            }
+            return false;
+        }
     },
     data() {
         return {
@@ -83,14 +185,14 @@ export default {
             }
         })
         // 公司名来自 票号
-        if(this.itemState['companyName']){
+        if (this.itemState['companyName']) {
             this.$set(this.itemState['companyName'], "value", this.getCompanyName)
         }
-        
+
         console.log("默认值获取完毕")
-        
-        if(this.stepData.useAfterEnter){
-            this.stepData.afterEnterFn(this.itemState,this.itemGetters)
+
+        if (this.stepData.useAfterEnter) {
+            this.stepData.afterEnterFn(this.itemState, this.itemGetters)
         }
     },
     methods: {
@@ -98,7 +200,23 @@ export default {
 
         },
         async validate() {
-            return await this.$refs.form.validate();
+            let promises = this.$refs.form.fields.map(field => {
+                return new Promise((resolve, reject) => {
+                    field.validate('', '', (message, field) => {
+
+                        if (message) {
+                            resolve(false)
+
+                        } else {
+                            resolve(true)
+                        }
+
+                    })
+                })
+            })
+            let result = await Promise.all(promises)
+
+            return result.every(Boolean)
         },
         async beforeLeave() {
             let result = await this.validate();
@@ -123,9 +241,12 @@ export default {
         async validateConfirm() {
             return !this.fields.some(field => !field.hasConfirmed);
         },
+        goPrev() {
+            this.$emit('goPrev');
+        },
         async goNext() {
             let result = await this.beforeLeave();
-             if (!result) {
+            if (!result) {
                 this.showBaseValidation = true;
                 return;
             };
@@ -165,6 +286,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.form-info-home {
+    height: 100%;
+    width: calc(100% - 6px);
+
+    .content {
+        padding-bottom: 20px;
+    }
+}
 .form-section {
     // margin-top: 20px;
 }

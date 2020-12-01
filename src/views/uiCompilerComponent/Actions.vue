@@ -52,7 +52,7 @@
         </div>
         <el-dialog title="选择fieldNo" :visible.sync="multiChosenDialog" width="80%" :close-on-click-modal="false">
             <div>
-                (04页)标题：<input v-model="tempChosenValue.fact" />
+                标题：<input v-model="tempChosenValue.fact" />
                 <el-checkbox-group v-model="tempChosenValue.fields">
                     <el-table :data="list" max-height="250">
                         <el-table-column label="选择fieldNo">
