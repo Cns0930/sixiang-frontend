@@ -8,11 +8,13 @@ class SelectDef extends CommonComponents{
 
         this.component = rendererBuilder("text","ElSelectC")
         this.value = new Renderer("ElInput","")
+        this.disabled = new Renderer("ElSingleCheckboxC",false,{options:[true]},'不可编辑')
         
     }
     getAttributes(){
         
         return {
+            disabled: this.disabled.value,
             options:this.options.value,
             placeholder:"请输入内容"
         }

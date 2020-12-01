@@ -1,7 +1,6 @@
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 module.exports = {
-    productionSourceMap: false,
     assetsDir: 'view',
     configureWebpack: {
         plugins: [

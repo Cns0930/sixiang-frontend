@@ -253,7 +253,10 @@ export default {
                 if (!result.success) return;
                 this.typeMaterialOptions = result.data;
                 if(scope.row.material != null){
-                    this.ids = scope.row.material.map(v  => v.materialId)
+                    console.log(scope.row.material)
+                    this.ids = scope.row.material
+                    .filter( v => v != null)
+                    .map(v  => v.materialId)
                 }else{
                     this.ids = [];
                 }
