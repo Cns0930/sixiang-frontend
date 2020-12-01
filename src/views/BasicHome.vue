@@ -38,8 +38,7 @@ export default {
         // }
     },
     beforeUpdate() {
-        console.log('this.$route.path');
-        console.log(this.$route.path);
+        
         this.nowUrl = this.$route.path;
         let urlName = this.nowUrl;
         // console.log(urlName);

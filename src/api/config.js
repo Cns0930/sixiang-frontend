@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Message } from 'element-ui';
+import { Message,Notification  } from 'element-ui';
 import _ from 'lodash';
 import router from '../router';
 // axios.defaults.baseURL = process.env.API_ROOT;
@@ -27,6 +27,15 @@ const throttleMessage = _.debounce((msg) => {
     });
 }, 500);
 
+
+const throttleNotification = _.debounce((msg) => {
+    Notification({
+        title: '重新登陆',
+        message: msg,
+        dangerouslyUseHTMLString:true,
+        duration:10000
+    });
+}, 500);
 // 响应拦截器
 axios.interceptors.response.use(
     (response) => {
@@ -39,7 +48,7 @@ axios.interceptors.response.use(
             sessionStorage.clear();
             // router.push('/login');
             // source.cancel('Operation canceled by the user.');
-            throttleMessage("登录超时，请自行保存数据、退出登录并重新登录");
+            throttleNotification(`登录超时，请自行保存数据、并重新登录 <br/> <a href="/#/login">登陆</a>`);
         }
         return response;
     },

@@ -1,5 +1,5 @@
 import { getByApprovalItemId } from "@/api/basicInfo/approval";
-
+import dayjs from "dayjs"
 export const mixin={
     methods: {
         async init(){
@@ -12,6 +12,9 @@ export const mixin={
                 }
                 this.$store.commit("changeItem", result.data);
             }
-        }
+        },
+        timeFormatter(row, column, cellValue, index) {
+            return dayjs(cellValue).format("YYYY-MM-DD HH:mm:ss")
+        },
     }
 }

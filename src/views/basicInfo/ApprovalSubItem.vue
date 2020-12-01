@@ -160,7 +160,7 @@ export default {
         // 查询表格
         async reloadTable() {
             let result = await getApprovalSub({pageNum:this.currentPage,approvalItemId: this.itemId});
-            console.log("result:",result);
+           
             if (!result.success) return;
             this.total = result.data.total;
             this.tableData = result.data.records;
@@ -214,7 +214,7 @@ export default {
             let result = await listApprovalItem({pageNum: this.currentPageSelect,pageSize: this.pageSize});
             this.typeSubItemOptions = result.data.records;
             this.totalAim = result.data.total;
-            console.log("resulthhh:",this.typeSubItemOptions);
+            
             this.importDialogVisible = true;
         },
         async importSubApproval() {
@@ -238,7 +238,7 @@ export default {
         // 查询当前事项下的所有材料
         async materialList(){
             let result = await getAllByApprovalItemId({approvalItemId: this.itemId});
-            console.log("result:",result)
+          
             if (!result.success) return;
             this.typeMaterialOptions = result.data;
         },

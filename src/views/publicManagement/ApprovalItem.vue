@@ -32,8 +32,8 @@
             <div class="tableWrap">
                 <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%;" border
                     tooltip-effect="dark" :default-sort="{prop: 'createTime', order: 'descending'}">
-                    <el-table-column label="序号" type="index" :index="indexMethod">
-                    </el-table-column>
+                   
+               
                     <el-table-column prop="projectName" label="项目" sortable >
                     </el-table-column>
                     <el-table-column prop="approvalName" label="大项" show-overflow-tooltip sortable>
@@ -72,11 +72,11 @@
                                     帮办工具
                                 </el-button>
                                 <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
-                                    :disabled="!hasManagePermission()">
+                                    :disabled="!hasManagePermission">
                                     编辑
                                 </el-button>
                                 <el-button size="mini" type="danger" @click="handleClose(scope.row)"
-                                    :disabled="!hasManagePermission()">
+                                    :disabled="!hasManagePermission">
                                     关闭
                                 </el-button>
                             </el-button-group>
@@ -85,7 +85,7 @@
                 </el-table>
             </div>
             <div class="tablePagination">
-                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                <el-pagination @current-change="handleCurrentChange"
                     :current-page.sync="currentPage" :page-size="pagesize" layout="total, prev, pager, next"
                     :total="totalCount">
                 </el-pagination>
@@ -196,8 +196,11 @@
 
 
 <script>
-import basicMixin from "./basicMixin";
+
+import {mixin} from "@/mixin/mixin"
 import Vue from "vue";
+
+import {mapGetters} from "vuex"
 import {
     listApprovalAll,
     listProjectAll,
@@ -205,11 +208,12 @@ import {
     updateApprovalItem,
     getByApprovalItemId,
     shutApprovalItem,
+    listApprovalItem,
 } from "../../api/basicInfo/approval";
 
 export default {
     name: "ApprovalItem",
-    mixins: [basicMixin],
+    mixins: [mixin],
     data() {
         return {
             // 页面信息
@@ -228,9 +232,12 @@ export default {
             projectOptions: [],
             approvalOptions: [],
             pagesize: 15,
+            totalCount: 0,
         };
     },
-    computed: {},
+    computed: {
+         ...mapGetters({hasManagePermission:'config/hasManagePermission'})
+    },
     async created() {
         await this.searchItem();
         await this.loadOptions();
@@ -241,8 +248,7 @@ export default {
         itemInfo.itemNo = null;
         this.$store.commit("changeItem", itemInfo);
         sessionStorage.removeItem('itemInfo');
-        console.log('this.$store.state.home.item');
-        console.log(this.$store.state.home.item);
+        
     },
     methods: {
         // inputs(val) {
@@ -255,7 +261,7 @@ export default {
         //     this.multipleSelection = val;
         // },
         async handleEdit(index, row) {
-            console.log(row);
+         
             let res = await getByApprovalItemId({
                 approvalItemId: row.approvalItemId,
             });
@@ -287,7 +293,7 @@ export default {
         },
         async updateItem() {
             let res = await updateApprovalItem(this.tempItem);
-            console.log(res);
+            
             if (res.success) {
                 this.$message.success("事项修改成功!");
                 this.tempItem = {};
@@ -311,7 +317,7 @@ export default {
             await this.list();
         },
         handleClickItemDefault(item) {
-            console.log(item)
+          
             this.$store.commit("changeItem", item);
             sessionStorage.setItem("itemInfo", item);
             sessionStorage.setItem('activeName', 'subitem');
@@ -377,16 +383,10 @@ export default {
                 params.startTime = this.timeRange[0];
                 params.endTime = this.timeRange[1];
             }
-            await this.search(params);
+            let result = await listApprovalItem(params);
+            this.tableData = result.data.records;
         },
-        hasManagePermission() {
-            let hasAdmin = this.$store.state['config'].roles.includes('admin');
-            let hasResearcher = this.$store.state['config'].roles.includes('researcher');
-            if (hasAdmin || hasResearcher) {
-                return true;
-            }
-            return false;
-        }
+        
     },
 };
 </script>

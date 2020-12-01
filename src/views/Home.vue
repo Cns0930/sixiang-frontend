@@ -1,7 +1,37 @@
 <template>
     <div class="home">
         <header>
-            <span class="left">四象2.0</span>
+            <!-- <span class="left">四象2.0</span> -->
+            <div class="-center left">
+                <img  src="~@/assets/png/logo.png" />
+
+                <el-popover
+                    v-for=" menu,i in topMenuList"
+                    :key="i"
+                    placement="bottom-start"
+                    width="150"
+                    trigger="click" 
+                    popper-class="dropdown-menu-top"
+                    v-model="menu.visible">
+                    <div class="dropdown-btn -center" slot="reference">{{menu.label}}<i class="el-icon-arrow-down"></i></div>
+                    <ul class="dropdown-list">
+                        <li v-for="item,k in menu.children" @click="handleJump(item.path)" :key="k">{{item.label}}</li>
+                       
+                    </ul>
+                </el-popover>
+                <!-- <el-popover
+                    placement="bottom-start"
+                    width="150"
+                    trigger="click" 
+                    popper-class="dropdown-menu-top"
+                    v-model="userManagementListVisible">
+                    <div class="dropdown-btn -center" slot="reference">用户管理<i class="el-icon-arrow-down"></i></div>
+                    <ul class="dropdown-list">
+                        <li  @click="handleJump('/user')">用户管理</li>
+                     
+                    </ul>
+                </el-popover> -->
+            </div>
             <div class="right">
                 <div class="itemInfo-box" v-if="isShowItem()">
                     <!-- <span class="itemInfo-title">事项信息<i class="el-icon-document"></i> </span> -->
@@ -24,12 +54,14 @@
             </div>
         </header>
         <section class="main">
-            <div class="mainLeft" @click="handleCollapse(false)">
-                <leftside :showList="showList" v-if="showList"></leftside>
+            <div class="mainLeft" @click="handleCollapse(false)" v-if="showList">
+                <leftside :showList="showList" ></leftside>
             </div>
             <div class="mianRight" :class="{'chosen': isCollapse}">
                 <div class="routerView" :class="{bigContent:showList,smallContent:!showList}">
-                    <MainLayout></MainLayout>
+                  
+                    <router-view></router-view>
+                   
                 </div>
             </div>
         </section>
@@ -42,12 +74,15 @@ import { logout } from "@/api/item/index";
 import Leftside from "./mainLayout/Leftside";
 import MainLayout from "./mainLayout/mainLayout";
 import { mapState, mapMutations } from 'vuex';
+import { generaterTopMenuList } from '@/router/navConfig';
 export default {
     name: "Home",
     data() {
         return {
-            showList: true,
-            loginName: localStorage.getItem('username')
+            // showList: false,
+            loginName: localStorage.getItem('username'),
+            topMenuList:[],
+
         };
     },
     components: {
@@ -59,10 +94,22 @@ export default {
         ...mapState({
             isCollapse: state => state.config.isCollapse,
             itemInfo: state => state.home.item,
-        })
+            roles:state=>state.config.roles,
+        }),
+        showList(){
+           
+            return this.$route.matched.reduce((result,r)=>{
+                if(r.meta.hasOwnProperty('showLeftMenu')){
+                    result = r.meta.showLeftMenu;
+                }
+                return result;
+            },false)
+          
+        },
+         
     },
     mounted() {
-
+        this.topMenuList = generaterTopMenuList(this.roles)
     },
     methods: {
         ...mapMutations('config', { handleCollapse: 'setCollapse' }),
@@ -88,6 +135,14 @@ export default {
             } else {
                 return true;
             }
+        },
+        handleJump (path) {
+            this.topMenuList.forEach(v=>{
+                this.$set(v,"visible",false)
+            })
+           
+            this.$router.push(path);
+
         }
     }
 };
@@ -95,45 +150,71 @@ export default {
 
 <style lang="scss" scoped>
 @import "./../assets/css/common.scss";
+
 .home {
     min-height: 100vh;
     header {
         width: 100%;
-        height: 50px;
+        height: $header-height;
         position: fixed;
         -webkit-box-shadow: 0 3px 4px 0 rgba(0, 0, 0, 0.14),
             0 3px 3px -2px rgba(0, 0, 0, 0.12), 0 1px 8px 0 rgba(0, 0, 0, 0.2);
         box-shadow: 0 3px 4px 0 rgba(0, 0, 0, 0.14),
             0 3px 3px -2px rgba(0, 0, 0, 0.12), 0 1px 8px 0 rgba(0, 0, 0, 0.2);
         z-index: 4;
-        background: #f0f2f5;
+        background: #2b3b65;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        .left{
-            font-weight: 700;
-            font-size: 24px;
-            text-indent: 30px;
-            letter-spacing: 3px;
-        }
-        .right{
-            display:flex;
-            .itemInfo-box{
-                margin-right:10px;
-                .itemInfo-text{
-                   font-size:14px;
-                }
-                .itemInfo-text-in{
-                    margin-right:8px;
-                    color: #517bea;
-                    font-weight:bold;
-                    font-size:14px;
-                }
+        color: #fff;
+        .left {
+            
+            margin-left: 20px;
+            height: 30px;
            
+            img{
+                margin-right:120px;
+            }
+            .dropdown-btn{
+                color:#fff;
+                cursor:pointer;
+                font-size:12px;
+                height: 32px;
+                border-radius: 4px;
+                padding: 6px 8px;
+                font-weight: bold;
+                i{
+                    margin-left:10px;
+                    font-size:12px;
+                }
+                &:hover{
+                    background-color: rgba(235,202,197,0.2);
+                }
+                
             }
             
         }
-        
+        .right {
+            display: flex;
+            .itemInfo-box {
+                margin-right: 10px;
+                .itemInfo-text {
+                    font-size: 14px;
+                }
+                .itemInfo-text-in {
+                    margin-right: 8px;
+                    color: #f5588a;
+                    font-weight: bold;
+                    font-size: 14px;
+                }
+            }
+            ::v-deep {
+                .el-dropdown {
+                    color: #fff;
+                }
+            }
+        }
+
         // .avatar {
         //     float: right;
         //     margin: 13px 16px 0 0;

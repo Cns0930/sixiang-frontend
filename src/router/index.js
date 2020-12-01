@@ -17,7 +17,7 @@ import ItemManager from "@/views/formConstructor/ItemManager"
 import Login from "@/views/login/Login"
 import Setting from "@/views/setting/Setting"
 
-import ApprovalItem from "@/views/basicInfo/ApprovalItem"
+import ApprovalItem from "@/views/publicManagement/ApprovalItem"
 import PublicApprovalItem from "@/views/basicInfo/PublicApprovalItem"
 import Material from "@/views/basicInfo/Material"
 import ApprovalSubItem from "@/views/basicInfo/ApprovalSubItem"
@@ -27,6 +27,7 @@ import AIdocument from "@/views/basicInfo/AIdocument"
 import singleWindow from "@/views/basicInfo/singleWindowMaterial"
 import OnlineDocumentEditor from "@/views/basicInfo/OnlineDocumentEditor"
 import UiCompilerComponent from "@/views/uiCompilerComponent/Index"
+import PublicDocument from "@/views/publicManagement/PublicDocument"
 Vue.use(VueRouter)
 import store from "@/vuex/store"
 import bangbanAxios from "@/api/ANew/config"
@@ -54,6 +55,9 @@ const routes = [
             {
                 path: '/subhome',
                 component: SubHome,
+                meta:{
+                    showLeftMenu:true,
+                },
                 children: [
                     {
                         path:"/formconstructor",
@@ -121,6 +125,9 @@ const routes = [
             {
                 path: '/basic/subitem',
                 component: BasicHome,
+                meta:{
+                    showLeftMenu:true,
+                },
                 children: [
                     {
                         path: '/basic/material',
@@ -158,7 +165,12 @@ const routes = [
                 path: '/public',
                 name: 'PublicApprovalItem',
                 component: PublicApprovalItem,
-            },    
+            },  
+            {
+                path: '/publicdocument',
+                name: 'PublicDocument',
+                component: PublicDocument,
+            },   
         ]
     },
     {

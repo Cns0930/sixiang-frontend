@@ -161,3 +161,18 @@ p.trip{
 .el-menu-item:focus{
     background: rgba(0,0,0,0.050);
 }
+
+.dropdown-menu-top{
+    padding: 12px 0;
+
+    .dropdown-list{
+        li{
+            cursor: pointer;
+            font-size:12px;
+            padding:6px 12px;
+            &:hover{
+                background-color: #eee;
+            }
+        }
+    }
+}
