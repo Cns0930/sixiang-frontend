@@ -18,6 +18,7 @@ import Login from "@/views/login/Login"
 import Setting from "@/views/setting/Setting"
 
 import ApprovalItem from "@/views/publicManagement/ApprovalItem"
+import ApprovalSubItemText from "@/views/basicInfo/ApprovalSubItemText"
 import PublicApprovalItem from "@/views/basicInfo/PublicApprovalItem"
 import Material from "@/views/basicInfo/Material"
 import ApprovalSubItem from "@/views/basicInfo/ApprovalSubItem"
@@ -151,6 +152,11 @@ const routes = [
                         path: '/basic/AIdocument',
                         component: AIdocument
                     },
+                    {
+                        path: '/basic/ApprovalSubItemText',
+                        component: ApprovalSubItemText
+                    },
+                    
                     {
                         path: '/basic/singleWindow',
                         component: singleWindow

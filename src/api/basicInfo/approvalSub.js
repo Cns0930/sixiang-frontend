@@ -17,3 +17,13 @@ export const relateMaterial = params => { return axios.post(`/ss/approvalSub/rel
 
 // 查询情形 不分页
 export const listApprovalSubAll = params => { return axios.get(`/ss/approvalSub/listApprovalSubAll`, {params}).then(res=>res.data); };
+
+// 查询所有情形与子文档引用关系
+export const listSubitemAndDocumentNew = params => { return axios.get(`/ss/approvalSubitemAndDocumentNew/listSubitemAndDocumentNew`, {params}).then(res=>res.data); };
+
+// 新增情形与子文档引用关系
+export const addSubitemAndDocumentNew = params => { return axios.post(`/ss/approvalSubitemAndDocumentNew/addSubitemAndDocumentNew`, params).then(res=>res.data); };
+
+// 删除情形与子文档引用关系
+export const deleteSubitemAndDocumentNew = params => { return axios.get(`/ss/approvalSubitemAndDocumentNew/deleteSubitemAndDocumentNew`, {params}).then(res=>res.data); };
+

@@ -6,7 +6,7 @@ import { listApprovalItem , getByApprovalItemId, listPublicApprovalItem } from "
 import { listMaterial } from "../../api/basicInfo/material";
 import { listitemNoSinglewindow } from "../../api/basicInfo/singleWindow";
 import { listDocument } from "../../api/basicInfo/AIdocument";
-
+import { listSubitemAndDocumentNew } from "../../api/basicInfo/approvalSub";
 import _ from "lodash";
 import dayjs from "dayjs";
 export default {
@@ -33,14 +33,19 @@ export default {
                 if(!result.success) return;
                 this.tableData = result.data.records;
             } else if(this.type === 'pickUp') {
-
+                
             } else if(this.type === 'singleWindow') {
                 result = await listitemNoSinglewindow({itemNo: this.$store.state.home.item.itemNo});
                 this.tableData = result.data;
             } else if(this.type === 'AIdocument') {
                 result = await listDocument({approvalItemId: this.$route.query.itemId});
                 this.tableData = result.data;
-            } else if(this.type === 'public'){
+            } else if(this.type === 'ApprovalSubItemText') {
+                result = await listSubitemAndDocumentNew({itemId: this.$route.query.itemId,pageNum: this.currentPage,
+                pageSize: this.pagesize,});
+                this.tableData = result.data.records;
+            } 
+             else if(this.type === 'public'){
                 result = await listPublicApprovalItem(params)
                 this.tableData = result.data.records;
             }

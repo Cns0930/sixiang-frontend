@@ -5,8 +5,8 @@
 
             <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
                 <el-tab-pane label="情形管理" name="subitem"></el-tab-pane>
-                <el-tab-pane label="AI文档" name="AIdocument"></el-tab-pane>
-                <el-tab-pane label="情形子文档" name="AIdocument"></el-tab-pane>
+                <!-- <el-tab-pane label="AI文档" name="AIdocument"></el-tab-pane> -->
+                <el-tab-pane label="情形子文档" name="ApprovalSubItemText"></el-tab-pane>
                 <el-tab-pane label="帮办材料" name="material"></el-tab-pane>
                 <el-tab-pane label="材料字段" name="field"></el-tab-pane>
                 <el-tab-pane label="前端字段" name="" disabled></el-tab-pane>
@@ -83,14 +83,14 @@ export default {
                 sessionStorage.setItem('activeName', 'accessory');
                 this.$store.commit("config/setCrumbList", [{ path: `/basic/subitem?itemId=${this.$route.query.itemId}`, label: '调研信息' }])
                 this.$store.commit("config/setCrumbListSecond", [{ path: "/basic/accessory", label: '附件管理' }])
-            } else if (this.activeName === "AIdocument") {
+            } else if (this.activeName === "ApprovalSubItemText") {
                 this.$router.push({
-                    path: "/basic/AIdocument",
+                    path: "/basic/ApprovalSubItemText",
                     query: { itemId: this.$route.query.itemId },
                 });
-                sessionStorage.setItem('activeName', 'AIdocument');
+                sessionStorage.setItem('activeName', 'ApprovalSubItemText');
                 this.$store.commit("config/setCrumbList", [{ path: `/basic/subitem?itemId=${this.$route.query.itemId}`, label: '调研信息' }])
-                this.$store.commit("config/setCrumbListSecond", [{ path: "/basic/AIdocument", label: 'AI文档' }])
+                this.$store.commit("config/setCrumbListSecond", [{ path: "/basic/ApprovalSubItemText", label: '情形子文档' }])
             } else if (this.activeName === "singleWindow") {
                 this.$router.push({
                     path: "/basic/singleWindow",
