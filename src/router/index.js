@@ -4,6 +4,8 @@ import Home from '../views/Home.vue'
 import SubHome from '../views/SubHome.vue'
 import BasicHome from '../views/BasicHome.vue'
 import User from '../views/userInfo/user.vue'
+import AllEdit from '../views/allEdit/allEdit.vue'
+import ChangeEdit from '../views/allEdit/changeEdit.vue'
 import Editor from "../views/editor/Editor"
 // import InlineEditor from "../views/inlineEditor/InlineEditor"
 import FormConstructor from "@/views/formConstructor/FormConstructor"
@@ -53,6 +55,14 @@ const routes = [
             {
                 path: '/user',
                 component: User,
+            },
+            {
+                path: '/allEdit',
+                component: AllEdit,
+            },
+            {
+                path: '/changeEdit',
+                component: ChangeEdit,
             },
             {
                 path: '/subhome',

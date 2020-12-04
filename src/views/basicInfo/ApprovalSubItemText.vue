@@ -1,13 +1,16 @@
 <template>
     <div class="workWrap">
-        <header>情形子文档</header>
+        <header>
+            <span class="title">情形子文档</span>
+            <el-button type="primary" icon="el-icon-plus" @click="addText(0,tableData.length,tableData)">新增</el-button>
+            </header>
         <section class="workBox">
             <div class="searchBox">
                 <!-- <el-input placeholder="按情形名称查询" v-model="approvalName" clearable style="width: 200px"></el-input> -->
                 <el-input placeholder="情形名称或子文档名称查询" v-model="subitemNameAndDocumentSubName" clearable style="width: 200px;"
                 @keyup.native.enter="search"></el-input>
                 <el-button @click="textSearch()">搜索</el-button>
-                <el-button v-if="tableData.length < 1" type="primary" @click="addFirst">新增</el-button>
+                <!-- <el-button v-if="tableData.length < 1" type="primary" @click="addFirst">新增</el-button> -->
             </div>
             <div class="tableWrap">
                 <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%" border
@@ -192,16 +195,16 @@ export default {
         async textSearch() {
             await this.search()
         },
-        // 列表无数据时新增
-        addFirst() {
-            this.tableData.push({
-                approvalSubitemId: '',
-                subitemName:'',
-                globalDocumentSubId: '',
-                isRequired:'',
-                flag:true
-            }); 
-        },
+        // // 列表无数据时新增
+        // addFirst() {
+        //     this.tableData.push({
+        //         approvalSubitemId: '',
+        //         subitemName:'',
+        //         globalDocumentSubId: '',
+        //         isRequired:'',
+        //         flag:true
+        //     }); 
+        // },
         // 情形列表
         async getApprovalList() {
             this.approvalSubList = []
@@ -261,13 +264,24 @@ export default {
         // 新增
         async addText(item,index, rows) {            
             console.log(item,index,rows)
-            rows.splice(index + 1, 0, {
+            if(item == 0) {
+                rows.splice(index + 1, 0, {
+                    approvalSubitemId: '',
+                    subitemName:'',
+                    globalDocumentSubId: '',
+                    isRequired:'',
+                    flag:true
+                })
+            } else{
+                rows.splice(index + 1, 0, {
                 approvalSubitemId: Number(item.approvalSubitemId),
                 subitemName:item.subitemName,
                 globalDocumentSubId: '',
                 isRequired:'',
                 flag:true
             });
+            }
+            
         },
         // 删除
         async handleDelete(item,index, rows) {
@@ -372,6 +386,10 @@ export default {
         height: 50px;
         line-height: 50px;
         letter-spacing: 1px;
+        .title {
+            // font-size: 20px;
+            margin-right: 20px;
+        }
     }
     .workBox {
         height: calc(100% - 50px);
