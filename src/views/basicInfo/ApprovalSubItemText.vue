@@ -3,10 +3,12 @@
         <header>情形子文档</header>
         <section class="workBox">
             <div class="searchBox">
-                <el-input placeholder="查询情形名称或者子文档名称" v-model="valueM" clearable style="width: 200px"></el-input>
-                <el-button @click="materialSearch()">搜索</el-button>
+                <!-- <el-input placeholder="按情形名称查询" v-model="approvalName" clearable style="width: 200px"></el-input> -->
+                <el-input placeholder="情形名称或子文档名称查询" v-model="subitemNameAndDocumentSubName" clearable style="width: 200px;"
+                @keyup.native.enter="search"></el-input>
+                <el-button @click="textSearch()">搜索</el-button>
+                <el-button v-if="tableData.length < 1" type="primary" @click="addFirst">新增</el-button>
             </div>
-
             <div class="tableWrap">
                 <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%" border
                     tooltip-effect="dark" :default-sort="{ prop: 'createTime', order: 'ascending' }">
@@ -59,7 +61,7 @@
                             <el-option label="是" :value="Number(1)"></el-option>
                             <el-option label="否" :value="Number(0)"></el-option>
                             </el-select>
-                            <span v-else>{{scope.row.isRequired == 1? '是':'否'}}</span>
+                            <span v-else>{{scope.row.isRequired == Number(1)? '是':'否'}}</span>
                         </template>
                     </el-table-column>
                     <!-- <el-table-column prop="notes" label="备注"></el-table-column> -->
@@ -70,12 +72,15 @@
                     </el-table-column>
                     <el-table-column label="操作" fixed="right" width="300">
                         <template slot-scope="scope">
-                            <el-button v-if="scope.row.flag" size="mini" type="primary" @click="saveText(scope.row,scope.$index, tableData)">save</el-button>
+                            <div v-if="scope.row.flag">
+                                <el-button  size="mini" icon="el-icon-close" @click="closeText(scope.row,scope.$index, tableData)"></el-button>
+                                <el-button  size="mini" type="primary" icon="el-icon-check" @click="saveText(scope.row,scope.$index, tableData)"></el-button>
+                            </div>
                             <div v-else>
-                                <el-button size="mini" @click="addText(scope.row,scope.$index, tableData)" style="margin-left: 20px" icon="el-icon-circle-plus-outline">
+                                <el-button size="mini" @click="addText(scope.row,scope.$index, tableData)" style="margin-left: 20px" icon="el-icon-plus">
                                 </el-button>
-                                <el-button size="mini" type="danger" @click="handleDelete(scope.row,scope.$index, tableData)" icon="el-icon-remove-outline"></el-button>
-                                <el-button size="mini" type="primary" @click="Edit((scope.row,scope.$index, tableData))" icon="el-icon-edit"></el-button>
+                                <el-button size="mini" type="danger" @click="handleDelete(scope.row,scope.$index, tableData)" icon="el-icon-minus"></el-button>
+                                <el-button size="mini" type="primary" @click="Edit(scope.row,scope.$index, tableData)" icon="el-icon-edit"></el-button>
                             </div>
                         </template>
                     </el-table-column>
@@ -97,7 +102,8 @@ import basicMixin from "./basicMixin";
 import Vue from "vue";
 import { listMaterial, getTemplateByMaterialId, copySelectedMaterial, getAllByApprovalItemId } from "../../api/basicInfo/material";
 import { listGlobalDcumentSub } from "../../api/basicInfo/publicDocument";
-import { listSubitemAndDocumentNew,getApprovalSub,addSubitemAndDocumentNew,deleteSubitemAndDocumentNew } from "../../api/basicInfo/approvalSub";
+import { listSubitemAndDocumentNew,getApprovalSub,addSubitemAndDocumentNew,deleteSubitemAndDocumentNew,updateSubitemAndDocumentNew } from "../../api/basicInfo/approvalSub";
+// import { delete } from 'node_modules/vue/types/umd';
 export default {
     name: "ApprovalSubItemText",
     mixins: [basicMixin],
@@ -106,7 +112,7 @@ export default {
             type: "ApprovalSubItemText",
             itemId: this.$route.query.itemId,
             singleWindowMaterials: [],
-            valueM: '',
+            subitemNameAndDocumentSubName:'',
             tableData: [],
             approvalSubList:[], // 情形列表
             approvalSubTextList:[], // 子文档列表
@@ -158,6 +164,8 @@ export default {
     async created() {
         await this.init();
         await this.search();
+        await this.getApprovalList()
+        await this.getApprovalSubText()
         // await this.getList();
     },
 
@@ -171,19 +179,6 @@ export default {
         isRequiredChange(v){
           console.log(v)
         },
-        // async initSingleWindowMaterials() {
-        //     let result = await listitemNoSinglewindow({itemNo: this.$store.state.home.item.itemNo});
-        //     if (!result.success) return;
-        //     result.data.forEach(element => {
-        //         let material = {
-        //             value: element.singlewindowMaterialId,
-        //             label: element.singlewindowMaterialName
-        //         }
-        //         this.singleWindowMaterials.push(material);
-        //     });
-        //     console.log('this.singleWindowMaterials');
-        //     console.log(this.singleWindowMaterials);
-        // },
         async getList() {
              let result = await listSubitemAndDocumentNew();
              console.log(result)
@@ -192,6 +187,39 @@ export default {
         },
         getTime(val) {
             console.log(val);
+        },
+        // 搜索
+        async textSearch() {
+            await this.search()
+        },
+        // 列表无数据时新增
+        addFirst() {
+            this.tableData.push({
+                approvalSubitemId: '',
+                subitemName:'',
+                globalDocumentSubId: '',
+                isRequired:'',
+                flag:true
+            }); 
+        },
+        // 情形列表
+        async getApprovalList() {
+            this.approvalSubList = []
+            let result = await getApprovalSub({approvalItemId: this.$route.query.itemId});
+            console.log(result)
+            if (!result.success) return;
+            result.data.records.forEach(ele=>{
+                this.approvalSubList.push(ele.approvalSubitem)
+            })
+            
+        },
+        // 子文档列表
+        async getApprovalSubText() {
+            this.approvalSubTextList = []
+            let result = await listGlobalDcumentSub();
+            if (!result.success) return;
+            this.approvalSubTextList = result.data.records
+            console.log(this.approvalSubTextList,'77777')
         },
         handleSelectionChange(val) {
             this.multipleSelection = val;
@@ -230,9 +258,8 @@ export default {
             console.log(this.documentEdit);
             this.editDialogVisible = true;
         },
-        async addText(item,index, rows) {
-            await this.getApprovalList()
-            await this.getApprovalSubText()
+        // 新增
+        async addText(item,index, rows) {            
             console.log(item,index,rows)
             rows.splice(index + 1, 0, {
                 approvalSubitemId: Number(item.approvalSubitemId),
@@ -241,14 +268,6 @@ export default {
                 isRequired:'',
                 flag:true
             });
-            // this.$set(this.tableData,index+1,{
-            //     approvalSubitemId: String(item.approvalSubitemId),
-            //     subitemName:item.subitemName,
-            //     globalDocumentSubId: '',
-            //     isRequired:'',
-            //     flag:true
-            // })
-            console.log(this.tableData)
         },
         // 删除
         async handleDelete(item,index, rows) {
@@ -267,36 +286,35 @@ export default {
             await this.search();
         },
         // 修改
-        Edit() {
-
+        Edit(item,index, rows) {
+            this.$set(item,'flag',true)
+            this.$set(item,'edits',true)
         },
-        // 情形列表
-        async getApprovalList() {
-            this.approvalSubList = []
-            let result = await getApprovalSub({approvalItemId: this.$route.query.itemId});
-            console.log(result)
-            if (!result.success) return;
-            result.data.records.forEach(ele=>{
-                this.approvalSubList.push(ele.approvalSubitem)
-            })
-            
-        },
-        // 子文档列表
-        async getApprovalSubText() {
-            this.approvalSubTextList = []
-            let result = await listGlobalDcumentSub();
-            if (!result.success) return;
-            this.approvalSubTextList = result.data.records
-            console.log(this.approvalSubTextList,'77777')
-        },
+        
         // 保存
         async saveText(item,index, rows) {
-            console.log(item,index, rows,'0000')
-            delete item.flag
-            const res = await addSubitemAndDocumentNew(item)
-            console.log(res)
+            if(item.edits) {
+                delete item.edits
+                delete item.flag
+                const result = await updateSubitemAndDocumentNew(item)
+                console.log(result,'result')
+            } else {
+              delete item.flag
+              const res = await addSubitemAndDocumentNew(item)
+              console.log(res,'res')
+            }
+            
             await this.search();
-
+        },
+        // 取消
+        closeText(item,index, rows) {
+            console.log(item,index, rows,'0000')
+            if(item.edits) {
+               this.$set(item,'flag',null)
+            } else {
+                rows.splice(index,1)
+            }
+            
         },
         //增加文档
         async addDocumentButton() {

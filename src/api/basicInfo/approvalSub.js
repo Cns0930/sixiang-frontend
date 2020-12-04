@@ -27,3 +27,6 @@ export const addSubitemAndDocumentNew = params => { return axios.post(`/ss/appro
 // 删除情形与子文档引用关系
 export const deleteSubitemAndDocumentNew = params => { return axios.get(`/ss/approvalSubitemAndDocumentNew/deleteSubitemAndDocumentNew`, {params}).then(res=>res.data); };
 
+// 修改情形与子文档引用关系
+export const updateSubitemAndDocumentNew = params => { return axios.post(`/ss/approvalSubitemAndDocumentNew/updateSubitemAndDocumentNew`, params).then(res=>res.data); };
+
