@@ -61,10 +61,32 @@ export default {
                 return result;
             }, {})
         },
-        fields() {
+        fieldsGroup() {
 
-            return this.config.map(fieldNo => this.itemState[fieldNo])
+            if (this.config.every(v => _.isString(v))) {
+                return [{
+                    fact: '',
+                    fields: this.config.map(fieldNo => this.itemState[fieldNo]).sort((a, b) => a.sort - b.sort)
+                }]
+            }
+            return this.config.map(group => {
+
+                return {
+                    fact: group.fact,
+                    fields: group.fields.map(fieldNo => this.itemState[fieldNo]).sort((a, b) => a.sort - b.sort)
+                }
+            })
         },
+        fields(){
+             
+            return this.fieldsGroup.map(block=>block.fields).flat();
+            
+          
+        },
+        // fields() {
+
+        //     return this.config.map(fieldNo => this.itemState[fieldNo])
+        // },
         jingbanrenCardP() {
             return this.itemState["99_1"]
         },

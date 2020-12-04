@@ -30,7 +30,7 @@ const throttleMessage = _.debounce((msg) => {
 
 const throttleNotification = _.debounce((msg) => {
     Notification({
-        title: '重新登陆',
+        title: '重新登录',
         message: msg,
         dangerouslyUseHTMLString:true,
         duration:10000
@@ -48,7 +48,7 @@ axios.interceptors.response.use(
             sessionStorage.clear();
             // router.push('/login');
             // source.cancel('Operation canceled by the user.');
-            throttleNotification(`登录超时，请自行保存数据、并重新登录 <br/> <a href="/#/login">登陆</a>`);
+            throttleNotification(`登录超时，请自行保存数据、并重新登录 <br/> <a href="#/login">登录</a>`);
         }
         return response;
     },
