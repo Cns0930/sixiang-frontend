@@ -5,35 +5,21 @@
         <section class="workBox">
             <div class="searchBox">
                 <el-tag  size="medium" style="margin-top:10px" v-for="item in tagList" :key="item.itemNo">{{item.itemName}}</el-tag>
+                <!-- <div class="handle">
+                    <el-button @click="transferOutput">保存输出到超级帮办</el-button>
+                </div> -->
             </div>
             <div class="tableWrap">
                 <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%;" border
                     tooltip-effect="dark" :default-sort="{prop: 'createTime', order: 'descending'}" >>
                    
-                    <el-table-column type="selection" width="70"></el-table-column>
-                    <el-table-column prop="projectName" label="fieldNo" sortable >
+                    <el-table-column label="序号" type="index" width="70"></el-table-column>
+                    <el-table-column prop="fieldNo" label="fieldNo">
                     </el-table-column>
-                    <el-table-column prop="approvalName" label="组件名" show-overflow-tooltip sortable>
+                    <el-table-column prop="label" label="label" width="180"></el-table-column>
+                    <el-table-column prop="fieldComponentName" label="组件名" show-overflow-tooltip sortable>
                     </el-table-column>
-                    <!-- <el-table-column prop="itemInternalNo" label="内部事项编号" show-overflow-tooltip>
-                    </el-table-column>
-                    <el-table-column prop="itemNo" label="事项编号" show-overflow-tooltip>
-                    </el-table-column> -->
-                    <!-- <el-table-column label="事项名称"  show-overflow-tooltip>
-                        <template slot-scope="scope">
-                            <el-button @click="handleClickItemDefault(scope.row)" type="text" style="color: orange;">
-                                {{scope.row.itemName}}
-                            </el-button>
-                        </template>
-                    </el-table-column> -->
-                    <!-- <el-table-column prop="itemType" label="事项类型" >
-                    </el-table-column>
-                    <el-table-column prop="itemCode" label="事项实施编码"  show-overflow-tooltip>
-                    </el-table-column>
-                    <el-table-column prop="createBy" label="创建人" >
-                    </el-table-column>
-                    <el-table-column prop="itemStatus" label="状态" sortable  width="50">
-                    </el-table-column> -->
+                    <el-table-column prop="fieldType" label="类型" :formatter="formatFieldType" width="120"></el-table-column>
                     <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable >
                     </el-table-column>
                     <el-table-column prop="updateTime" label="最后修改时间" :formatter="timeFormatter" sortable
@@ -41,21 +27,11 @@
                     </el-table-column>
                     <el-table-column label="操作" fixed="right" width="300">
                         <template slot-scope="scope">
-                            <el-button-group>
-                                <!-- <el-button size="mini" @click="handleClickItem(scope.row)">
-                                    调研信息
-                                </el-button> -->
-                                <el-button size="mini" @click="lookFor(scope.$index,scope.row)">
-                                    查看
-                                </el-button>
-                                <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">
-                                    编辑
-                                </el-button>
-                                <!-- <el-button size="mini" type="danger" @click="handleClose(scope.row)"
-                                    :disabled="!hasManagePermission">
-                                    关闭
-                                </el-button> -->
-                            </el-button-group>
+                            <el-button size="small" @click="lookFor(scope.row)" icon="el-icon-view">
+                            </el-button>
+                            <el-button size="small" type="primary" @click="handleEdit(scope.row)" icon="el-icon-edit">
+                            </el-button>
+                            <el-button @click="transferOutput(scope.row)">保存输出到超级帮办</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -67,6 +43,74 @@
                 </el-pagination>
             </div> -->
         </section>
+        <!-- 查看 -->
+        <el-dialog title="字段组件属性查看" :visible.sync="lookVisible" width="80%" :close-on-click-modal="false">
+            <div class="look-fiels">               
+                    <div class="fields-items" v-for="item in fieldNoList" :key="item.id" v-if="item && lookVisible ">
+                        <div class="attribute">
+                            <span class="attribute-key" style="font-weight:bold;font-size:18px">事项名称</span>
+                            <span class="attribute-value" style="font-weight:bold;font-size:18px">{{item.itemName}}</span>
+                        </div>
+                        <el-divider></el-divider> 
+                        <div class="attribute">
+                            <span class="attribute-key">fieldNo</span>
+                            <el-input class="attribute-value" v-model="item.fieldNo" disabled></el-input>
+                        </div>
+                        <div class="attribute">
+                            <span class="attribute-key">label</span>
+                            <el-input class="attribute-value" v-model="item.label"></el-input>
+                        </div>
+                        <div class="attribute">
+                            <span class="attribute-key">备注(以此为准)</span>
+                            <el-input class="attribute-value" v-model="item.remark"></el-input>
+                        </div>
+                        <div class="attribute" v-for="(v,i) in item.componentDefs" :key="i">
+                            <span class="attribute-key">{{v.label || i}} </span>
+                            <component class="attribute-value" :is="v.renderTemplateName" v-model="v.value"
+                                v-bind="v.attributes" :key="item.fieldNo+v.renderTemplateName"></component>
+                        </div>
+                    </div>
+                </div>
+                <span slot="footer" class="dialog-footer" >
+                <el-button type="primary" @click="lookVisible = false">关 闭</el-button>
+            </span>
+        </el-dialog>
+        <!-- 编辑 -->
+        <el-dialog title="字段组件属性填写" :visible.sync="editDialogVisible" width="80%" :close-on-click-modal="false" >
+                <div class="attribute-content">
+                <!-- <div v-if="temp_field_info">
+                    <div class="attribute">字段说明信息: {{temp_field_info.descriptionInfo}}</div>
+                    <div class="attribute">前端验证信息: {{temp_field_info.validationInfo}}</div>
+                </div> -->
+                
+                <div v-if="temp_fieldObj && editDialogVisible">
+                    <el-divider></el-divider>
+                    <div class="attribute">
+                        <span class="attribute-key">fieldNo</span>
+                        <el-input class="attribute-value" v-model="temp_fieldObj.fieldNo" disabled></el-input>
+                    </div>
+                    <div class="attribute">
+                        <span class="attribute-key">label</span>
+                        <el-input class="attribute-value" v-model="temp_fieldObj.label"></el-input>
+                    </div>
+                    <div class="attribute">
+                        <span class="attribute-key">备注(以此为准)</span>
+                        <el-input class="attribute-value" v-model="temp_fieldObj.remark"></el-input>
+                    </div>
+                    <div class="attribute" v-for="(v,i) in temp_fieldObj.componentDefs" :key="i">
+                        <span class="attribute-key">{{v.label || i}} </span>
+                        <component class="attribute-value" :is="v.renderTemplateName" v-model="v.value"
+                            v-bind="v.attributes" :key="temp_fieldObj.fieldNo+v.renderTemplateName"></component>
+                    </div>
+                </div>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="editDialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="handleSaveField(temp_fieldObj);editDialogVisible = false">确 定
+                </el-button>
+                
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -76,26 +120,33 @@
 
 import {mixin} from "@/mixin/mixin"
 import Vue from "vue";
-
-import {mapGetters} from "vuex"
-import {
-    listApprovalAll,
-    listProjectAll,
-    addApprovalItem,
-    updateApprovalItem,
-    getByApprovalItemId,
-    shutApprovalItem,
-    listApprovalItem,
-} from "../../api/basicInfo/approval";
+import defs, {
+    deserializeComputedField,
+    deserializeBaseField,
+    deserializeTableData
+} from "../attributeComponents/index";
+// import {mapGetters} from "vuex"
+import { mapState } from "vuex";
+import defRenderers from "@/views/attributeComponents/defRendererComponents/index";
+import { getFieldById,getByIds,batchEdit,getFieldAll} from "@/api/superForm/index";
 import {listEqualFields} from "../../api/basicInfo/allEdit";
 export default {
     name: "changeEdit",
     mixins: [mixin],
+    components: {
+        ...defRenderers
+    },
     data() {
         return {
+            defRenderers,
             // 页面信息
             type: "work",
             tagList:Object.values(this.$route.query),
+            // 编辑弹框
+            editDialogVisible: false,
+            // 查看弹窗
+            lookVisible:false,
+            fieldNoList:[],
             // 筛选
             filterProjectId: null,
             filterApprovalId: null,
@@ -112,11 +163,18 @@ export default {
             currentPage: 1,
             pagesize: 15,
             totalCount: 0,
-            multipleSelection: []
+            multipleSelection: [],
+            // 展示用
+            temp_field_info: null,
+            // 属性填写用
+            temp_fieldObj: null,
         };
     },
     computed: {
-         ...mapGetters({hasManagePermission:'config/hasManagePermission'}),
+        //  ...mapGetters({hasManagePermission:'config/hasManagePermission'}),
+         ...mapState({
+            itemId: state => state.home.item.approvalItemId,
+        }),
         //  tagList() {
         //     return Object.values(this.$route.query)
         //  }
@@ -139,12 +197,10 @@ export default {
         // },
         async getTable() {
             let params = this.tagList.map(ele=>ele.approvalItemId)
-            console.log(params)
             const res = await listEqualFields(params)
-            console.log(res)
             let fieldSameList = []
             if(!res.success) return;
-            let resultList = data.reduce((acc,cur) => {
+            let resultList = res.data.reduce((acc,cur) => {
                 if(!fieldSameList.includes(cur.fieldNo)) {
                     fieldSameList.push(cur.fieldNo);
                     cur.ids = [];
@@ -156,16 +212,145 @@ export default {
                 }
                 return acc
             },[])
-            console.log(resultList)
+            this.tableData = resultList
         },
         getTime(val) {
             console.log(val);
         },
-        handleEdit(index,item) {
-            console.log(index,item)
+        // 编辑
+        async handleEdit(fieldObj) {
+            console.log(fieldObj)
+            let result = await getFieldById({id:fieldObj.id});
+           
+            if(!result.success) return;
+
+            // 处理调研备注信息的展示
+            this.temp_field_info = {descriptionInfo: result.data.descriptionInfo, validationInfo: result.data.validationInfo};
+
+            let newFieldObj = deserializeTableData({id:result.data.id,fieldName:fieldObj.fieldName,fieldType: result.data.fieldType, remark: result.data.remark,
+            children: result.data.children, ... result.data.object, });
+            console.log(newFieldObj,'222')
+            newFieldObj.ids = fieldObj.ids,
+            this.temp_fieldObj = newFieldObj;
+            delete this.temp_fieldObj.list;
+            this.editDialogVisible = true;
         },
-        lookFor(index,item) {
-            console.log(index,item)
+        // 查看
+        async lookFor(fieldObj) {
+            this.fieldNoList = []
+            let res = await getByIds(fieldObj.ids);
+            console.log(res)
+            if(!res.success) return;
+            res.data.forEach(ele=>{
+                let newsFieldObj = deserializeTableData({  fieldType: ele.fieldType, remark: ele.remark,
+                children:  ele.children, ... ele.object,id: ele.id });
+                newsFieldObj.itemName = ele.itemName
+                delete newsFieldObj.list;
+                this.fieldNoList.push(newsFieldObj) ;
+            })
+            console.log(this.fieldNoList)
+            this.lookVisible = true
+        },
+        // 单个保存 属于调研的不用传
+        async handleSaveField(v) {
+            console.log(v)
+            //情形默认选中则添加value
+            if(v.type && v.type === "qingxingCheckbox") {
+                v.componentDefs.options.value.forEach(m => {
+                    if(m.chosen) {
+                        if(!v.componentDefs.value.value.includes(m.value)) {
+                            v.componentDefs.value.value.push(m.value)
+                        }
+                    } else {
+                        v.componentDefs.value.value = v.componentDefs.value.value.filter(v => v != m.value)
+                    }
+                })
+            }
+            let vsimple = _.cloneDeep(v)
+            delete vsimple.descriptionInfo
+            delete vsimple.validationInfo
+            let param = {
+                fieldName: v.fieldName,
+                fieldType: v.fieldType,
+                ids: v.ids,
+                label: v.label,                
+                object: vsimple,
+                remark: v.remark
+            };
+            console.log(param)
+            let result = await batchEdit(param);
+            if (!result.success) return;
+            this.$message({ type: "success", message: "保存成功" });
+            await this.getTable()
+        },
+        // 保存输出到超级帮办
+        async transferOutput(v){
+            console.log(v)
+            let serviceBaseUrl = this.$store.state.setting.bangbanUrl;
+            // 去尾处理
+            if(serviceBaseUrl.endsWith('/')){
+                serviceBaseUrl = serviceBaseUrl.substring(0, serviceBaseUrl.length-1)
+            }
+            if(serviceBaseUrl == null || serviceBaseUrl == ''){
+                this.$message({ type: "error", message: "请先设置超级帮办地址!" });
+                return;
+            }
+            console.log(serviceBaseUrl)
+            // 修改输出方式
+
+            // 获取事项下的步骤
+            // 获取事项下的字段
+            let result0 = await Promise.all([
+                // getStep({approvalItemId: this.itemId}),
+                getFieldAll({ approvalItemId: v.approvalItemId }),
+            ])
+            console.log(result0)
+            if (result0.some(v => !v.success)) return;
+
+            let stepRes = result0[0]
+            let fieldRes = result0[1]
+
+            let params = {
+                stepJson: stepRes.data,
+                fieldsJson: fieldRes.data,
+                sid: this.$store.state.home.item.itemNo,
+                sixiangUserName: localStorage.getItem('username'),
+            };
+            console.log(params)
+
+            // 步骤保存到超级帮办
+            // let result = await axios.post(serviceBaseUrl+"/api/sixiang/saveJavaScript", params).then(res => res.data);
+            // console.log(result)
+            // if(result.code == 200){
+            //     this.$message({ type: "success", message: "导入成功 请查看数据库" });
+            // }else{
+            //     this.$message({ type: "error", message: result.message + " "+ result.data });
+            //     return;
+            // }
+
+            // 保存传输日志
+            // let result3 = await addSysTransferLog(
+            //     {
+            //         approvalItemId: this.$store.state.home.item.approvalItemId,
+            //         description: "step",
+            //         transferData: JSON.stringify(params)
+            //     }
+            // );
+       },
+        // 点击 fieldNo
+        async handleClickField(fieldObj) {
+
+            
+        },
+        // 组件类型
+        formatFieldType(row, column, cellValue, index) {
+            if (cellValue == 1) {
+                return "基本字段"
+            }
+            if (cellValue == 2) {
+                return "合成字段"
+            }
+            return "其他"
         },
     },
 };
@@ -212,5 +397,48 @@ export default {
             width: 100%;
         }
     }
+    .el-button+.el-button {
+    margin-left: 10px;
 }
+}
+.base-field-list {
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: red 1px solid;
+    height: 100%;
+}
+.computed-field {
+    width: 200px;
+    border: green 1px solid;
+    height: 100%;
+}
+.look-fiels{
+   display: flex;
+   flex-wrap: wrap;
+    .fields-items{
+        width: 45%;
+        margin-bottom: 30px;
+    }
+    .fields-items:last-child{
+        margin-bottom: 0;
+    }
+}
+.el-divider--horizontal {
+    margin: 10px 0;
+}
+.attribute {
+        margin: 4px 0;
+        display: flex;
+        align-items: center;
+        .attribute-key {
+            width: 200px;
+            text-align: right;
+            padding-right: 30px;
+        }
+        .attribute-value {
+            flex: 1;
+        }
+    }
 </style>

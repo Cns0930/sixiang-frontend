@@ -725,6 +725,7 @@ export default {
         },
         // 单个保存 属于调研的不用传
         async handleSaveField(v) {
+            console.log(v)
             //情形默认选中则添加value
             if(v.type && v.type === "qingxingCheckbox") {
                 v.componentDefs.options.value.forEach(m => {

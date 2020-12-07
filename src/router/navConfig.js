@@ -39,6 +39,10 @@ const topMenuList=[
                 path: "/public",
                 label: "公共事项",
             },
+            {
+                path: "/allEdit",
+                label: "批量编辑",
+            },
         ],
         order: 1
     },
@@ -69,17 +73,17 @@ const topMenuList=[
         ],
         order: 3
     },
-    {
-        label: "批量编辑",
-        authKey: ["admin","developer","researcher","test"],
-        children:[
-            {
-                path: "/allEdit",
-                label: "批量编辑",
-            },
-        ],
-        order: 4
-    },
+    // {
+    //     label: "批量编辑",
+    //     authKey: ["admin","developer","researcher","test"],
+    //     children:[
+    //         {
+    //             path: "/allEdit",
+    //             label: "批量编辑",
+    //         },
+    //     ],
+    //     order: 4
+    // },
 ]
 // 对于导航列表处理函数
 const showList = (authList, originList) => {

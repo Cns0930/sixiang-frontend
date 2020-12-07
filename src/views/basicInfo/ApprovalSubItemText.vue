@@ -14,7 +14,7 @@
             </div>
             <div class="tableWrap">
                 <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%" border
-                    tooltip-effect="dark" :default-sort="{ prop: 'createTime', order: 'ascending' }">
+                    tooltip-effect="dark" :default-sort="{ prop: 'createTime', order: 'descending' }">
                     <el-table-column label="序号" type="index" width="70" :index="indexMethod"></el-table-column>
                     <el-table-column prop="subitemName"  label="情形名称" width="200" show-overflow-tooltip>
                         <template slot-scope="scope">

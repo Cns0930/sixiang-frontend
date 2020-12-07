@@ -1,5 +1,4 @@
 import axios from 'axios';
-
 // 获取字段
 export const getField = params => axios.get('/superform/fields/list2', {params}).then(res => res.data);
 
@@ -9,6 +8,9 @@ export const getFieldAll = params => axios.get('/superform/fields/listAll', {par
 // 保存单个字段
 export const saveOne = params => axios.post('/superform/fields/saveOne', params).then(res => res.data);
 
+// 批量修改字段
+export const batchEdit = params => axios.post('/superform/fields/batchEdit', params).then(res => res.data);
+
 // 删除单个字段
 export const deleteOne = params => axios.post('/superform/fields/deleteOne', params).then(res => res.data);
 
@@ -17,6 +19,9 @@ export const deleteOne = params => axios.post('/superform/fields/deleteOne', par
 
 // 根据id 获取字段
 export const getFieldById = params => axios.get('/superform/fields/getById', {params}).then(res => res.data);
+
+// 根据id获取字段 带子项 可传多个id
+export const getByIds = params => axios.post('/superform/fields/getByIds', params).then(res => res.data);
 
 // 搜索字段
 export const searchFields = params => axios.post('/superform/fields/searchFields', params).then(res => res.data);
