@@ -35,7 +35,7 @@
                                         @input="v.oninput && v.oninput($event,itemState)" v-model="v.value">
                                     </component>
                                     <!-- if 普通组件 -->
-                                    <el-form-item v-else :key="i" :label="v.label"
+                                    <el-form-item v-else :key="i" :label="v.label.trim()"
                                         :label-width="v.label?_.isNil(v.labelWidth)? '200px':v.labelWidth:'50px'"
                                         :prop="v.ruleKey || ''" :obj="v">
                                         <component :is="v.component" v-model="v.value" v-bind="v.attributes"

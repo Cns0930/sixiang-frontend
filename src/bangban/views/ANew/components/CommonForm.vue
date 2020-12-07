@@ -9,7 +9,7 @@
                         @change="v.onchange && v.onchange($event,itemState)"
                         @input="v.oninput && v.oninput($event,itemState)"></component>
 
-                    <el-form-item v-else :key="i" :label="v.label"
+                    <el-form-item v-else :key="i" :label="v.label.trim()"
                         :label-width="v.label?_.isNil(v.labelWidth)? '200px':v.labelWidth:'50px'"
                         :prop="v.ruleKey || ''" :obj="v">
 
