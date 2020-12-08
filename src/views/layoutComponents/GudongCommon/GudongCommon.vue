@@ -16,7 +16,8 @@
                 <div class="tab-list-item " v-for="(gudong ,gudongIndex) in children" :key="gudongIndex"
                     :class="{active:active==gudongIndex,unactive:active!=gudongIndex,'warning-border':!validatedStatus[gudongIndex]}"
                     @click="active = gudongIndex">
-                    <img src="./p.png"></img>
+                    <!-- <img src="./p.png"></img> -->
+                    <i class="el-icon-postcard gudongIcon"></i>
                     <div class="tab-list-info">
                         <div class="tab-list-name">{{children[gudongIndex][labelFieldNo].value}}</div>
                         <!-- <div class="tab-list-type">{{gudong.type}}</div> -->
@@ -203,6 +204,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.gudongIcon {
+    margin-left: 12px;
+    font-size: 32px;
+}
 .tab-block {
     // background: rgba(255, 255, 255, 0.2);
 
@@ -260,7 +265,8 @@ export default {
             padding: 0 10px;
         }
         .tab-list-info {
-            padding: 4px;
+            padding: 4px 4px 4px 12px;
+            margin-top: -4px;
         }
         .tab-list-name {
             font-size: 16px;
