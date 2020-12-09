@@ -277,11 +277,10 @@ export default {
         // 确定选择
         async selectClick() {
            console.log(this.multipleSelection)
-            let lists = this.multipleSelection.map(ele=>({approvalItemId:ele.approvalItemId,itemName:ele.itemName,itemNo:ele.itemNo}))
-            this.$router.push({
-               path:'/changeEdit',
-               query:lists
-            })
+            let lists = this.multipleSelection.map(ele=>({approvalItemId:ele.approvalItemId,itemName:ele.itemName,itemNo:ele.itemNo,itemNo:ele.itemNo}))
+            this.$store.commit('changeEditList',lists)
+            sessionStorage.setItem('editAll',JSON.stringify(lists))
+            this.$router.push('/changeEdit')
         },
         async handleEdit(index, row) {
          

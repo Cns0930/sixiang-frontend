@@ -6,6 +6,9 @@ const mutations = {
     changeItem(state,data){
         state.item=data;
     },
+    changeEditList(state,data){
+        state.editList=data;
+    },
     // changeItemOptions(state,data){
     //     state.itemOptions=data;
     // }

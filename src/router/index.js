@@ -59,10 +59,12 @@ const routes = [
             {
                 path: '/allEdit',
                 component: AllEdit,
+                name:'AllEdit'
             },
             {
                 path: '/changeEdit',
                 component: ChangeEdit,
+                name:'ChangeEdit'
             },
             {
                 path: '/subhome',

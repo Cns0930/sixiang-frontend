@@ -20,6 +20,8 @@ const state = {
     // itemName: '测试',
     // 事项
     item: {},
+    // 批量编辑
+    editList:null,
     // 超级帮办 皮肤
     shixiangForm: {
         approval: ['30', '310115-418-03'],

@@ -4,34 +4,34 @@
         </header>
         <section class="workBox">
             <div class="searchBox">
-                <el-tag  size="medium" style="margin-top:10px" v-for="item in tagList" :key="item.itemNo">{{item.itemName}}</el-tag>
-                <!-- <div class="handle">
+                <el-tag size="medium" style="margin-top:10px" v-for="item in tagList" :key="item.itemNo">{{item.itemName}}</el-tag>
+                <div class="handle">
                     <el-button @click="transferOutput">保存输出到超级帮办</el-button>
-                </div> -->
+                </div>
             </div>
             <div class="tableWrap">
                 <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%;" border
-                    tooltip-effect="dark" :default-sort="{prop: 'createTime', order: 'descending'}" >>
+                    tooltip-effect="dark" :default-sort="{prop: 'createTime', order: 'descending'}" 
+                    row-key="id" :tree-props="{children: 'children', hasChildren: 'hasChildren'}" default-expand-all>
                    
-                    <el-table-column label="序号" type="index" width="70"></el-table-column>
-                    <el-table-column prop="fieldNo" label="fieldNo">
-                    </el-table-column>
+                    <!-- <el-table-column label="序号" type="index" width="70"></el-table-column> -->
+                    <el-table-column prop="fieldNo" label="fieldNo"></el-table-column>
                     <el-table-column prop="label" label="label" width="180"></el-table-column>
                     <el-table-column prop="fieldComponentName" label="组件名" show-overflow-tooltip sortable>
                     </el-table-column>
-                    <el-table-column prop="fieldType" label="类型" :formatter="formatFieldType" width="120"></el-table-column>
+                    <el-table-column prop="fieldType" label="类型" :formatter="formatFieldType" width="160"></el-table-column>
                     <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable >
                     </el-table-column>
                     <el-table-column prop="updateTime" label="最后修改时间" :formatter="timeFormatter" sortable
                         show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column label="操作" fixed="right" width="300">
+                    <el-table-column label="操作" fixed="right" width="240">
                         <template slot-scope="scope">
                             <el-button size="small" @click="lookFor(scope.row)" icon="el-icon-view">
                             </el-button>
                             <el-button size="small" type="primary" @click="handleEdit(scope.row)" icon="el-icon-edit">
                             </el-button>
-                            <el-button @click="transferOutput(scope.row)">保存输出到超级帮办</el-button>
+                            <!-- <el-button @click="transferOutput(scope.row)">保存输出到超级帮办</el-button> -->
                         </template>
                     </el-table-column>
                 </el-table>
@@ -128,10 +128,13 @@ import defs, {
 // import {mapGetters} from "vuex"
 import { mapState } from "vuex";
 import defRenderers from "@/views/attributeComponents/defRendererComponents/index";
+import { addSysTransferLog} from "@/api/item/index";
 import { getFieldById,getByIds,batchEdit,getFieldAll} from "@/api/superForm/index";
 import {listEqualFields} from "../../api/basicInfo/allEdit";
+import { getStep} from "@/api/step/index";
+import axios from 'axios';
 export default {
-    name: "changeEdit",
+    name: "ChangeEdit",
     mixins: [mixin],
     components: {
         ...defRenderers
@@ -141,74 +144,82 @@ export default {
             defRenderers,
             // 页面信息
             type: "work",
-            tagList:Object.values(this.$route.query),
             // 编辑弹框
             editDialogVisible: false,
             // 查看弹窗
             lookVisible:false,
             fieldNoList:[],
             // 筛选
-            filterProjectId: null,
-            filterApprovalId: null,
+            // filterProjectId: null,
+            // filterApprovalId: null,
             filterKeyword: "",
             timeRange: [],
             // 表格
             tableData: [],
             // 弹窗
-            dialogAddVisible: false,
-            dialogUpdateVisible: false,
-            tempItem: {},
-            projectOptions: [],
-            approvalOptions: [],
-            currentPage: 1,
-            pagesize: 15,
-            totalCount: 0,
-            multipleSelection: [],
+            // dialogAddVisible: false,
+            // dialogUpdateVisible: false,
+            // tempItem: {},
+            // projectOptions: [],
+            // approvalOptions: [],
+            // currentPage: 1,
+            // pagesize: 15,
+            // totalCount: 0,
+            // multipleSelection: [],
             // 展示用
             temp_field_info: null,
             // 属性填写用
             temp_fieldObj: null,
+            childrenList:[]
         };
     },
     computed: {
-        //  ...mapGetters({hasManagePermission:'config/hasManagePermission'}),
          ...mapState({
-            itemId: state => state.home.item.approvalItemId,
+            // itemId: state => state.home.item.approvalItemId,
         }),
-        //  tagList() {
-        //     return Object.values(this.$route.query)
-        //  }
+        tagList() {
+            return this.$store.state.home.editList || JSON.parse(sessionStorage.getItem('editAll'))
+        }
     },
     async created() {
-        // await this.searchItem();
-        // await this.loadOptions();
+
         
-        // let itemInfo = this.$store.state.home.item;
-        // itemInfo.approvalItemId = null;
-        // itemInfo.itemName = null;
-        // itemInfo.itemNo = null;
-        // this.$store.commit("changeItem", itemInfo);
-        // sessionStorage.removeItem('itemInfo');
-        await this.getTable()
+    },
+    async mounted(){
+       await this.getTable()
     },
     methods: {
-        // inputs(val) {
-        //   console.log(this.model);
-        // },
         async getTable() {
             let params = this.tagList.map(ele=>ele.approvalItemId)
             const res = await listEqualFields(params)
-            let fieldSameList = []
             if(!res.success) return;
+            let fieldSameList = []
             let resultList = res.data.reduce((acc,cur) => {
                 if(!fieldSameList.includes(cur.fieldNo)) {
                     fieldSameList.push(cur.fieldNo);
                     cur.ids = [];
                     cur.ids.push(cur.id)
                     acc.push(cur);
+                    if(cur.children) {
+                        cur.children.forEach((ele,i)=>{
+                            ele.ids = [];
+                            ele.ids.push(ele.id)
+                        }
+                        
+                    )}            
                 } else {
                     let fieldIndex = fieldSameList.findIndex(v => v == cur.fieldNo);
                     acc[fieldIndex].ids.push(cur.id)
+                    if(cur.children) {
+                        cur.children.forEach((ele,i)=>{
+                            let indexs = acc[fieldIndex].children.findIndex(v=> v.fieldNo == ele.fieldNo)
+                            if(indexs!= -1) {
+                              acc[fieldIndex].children[indexs].ids.push(ele.id)
+                            }
+                            
+                        })
+                    }
+                         
                 }
                 return acc
             },[])
@@ -237,9 +248,10 @@ export default {
         },
         // 查看
         async lookFor(fieldObj) {
+            console.log(fieldObj,'1111')
             this.fieldNoList = []
             let res = await getByIds(fieldObj.ids);
-            console.log(res)
+            // console.log(res)
             if(!res.success) return;
             res.data.forEach(ele=>{
                 let newsFieldObj = deserializeTableData({  fieldType: ele.fieldType, remark: ele.remark,
@@ -266,9 +278,7 @@ export default {
                     }
                 })
             }
-            let vsimple = _.cloneDeep(v)
-            delete vsimple.descriptionInfo
-            delete vsimple.validationInfo
+            let vsimple = _.pick(v,['type', 'label','fieldNo', 'fieldName', 'fieldType', 'componentDefs','isList'])
             let param = {
                 fieldName: v.fieldName,
                 fieldType: v.fieldType,
@@ -284,8 +294,7 @@ export default {
             await this.getTable()
         },
         // 保存输出到超级帮办
-        async transferOutput(v){
-            console.log(v)
+        async transferOutput(){
             let serviceBaseUrl = this.$store.state.setting.bangbanUrl;
             // 去尾处理
             if(serviceBaseUrl.endsWith('/')){
@@ -295,52 +304,56 @@ export default {
                 this.$message({ type: "error", message: "请先设置超级帮办地址!" });
                 return;
             }
-            console.log(serviceBaseUrl)
-            // 修改输出方式
-
             // 获取事项下的步骤
-            // 获取事项下的字段
-            let result0 = await Promise.all([
-                // getStep({approvalItemId: this.itemId}),
-                getFieldAll({ approvalItemId: v.approvalItemId }),
-            ])
-            console.log(result0)
-            if (result0.some(v => !v.success)) return;
-
-            let stepRes = result0[0]
-            let fieldRes = result0[1]
-
-            let params = {
-                stepJson: stepRes.data,
-                fieldsJson: fieldRes.data,
-                sid: this.$store.state.home.item.itemNo,
-                sixiangUserName: localStorage.getItem('username'),
-            };
-            console.log(params)
+            let stepRes = await Promise.all(             
+                this.tagList.map((ele) =>
+                   getStep({approvalItemId: ele.approvalItemId})
+                ) 
+            )
+             // 获取事项下的字段
+            let fieldRes = await Promise.all(             
+                this.tagList.map((ele) =>
+                   getFieldAll({ approvalItemId: ele.approvalItemId })
+                ) 
+            )
+            
+            if (stepRes.some(v => !v.success)&&fieldRes.some(v => !v.success)) return;
+            let lists = []
+            this.tagList.forEach((ele,i)=>{
+                let params = {
+                    stepJson: stepRes[i].data,
+                    fieldsJson: fieldRes[i].data,
+                    sid: ele.itemNo,
+                    sixiangUserName: localStorage.getItem('username'),
+                };
+                lists.push(params)
+            })
 
             // 步骤保存到超级帮办
-            // let result = await axios.post(serviceBaseUrl+"/api/sixiang/saveJavaScript", params).then(res => res.data);
-            // console.log(result)
-            // if(result.code == 200){
-            //     this.$message({ type: "success", message: "导入成功 请查看数据库" });
-            // }else{
-            //     this.$message({ type: "error", message: result.message + " "+ result.data });
-            //     return;
-            // }
+            let result = await Promise.all( 
+                lists.map(v=>axios.post(serviceBaseUrl+"/api/sixiang/saveJavaScript", v).then(res => res.data))
+            );
+            console.log(result)
+            if(result.every(v=>v.success)){
+                this.$message({ type: "success", message: "导入成功 请查看数据库" });
+            }else{
+                this.$message({ type: "error", message: result.message + " "+ result.data });
+                return;
+            }
 
             // 保存传输日志
-            // let result3 = await addSysTransferLog(
-            //     {
-            //         approvalItemId: this.$store.state.home.item.approvalItemId,
-            //         description: "step",
-            //         transferData: JSON.stringify(params)
-            //     }
-            // );
-       },
-        // 点击 fieldNo
-        async handleClickField(fieldObj) {
-
-            
+            let logs = lists.map(item=>({params:item}))
+            this.tagList.forEach((ele,i)=>{
+                logs[i].approvalItemId = ele.approvalItemId
+            })
+            let result3 = await Promise.all(
+                logs.map(v=>addSysTransferLog(
+                    {
+                        approvalItemId: v.approvalItemId,
+                        description: "step",
+                        transferData: JSON.stringify(v.params)
+                    }
+                )))
         },
         // 组件类型
         formatFieldType(row, column, cellValue, index) {
