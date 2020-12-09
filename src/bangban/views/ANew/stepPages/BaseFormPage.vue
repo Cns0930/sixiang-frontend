@@ -151,7 +151,10 @@ export default {
         }
     },
     async created() {
-        if (this.hasQueryDefaultInfo) return;
+        if (this.hasQueryDefaultInfo) {
+            this.executeAfterEnterFn();
+            return;
+        };
         let result = await queryDefault({ companyName: this.getCompanyName, selfserviceRecordId: this.getCurrentSelfServiceRecordId })
         if (!result.code == 200) return;
         this.$store.commit("putHasQueryDefaultInfo", true)
@@ -191,11 +194,15 @@ export default {
 
         console.log("默认值获取完毕")
 
-        if (this.stepData.useAfterEnter) {
-            this.stepData.afterEnterFn(this.itemState, this.itemGetters)
-        }
+        this.executeAfterEnterFn();
+        
     },
     methods: {
+        executeAfterEnterFn() {
+            if (this.stepData.useAfterEnter) {
+                this.stepData.afterEnterFn(this.itemState, this.itemGetters)
+            }
+        },
         async beforeEnter() {
 
         },
