@@ -741,12 +741,11 @@ export default {
             let vsimple = _.cloneDeep(v)
             delete vsimple.descriptionInfo
             delete vsimple.validationInfo
-
             let param = {
                 id: v.id,
                 fieldNo: v.fieldNo,
                 fieldName: v.fieldName,
-                label: v.label,
+                label: v.label.trim(),
                 fieldComponentName: v.componentDefs?.type?.value,
                 fieldType: v.fieldType,
                 object: vsimple,

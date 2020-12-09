@@ -18,7 +18,7 @@
                             <el-checkbox v-if="extraAttribute" style="margin-left: 20px;" v-model="extraAttribute.value" @change="handleExtraChange">{{extraAttribute.label}}</el-checkbox>
                         </el-form-item>
                         <el-divider />
-                        <el-form-item v-for="(v,i) in fields" :key="i" :label="v.label"
+                        <el-form-item v-for="(v,i) in fields" :key="i" :label="v.label.trim()"
                             :prop="v.ruleKey ? v.ruleKey : v.required !== false ? 'required' : ''" :obj="v">
                             <component :is="v.component" v-model="v.value" v-bind="v.attributes"></component>
                         </el-form-item>

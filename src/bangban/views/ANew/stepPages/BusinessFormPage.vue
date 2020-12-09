@@ -33,7 +33,7 @@
                                     <!-- if 普通组件 -->
                                     <el-form-item v-else 
                                     :key="i" 
-                                    :label="v.label"  
+                                    :label="v.label.trim()"  
                                     :label-width="v.label?_.isNil(v.labelWidth)? '200px':v.labelWidth:'50px'" 
                                     :prop="v.ruleKey || ''" 
                                     :obj="v">

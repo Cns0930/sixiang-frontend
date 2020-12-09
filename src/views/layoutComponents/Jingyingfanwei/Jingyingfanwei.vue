@@ -61,7 +61,7 @@
                         </div>
                     </el-col>
                     
-                    <el-form-item label="表述条目" prop="required" :obj="v.fanwei">
+                    <el-form-item label="表述条目" prop="required" :obj="v.fanwei.trim()">
                         <el-select v-model="v.fanwei.value" filterable placeholder="请输入内容" style="width:calc(100% - 140px)"
                             @change="handleChangeConfirm($event,v)">
                             <el-option v-for="(o,q) in opsXuke" :key="q" :label="o.label" :value="o.value">

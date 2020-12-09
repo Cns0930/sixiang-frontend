@@ -4,7 +4,7 @@
             <el-col :span="24" v-if="v.wrapStart"></el-col>
             <el-col :span="v.span || 12" v-if="!v.hidden" :key="i">
                 
-                <el-form-item :key="i" :label="v.label"
+                <el-form-item :key="i" :label="v.label.trim()"
                     :label-width="v.label?_.isNil(v.labelWidth)? '200px':v.labelWidth:'50px'" :prop="v.ruleKey || ''"
                     :obj="v" @itemValidated="handleItemValidated($event,v)" ref="formItem" :siblings="fields"
                     :parent="parent">
