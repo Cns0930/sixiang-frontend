@@ -10,7 +10,7 @@
                 </div>
             </div>
             <div class="tableWrap">
-                <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%;" border
+                <el-table v-loading="loading" ref="multipleTable" class="workTable" :data="tableData" style="width: 100%;" border
                     tooltip-effect="dark" :default-sort="{prop: 'createTime', order: 'descending'}" 
                     row-key="id" :tree-props="{children: 'children', hasChildren: 'hasChildren'}" default-expand-all>
                    
@@ -142,6 +142,7 @@ export default {
     data() {
         return {
             defRenderers,
+            loading:false,
             // 页面信息
             type: "work",
             // 编辑弹框
@@ -190,6 +191,7 @@ export default {
     },
     methods: {
         async getTable() {
+            this.loading = true
             let params = this.tagList.map(ele=>ele.approvalItemId)
             const res = await listEqualFields(params)
             if(!res.success) return;
@@ -224,6 +226,7 @@ export default {
                 return acc
             },[])
             this.tableData = resultList
+            this.loading = false
         },
         getTime(val) {
             console.log(val);
@@ -371,6 +374,10 @@ export default {
 
 <style scoped lang="scss">
 @import "../../assets/css/global.scss";
+/deep/ .el-dialog__body{
+    max-height: 650px;
+    // min-height: 560px;
+}
 .workWrap {
     width: 99.9%;
     height: calc(100% - 22px);

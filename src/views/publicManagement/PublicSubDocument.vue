@@ -11,8 +11,9 @@
                 @keyup.native.enter="search"></el-input>
 
             <el-button @click="search" type="primary">搜索</el-button>
+            
         </div>
-        <div>
+        <div class="tableWrap">
             <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%;" border
                 tooltip-effect="dark" :default-sort="{prop: 'createTime', order: 'descending'}">
 
@@ -27,7 +28,7 @@
                 <el-table-column prop="updateTime" label="更新时间" :formatter="timeFormatter" show-overflow-tooltip>
                 </el-table-column>
 
-                <el-table-column label="操作" fixed="right">
+                <el-table-column label="操作" fixed="right" width="260">
                     <template slot-scope="scope">
                         <el-button-group>
                             <el-button @click="handleEdit(scope.row)" :disabled="!hasManagePermission">
@@ -36,7 +37,9 @@
                             <el-button @click="handleDelete(scope.row)" type="danger" :disabled="!hasManagePermission">
                                 删除
                             </el-button>
-
+                            <el-button @click="handleLook(scope.row)" type="primary" :disabled="!hasManagePermission">
+                                查看相关事项
+                            </el-button>
                         </el-button-group>
                     </template>
                 </el-table-column>
@@ -56,7 +59,7 @@
                     </el-form-item>
                     <el-form-item label="所属材料">
                         <el-select placeholder="所属材料" v-model="addForm.globalDocumentId" filterable clearable>
-                            <el-option v-for="v,i in allGlobalDocuments" :label="v.label" :value="v.value" :key="i">
+                            <el-option v-for="(v,i) in allGlobalDocuments" :label="v.label" :value="v.value" :key="i">
                             </el-option>
 
                         </el-select>
@@ -115,13 +118,74 @@
                 <el-button type="primary" @click="edit" :loading="editBtnLoading">确定</el-button>
             </span>
         </el-dialog>
+        <!-- 查看事项窗口 -->
+        <el-dialog :title="lookTitle" :visible.sync="lookDialogVisible" width="60%" :close-on-click-modal="false">
+            <div class="filter-box">
+                <el-input placeholder="事项名称查询" v-model="itemName" clearable style="width: 200px;"
+                @keyup.native.enter="search"></el-input>
+                <el-input placeholder="情形名称查询" v-model="subitemName" clearable style="width: 200px;"
+                @keyup.native.enter="search"></el-input>
+                <el-button @click="shixiangList(refresh)" type='primary'>搜索</el-button>
+                <el-button style="float:right;margin-bottom:10px" @click="toggleSelection">取消选择</el-button>
+            </div>
+            <div class="tableWrap">
+                <el-table ref="multipleTables" class="workTable" :data="lookTableData" style="width: 100%;" border
+                    tooltip-effect="dark"  @selection-change="handleSelectionChange">>
+                    <el-table-column type="selection" width="70"></el-table-column>
+                    <el-table-column prop="itemName" label="事项名称" >
+                    </el-table-column>
+                    <el-table-column prop="subitemName" label="情形名称" show-overflow-tooltip >
+                    </el-table-column>
+                    <el-table-column prop="isRequired" label="是否必须"  show-overflow-tooltip>
+                        <template slot-scope="scope">
+                            {{scope.row.isRequired == Number(1)? '是':'否'}}
+                        </template>
+                    </el-table-column>
+                    <!-- <el-table-column  show-overflow-tooltip>
+                    </el-table-column> -->
+                    <!-- <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable >
+                    </el-table-column> -->
+                    <!-- <el-table-column prop="updateTime" label="最后修改时间" :formatter="timeFormatter" sortable
+                        show-overflow-tooltip>
+                    </el-table-column> -->
+                </el-table>
+                <p v-if="lookTableData.length>0" class="tips">选中记录后，请选择子文档名称修改子文档关联</p>
+            </div>
+            <!-- <div class="tablePagination">
+                <el-pagination @current-change="handleCurrentChange"
+                    :current-page.sync="currentPage" :page-size="pagesize" layout="total, prev, pager, next"
+                    :total="totalCount">
+                </el-pagination>
+            </div> -->
+            
+            <span slot="footer" class="dialog-footer" v-if="lookTableData.length>0">
+                
+                <div style="float:left;margin-left:20px">
+                    <el-select
+                            v-model="globalDocumentSubId"
+                            placeholder="请选择子文档名称"
+                            clearable
+                            @change="globalDocumentSubNameChange"
+                        >
+                        <el-option
+                            v-for="item in approvalSubTextList"
+                            :key="item.globalDocumentSubName"
+                            :label="item.globalDocumentSubName"
+                            :value="item.globalDocumentSubId"
+                        />
+                        </el-select>
+                    <el-button style="margin-left:10px" type="primary" @click="changeText" :loading="editBtnLoading">修改关联文档</el-button>
+                   </div>
+                   <el-button @click="lookDialogVisible = false">关 闭</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
 <script>
 import { mixin } from "@/mixin/mixin"
 import {
-    addGlobalDcumentSub, delDcumentSub, getByGlobalDcumentSubId, listGlobalDcumentSub, updateGlobalDcumentSub, listGlobalDcument
+    addGlobalDcumentSub, delDcumentSub, getByGlobalDcumentSubId, listGlobalDcumentSub, updateGlobalDcumentSub, listGlobalDcument,listSubitemAndDocumentNewNoPage,batchEditDocumentSub
 } from '@/api/basicInfo/publicDocument'
 
 import { mapGetters } from "vuex"
@@ -151,7 +215,16 @@ export default {
             addForm: {},
             addBtnLoading: false,
             allGlobalDocuments: [],
-
+            // dialog look
+            lookDialogVisible:false,
+            subitemName:'', // 情形
+            itemName:'', // 事项
+            approvalSubTextList:[], // 子文档列表
+            globalDocumentSubId:'',
+            refresh:null,
+            lookTitle:null,
+            lookTableData:[],
+            multipleSelection: []
         }
     },
     computed: {
@@ -159,6 +232,7 @@ export default {
     },
     async created() {
         this.search();
+        this.getApprovalSubText()
         let result = await listGlobalDcument({
             pageNum: 1,
             pageSize: 99999,
@@ -219,6 +293,57 @@ export default {
 
 
         },
+        // 查看相关事项
+        async handleLook(v) {
+           this.refresh = v
+           this.lookTitle = `⼦⽂档编号：${v.globalDocumentSubCode} \xa0 \xa0 ⼦⽂档名称：${v.globalDocumentSubName}`
+           await this.shixiangList(v)
+           this.lookDialogVisible = true
+        },
+        // 事项列表
+        async shixiangList (item) {
+            let params = {
+              globalDocumentSubId:item.globalDocumentSubId,
+              itemName:this.itemName,
+              subitemName:this.subitemName
+            }
+           let res = await listSubitemAndDocumentNewNoPage(params)
+           this.lookTableData = res.data 
+        },
+        //  checkbox多选
+        handleSelectionChange(val) {
+            this.multipleSelection = val;
+        },
+        // 取消选择
+        toggleSelection() {
+           this.$refs.multipleTables.clearSelection();
+        },
+        // 
+        globalDocumentSubNameChange(v){
+          console.log(v)
+        },
+        // 子文档列表
+        async getApprovalSubText() {
+            this.approvalSubTextList = []
+            let result = await listGlobalDcumentSub();
+            if (!result.success) return;
+            this.approvalSubTextList = result.data.records
+        },
+        // 修改关联文档
+        async changeText() {
+            let ids = this.multipleSelection.map(ele=>ele.id)
+            let params = {
+                ids:ids,
+                targetGlobalDocumentSubId:this.globalDocumentSubId
+            }
+            const result = await batchEditDocumentSub(params)
+            if(result.success) {
+                this.$message.success('修改关联文档成功');
+                this.globalDocumentSubId = ''
+                await this.shixiangList(this.refresh)
+            }
+           console.log(result)
+        },
         handleAdd() {
             this.addDialogVisible = true;
         },
@@ -244,16 +369,21 @@ export default {
     header {
         display: flex;
         align-items: center;
-        .title {
+        .title{
             font-size: 20px;
-            margin-right: 20px;
+            font-weight: 700;
+            height: 50px;
+            line-height: 50px;
+            letter-spacing: 1px;
+            margin-right:20px;
         }
     }
     & > * {
-        margin: 4px 0;
+        margin: 8px 0;
     }
 }
 .filter-box {
+    padding-left: 20px;
     & > *:not(:first-child) {
         margin-left: 10px;
     }
@@ -268,4 +398,19 @@ export default {
         width: 200px;
     }
 }
+.tableWrap {
+        // margin-top: 16px;
+        margin-left: 20px;
+        width: calc(100% - 20px);
+        overflow: hidden;
+        .workTable {
+            width: 100%;
+        }
+        .tips{
+            text-align: left;
+            font-size: 12px;
+            color: grey;
+            margin-top: 8px;
+        }
+    }
 </style>

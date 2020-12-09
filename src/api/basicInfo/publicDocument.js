@@ -31,3 +31,10 @@ export const listGlobalDcumentSub = params => { return axios.get(`/ss/globalDocu
 
 // 修改子文档
 export const updateGlobalDcumentSub = params => { return axios.post(`/ss/globalDocumentSubList/updateGlobalDcumentSub`, params).then(res=>res.data); };
+
+// 查询所有情形与子文档引用关系 根据文档 不分页
+export const listSubitemAndDocumentNewNoPage = params => { return axios.get(`/ss/approvalSubitemAndDocumentNew/listSubitemAndDocumentNewNoPage`, {params}).then(res=>res.data); };
+
+// 批量修改记录关联子文档
+export const batchEditDocumentSub = params => { return axios.post(`/ss/approvalSubitemAndDocumentNew/batchEditDocumentSub`, params).then(res=>res.data); };
+
