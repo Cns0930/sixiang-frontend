@@ -32,6 +32,7 @@ import OnlineDocumentEditor from "@/views/basicInfo/OnlineDocumentEditor"
 import UiCompilerComponent from "@/views/uiCompilerComponent/Index"
 import PublicDocument from "@/views/publicManagement/PublicDocument"
 import PublicSubDocument from "@/views/publicManagement/PublicSubDocument"
+import ReadMe from "@/views/readMe/ReadMe"
 Vue.use(VueRouter)
 import store from "@/vuex/store"
 import bangbanAxios from "@/api/ANew/config"
@@ -195,6 +196,11 @@ const routes = [
                 name: 'PublicSubDocument',
                 component: PublicSubDocument,
             },
+            {
+                path:"/readme",
+                name:"ReadMe",
+                component:ReadMe,
+            }
         ]
     },
     {
