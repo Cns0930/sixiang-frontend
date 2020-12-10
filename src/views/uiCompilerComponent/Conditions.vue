@@ -1,5 +1,6 @@
 <template>
     <div class="conditions">
+        
         <div>
              <select v-model="conditionBlock.logic">
                 <option value="any">或</option>
@@ -29,7 +30,7 @@
                 <!-- <DropDown @addCondition="addCondition(v.children)" @addAction="addAction(v.children)"></DropDown> -->
             </template>
             <template v-else>
-                <Conditions  :conditionBlock="condition.subConditionBlock" :list="list" @deleteConditionBlock="deleteConditionBlock(i)"></Conditions>
+                <Conditions  :conditionBlock="condition.subConditionBlock" :list="list" @deleteConditionBlock="deleteConditionBlock(i)" class="inner-condition"></Conditions>
             </template>
         </div>
 
@@ -129,6 +130,11 @@ export default {
 
 <style scoped lang="scss">
 .conditions {
-    margin-left: 28px;
+    // margin-left: 28px;
+    // background: rgba(0, 77, 156, 0.3);
 }
+   .inner-condition{
+
+        margin-left: 28px;
+   }
 </style>
