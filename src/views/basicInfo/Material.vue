@@ -3,7 +3,7 @@
         <header>帮办材料</header>
         <section class="workBox">
             <div class="searchBox">
-                <el-input placeholder="筛选材料名称或者材料编号" v-model="valueM" clearable style="width: 200px;"></el-input>
+                <el-input placeholder="筛选材料名称或者模板名称" v-model="valueM" clearable style="width: 200px;"></el-input>
                 <el-button @click="materialSearch()">搜索</el-button>
                 <div class="handle">
                     <el-button type="primary" @click="materialVisible(materialInit)">新建材料</el-button>
@@ -360,8 +360,8 @@ export default {
                 keyword: this.valueM,
                 pageNum: this.currentPage,
                 pageSize: this.pagesize,
-                approvalItemId: this.materialT.approvalItemId,
-                materialStatus: this.materialT.materialStatus,
+                approvalItemId: this.$route.query.itemId,
+                materialStatus: 'Y',
             });
 
             if (!result.success) return;

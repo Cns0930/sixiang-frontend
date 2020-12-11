@@ -28,9 +28,6 @@
                     <el-button type="primary" @click="selectClick">
                         确定所选
                     </el-button>
-                    
-                    <!-- <el-button type="primary">导出</el-button>
-                    <el-button type="primary">导入</el-button> -->
                 </div>
             </div>
             <div class="tableWrap">
@@ -46,12 +43,12 @@
                     </el-table-column>
                     <el-table-column prop="itemNo" label="事项编号" show-overflow-tooltip>
                     </el-table-column> -->
-                    <el-table-column label="事项名称"  show-overflow-tooltip>
-                        <template slot-scope="scope">
+                    <el-table-column prop="itemName" label="事项名称"  show-overflow-tooltip>
+                        <!-- <template slot-scope="scope">
                             <el-button @click="handleClickItemDefault(scope.row)" type="text" style="color: orange;">
                                 {{scope.row.itemName}}
                             </el-button>
-                        </template>
+                        </template> -->
                     </el-table-column>
                     <!-- <el-table-column prop="itemType" label="事项类型" >
                     </el-table-column>
@@ -263,9 +260,6 @@ export default {
         getTime(val) {
             console.log(val);
         },
-        // handleSelectionChange(val) {
-        //     this.multipleSelection = val;
-        // },
         //  checkbox多选
         handleSelectionChange(val) {
             this.multipleSelection = val;

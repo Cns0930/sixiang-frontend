@@ -2,6 +2,7 @@ import _ from "lodash"
 import dayjs from "dayjs"
 import state from "@/vuex/home/state";
 import helper from "@/utils/function"
+import axios from "@/api/ANew/config"
 import Vue from "vue"
 
 export const mergeFieldAttr = (result, item) => {
@@ -88,7 +89,8 @@ export function functionReviverRuntime(value, tag,args=[]) {
                 }`).bind({
                 _,
                 dayjs,
-                helper
+                helper,
+                axios
             });
         }
     }
@@ -117,7 +119,8 @@ export function functionReviverEventRuntime(value, tag, key) {
                 }`).bind({
                     _,
                     dayjs,
-                    helper
+                    helper,
+                    axios
                 });
             } catch (e) {
                 console.warn("错误代码：function body"+match[1])

@@ -143,24 +143,6 @@ export default {
     computed: {},
     watch: {
     tableData(val) {
-        console.log(val,'9999')
-    //   if (val.length === 0) {
-    //     this.tableData.push({
-    //         documentName: '',
-    //         documentAlias: '',
-    //         isRequired:'',
-    //     });
-    //   }
-    //   this.sourceColumns = [];
-    //   this.targetColumns = [];
-    //   val.forEach((item) => {
-    //     this.sourceColumns.push(item.sourceColumn);
-    //     this.targetColumns.push(item.targetColumn);
-    //   });
-    //   this.sourceColumns = this.sourceColumns.filter((s) => s && s.trim());
-    //   this.targetColumns = this.targetColumns.filter((s) => s && s.trim());
-    //   console.log(this.sourceColumns);
-    //   console.log(this.targetColumns);
     },
   },
 

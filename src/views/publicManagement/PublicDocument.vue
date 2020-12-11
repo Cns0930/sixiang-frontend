@@ -17,7 +17,7 @@
             </el-select>
             <el-button @click="search" type="primary">搜索</el-button>
         </div>
-        <div>
+        <div class="tableWrap">
             <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%;" border
                 tooltip-effect="dark" :default-sort="{prop: 'createTime', order: 'descending'}">
 
@@ -227,16 +227,22 @@ export default {
     header{
         display:flex;
         align-items: center;
+        
         .title{
-            font-size:20px;
+            font-size: 20px;
+            font-weight: 700;
+            height: 50px;
+            line-height: 50px;
+            letter-spacing: 1px;
             margin-right:20px;
         }
     }
     & > * {
-        margin: 4px 0;
+        margin: 8px 0;
     }
 }
 .filter-box {
+    padding-left: 20px;
     & > *:not(:first-child) {
         margin-left: 10px;
     }
@@ -251,4 +257,13 @@ export default {
         width:200px;
     }
 }
+.tableWrap {
+        // margin-top: 16px;
+        margin-left: 20px;
+        width: calc(100% - 20px);
+        overflow: hidden;
+        .workTable {
+            width: 100%;
+        }
+    }
 </style>

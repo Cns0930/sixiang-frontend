@@ -73,6 +73,17 @@ const topMenuList=[
         ],
         order: 3
     },
+    {
+        label: "说明",
+        authKey: ["admin","developer","researcher","test"],
+        children:[
+            {
+                path: "/readme",
+                label: "开发说明",
+            },
+        ],
+        order: 4
+    },
     // {
     //     label: "批量编辑",
     //     authKey: ["admin","developer","researcher","test"],

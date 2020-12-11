@@ -1,12 +1,22 @@
 <template>
-    <div>
+    <div class="ui-compiler">
         <button @click="addConditionBlock">添加条件块</button>
         <!-- <button>添加行为</button> -->
         <button @click="compile">查看/关闭编译</button>
         <div ref="codeEditor" style="width:100%;height:300px" v-show="codeEditorOpen"></div>
         <div class="statement">
-            <Interface v-for="model,i in models" :key="i" :model="model" :list="fieldsWithOptions" class="statement"
-                @deleteConditionBlock="deleteConditionBlock(i)"></Interface>
+            <el-card v-for="model,i in models" :key="i" class="interface-block">
+                <div slot="header" class="interface-block-header">
+               
+                     <el-button  type="success" circle style="margin-right:20px">{{i+1}}</el-button>
+                    <button @click="modelUp(i)" v-if="i!=0">向上</button>
+                    <button @click="modelDown(i)" v-if="i!=models.length-1">向下</button>
+                </div>
+               
+                <Interface :model="model" :list="fieldsWithOptions" class="statement"
+                    @deleteConditionBlock="deleteConditionBlock(i)"></Interface>
+            </el-card>
+
         </div>
     </div>
 </template>
@@ -22,14 +32,14 @@ export default {
     components: {
         Interface
     },
-    props:{
-        models:{
-            default(){
+    props: {
+        models: {
+            default() {
                 return []
             }
         },
-        fields:{
-            default(){
+        fields: {
+            default() {
                 return []
             }
         }
@@ -44,10 +54,10 @@ export default {
     data() {
         return {
             // models: [],
-            code:"",
+            code: "",
             // 开关 configFn
-            codeEditorOpen:false,
-            codeEditor:null,
+            codeEditorOpen: false,
+            codeEditor: null,
 
         }
     },
@@ -66,7 +76,7 @@ export default {
         },
 
     },
-    mounted(){
+    mounted() {
 
     },
     methods: {
@@ -94,11 +104,11 @@ export default {
 
                 },
                 actionBlock: {
-                    actions:[
-                       
+                    actions: [
+
                     ]
                 },
-                type:"stepPage"
+                type: "stepPage"
             })
         },
         // 删除条件块
@@ -108,26 +118,26 @@ export default {
         addAction() {
 
         },
-        async compile(){
+        async compile() {
             // console.log(this.models);
-            if(this.codeEditorOpen){
-                this.codeEditorOpen=false;
+            if (this.codeEditorOpen) {
+                this.codeEditorOpen = false;
                 return;
             }
             this.codeEditorOpen = true;
             await this.$nextTick();
 
-            
-            try{
-               this.code= compiler(this.models)
-               
-            }catch(e){
+
+            try {
+                this.code = compiler(this.models)
+
+            } catch (e) {
                 console.warn(e);
-                this.code="配置错误"
+                this.code = "配置错误"
             }
             this.initEditForConfig(this.code)
             console.log(this.code);
-            
+
         },
         // 初始化 配置 编辑器
         initEditForConfig() {
@@ -138,19 +148,38 @@ export default {
             this.codeEditor.setValue(this.code)
             beautify.beautify(this.codeEditor.session)
         },
-        getCompilerValue(){
-            try{
-               this.code= compiler(this.models)
-               
-            }catch(e){
+        getCompilerValue() {
+            try {
+                this.code = compiler(this.models)
+
+            } catch (e) {
                 console.warn(e);
-                this.code="配置错误"
+                this.code = "配置错误"
             }
             this.initEditForConfig(this.code)
             return this.codeEditor.getValue();
         },
-        getModels(){
+        getModels() {
             return this.models
+        },
+        modelUp(i) {
+            let originIndex = i;
+            let targetIndex = i - 1;
+
+            let temp = this.models[targetIndex];
+
+            this.$set(this.models, targetIndex, this.models[originIndex]);
+            this.$set(this.models, originIndex, temp);
+
+        },
+        modelDown(i) {
+            let originIndex = i;
+            let targetIndex = i + 1;
+
+            let temp = this.models[targetIndex];
+
+            this.$set(this.models, targetIndex, this.models[originIndex]);
+            this.$set(this.models, originIndex, temp);
         }
     }
 
@@ -161,5 +190,8 @@ export default {
 <style scoped lang="scss">
 .statement {
     margin-bottom: 16px;
+}
+.interface-block {
+   margin-bottom: 6px;
 }
 </style>
