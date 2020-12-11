@@ -56,6 +56,7 @@
                     <el-table-column prop="fieldType" label="类型" :formatter="formatFieldType" width="120">
                     </el-table-column>
                     <el-table-column prop="remark" label="备注"> </el-table-column>
+                    <el-table-column prop="descriptionInfo" label="字段描述信息"> </el-table-column>
                     <el-table-column fixed="right" label="操作" width="350">
                         <template slot-scope="scope">
                             <el-button @click="handleClickFieldDY(scope.row);" type="text" size="small"> 需求编辑</el-button>
