@@ -4,7 +4,7 @@
         </header>
         <section class="workBox">
             <div class="searchBox">
-                <el-tag size="medium" style="margin-top:10px" v-for="item in tagList" :key="item.itemNo">{{item.itemName}}</el-tag>
+                <el-tag size="medium" style="margin-top:10px" effect="plain" v-for="item in tagList" :key="item.itemNo">{{item.itemName}}</el-tag>
                 <div class="handle">
                     <el-button @click="transferOutput">保存输出到超级帮办</el-button>
                 </div>
@@ -337,7 +337,7 @@ export default {
                 lists.map(v=>axios.post(serviceBaseUrl+"/api/sixiang/saveJavaScript", v).then(res => res.data))
             );
             console.log(result)
-            if(result.every(v=>v.success)){
+            if(result.every(v=>v.code == 200)){
                 this.$message({ type: "success", message: "导入成功 请查看数据库" });
             }else{
                 this.$message({ type: "error", message: result.message + " "+ result.data });

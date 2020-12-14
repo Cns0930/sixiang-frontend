@@ -241,7 +241,7 @@ export default {
         };
     },
     computed: {
-         ...mapGetters({hasManagePermission:'config/hasManagePermission'})
+        ...mapGetters({hasManagePermission:'config/hasManagePermission'})
     },
     async created() {
         await this.list();
