@@ -1,5 +1,6 @@
 @import './color.scss';
-::-webkit-scrollbar{
+
+::-webkit-scrollbar {
     width: 7px;
     height: 7px;
     background-color: #F5F5F5;
@@ -14,12 +15,13 @@
 }
 
 /*定义滑块 内阴影+圆角*/
-::-webkit-scrollbar-thumb{
+::-webkit-scrollbar-thumb {
     border-radius: 10px;
     box-shadow: inset 0 0 6px rgba(0, 0, 0, .1);
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .1);
     background-color: #c8c8c8;
 }
+
 .el-input__inner-like {
     -webkit-appearance: none;
     box-sizing: border-box;
@@ -33,20 +35,21 @@
     transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
     width: 100%;
 }
+
 .el-textarea.is-disabled {
     &>textarea.el-textarea__inner {
         background-color: #00286D !important;
     }
 }
 
-.el-button{
+.el-button {
     padding: 6px 10px;
     border-radius: 2px;
 }
 
 
 .side.el-button {
-    color:#fff;
+    color: #fff;
     border-radius: 4px;
     background-image: linear-gradient(180deg, #3397FF 0%, #013BD3 100%);
     font-size: 16px;
@@ -54,10 +57,11 @@
     border-color: #0665ab;
     height: 30px;
     width: 70px;
-    display:flex;
+    display: flex;
     align-items: center;
     justify-content: center;
 }
+
 .sub-title-n {
     display: flex;
     align-items: center;
@@ -86,31 +90,36 @@
 }
 
 // 重置弹窗样式
-.el-dialog{
+.el-dialog {
     border-radius: 4px;
 }
-.el-dialog__header{
+
+.el-dialog__header {
     background: #F0F2F5;
     padding: 10px 20px 10px 20px;
     border-radius: 4px 4px 0 0;
-    span{
+
+    span {
         color: #222222;
         line-height: 20px;
     }
-    .el-dialog__headerbtn{
+
+    .el-dialog__headerbtn {
         top: 11px;
     }
-    .el-dialog__headerbtn .el-dialog__close{
-            color: #2e2d2d !important;
-            font-size: 20px;
+
+    .el-dialog__headerbtn .el-dialog__close {
+        color: #2e2d2d !important;
+        font-size: 20px;
     }
 }
-.el-dialog__body{
+
+.el-dialog__body {
     max-height: 560px;
     overflow-y: auto;
 }
 
-p.trip{
+p.trip {
     font-size: 14px;
     color: #606266;
     font-weight: 600;
@@ -118,61 +127,147 @@ p.trip{
 
 // 左侧 菜单
 
-.el-menu-item,.el-submenu__title {
-	height: 38px;
-	line-height: 38px;
-	font-size: 12px;
+.el-menu-item,
+.el-submenu__title {
+    height: 38px;
+    line-height: 38px;
+    font-size: 12px;
 }
+
 .el-menu-item-group__title {
-	padding-top: 0px;
-	font-size: 12px;
+    padding-top: 0px;
+    font-size: 12px;
 }
+
 .el-submenu .el-menu {
-	background-color: $color_menu_item_hover;
+    background-color: $color_menu_item_hover;
 }
-.el-submenu .el-menu-item:hover,.el-submenu__title:hover{
-	background-color: $color_menu_item_hover;
+
+.el-submenu .el-menu-item:hover,
+.el-submenu__title:hover {
+    background-color: $color_menu_item_hover;
 }
+
 .el-submenu .el-menu-item {
     height: 38px;
     line-height: 38px;
 }
-.el-submenu .el-menu-item:hover{
-	color: $color_menu_hover;
+
+.el-submenu .el-menu-item:hover {
+    color: $color_menu_hover;
 }
+
 .el-menu-item.is-active {
     color: $color_menu_item_color;
-    background: rgba(0,0,0,0.10);
-    box-shadow: inset 0 1px 2px 0 rgba(0,0,0,0.12);
+    background: rgba(0, 0, 0, 0.10);
+    box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.12);
 }
- .el-menu-item:hover{
-	color: $color_menu_item_color;
-    background: rgba(0,0,0,0.050);
-    
+
+.el-menu-item:hover {
+    color: $color_menu_item_color;
+    background: rgba(0, 0, 0, 0.050);
+
 }
-.el-menu-item, .el-submenu__title{
-	color:$color_menu_item_color;
+
+.el-menu-item,
+.el-submenu__title {
+    color: $color_menu_item_color;
 }
-.el-menu{
+
+.el-menu {
     background-color: $color_menu_bgcolor;
-    border:none;
+    border: none;
 }
 
-.el-menu-item:focus{
-    background: rgba(0,0,0,0.050);
+.el-menu-item:focus {
+    background: rgba(0, 0, 0, 0.050);
 }
 
-.dropdown-menu-top{
+.dropdown-menu-top {
     padding: 12px 0;
 
-    .dropdown-list{
-        li{
+    .dropdown-list {
+        li {
             cursor: pointer;
-            font-size:12px;
-            padding:6px 12px;
-            &:hover{
+            font-size: 12px;
+            padding: 6px 12px;
+
+            &:hover {
                 background-color: #eee;
             }
         }
+    }
+}
+
+
+
+.ui-compiler {
+    button {
+        align-items: center;
+        border: 1px solid #3273dc;
+
+        box-shadow: none;
+        display: inline-flex;
+
+        height: 20px;
+        justify-content: flex-start;
+        line-height: 12px;
+        padding: 1px;
+        // position: relative;
+        vertical-align: top;
+        border-radius: 2px;
+        font-size: 12px;
+        background-color: transparent;
+        
+        color: #3273dc;
+        cursor:pointer;
+        &:hover {
+            background-color: #3273dc;
+            border-color: #3273dc;
+            color: #fff;
+        }
+        &:focus{
+            box-shadow: 0 0 0 0.125em rgba(50,115,220,.25);
+            border-color: #3273dc;
+            outline: 0;
+            // background-color: #3273dc;
+            // color: #fff;
+        }
+    }
+
+    select {
+        align-items: center;
+        border: 1px solid #3298dc;
+        border-radius: 2px;
+        box-shadow: none;
+        display: inline-flex;
+        font-size: 12px;
+        height: 20px;
+        justify-content: flex-start;
+        line-height: 1.5;
+        padding: 1px;
+        
+        vertical-align: top;
+    }
+
+    input {
+        align-items: center;
+        border: 1px solid  #3298dc;
+        border-radius: 2px;
+        box-shadow: none;
+        display: inline-flex;
+        font-size: 12px;
+        height: 20px;
+        justify-content: flex-start;
+        line-height: 1.5;
+        padding: 1px;
+        
+        vertical-align: top;
+        &:focus{
+            box-shadow: 0 0 0 0.125em rgba(0,209,178,.25);
+            border-color: #3273dc;
+            outline: 0;
+        }
+        
     }
 }

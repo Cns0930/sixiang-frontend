@@ -1,13 +1,17 @@
 <template>
     <div class="interface">
-        
-        <p>条件：IF</p>
-        <p></p>
-        <Conditions :conditionBlock="model.conditionBlock" :list="list" @deleteConditionBlock="$emit('deleteConditionBlock')"></Conditions>
-        
-        <p>行为：</p>
-        <Actions :actionBlock="model.actionBlock" :list="list" style="margin-left:20px"></Actions>
-        <el-divider/>
+        <div class="block condition-block">
+            <p class="-center">条件</p>
+
+            <Conditions :conditionBlock="model.conditionBlock" :list="list"
+                @deleteConditionBlock="$emit('deleteConditionBlock')" class="block-content"></Conditions>
+        </div>
+
+        <div class="block action-block">
+            <p class="-center">行为</p>
+            <Actions :actionBlock="model.actionBlock" :list="list" class="block-content" ></Actions>
+        </div>
+
     </div>
 </template>
 
@@ -41,7 +45,7 @@ export default {
                             //  宾语
                             object: "",
                         }],
-                      
+
 
                     },
                     actionBlock: {
@@ -59,13 +63,13 @@ export default {
     },
     data() {
         return {
-            
+
         }
     },
     methods: {
-        
-       
-        
+
+
+
 
     }
 
@@ -75,8 +79,31 @@ export default {
 </script>
 
 <style scoped lang="scss">
-// .interface {
-//     margin-left: 28px;
-// }
+.interface {
+  
+}
+.block-content{
+    // background: rgba(103, 178, 255, 0.3);
+    padding: 10px;
+
+    flex: 1;
+}
+.block {
+    margin-bottom: 4px;
+    display: flex;
+    border:1px solid #C5C7C9;
+    border-left:none;
+    
+}
+.condition-block p{
+    background:rgba(248,123,19,0.2);
+    width: 40px;
+    border-left:2px solid #F87B13; 
+}
+.action-block p {
+    background:rgba(212,29,29,0.2);
+     width: 40px;
+     border-left:2px solid #D41D1D; 
+}
 </style>
 

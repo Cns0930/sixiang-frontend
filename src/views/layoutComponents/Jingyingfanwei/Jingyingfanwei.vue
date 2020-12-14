@@ -61,7 +61,7 @@
                         </div>
                     </el-col>
                     
-                    <el-form-item label="表述条目" prop="required" :obj="v.fanwei.trim()">
+                    <el-form-item label="表述条目" prop="required" :obj="v.fanwei">
                         <el-select v-model="v.fanwei.value" filterable placeholder="请输入内容" style="width:calc(100% - 140px)"
                             @change="handleChangeConfirm($event,v)">
                             <el-option v-for="(o,q) in opsXuke" :key="q" :label="o.label" :value="o.value">
@@ -289,6 +289,9 @@ export default {
                 textarea.htmlValue = this.valueToHtmlValue(textarea.value)
             }
             data.forbid = true;
+            if(flag == 'Fanwei') {
+                this.handleAdd();
+            }
             // console.log(data,this.value,'add');
         },
         valueToHtmlValue(value) {
