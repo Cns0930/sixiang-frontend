@@ -165,7 +165,15 @@ export function CheckMail(code) {
         return false
     }
 }
-
+export function getGudongTypeByName(name) {
+    if(name.length >= 1 && name.length <= 4){
+        return "自然人"
+    }else if(name.length >= 7){
+        return "企业"
+    }else{
+        return ""
+    }
+}
 export default {
     CheckSocialCreditCode,
     IdentityCodeValid,
@@ -173,6 +181,7 @@ export default {
     CheckPhone,
     CheckMail,
     CheckPostCode,
-    CheckFixedTelephone
-    
+    CheckFixedTelephone,
+    getGudongTypeByName
 }
+

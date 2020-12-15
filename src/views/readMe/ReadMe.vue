@@ -75,6 +75,9 @@ helper.CheckMail,
 helper.CheckPostCode,
 // 验证固定电话
 helper.CheckFixedTelephone
+//  根据股东名称长度 判断股东类型
+helper.getGudongTypeByName(name)
+
 \`\`\`
     `
     }
