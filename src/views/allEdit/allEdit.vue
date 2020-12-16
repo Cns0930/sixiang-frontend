@@ -31,10 +31,10 @@
                 </div>
             </div>
             <div class="tableWrap">
-                <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%;" border
-                    tooltip-effect="dark" :default-sort="{prop: 'createTime', order: 'descending'}" @selection-change="handleSelectionChange">>
+                <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%;" border :row-key="getRowKey"
+                    tooltip-effect="dark" :default-sort="{prop: 'createTime', order: 'descending'}" @select="handleSelectionChange" >
                    
-                    <el-table-column type="selection" width="70"></el-table-column>
+                    <el-table-column type="selection" width="70" :reserve-selection='true'></el-table-column>
                     <el-table-column prop="projectName" label="项目" sortable >
                     </el-table-column>
                     <el-table-column prop="approvalName" label="大项" show-overflow-tooltip sortable>
@@ -235,14 +235,16 @@ export default {
             currentPage: 1,
             pagesize: 15,
             totalCount: 0,
-            multipleSelection: []
+            flag:true,
+            multipleSelection: [],
+            // multipleSelectionAll: [],   // 所有选中的数据包含跨页数据
         };
     },
     computed: {
-         ...mapGetters({hasManagePermission:'config/hasManagePermission'})
+        ...mapGetters({hasManagePermission:'config/hasManagePermission'})
     },
     async created() {
-        await this.searchItem();
+        await this.list();
         await this.loadOptions();
 
         let itemInfo = this.$store.state.home.item;
@@ -254,16 +256,33 @@ export default {
         
     },
     methods: {
-        // inputs(val) {
-        //   console.log(this.model);
-        // },
         getTime(val) {
             console.log(val);
         },
-        //  checkbox多选
-        handleSelectionChange(val) {
+        async list() {
+            let params = {
+                approvalId: this.filterApprovalId,
+                projectId: this.filterProjectId,
+                keyword: this.filterKeyword,
+                pageSize: this.pagesize,
+                pageNum: this.currentPage,
+            }
+            if (this.timeRange != null && this.timeRange.length > 1) {
+                params.startTime = this.timeRange[0];
+                params.endTime = this.timeRange[1];
+            }
+            let result = await listApprovalItem(params);
+            if(!result.success) return;
+            this.tableData = result.data.records;
+            this.totalCount = result.data.total;
+        },
+        getRowKey(row) {
+           return row.approvalItemId
+        },
+        handleSelectionChange (val,item) {
             this.multipleSelection = val;
         },
+
         // 取消选择
         toggleSelection() {
            this.$refs.multipleTable.clearSelection();
@@ -384,26 +403,11 @@ export default {
                 this.$message({ type: "warning", message: "取消关闭" })
             }
         },
-        async handleCurrentChange() {
-            this.list();
+        // 分页切换
+        async handleCurrentChange(v) {
+            await this.list();
         },
-        async list() {
-            let params = {
-                approvalId: this.filterApprovalId,
-                projectId: this.filterProjectId,
-                keyword: this.filterKeyword,
-                pageSize: this.pagesize,
-                pageNum: this.currentPage,
-            }
-            if (this.timeRange != null && this.timeRange.length > 1) {
-                params.startTime = this.timeRange[0];
-                params.endTime = this.timeRange[1];
-            }
-            let result = await listApprovalItem(params);
-             if(!result.success) return;
-            this.tableData = result.data.records;
-            this.totalCount = result.data.total;
-        },
+        
         
     },
 };
