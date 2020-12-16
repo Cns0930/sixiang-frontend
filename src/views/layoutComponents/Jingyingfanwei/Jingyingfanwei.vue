@@ -173,17 +173,17 @@ export default {
         },
     },
     async created() {
-        this.hightlightJingyingfanwei = await getListHighlighterScopes();
-        let ops = await getScopes();
-        this.ops = ops.map(v => ({ value: v, label: v }));
-        this.scopeWithMatter = await getScopesRelation();
-        this.opsXuke = this.scopeWithMatter.map(v => ({ value: v.scopes, label: v.scopes }));
         if(this.value.jingyingfanwei.textArray.length == 0) {
             this.value.addList = []
             this.addList = this.value.addList;
         } else {
             this.addList = this.value.addList;
         }
+        this.hightlightJingyingfanwei = await getListHighlighterScopes();
+        let ops = await getScopes();
+        this.ops = ops.map(v => ({ value: v, label: v }));
+        this.scopeWithMatter = await getScopesRelation();
+        this.opsXuke = this.scopeWithMatter.map(v => ({ value: v.scopes, label: v.scopes }));
         
         // console.log(this.value,'value123123');
         this.$set(this.resultBlock, "htmlValue", this.valueToHtmlValue(this.resultBlock.value))
@@ -229,13 +229,13 @@ export default {
         },
         // 移除添加项
         handleRemove(data, i) {
-            console.log(data, i, 'delete')
+            console.log(data, i, 'delete',this.resultBlock)
             let added = data.fanwei;
             let textarea = this.resultBlock;
-            if (textarea && added) {
+            if (textarea && added.value) {
                 textarea.value = textarea.value.replace("，" + added.value, "");
                 textarea.htmlValue = this.valueToHtmlValue(textarea.value)
-                textarea.textArray = _.remove(textarea.textArray, added.value)
+                _.remove(textarea.textArray, (n) => n == added.value)
             }
             this.addList.splice(i, 1)
         },
