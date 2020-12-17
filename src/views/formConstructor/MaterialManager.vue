@@ -7,7 +7,7 @@
             <el-button @click="handleDownload" type="primary">下载最新word模板</el-button>
 
             <el-badge :is-dot="!isLast" >
-                <el-button @click="transferAllTemplates">批量保存到超级帮办</el-button>
+                <el-button @click="transferAllTemplates" :disabled="backend.includes('4141')">批量保存到超级帮办</el-button>
             </el-badge>
 
         </div>
@@ -129,6 +129,7 @@ export default {
     components: { CodeEditor },
     data() {
         return {
+            backend: process.env.VUE_APP_BASE_IP,
             templates: [],
 
             templateCreateVisible: false,

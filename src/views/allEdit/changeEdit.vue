@@ -6,7 +6,7 @@
             <div class="searchBox">
                 <el-tag size="medium" style="margin-top:10px" effect="plain" v-for="item in tagList" :key="item.itemNo">{{item.itemName}}</el-tag>
                 <div class="handle">
-                    <el-button @click="transferOutput">保存输出到超级帮办</el-button>
+                    <el-button @click="transferOutput" :disabled="backend.includes('4141')">保存输出到超级帮办</el-button>
                 </div>
             </div>
             <div class="tableWrap">
@@ -141,6 +141,7 @@ export default {
     },
     data() {
         return {
+            backend: process.env.VUE_APP_BASE_IP,
             defRenderers,
             loading:false,
             // 页面信息
