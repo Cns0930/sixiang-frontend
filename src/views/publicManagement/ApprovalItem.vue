@@ -283,7 +283,7 @@ export default {
             await this.loadOptions();
         },
         async saveItem() {
-            this.tempItem.createBy = this.loginName;
+            this.tempItem.createBy = localStorage.getItem("username");
             let res = await addApprovalItem(this.tempItem);
             if (res.success) {
                 this.$message.success("事项保存成功!");
