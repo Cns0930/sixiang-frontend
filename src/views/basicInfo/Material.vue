@@ -13,12 +13,12 @@
             </div>
             <div class="tableWrap">
                 <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%;" border
-                    tooltip-effect="dark" :default-sort="{prop: 'createTime', order: 'descending'}">
+                    tooltip-effect="dark" :default-sort="{prop: 'createTime', order: 'descending'}" :height="tableHeight">
                     <!-- <el-table-column
               type="selection"
               width="50">
                     </el-table-column>-->
-                    <el-table-column label="序号" type="index" width="45" :index="indexMethod"></el-table-column>
+                    <el-table-column label="序号" type="index" width="50px" :index="indexMethod"></el-table-column>
                     <!-- <el-table-column
               label="部门"
               sortable
@@ -49,20 +49,20 @@
                         width="100"
                         show-overflow-tooltip
                     ></el-table-column> -->
-                    <el-table-column prop="docxTemplateName" label="超级帮办word模板命名" width="200"></el-table-column>
-                    <el-table-column prop="documentSeq" label="文档序号" width="100" show-overflow-tooltip>
+                    <el-table-column prop="docxTemplateName" label="超级帮办word模板命名"></el-table-column>
+                    <el-table-column prop="documentSeq" label="文档序号"  width="50px">
                     </el-table-column>
-                    <el-table-column prop="isNavigation" label="是否显示在左侧导航" width="100" :formatter="isRequiredFormatter">
+                    <el-table-column prop="isNavigation" label="是否显示在左侧导航" :formatter="isRequiredFormatter">
                     </el-table-column>
-                    <el-table-column prop="navigationOrder" label="导航顺序" width="100"></el-table-column>
-                    <el-table-column prop="descriptionInfo" label="材料逻辑"></el-table-column>
-                    <el-table-column prop="produceSource" label="产生方式" width="100" show-overflow-tooltip>
+                    <el-table-column prop="navigationOrder" label="导航顺序"  width="50px" ></el-table-column>
+                    <el-table-column prop="descriptionInfo" label="材料逻辑" show-overflow-tooltip width="300"></el-table-column>
+                    <el-table-column prop="produceSource" label="产生方式" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable width="160">
                     </el-table-column>
-                    <el-table-column prop="updateTime" label="最后修改时间" width="160" :formatter="timeFormatter" sortable
+                    <el-table-column prop="updateTime" label="最后修改时间" :formatter="timeFormatter" sortable
                         show-overflow-tooltip></el-table-column>
-                    <el-table-column label="操作" fixed="right" width="230">
+                    <el-table-column label="操作" fixed="right" width="110px">
                         <template slot-scope="scope">
                             <el-button size="mini" type="primary"  @click="goOnlineDocumentEditor(scope.row)">编辑word模板</el-button>
                             <el-button size="mini" @click="EditmaterialVisible(scope.row)">编辑</el-button>
@@ -205,7 +205,7 @@
             </span>
         </el-dialog>
         <!-- 导入自选材料 -->
-        <el-dialog title="导入自选材料" :visible.sync="importDialogVisible" width="80%" :close-on-click-modal="false">
+        <el-dialog title="导入自选材料" :visible.sync="importDialogVisible" width="50%" :close-on-click-modal="false">
 
             <el-form label="事项名称">
                 <el-select clearable filterable placeholder="请选择事项名称或者输入关键词" v-model="idd" @change="selectOne"
@@ -225,12 +225,13 @@
                 </el-select>
             </el-form>
 
-            <el-table :data="tableDataSS" border row-key="materialId" ref="checkTable"
+            <el-table :data="tableDataSS" border row-key="materialId" style="width:80%" ref="checkTable"
                 @selection-change="handleSelectionChange">
-                <el-table-column prop="materialCode" label="材料编码"></el-table-column>
-                <el-table-column prop="materialName" label="材料名称"></el-table-column>
                 <el-table-column type="selection" reserve-selection label="选择">
                 </el-table-column>
+                <el-table-column prop="materialCode" label="材料编码" width="200"></el-table-column>
+                <el-table-column prop="materialName" label="材料名称"></el-table-column>
+                
             </el-table>
 
             <p>已选中{{temp_selected_fields.length}}个材料</p>
@@ -290,17 +291,47 @@ export default {
             tableData: [],
             totalAim: 0,
             multipleSelection: [],
+            tableHeight:0,
         };
     },
     computed: {},
     async created() {
         await this.init();
         await this.search();
+        this.getTableHeight()
+    },
+    //挂载window.onresize事件
+    mounted() {
+    let _this = this
+    window.onresize = () => {
+        if (_this.resizeFlag) {
+        clearTimeout(_this.resizeFlag)
+        }
+        _this.resizeFlag = setTimeout(() => {
+        _this.getTableHeight()
+        _this.resizeFlag = null
+        }, 100)
+    }
+    },
+    // 注销window.onresize事件
+    beforeRouteLeave(to, from, next) {
+    //离开组件的时候触发
+    window.onresize = null
+    next()
     },
     methods: {
         // inputs(val) {
         //   console.log(this.model);
         // },
+        getTableHeight() {
+            let tableH = 280
+            let tableHeightDetil = window.innerHeight - tableH
+            if (tableHeightDetil <= 300) {
+                this.tableHeight = 300
+            } else {
+                this.tableHeight = window.innerHeight - tableH
+            }
+        },
         getTime(val) {
             console.log(val);
         },

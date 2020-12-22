@@ -18,8 +18,8 @@
             </el-upload>
             <el-button type="success" @click="upload()" class="upload-input">导入</el-button>
 
-        </div>
-        <el-table :data="tableData" border style="margin-top: 10px;">
+        </div> 
+        <el-table :data="tableData" border style="margin-top: 10px;" :height="tableHeight">
             <el-table-column prop="materialName" label="材料名称"></el-table-column>
             <el-table-column prop="docxTemplateName" label="模板名称" ></el-table-column>
             <el-table-column prop="fieldName" label="字段名称"  :show-overflow-tooltip="true"></el-table-column>
@@ -28,8 +28,8 @@
             <el-table-column prop="fieldNo" label="字段编号" ></el-table-column>
             <el-table-column prop="valueSource" label="字段值来源"></el-table-column>
             <el-table-column prop="defaultValue" label="默认值" ></el-table-column>
-            <el-table-column prop="descriptionInfo" label="字段逻辑描述"></el-table-column>
-            <el-table-column prop="note" label="备注"></el-table-column>
+            <el-table-column prop="descriptionInfo" label="字段逻辑描述" show-overflow-tooltip width="200"></el-table-column>
+            <!-- <el-table-column prop="note" label="备注"></el-table-column> -->
             <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter"  ></el-table-column>
             <el-table-column prop="updateTime" label="更新时间" :formatter="timeFormatter"></el-table-column>
             <el-table-column label="操作">
@@ -306,12 +306,33 @@ export default {
                 关联材料不存在: null,
                 同情形下名称相同: null,
             },
+            tableHeight:0,
         };
     },
     async created() {
         await this.init();
         this.materialList();
         this.reloadTable();
+        this.getTableHeight()
+    },
+    //挂载window.onresize事件
+    mounted() {
+    let _this = this
+    window.onresize = () => {
+        if (_this.resizeFlag) {
+        clearTimeout(_this.resizeFlag)
+        }
+        _this.resizeFlag = setTimeout(() => {
+        _this.getTableHeight()
+        _this.resizeFlag = null
+        }, 100)
+    }
+    },
+    // 注销window.onresize事件
+    beforeRouteLeave(to, from, next) {
+    //离开组件的时候触发
+    window.onresize = null
+    next()
     },
     methods: {
         // 查询表格
@@ -516,6 +537,15 @@ export default {
         //  移除文件
         handleRemove(file, fileList) {
         },
+        getTableHeight() {
+            let tableH = 280
+            let tableHeightDetil = window.innerHeight - tableH
+            if (tableHeightDetil <= 300) {
+                this.tableHeight = 300
+            } else {
+                this.tableHeight = window.innerHeight - tableH
+            }
+        }
     }
 };
 </script>

@@ -523,6 +523,15 @@ export default {
             this.$set(this.temp_page.stepObject.config, originIndex, temp);
             console.log(this.temp_page.stepObject.config)
         },
+        // 向下
+        swapDown(scope) {
+            let originIndex = scope.$index;
+            let targetIndex = originIndex + 1;
+            let temp = this.temp_page.stepObject.config[targetIndex];
+            this.$set(this.temp_page.stepObject.config, targetIndex, this.temp_page.stepObject.config[originIndex]);
+            this.$set(this.temp_page.stepObject.config, originIndex, temp);
+            console.log(this.temp_page.stepObject.config)
+        },
         //  预览
         // handlePreview() {
         //     let module = {

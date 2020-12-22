@@ -32,7 +32,7 @@
             </div>
             <div class="tableWrap">
                 <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%;" border :row-key="getRowKey"
-                    tooltip-effect="dark" :default-sort="{prop: 'createTime', order: 'descending'}" @select="handleSelectionChange" >
+                    tooltip-effect="dark" :default-sort="{prop: 'createTime', order: 'descending'}" @selection-change="handleSelectionChange" >
                    
                     <el-table-column type="selection" width="70" :reserve-selection='true'></el-table-column>
                     <el-table-column prop="projectName" label="项目" sortable >
@@ -279,7 +279,8 @@ export default {
         getRowKey(row) {
            return row.approvalItemId
         },
-        handleSelectionChange (val,item) {
+        handleSelectionChange (val) {
+            console.log(val)
             this.multipleSelection = val;
         },
 
