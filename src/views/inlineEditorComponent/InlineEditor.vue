@@ -14,7 +14,7 @@
                 <el-divider direction="vertical" content-position="center"></el-divider>
                 <button @click="openEditor">全屏打开代码编辑器</button>
 
-                <el-divider direction="vertical" content-position="center"></el-divider> <button @click="transfer">保存并输出html到超级帮办</button>
+                <el-divider direction="vertical" content-position="center"></el-divider> <button @click="transfer" :disabled="backend.includes('4141')">保存并输出html到超级帮办</button>
             </div>
 
             <div class="main">
@@ -84,6 +84,7 @@ export default {
     props: ["temp_page", "currentPagenum"],
     data() {
         return {
+            backend: process.env.VUE_APP_BASE_IP,
             editor: null,
             ifShow: false,
             page: "0",

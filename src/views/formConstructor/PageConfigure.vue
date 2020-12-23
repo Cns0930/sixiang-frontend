@@ -11,7 +11,7 @@
 
             <el-divider direction="vertical"></el-divider>
             <el-badge :is-dot="!isLast">
-                 <el-button @click="transferOutput">保存输出到超级帮办</el-button>
+                 <el-button @click="transferOutput" :disabled="backend.includes('4141')">保存输出到超级帮办</el-button>
             </el-badge>
            
         </div>
@@ -230,6 +230,7 @@ export default {
     components:{UiCompilerComponent},
     data() {
         return {
+            backend: process.env.VUE_APP_BASE_IP,
             // 创建页面用
             stepPageCreateVisible: false,
             temp_page_name: "",

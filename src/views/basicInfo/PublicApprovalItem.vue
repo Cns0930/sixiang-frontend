@@ -311,7 +311,7 @@ export default {
             await this.loadOptions();
         },
         async saveItem() {
-            this.tempItem.createBy = this.loginName;
+            this.tempItem.createBy = localStorage.getItem("username");
             this.tempItem.isPublic = 1;
             let res = await addApprovalItem(this.tempItem);
             if (res.success) {
