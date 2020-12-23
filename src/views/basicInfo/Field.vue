@@ -498,6 +498,7 @@ export default {
         customUpload(file) {
             let fd = new FormData();
             fd.append("file", file);
+            fd.append("approvalItemId", this.itemId);
             console.log('fd');
             console.log(fd);
             axios.post(
@@ -522,7 +523,14 @@ export default {
             return false;
         },
         upload() {
+            this.$confirm('会全部覆盖，是否继续导入？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+        }).then(() => {
             this.$refs.upload.submit();
+        }).catch(_ => {});
+            
         },
         // 成功上传文件
         upFile(res, file) {
