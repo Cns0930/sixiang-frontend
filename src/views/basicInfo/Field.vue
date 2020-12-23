@@ -19,7 +19,7 @@
             <el-button type="success" @click="upload()" class="upload-input">导入</el-button>
 
         </div> 
-        <el-table :data="tableData" border style="margin-top: 10px;" :height="tableHeight">
+        <el-table :data="tableData" border style="margin-top: 10px;" :height="tableHeight" v-loading="loading">
             <el-table-column prop="materialName" label="材料名称"></el-table-column>
             <el-table-column prop="docxTemplateName" label="模板名称" ></el-table-column>
             <el-table-column prop="fieldName" label="字段名称"  :show-overflow-tooltip="true"></el-table-column>
@@ -249,6 +249,7 @@ export default {
     mixins: [basicMixin],
     data() {
         return {
+            loading:false,
             // 页面信息
             type: "field",
             itemId: this.$route.query.itemId,
@@ -496,6 +497,7 @@ export default {
         },
         // 上传文件
         customUpload(file) {
+             this.loading = true
             let fd = new FormData();
             fd.append("file", file);
             fd.append("approvalItemId", this.itemId);
@@ -514,7 +516,8 @@ export default {
                             this.reloadTable();
                             this.$refs.upload.clearFiles();
                             this.uploadBackInfo = res.data.data;
-                            this.uploadDialogVisible = true;
+                            this.loading = false
+                            // this.uploadDialogVisible = true;
                         } else {
                             this.$message.warning('上传失败,请重新上传');
                         }
