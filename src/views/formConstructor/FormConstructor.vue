@@ -62,8 +62,8 @@
                         <template slot-scope="scope">
                             <el-button @click="handleClickFieldDY(scope.row);" type="text" size="small"> 需求编辑</el-button>
                             <el-button @click="handleClickField(scope.row);" type="text" size="small"> 编辑</el-button>
-                            <!-- <el-button @click="handleClickChangeType(scope);" type="text" size="small">更改组件类型
-                            </el-button> -->
+                            <el-button @click="handleClickChangeType(scope);" type="text" size="small">更改组件类型
+                            </el-button>
                             <el-button @click="handleClickAddChild(scope.row);" type="text" size="small"
                                 :disabled="!scope.row.isList">添加子项
                             </el-button>

@@ -124,7 +124,7 @@
                         <el-form-item label="产生方式">
                             <el-select v-model="materialT.produceSource" placeholder="材料的产生来源">
                                 <el-option label="用户自带" value="用户自带"></el-option>
-                                <el-option label="现场制作" value="当场制作"></el-option>
+                                <el-option label="现场制作" value="现场制作"></el-option>
                             </el-select>
                         </el-form-item>
                     </div>
@@ -180,7 +180,7 @@
                         <el-form-item label="产生方式">
                             <el-select v-model="materialTEdit.produceSource" placeholder="材料的产生来源">
                                 <el-option label="用户自带" value="用户自带"></el-option>
-                                <el-option label="现场制作" value="当场制作"></el-option>
+                                <el-option label="现场制作" value="现场制作"></el-option>
                             </el-select>
                         </el-form-item>
                     </div>
