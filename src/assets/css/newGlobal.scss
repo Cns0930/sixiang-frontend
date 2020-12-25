@@ -555,6 +555,18 @@
 .el-cascader-node.in-active-path, .el-cascader-node.is-active, .el-cascader-node.is-selectable.in-checked-path {
     color: #fff;
 }
+// 日期范围
+.el-range-editor.el-input__inner{
+    width:100%;
+}
+.el-range-editor .el-range-input{
+    background:#00286D;
+    color: #FFF;
+}
+.el-date-editor .el-range-separator{
+    color: #FFF;
+    padding: 0;
+}
 // 其他
 
 #dwtcontrolContainer {

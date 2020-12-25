@@ -46,18 +46,19 @@
         <div class="main">
        
             <!-- 字段表格 -->
-            <div class="fields-table" style="width: 100%;padding:10px 60px">
+            <div class="fields-table" style="width: 100%;padding:10px 60px" :height="tableHeight">
                 <el-table :data="tableData" border style="width: 100%" row-key="id"
                     :tree-props="{children: 'list', hasChildren: 'hasChildren'}" default-expand-all>
                     <el-table-column fixed prop="fieldNo" label="fieldNo" width="150"></el-table-column>
-                    <el-table-column prop="fieldName" label="字段名称" width="150"></el-table-column>
-                    <el-table-column prop="label" label="label" width="180"></el-table-column>
-                    <el-table-column prop="type" label="组件名" width="120"></el-table-column>
-                    <el-table-column prop="fieldType" label="类型" :formatter="formatFieldType" width="120">
+                    <el-table-column prop="fieldName" label="字段名称" width="100"></el-table-column>
+                    <el-table-column prop="label" label="label" width="150"></el-table-column>
+                    <el-table-column prop="type" label="组件名" width="100"></el-table-column>
+                    <el-table-column prop="fieldType" label="类型" :formatter="formatFieldType" width="100">
                     </el-table-column>
-                    <el-table-column prop="remark" label="备注"> </el-table-column>
-                    <el-table-column prop="descriptionInfo" label="字段描述信息"> </el-table-column>
-                    <el-table-column fixed="right" label="操作" width="350">
+                    <el-table-column prop="remark" label="备注" show-overflow-tooltip width="150"> </el-table-column>
+                    <el-table-column prop="descriptionInfo" label="字段描述信息" show-overflow-tooltip> </el-table-column>
+                    <el-table-column prop="validationInfo" label="前端验证信息" show-overflow-tooltip> </el-table-column>
+                    <el-table-column fixed="right" label="操作" width="300">
                         <template slot-scope="scope">
                             <el-button @click="handleClickFieldDY(scope.row);" type="text" size="small"> 需求编辑</el-button>
                             <el-button @click="handleClickField(scope.row);" type="text" size="small"> 编辑</el-button>
