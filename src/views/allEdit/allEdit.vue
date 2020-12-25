@@ -237,7 +237,6 @@ export default {
             totalCount: 0,
             flag:true,
             multipleSelection: [],
-            // multipleSelectionAll: [],   // 所有选中的数据包含跨页数据
         };
     },
     computed: {

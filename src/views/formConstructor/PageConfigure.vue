@@ -471,7 +471,9 @@ export default {
         },
         //全选
         chooseAllFieldToTemp() {
-            this.temp_page.stepObject.config = this.fields.map(v => v.fieldNO);
+            this.temp_page.stepObject.config = this.fields.map(v => v.fieldNo);
+            console.log(this.temp_page.stepObject.config,'000')
+            console.log(this.fields,'111')
         },
         //删除 选中的字段
         handleDeleteFromTempChosenFields(i) {
