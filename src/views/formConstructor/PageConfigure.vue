@@ -130,7 +130,7 @@
         </div>
         <!-- 导入字段步骤 -->
         
-        <el-dialog title="导入字段步骤" :visible.sync="importPreviewVisible" width="50%" :close-on-click-modal="false">
+        <el-dialog title="导入自选步骤" :visible.sync="importPreviewVisible" width="50%" :close-on-click-modal="false">
             <div>
                 事项名称:
                 <el-select clearable filterable placeholder="请选择事项名称" v-model="temp_page_itemId" @change="selectOne" style="position:relative" 
@@ -818,7 +818,7 @@ export default {
             this.loadStep();
             }
         },
-        // 导入字段步骤
+        // 导入自选步骤
         async importPreview() {
             let result = await listApprovalItem({pageNum: this.currentPageSelect,pageSize: this.pageSize});
             this.typeSubItemOptions = result.data.records;
@@ -874,7 +874,7 @@ export default {
         async importStepPage() {
             let res= await batchSaveBytype({approvalItemId:this.itemId,stepslist:this.multipleSelection})
             if(!res.success) return
-            this.$message.success('导入字段成功')
+            this.$message.success('导入自选步骤成功')
             this.importPreviewVisible = false
             await this.loadAll()
             this.stepList = []

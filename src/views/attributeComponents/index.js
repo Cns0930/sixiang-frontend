@@ -126,8 +126,8 @@ export function deserializeTableData(fieldJSON){
         if(fieldJSON.children != null){
            
             
-            if(fieldJSON.children.some(e=>e.validationInfo)) {
-                let children = fieldJSON.children.map(v => ({ id: v.id, fieldType: v.fieldType,validationInfo:v.validationInfo, ...v.object })).map(deserializeBaseField)
+            if(fieldJSON.children.some(e=>e.validationInfo)||fieldJSON.children.some(e=>e.descriptionInfo)) {
+                let children = fieldJSON.children.map(v => ({ id: v.id, fieldType: v.fieldType,validationInfo:v.validationInfo,descriptionInfo:v.descriptionInfo, ...v.object })).map(deserializeBaseField)
                 output.componentDefs.meta.value = children
                 output.list =children;
             } else {
