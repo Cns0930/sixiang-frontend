@@ -43,22 +43,22 @@
                 ></el-pagination>
                 </div>
         </div>
-        <div class="main">
-       
+        <div class="main">                       
             <!-- 字段表格 -->
-            <div class="fields-table" style="width: 100%;padding:10px 60px" :height="tableHeight">
-                <el-table :data="tableData" border style="width: 100%" row-key="id"
-                    :tree-props="{children: 'list', hasChildren: 'hasChildren'}" default-expand-all>
-                    <el-table-column fixed prop="fieldNo" label="fieldNo" width="150"></el-table-column>
-                    <el-table-column prop="fieldName" label="字段名称" width="100"></el-table-column>
-                    <el-table-column prop="label" label="label" width="150"></el-table-column>
-                    <el-table-column prop="type" label="组件名" width="100"></el-table-column>
-                    <el-table-column prop="fieldType" label="类型" :formatter="formatFieldType" width="100">
+            <div class="fields-table" style="width: 100%;padding:10px 60px">
+                <!-- <draggable @start="drag=true" @end="drag=false"> -->
+                <el-table :data="tableData" border style="width: 100%" row-key="id" :row-style="{height:'40px'}" :header-row-style="{height:'50px'}"
+                    :tree-props="{children: 'list', hasChildren: 'hasChildren'}" default-expand-all :height="tableHeight">
+                    <el-table-column fixed prop="fieldNo" label="fieldNo" width="150" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="fieldName" label="字段名称" width="100" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="label" label="label" width="150" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="type" label="组件名" width="100" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="fieldType" label="类型" :formatter="formatFieldType" width="100" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="remark" label="备注" show-overflow-tooltip width="150"> </el-table-column>
-                    <el-table-column prop="descriptionInfo" label="字段描述信息" show-overflow-tooltip> </el-table-column>
                     <el-table-column prop="validationInfo" label="前端验证信息" show-overflow-tooltip> </el-table-column>
-                    <el-table-column fixed="right" label="操作" width="300">
+                    <el-table-column prop="descriptionInfo" label="字段描述信息" show-overflow-tooltip> </el-table-column>
+                    <el-table-column prop="remark" label="备注" show-overflow-tooltip width="150"> </el-table-column>
+                    <el-table-column fixed="right" label="操作">
                         <template slot-scope="scope">
                             <el-button @click="handleClickFieldDY(scope.row);" type="text" size="small"> 需求编辑</el-button>
                             <el-button @click="handleClickField(scope.row);" type="text" size="small"> 编辑</el-button>
@@ -71,6 +71,7 @@
                         </template>
                     </el-table-column>
                 </el-table>
+                 <!-- </draggable> -->
                 <div class="tablePagination">
                     <el-pagination
                         @size-change="handleSizeChange"
@@ -137,7 +138,7 @@
                         <el-input v-model="temp_fieldObj.label"></el-input>
                     </div>
                     <div class="attribute">
-                        <span class="attribute-key">字段说明信息</span>
+                        <span class="attribute-key">字段描述信息</span>
                         <el-input type="textarea" v-model="temp_fieldObj.descriptionInfo" autosize></el-input>
                     </div>
                     <div class="attribute">
@@ -306,10 +307,12 @@
 </template>
 
 <script>
+import draggable from 'vuedraggable'
+import Sortable from 'sortablejs'
 import defs, {
     deserializeComputedField,
     deserializeBaseField,
-    deserializeTableData
+    deserializeTableData,
 } from "../attributeComponents/index";
 import { getById } from "@/api/item/index";
 import { mapState } from "vuex";
@@ -325,12 +328,14 @@ import { mixin } from "@/mixin/mixin"
 export default {
     name: "FormConstructor",
     components: {
-        ...defRenderers
+        ...defRenderers,
+        draggable,
     },
     mixins: [mixin],
     data() {
         return {
             defRenderers,
+            tableHeight:500,
             pageSize: 30,
             // 添加 fieldNo 的dialog 用
             dialogVisible: false,
@@ -396,11 +401,48 @@ export default {
 
         })
     },
-    async mounted() {
+    async created() {
         await this.init();
         await this.load();
+        await this.getTableHeight()
+        
+    },
+    //挂载window.onresize事件
+    mounted() {
+        let _this = this
+        window.onresize = () => {
+            if (_this.resizeFlag) {
+            clearTimeout(_this.resizeFlag)
+            }
+            _this.resizeFlag = setTimeout(() => {
+            _this.getTableHeight()
+            _this.resizeFlag = null
+            }, 100)
+        }
+        this.rowDrop();
+    },
+    // 注销window.onresize事件
+    beforeRouteLeave(to, from, next) {
+        //离开组件的时候触发
+        window.onresize = null
+        next()
     },
     methods: {
+        // 行拖拽
+            rowDrop () {
+               // 此时找到的元素是要拖拽元素的父容器
+                const tbody = document.querySelector('.el-table__body-wrapper tbody');
+                console.log(tbody)
+                const _this = this;
+                Sortable.create(tbody, {
+           //  指定父元素下可被拖拽的子元素
+                  draggable: ".el-table__row",
+                   onEnd ({ newIndex, oldIndex }) {
+                        const currRow = _this.tableData.splice(oldIndex, 1)[0];
+                        _this.tableData.splice(newIndex, 0, currRow);
+                    }
+                });
+            },
         // 创建 基本字段
         handleAddBaseField() {
             this.dialogVisible = true;
@@ -463,7 +505,7 @@ export default {
             }
             let ComponentDefClass = defs.find(v => v.value == this.temp_type)?.componentDef
             let v = {
-                fieldNo: this.temp_fieldNo,
+                fieldNo: this.temp_fieldNo.trim(),
                 type: this.temp_type,
                 label: this.temp_label,
                 fieldComponentName: this.temp_type,
@@ -549,7 +591,7 @@ export default {
             let isList = !!def.isList;
 
             let v = {
-                fieldNo: this.temp_fieldNo,
+                fieldNo: this.temp_fieldNo.trim(),
                 type: this.temp_type,
                 label: this.temp_label,
                 fieldComponentName: this.temp_type,
@@ -673,6 +715,15 @@ export default {
 
         // 重新定义删除
         async handleDeleteField(v) {
+            try {
+                await this.$confirm('确定删除?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                })
+            } catch (e) {
+                return;
+            }
             let param = {
                 fieldId: v.id
             };
@@ -938,6 +989,15 @@ export default {
                 this.searchPublicResult = result.data.records;
             }else{
                 this.$message({ type: "error", message: "查询出错"});
+            }
+        },
+        getTableHeight() {
+            let tableH = 276
+            let tableHeightDetil = window.innerHeight - tableH
+            if (tableHeightDetil <= 300) {
+                this.tableHeight = 300
+            } else {
+                this.tableHeight = window.innerHeight - tableH
             }
         }
     }

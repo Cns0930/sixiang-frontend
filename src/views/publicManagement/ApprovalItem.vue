@@ -94,24 +94,24 @@
 
         <section class="dialogBox">
             <!-- 新建窗口 -->
-            <el-dialog title="事项属性填写" :visible.sync="dialogAddVisible" width="80%" :close-on-click-modal="false">
+            <el-dialog title="事项属性填写" :visible.sync="dialogAddVisible" width="80%" :close-on-click-modal="false" :show-close='false'>
                 <div class="attribute-content">
-                    <el-form :inline="false" label-position="left" class="demo-form-inline">
-                        <el-form-item label="项目">
+                    <el-form :model='tempItem' ref="tempItem" :inline="false" label-position="left" class="demo-form-inline" :rules="rules">
+                        <el-form-item label="项目" prop="projectId">
                             <el-select v-model="tempItem.projectId" filterable>
                                 <el-option v-for="(v,i) in projectOptions" :key="i" :label="v.projectName"
                                     :value="v.projectId">
                                 </el-option>
                             </el-select>
                         </el-form-item>
-                        <el-form-item label="大项">
+                        <el-form-item label="大项" prop="approvalId">
                             <el-select v-model="tempItem.approvalId" filterable>
                                 <el-option v-for="(v,i) in approvalOptions" :key="i" :label="v.approvalName"
                                     :value="v.approvalId">
                                 </el-option>
                             </el-select>
                         </el-form-item>
-                        <el-form-item label="事项编号">
+                        <el-form-item label="事项编号" prop="itemNo">
                             <el-input v-model="tempItem.itemNo">
                             </el-input>
                         </el-form-item>
@@ -119,15 +119,15 @@
                             <el-input v-model="tempItem.itemInternalNo">
                             </el-input>
                         </el-form-item>
-                        <el-form-item label="事项实施编码">
+                        <el-form-item label="事项实施编码" prop="itemCode">
                             <el-input v-model="tempItem.itemCode">
                             </el-input>
                         </el-form-item>
-                        <el-form-item label="事项名称">
+                        <el-form-item label="事项名称" prop="itemName">
                             <el-input v-model="tempItem.itemName">
                             </el-input>
                         </el-form-item>
-                        <el-form-item label="事项类型(如新增/变更)">
+                        <el-form-item label="事项类型(如新增/变更)" prop="itemType">
                             <el-input v-model="tempItem.itemType">
                             </el-input>
                         </el-form-item>
@@ -138,10 +138,10 @@
                     </el-form>
                 </div>
                 <span slot="footer" class="dialog-footer">
-                    <el-button @click="dialogAddVisible = false">
+                    <el-button @click="resetForm(tempItem)">
                         取消
                     </el-button>
-                    <el-button type="primary" @click="saveItem()">
+                    <el-button type="primary" @click="saveItem(tempItem)">
                         确定
                     </el-button>
                 </span>
@@ -150,27 +150,31 @@
             <!-- 编辑窗口 -->
             <el-dialog title="事项属性填写" :visible.sync="dialogUpdateVisible" width="80%" :close-on-click-modal="false">
                 <div class="attribute-content">
-                    <el-form :inline="false" label-position="left" class="demo-form-inline">
-                        <el-form-item label="大项">
+                    <el-form :model='tempItem' ref="tempItem" :rules="rules" :inline="false" label-position="left" class="demo-form-inline">
+                        <el-form-item label="大项" prop="approvalId">
                             <el-select v-model="tempItem.approvalId" filterable>
                                 <el-option v-for="(v,i) in approvalOptions" :key="i" :label="v.approvalName"
                                     :value="v.approvalId">
                                 </el-option>
                             </el-select>
                         </el-form-item>
-                        <el-form-item label="事项编号">
+                        <el-form-item label="事项编号" prop="itemNo">
                             <el-input v-model="tempItem.itemNo">
                             </el-input>
                         </el-form-item>
-                        <el-form-item label="事项实施编码">
+                        <!-- <el-form-item label="事项内部编号">
+                            <el-input v-model="tempItem.itemInternalNo">
+                            </el-input>
+                        </el-form-item> -->
+                        <el-form-item label="事项实施编码" prop="itemCode">
                             <el-input v-model="tempItem.itemCode">
                             </el-input>
                         </el-form-item>
-                        <el-form-item label="事项名称">
+                        <el-form-item label="事项名称" prop="itemName">
                             <el-input v-model="tempItem.itemName">
                             </el-input>
                         </el-form-item>
-                        <el-form-item label="事项类型(如新增/变更)">
+                        <el-form-item label="事项类型(如新增/变更)" prop="itemType">
                             <el-input v-model="tempItem.itemType">
                             </el-input>
                         </el-form-item>
@@ -184,7 +188,7 @@
                     <el-button @click="dialogUpdateVisible = false">
                         取消
                     </el-button>
-                    <el-button type="primary" @click="updateItem()">
+                    <el-button type="primary" @click="updateItem(tempItem)">
                         确定
                     </el-button>
                 </span>
@@ -234,6 +238,26 @@ export default {
             currentPage: 1,
             pagesize: 15,
             totalCount: 0,
+            rules: {
+                projectId: [
+                    { required: true, message: '请选择项目', trigger: 'change' },
+                ],
+                approvalId: [
+                    { required: true, message: '请选择大项', trigger: 'change' }
+                ],
+                itemNo: [
+                    { required: true, message: '请输入事项编号', trigger: 'blur' },
+                ],
+                itemCode: [
+                    { required: true, message: '请输入事项实施编号', trigger: 'blur' }
+                ],
+                itemName: [
+                    { required: true, message: '请输入事项名称', trigger: 'blur' },
+                ],
+                itemType: [
+                    { required: true, message: '请输入事项类型', trigger: 'blur' }
+                ],
+                }
         };
     },
     computed: {
@@ -282,25 +306,45 @@ export default {
             this.tempItem = {};
             await this.loadOptions();
         },
-        async saveItem() {
-            this.tempItem.createBy = localStorage.getItem("username");
-            let res = await addApprovalItem(this.tempItem);
-            if (res.success) {
-                this.$message.success("事项保存成功!");
-                this.tempItem = {};
-                this.dialogAddVisible = false;
-                await this.list();
-            }
+        //新增取消
+        resetForm(tempItem) {
+            this.dialogAddVisible = false
+            this.$refs.tempItem.resetFields();
         },
-        async updateItem() {
-            let res = await updateApprovalItem(this.tempItem);
+        // 新增保存
+        async saveItem(tempItem) {
+            this.$refs.tempItem.validate(async (valid) => {
+                if (valid) {
+                    this.tempItem.createBy = localStorage.getItem("username");
+                    let res = await addApprovalItem(this.tempItem);
+                    if (res.success) {
+                        this.$message.success("事项保存成功!");
+                        this.tempItem = {};
+                        this.dialogAddVisible = false;
+                        this.list();
+                    }
+                } else {
+                    console.log('error submit!!');
+                    return false;
+                }
+            });
             
-            if (res.success) {
-                this.$message.success("事项修改成功!");
-                this.tempItem = {};
-                this.dialogUpdateVisible = false;
-                await this.list();
+        },
+        async updateItem(tempItem) {
+            this.$refs.tempItem.validate(async (valid) => {
+                if (valid) {
+                    let res = await updateApprovalItem(this.tempItem);
+                    if (res.success) {
+                        this.$message.success("事项修改成功!");
+                        this.tempItem = {};
+                        this.dialogUpdateVisible = false;
+                        await this.list();
+                    }
+                } else {
+                console.log('error submit!!');
+                return false;
             }
+        });
         },
         async loadOptions() {
             // 获取选项

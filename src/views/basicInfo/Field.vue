@@ -23,20 +23,20 @@
                 <el-button type="primary" @click="updown" class="upload-input">导出到帮办字段</el-button>
             </div>
         </div>
-        <el-table ref="multipleTables" :data="tableData" border style="margin-top: 10px;" :height="tableHeight" v-loading="loading" :row-key="getRowKey"  @selection-change="handleSelectionChange">
+        <el-table ref="multipleTables" :data="tableData" border style="margin-top: 10px;" :row-style="{height:'60px'}" :header-row-style="{height:'50px'}" :height="tableHeight" v-loading="loading" :row-key="getRowKey"  @selection-change="handleSelectionChange">
             <el-table-column type="selection" :reserve-selection='true'></el-table-column>
-            <el-table-column prop="materialName" label="材料名称"></el-table-column>
-            <el-table-column prop="docxTemplateName" label="模板名称" ></el-table-column>
-            <el-table-column prop="fieldName" label="字段名称"  :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column prop="docxTemplateName" label="模板名称" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="materialName" label="材料名称" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="fieldName" label="字段名称"  show-overflow-tooltip></el-table-column>
             <el-table-column prop="isRequired" label="是否必填" :formatter="isRequiredFormatter"></el-table-column>
-            <el-table-column prop="label" label="前端字段名称"></el-table-column>
-            <el-table-column prop="fieldNo" label="字段编号" ></el-table-column>
-            <el-table-column prop="valueSource" label="字段值来源"></el-table-column>
-            <el-table-column prop="defaultValue" label="默认值" ></el-table-column>
+            <el-table-column prop="label" label="前端字段名称" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="fieldNo" label="字段编号" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="valueSource" label="字段值来源" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="defaultValue" label="默认值" show-overflow-tooltip></el-table-column>
             <el-table-column prop="descriptionInfo" label="字段逻辑描述" show-overflow-tooltip width="200"></el-table-column>
             <!-- <el-table-column prop="note" label="备注"></el-table-column> -->
-            <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter"  ></el-table-column>
-            <el-table-column prop="updateTime" label="更新时间" :formatter="timeFormatter"></el-table-column>
+            <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter"  show-overflow-tooltip></el-table-column>
+            <el-table-column prop="updateTime" label="更新时间" :formatter="timeFormatter" show-overflow-tooltip></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
                     <el-button-group>
@@ -113,20 +113,17 @@
                 <el-form-item label="字段名称" required prop="fieldName">
                     <el-input v-model="editForm.fieldName"></el-input>
                 </el-form-item>
-                <el-form-item label="字段编号" required >
-                    <el-input v-model="editForm.fieldNo"></el-input>
-                </el-form-item>
-                <el-form-item label="前端字段名称" >
-                    <el-input v-model="editForm.label"></el-input>
-                </el-form-item>
-                 <el-form-item label="字段逻辑描述" >
-                    <el-input v-model="editForm.descriptionInfo"></el-input>
-                </el-form-item>
                 <el-form-item label="是否必填" >
                     <el-select v-model="editForm.isRequired" clearable placeholder="是否必填">
                         <el-option label="是" :value="Number(1)"></el-option>
                         <el-option label="否" :value="Number(0)"></el-option>
                     </el-select>
+                </el-form-item>
+                <el-form-item label="前端字段名称" >
+                    <el-input v-model="editForm.label"></el-input>
+                </el-form-item>
+                <el-form-item label="字段编号" required >
+                    <el-input v-model="editForm.fieldNo"></el-input>
                 </el-form-item>
                 <el-form-item label="字段值来源" >
                     <el-select v-model="editForm.valueSource" 
@@ -140,6 +137,9 @@
                 </el-form-item>
                 <el-form-item label="默认值">
                     <el-input v-model="editForm.defaultValue"></el-input>
+                </el-form-item>
+                <el-form-item label="字段逻辑描述" >
+                    <el-input type="textarea" v-model="editForm.descriptionInfo"></el-input>
                 </el-form-item>
                 <el-form-item label="备注">
                     <el-input v-model="editForm.note"></el-input>
@@ -685,7 +685,7 @@ export default {
         handleRemove(file, fileList) {
         },
         getTableHeight() {
-            let tableH = 280
+            let tableH = 285
             let tableHeightDetil = window.innerHeight - tableH
             if (tableHeightDetil <= 300) {
                 this.tableHeight = 300

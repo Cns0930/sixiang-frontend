@@ -13,7 +13,7 @@
                 <!-- <el-button v-if="tableData.length < 1" type="primary" @click="addFirst">新增</el-button> -->
             </div>
             <div class="tableWrap">
-                <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%" border
+                <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%" border :row-style="{height:'60px'}" :header-row-style="{height:'50px'}"
                     tooltip-effect="dark" :default-sort="{ prop: 'createTime', order: 'descending' }">
                     <el-table-column label="序号" type="index" width="70" :index="indexMethod"></el-table-column>
                     <el-table-column prop="subitemName"  label="情形名称" width="200" show-overflow-tooltip>

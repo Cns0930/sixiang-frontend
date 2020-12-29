@@ -3,13 +3,13 @@
         <header>情形管理</header>
         <el-button @click="addDialogVisible = true" type="primary" style="margin-bottom:10px">添加</el-button>
         <el-button @click="handleImport()" type="primary" style="margin-bottom:10px">导入情形</el-button>
-        <el-table :data="tableData" border>
-            <el-table-column prop="approvalSubitem.subitemName" label="情形"></el-table-column>
-            <el-table-column prop="approvalSubitem.aliasName" label="别名"></el-table-column>
-            <el-table-column prop="material.materialName" label="所需材料" :formatter="formatterMaterial"></el-table-column>
-            <el-table-column prop="approvalSubitem.note" label="备注"></el-table-column>
-            <el-table-column prop="approvalSubitem.createTime" label="创建时间" :formatter="timeFormatter"></el-table-column>
-            <el-table-column prop="approvalSubitem.updateTime" label="更新时间" :formatter="timeFormatter"></el-table-column>
+        <el-table :data="tableData" border :row-style="{height:'60px'}" :header-row-style="{height:'50px'}">
+            <el-table-column prop="approvalSubitem.subitemName" label="情形" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="approvalSubitem.aliasName" label="别名" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="material.materialName" label="所需材料" :formatter="formatterMaterial" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="approvalSubitem.note" label="备注" show-overflow-tooltip ></el-table-column>
+            <el-table-column prop="approvalSubitem.createTime" label="创建时间" :formatter="timeFormatter" width="160"></el-table-column>
+            <el-table-column prop="approvalSubitem.updateTime" label="更新时间" :formatter="timeFormatter" width="160"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
                     <el-button-group>
