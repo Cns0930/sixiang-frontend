@@ -69,6 +69,10 @@ const topMenuList=[
                 path: "/publicsubdocument",
                 label: "材料子文档",
             },
+            {
+                path: "/examination",
+                label: "审批点管理",
+            },
             
         ],
         order: 3

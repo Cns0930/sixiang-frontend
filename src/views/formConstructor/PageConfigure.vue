@@ -392,10 +392,17 @@ export default {
         //  指定父元素下可被拖拽的子元素
                 draggable: ".el-table__row",
                 onEnd ({ newIndex, oldIndex }) {
-                    const currRow = _this.temp_fields.splice(oldIndex, 1)[0];
-                    _this.temp_fields.splice(newIndex, 0, currRow);
+                    const currRow = _this.temp_page.stepObject.config.splice(oldIndex, 1)[0];
+                    _this.temp_page.stepObject.config.splice(newIndex, 0, currRow);
                 }
             });
+            // let originIndex = scope.$index;
+            // let targetIndex = originIndex - 1;
+
+            // let temp = this.temp_page.stepObject.config[targetIndex];
+            // this.$set(this.temp_page.stepObject.config, targetIndex, this.temp_page.stepObject.config[originIndex]);
+            // this.$set(this.temp_page.stepObject.config, originIndex, temp);
+            // console.log(this.temp_page.stepObject.config)
         },
         addField() {
             this.addFieldDialogVisible = true
@@ -610,8 +617,6 @@ export default {
             let targetIndex = originIndex - 1;
 
             let temp = this.temp_page.stepObject.config[targetIndex];
-            // this.temp_page.stepObject.config[targetIndex]=this.temp_page.stepObject.config[originIndex];
-            // this.temp_page.stepObject.config[originIndex]=temp;
             this.$set(this.temp_page.stepObject.config, targetIndex, this.temp_page.stepObject.config[originIndex]);
             this.$set(this.temp_page.stepObject.config, originIndex, temp);
             console.log(this.temp_page.stepObject.config)

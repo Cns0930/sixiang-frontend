@@ -17,7 +17,10 @@
                     <!-- <el-table-column label="序号" type="index" width="70"></el-table-column> -->
                     <el-table-column prop="fieldNo" label="fieldNo"></el-table-column>
                     <el-table-column prop="label" label="label" width="180"></el-table-column>
-                    <el-table-column prop="fieldComponentName" label="组件名" show-overflow-tooltip sortable>
+                    <el-table-column prop="fieldComponentNames" label="组件名" show-overflow-tooltip sortable>
+                        <template slot-scope="scope">
+                            {{scope.row.fieldComponentNames.toString()}}
+                        </template>
                     </el-table-column>
                     <el-table-column prop="fieldType" label="类型" :formatter="formatFieldType" width="160"></el-table-column>
                     <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable >
@@ -29,7 +32,7 @@
                         <template slot-scope="scope">
                             <el-button size="small" @click="lookFor(scope.row)" icon="el-icon-view">
                             </el-button>
-                            <el-button size="small" type="primary" @click="handleEdit(scope.row)" icon="el-icon-edit">
+                            <el-button size="small" type="primary" :disabled="scope.row.fieldComponentNames.length>1" @click="handleEdit(scope.row)" icon="el-icon-edit">
                             </el-button>
                             <!-- <el-button @click="transferOutput(scope.row)">保存输出到超级帮办</el-button> -->
                         </template>
@@ -198,9 +201,12 @@ export default {
             if(!res.success) return;
             let fieldSameList = []
             let resultList = res.data.reduce((acc,cur) => {
+                // console.log(cur)
                 if(!fieldSameList.includes(cur.fieldNo)) {
                     fieldSameList.push(cur.fieldNo);
                     cur.ids = [];
+                    cur.fieldComponentNames = []
+                    cur.fieldComponentNames.push(cur.fieldComponentName)
                     cur.ids.push(cur.id)
                     acc.push(cur);
                     if(cur.children) {
@@ -213,6 +219,10 @@ export default {
                 } else {
                     let fieldIndex = fieldSameList.findIndex(v => v == cur.fieldNo);
                     acc[fieldIndex].ids.push(cur.id)
+                    // if(!acc[fieldIndex].fieldComponentNames.includes(cur.fieldComponentName)) {
+                       acc[fieldIndex].fieldComponentNames.push(cur.fieldComponentName)
+                    // }
+
                     if(cur.children) {
                         cur.children.forEach((ele,i)=>{
                             let indexs = acc[fieldIndex].children.findIndex(v=> v.fieldNo == ele.fieldNo)
@@ -224,8 +234,12 @@ export default {
                     }
                          
                 }
+                acc.forEach(ele=>{
+                    ele.fieldComponentNames = _.uniq(ele.fieldComponentNames)
+                })
                 return acc
             },[])
+            console.log(resultList,'000')
             this.tableData = resultList
             this.loading = false
         },

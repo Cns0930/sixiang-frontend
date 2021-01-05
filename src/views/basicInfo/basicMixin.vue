@@ -3,6 +3,7 @@
 </template>
 <script>
 import { listApprovalItem , getByApprovalItemId, listPublicApprovalItem } from "../../api/basicInfo/approval";
+import { listRule } from '@/api/basicInfo/ApprovalRules'
 import { listMaterial } from "../../api/basicInfo/material";
 import { listitemNoSinglewindow } from "../../api/basicInfo/singleWindow";
 import { listDocument } from "../../api/basicInfo/AIdocument";
@@ -45,6 +46,13 @@ export default {
                 pageSize: this.pagesize,subitemNameAndDocumentSubName:this.subitemNameAndDocumentSubName});
                 this.tableData = result.data.records;
             } 
+            else if(this.type === 'ApprovalRules') {
+                result = await listRule({approvalItemId: this.$route.query.itemId,ruleCode:params,pageNum: this.currentPage,
+                pageSize: this.pagesize});
+                this.tableData = result.data.records;
+                console.log(this.tableData)
+                this.totalCount = result.data.total
+            } 
              else if(this.type === 'public'){
                 result = await listPublicApprovalItem(params)
                 this.tableData = result.data.records;
@@ -53,7 +61,7 @@ export default {
             if(!result.success) return;
 
             this.totalCount = result.data.total;
-            this.$message({ type: "success", message: "查询成功" });
+            // this.$message({ type: "success", message: "查询成功" });
         },
         indexMethod(index) {
             return (this.currentPage - 1) * this.pagesize + (index + 1);

@@ -89,6 +89,34 @@ export function IdentityCodeValid(code) {
     if(!pass) console.log(tip);
     return pass;
 }
+export function cardToSex(card){ //根据身份证号解析性别
+    if (parseInt(card.substr(16, 1)) % 2 == 1) {
+    //男
+        return "男";
+    } else {
+        //女
+        return "女"
+    }
+}
+
+export function cardToAge(card){ // 根据身份证号解析年龄
+   
+   var myDate = new Date();
+
+    var month = myDate.getMonth() + 1;
+
+    var day = myDate.getDate();
+
+    var age = myDate.getFullYear() - card.substring(6, 10) - 1;
+
+    if (card.substring(10, 12) < month || card.substring(10, 12) == month && card.substring(12, 14) <= day) {
+
+        age++;
+
+    }
+
+    return age;
+}
 
 // 校验数字，并且大于_比较对象
 export function floatMoreThanValid(num,compareValue) {
@@ -182,6 +210,8 @@ export default {
     CheckMail,
     CheckPostCode,
     CheckFixedTelephone,
-    getGudongTypeByName
+    getGudongTypeByName,
+    cardToSex,
+    cardToAge
 }
 
