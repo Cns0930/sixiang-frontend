@@ -56,4 +56,9 @@ export default [
         label:"材料打印",
         type:"field"
     },
+    {
+        name:"MaterialUpload",
+        label:"材料上传",
+        type:"field"
+    }
 ]

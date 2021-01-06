@@ -12,7 +12,7 @@
                 </div>
             </div>
             <div class="tableWrap">
-                <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%;" border
+                <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%;" border :row-style="{height:'60px'}" :header-row-style="{height:'50px'}"
                     tooltip-effect="dark" :default-sort="{prop: 'createTime', order: 'descending'}" :height="tableHeight">
                     <!-- <el-table-column
               type="selection"
@@ -39,8 +39,8 @@
                     ></el-table-column>
                     <el-table-column prop="materialId" label="事项(小项)办事材料编号" width="100" show-overflow-tooltip></el-table-column>-->
                     <!-- <el-table-column prop="materialCode" label="材料编码" width="100" show-overflow-tooltip></el-table-column> -->
-                    <el-table-column prop="materialName" label="材料名称"></el-table-column>
-                    <el-table-column prop="templateName" label="模板名称(自取)"></el-table-column>
+                    <el-table-column prop="materialName" label="材料名称" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="templateName" label="模板名称(自取)" show-overflow-tooltip></el-table-column>
                     <!-- <el-table-column prop="materialStatus" label="材料状态" width="80"></el-table-column>
                     <el-table-column prop="documentSeq" label="文档编号" width="80"></el-table-column>
                     <el-table-column
@@ -49,10 +49,10 @@
                         width="100"
                         show-overflow-tooltip
                     ></el-table-column> -->
-                    <el-table-column prop="docxTemplateName" label="超级帮办word模板命名"></el-table-column>
+                    <el-table-column prop="docxTemplateName" label="超级帮办word模板命名" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="documentSeq" label="文档序号"  width="50px">
                     </el-table-column>
-                    <el-table-column prop="isNavigation" label="是否显示在左侧导航" :formatter="isRequiredFormatter">
+                    <el-table-column prop="isNavigation" label="是否显示在左侧导航" width="90px" :formatter="isRequiredFormatter">
                     </el-table-column>
                     <el-table-column prop="navigationOrder" label="导航顺序"  width="50px" ></el-table-column>
                     <el-table-column prop="descriptionInfo" label="材料逻辑" show-overflow-tooltip width="300"></el-table-column>
@@ -124,7 +124,7 @@
                         <el-form-item label="产生方式">
                             <el-select v-model="materialT.produceSource" placeholder="材料的产生来源">
                                 <el-option label="用户自带" value="用户自带"></el-option>
-                                <el-option label="现场制作" value="当场制作"></el-option>
+                                <el-option label="现场制作" value="现场制作"></el-option>
                             </el-select>
                         </el-form-item>
                     </div>
@@ -180,7 +180,7 @@
                         <el-form-item label="产生方式">
                             <el-select v-model="materialTEdit.produceSource" placeholder="材料的产生来源">
                                 <el-option label="用户自带" value="用户自带"></el-option>
-                                <el-option label="现场制作" value="当场制作"></el-option>
+                                <el-option label="现场制作" value="现场制作"></el-option>
                             </el-select>
                         </el-form-item>
                     </div>
@@ -324,7 +324,7 @@ export default {
         //   console.log(this.model);
         // },
         getTableHeight() {
-            let tableH = 280
+            let tableH = 290
             let tableHeightDetil = window.innerHeight - tableH
             if (tableHeightDetil <= 300) {
                 this.tableHeight = 300

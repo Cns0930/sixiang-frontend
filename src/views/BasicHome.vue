@@ -12,6 +12,7 @@
                 <el-tab-pane label="前端字段" name="" disabled></el-tab-pane>
                 <el-tab-pane label="单窗材料" name="singleWindow"></el-tab-pane>
                 <el-tab-pane label="附件管理" name="accessory"></el-tab-pane>
+                <el-tab-pane label="审批规则管理" name="approvalRules"></el-tab-pane>
             </el-tabs>
         </div>
 
@@ -100,6 +101,16 @@ export default {
                 this.$store.commit("config/setCrumbList", [{ path: `/basic/subitem?itemId=${this.$route.query.itemId}`, label: '调研信息' }])
                 this.$store.commit("config/setCrumbListSecond", [{ path: "/basic/singleWindow", label: '单窗材料' }])
             }
+             else if (this.activeName === "approvalRules") {
+                this.$router.push({
+                    path: "/basic/approvalRules",
+                    query: { itemId: this.$route.query.itemId },
+                });
+                sessionStorage.setItem('activeName', 'approvalRules');
+                this.$store.commit("config/setCrumbList", [{ path: `/basic/subitem?itemId=${this.$route.query.itemId}`, label: '调研信息' }])
+                this.$store.commit("config/setCrumbListSecond", [{ path: "/basic/approvalRules", label: '审批规则管理' }])
+            }
+            
         },
     },
 };

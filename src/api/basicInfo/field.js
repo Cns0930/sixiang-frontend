@@ -31,3 +31,13 @@ export const importfields = params => { return axios.get(`/ss/field/copyField`, 
 
 // 查询某一材料下的字段
 export const lookfields = params => { return axios.get(`/ss/field/listFieldAllByMaterial`, {params}).then(res=>res.data); };
+
+// 查询与帮办对应的字段
+export const listFieldNosByIds = params => { return axios.post(`/ss/field/listFieldNosByIds`, params).then(res=>res.data); };
+
+// 修改材料字段组件名
+export const updateFieldComponentName = params => { return axios.post(`/ss/field/updateFieldComponentNameById`, params).then(res=>res.data); };
+
+// 保存批量字段(只新增,field_no去重)
+export const saveBatch = params => { return axios.post(`/superform/fields/saveBatch`, params).then(res=>res.data); };
+

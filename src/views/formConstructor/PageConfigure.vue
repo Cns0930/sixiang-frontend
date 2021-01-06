@@ -2,6 +2,7 @@
     <div class="page-configure">
         <div class="op-bar">
             <el-button @click="importDefault">导入默认步骤</el-button>
+            <el-button @click="importPreview">导入字段步骤</el-button>
             <el-button @click="createStepPage">创建步骤页面</el-button>
            <!-- <el-button @click="handlePreview">预览页面</el-button>-->
             <el-button @click="loadAll">载入页面</el-button>
@@ -66,21 +67,23 @@
                     <div v-if="temp_page.stepObject.configType ==1">
                         <!-- config 配置 字段 或者 材料 -->
                         <div v-if="temp_page.stepPageType == 'field'">
-                            <el-button type="primary" @click="addFieldDialogVisible = true">添加字段</el-button>
+                            <el-button type="primary" @click="addField">添加字段</el-button>
                             <!-- <el-button type="primary" @click="saveTempFields">保存修改</el-button> -->
-                            <el-table :data="temp_fields">
-                                <el-table-column prop="fieldNo" label="fieldNo"></el-table-column>
-                                <el-table-column prop="label" label="字段"></el-table-column>
-                                <el-table-column prop="type" label="组件名" width="120"></el-table-column>
+                            <!-- <draggable v-model="temp_fields" @start="drag=true" @end="drag=false"> -->
+                                <el-table :data="temp_fields" row-key="id" class="dragg">
+                                    <el-table-column prop="fieldNo" label="fieldNo"></el-table-column>
+                                    <el-table-column prop="label" label="字段"></el-table-column>
+                                    <el-table-column prop="type" label="组件名" width="120"></el-table-column>
 
-                                <el-table-column label="操作">
-                                    <template slot-scope="scope">
-                                        <el-button type="text" @click="deleteConfig(scope)">删除</el-button>
-                                        <el-button type="text" @click="swapUp(scope)" v-if="scope.$index != 0">向上</el-button>
-                                        <el-button type="text" @click="swapDown(scope)" v-if="scope.$index != temp_fields.length-1">向下</el-button>
-                                    </template>
-                                </el-table-column>
-                            </el-table>
+                                    <el-table-column label="操作">
+                                        <template slot-scope="scope">
+                                            <el-button type="text" @click="deleteConfig(scope)">删除</el-button>
+                                            <!-- <el-button type="text" @click="swapUp(scope)" v-if="scope.$index != 0">向上</el-button>
+                                            <el-button type="text" @click="swapDown(scope)" v-if="scope.$index != temp_fields.length-1">向下</el-button> -->
+                                        </template>
+                                    </el-table-column>
+                                </el-table>
+                            <!-- </draggable> -->
                         </div>
                         <div v-else>
                             <el-button type="primary" @click="addMaterialDialogVisible = true">添加材料</el-button>
@@ -125,7 +128,53 @@
 
             </div>
         </div>
-
+        <!-- 导入字段步骤 -->
+        
+        <el-dialog title="导入自选步骤" :visible.sync="importPreviewVisible" width="50%" :close-on-click-modal="false">
+            <div>
+                事项名称:
+                <el-select clearable filterable placeholder="请选择事项名称" v-model="temp_page_itemId" @change="selectOne" style="position:relative" 
+                    remote reserve-keyword :remote-method="remoteMethod" :loading="loading"> 
+                        <el-option v-for="(v,i) in typeSubItemOptions" :key="i" :label="v.itemName" :value="v.approvalItemId"> 
+                            
+                        </el-option>
+                   
+                    <div class="text-center" style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
+                            <a class="text-normal">
+                                <el-pagination @size-change="handleSizeChangeSelect" @current-change="handleCurrentChangeSelect"
+                                    :current-page="currentPageSelect" :total="totalAim"
+                                    :page-size="pageSize"
+                                    layout="prev, pager, next"/>
+                            </a>
+                            </div> 
+                </el-select>
+                <!-- <el-select v-model="temp_page_itemId">
+                    <el-option v-for="(v,i) in typeSubItemOptions" :key="i" :label="v.label" :value="v.label"></el-option>
+                </el-select> -->
+            </div>
+            <div style="margin-top:10px">
+                步骤选项:
+                <el-select v-model="temp_page_step"  @change="selectOne">
+                    <el-option label="开发步骤" value="开发步骤"></el-option>
+                    <el-option label="调研步骤" value="调研步骤"></el-option>
+                </el-select>
+            </div>
+            <el-table :data="stepList" style="margin-top:10px" @selection-change="handleSelectionChange" border>
+                <el-table-column type="selection" width="70"></el-table-column>
+                <el-table-column prop="stepTitle" label="步骤名称"></el-table-column>
+                <el-table-column prop="stepPagenum" label="步骤顺序"></el-table-column>
+                
+                <!-- <el-table-column label="操作">
+                    <template slot-scope="scope">
+                        <el-button type="text" @click="deleteConfig(scope)">删除</el-button>
+                    </template>
+                </el-table-column> -->
+            </el-table>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="importPreviewVisible = false">取 消</el-button>
+                <el-button type="primary" @click="importStepPage">确 定</el-button>
+            </span>
+        </el-dialog>
         <!-- 创建步骤页面 -->
         <el-dialog title="创建步骤页面" :visible.sync="stepPageCreateVisible" width="50%" :close-on-click-modal="false">
             <div>
@@ -205,10 +254,13 @@
 </template>
 
 <script>
+import draggable from 'vuedraggable'
+import Sortable from 'sortablejs'
 import { mapState } from "vuex";
-import { getStep, saveStep, deleteStep, saveStepBatch, transferJs } from "@/api/step/index";
+import { getStep, saveStep, deleteStep, saveStepBatch, transferJs,listStepsBytype,batchSaveBytype } from "@/api/step/index";
 import { getFieldAll,getSaveMaxTimeStep } from "@/api/superForm/index";
 import { getTemplate } from '@/api/template/index'
+import { listApprovalItem } from "@/api/basicInfo/approval";
 import { getById, addSysTransferLog,getUptoDateSysTransferLog } from "@/api/item/index";
 import ace from "ace-builds";
 import beautify from "ace-builds/src-noconflict/ext-beautify";
@@ -227,7 +279,7 @@ dayjs.extend(isSameOrBefore)
 export default {
     name: "PageConfigure",
     mixins: [mixin],
-    components:{UiCompilerComponent},
+    components:{UiCompilerComponent,draggable},
     data() {
         return {
             backend: process.env.VUE_APP_BASE_IP,
@@ -241,8 +293,18 @@ export default {
             componentOptions: pageComponents,
             temp_page_component: null,
             temp_configType: "",
-
+            // 导入字段
+            importPreviewVisible:false,
+            currentPageSelect: 1,
+            pageSize: 10,
+            totalAim: 0,
             stepPages: [],
+            typeSubItemOptions:[],
+            loading: false,
+            temp_page_step:'',
+            temp_page_itemId:'',
+            multipleSelection:[],
+            stepList:[],
             // 代码框
             aceEditor: null,
             // 事项下所有的字段
@@ -296,10 +358,16 @@ export default {
         }
 
     },
+    updated() {
+       if(this.temp_page.stepObject.configType ==1 && this.temp_fields.length>0) {
+            this.rowDrop()
+        }
+    },
     async mounted() {
         await this.init();
         await this.loadAll();
         this.getLastUpdateInfo();
+        
     },
     methods: {
         // async init(){
@@ -314,6 +382,33 @@ export default {
         //     }
         //     this.loadAll();
         // },
+        // 表格行拖拽
+        rowDrop () {
+            // 此时找到的元素是要拖拽元素的父容器
+            const tbody = document.querySelector('.dragg .el-table__body-wrapper tbody');
+            console.log(tbody)
+            const _this = this;
+            Sortable.create(tbody, {
+        //  指定父元素下可被拖拽的子元素
+                draggable: ".el-table__row",
+                onEnd ({ newIndex, oldIndex }) {
+                    const currRow = _this.temp_page.stepObject.config.splice(oldIndex, 1)[0];
+                    _this.temp_page.stepObject.config.splice(newIndex, 0, currRow);
+                }
+            });
+            // let originIndex = scope.$index;
+            // let targetIndex = originIndex - 1;
+
+            // let temp = this.temp_page.stepObject.config[targetIndex];
+            // this.$set(this.temp_page.stepObject.config, targetIndex, this.temp_page.stepObject.config[originIndex]);
+            // this.$set(this.temp_page.stepObject.config, originIndex, temp);
+            // console.log(this.temp_page.stepObject.config)
+        },
+        addField() {
+            this.addFieldDialogVisible = true
+            this.rowDrop()
+        },
+        
         async getLastUpdateInfo() {
             let res = await Promise.all([
 
@@ -327,6 +422,7 @@ export default {
 
 
         },
+        // 创建步骤页面
         createStepPage() {
             this.stepPageCreateVisible = true;
         },
@@ -471,7 +567,9 @@ export default {
         },
         //全选
         chooseAllFieldToTemp() {
-            this.temp_page.stepObject.config = this.fields.map(v => v.fieldNO);
+            this.temp_page.stepObject.config = this.fields.map(v => v.fieldNo);
+            console.log(this.temp_page.stepObject.config,'000')
+            console.log(this.fields,'111')
         },
         //删除 选中的字段
         handleDeleteFromTempChosenFields(i) {
@@ -519,8 +617,6 @@ export default {
             let targetIndex = originIndex - 1;
 
             let temp = this.temp_page.stepObject.config[targetIndex];
-            // this.temp_page.stepObject.config[targetIndex]=this.temp_page.stepObject.config[originIndex];
-            // this.temp_page.stepObject.config[originIndex]=temp;
             this.$set(this.temp_page.stepObject.config, targetIndex, this.temp_page.stepObject.config[originIndex]);
             this.$set(this.temp_page.stepObject.config, originIndex, temp);
             console.log(this.temp_page.stepObject.config)
@@ -702,6 +798,7 @@ export default {
             export default getters`)
             beautify.beautify(this.outputEditor.session)
         },
+        //导入默认步骤
         async importDefault(){
             let message = "确认导入7个初始步骤页面吗";
             if (confirm(message) == true) {
@@ -725,6 +822,69 @@ export default {
             this.$message({ type: "success", message: "默认步骤导入成功" });
             this.loadStep();
             }
+        },
+        // 导入自选步骤
+        async importPreview() {
+            let result = await listApprovalItem({pageNum: this.currentPageSelect,pageSize: this.pageSize});
+            this.typeSubItemOptions = result.data.records;
+            this.totalAim = result.data.total;
+            this.importPreviewVisible = true
+        },
+        // 获取选择后的步骤列表
+        async getStepList() {
+           let res = await listStepsBytype({approvalItemId:this.temp_page_itemId,stepType:this.temp_page_step})
+           console.log(res)
+           if(!res.success) return
+           this.stepList = res.data
+        },
+        // 绑定id
+        getRowKey(row) {
+           return row.id
+        },
+        async selectOne(val){
+           if(this.temp_page_itemId&&this.temp_page_step) {
+               this.getStepList()
+           }
+        },
+        handleSelectionChange (val) {
+            console.log(val)
+            this.multipleSelection = val;
+        },
+        //下拉框带分页
+        async handleSizeChangeSelect(size){
+            this.selectData = [];
+            this.pageSize = size;
+            let result = await listApprovalItem({pageNum: this.currentPageSelect,pageSize: this.pageSize});
+            this.typeSubItemOptions = result.data.records;
+        },
+        async handleCurrentChangeSelect(current){
+            this.selectData = [];
+            this.currentPageSelect = current;
+            let result = await listApprovalItem({pageNum: this.currentPageSelect,pageSize: this.pageSize});
+            this.typeSubItemOptions = result.data.records;
+        },
+        //远程搜索
+        async remoteMethod(query){
+            if(query !== ''){
+                let result = await listApprovalItem({keyword:query, pageNum: this.currentPageSelect,pageSize: this.pageSize});
+                this.loading = true;
+                setTimeout(() => {
+                    this.loading = false;
+                    this.totalAim = result.data.total;
+                    this.typeSubItemOptions = result.data.records;
+                    
+                })
+            }
+        },
+        async importStepPage() {
+            let res= await batchSaveBytype({approvalItemId:this.itemId,stepslist:this.multipleSelection})
+            if(!res.success) return
+            this.$message.success('导入自选步骤成功')
+            this.importPreviewVisible = false
+            await this.loadAll()
+            this.stepList = []
+            this.temp_page_step='',
+            this.temp_page_itemId=''
         },
         async transferOutput(){
             let serviceBaseUrl = this.$store.state.setting.bangbanUrl;

@@ -1,20 +1,24 @@
 <template>
-    <div class="home new">
-
-        <div class="left">
-            <content-card title="收件流程" :img="stepIcon">
-                <LeftSteper slot="content" :stepsData="stepsData" :active.sync="active"
-                    @requestUpdateActive="handleUpdateActive"></LeftSteper>
-            </content-card>
-        </div>
-        <div class="right">
-            <!-- <template v-for="(step,index) in stepsData" >
-                <component  v-if="index == active" :is="step.component" :config="step.configType ==1 ? step.config:step.configFn(itemState,itemGetters)" @goNext="goNext" @goPrev="goPrevious" :stepData="step" ref="components"></component>
-            </template> -->
-            <component v-if="step" :is="step.component"
-                :config="getStepConfig()" @goNext="goNext"
-                @goPrev="goPrevious" :stepData="step" ref="components" :isLastStep="active==stepsData.length-1">
-            </component>
+    <div>
+        <section class="previewImgBox" @click="dialogTableVisible = false" v-if="dialogTableVisible">
+            <div class="previewImg" :style="{backgroundImage: `url(${imgUrl})`}"></div>
+        </section>
+        <div class="home new" ref="imageWrapper">
+            <div class="left">
+                <content-card title="收件流程" :img="stepIcon">
+                    <LeftSteper slot="content" :stepsData="stepsData" :active.sync="active"
+                        @requestUpdateActive="handleUpdateActive"></LeftSteper>
+                </content-card>
+            </div>
+            <div class="right">
+                <!-- <template v-for="(step,index) in stepsData" >
+                    <component  v-if="index == active" :is="step.component" :config="step.configType ==1 ? step.config:step.configFn(itemState,itemGetters)" @goNext="goNext" @goPrev="goPrevious" :stepData="step" ref="components"></component>
+                </template> -->
+                <component v-if="step" :is="step.component"
+                    :config="getStepConfig()" @goNext="goNext"
+                    @goPrev="goPrevious" :stepData="step" ref="components" :isLastStep="active==stepsData.length-1">
+                </component>
+            </div>
         </div>
         <processing v-if="msg" :msg="msg" />
         <el-dialog :show-close="false" class="message-dialog" title="系统提示" :visible.sync="showValidation" append-to-body
@@ -37,12 +41,12 @@
                 </div>
             </div>
         </el-dialog>
-
+    <el-button type="success" size="small" @click="toImage">生成截图</el-button>
     </div>
 </template>
 
 <script>
-
+import html2canvas from "html2canvas"
 // 库
 import AsyncValidator from 'async-validator';
 import _ from "lodash"
@@ -101,6 +105,7 @@ export default {
     },
     data() {
         return {
+            dialogTableVisible:false,
             stepIcon,
             rules: {},
             // stepPagesMap,
@@ -115,6 +120,7 @@ export default {
             barcode: "",
             // itemId: this.$route.query.itemId,
             type:this.$route.query.type,
+            imgUrl:'',
         }
     },
     components: { LeftSteper, ApprovalSelectContent, MaterialExtract, FormPage, IdCardInfo, CommonMaterial, BaseFormPage, BusinessFormPage, ContentCard,LastStep,processing },
@@ -233,6 +239,16 @@ export default {
 
 
         // },
+        toImage() {
+            html2canvas(this.$refs.imageWrapper).then(canvas => {
+            let dataURL = canvas.toDataURL("image/png");
+            this.imgUrl = dataURL;
+            console.log(this.imgUrl)
+            if (this.imgUrl !== "") {
+                this.dialogTableVisible = true;
+            }
+            });
+      },
         getStepConfig(){
             console.log("计算config",this.itemState,this.itemGetters)
             if(this.step.configType ==1){
@@ -525,4 +541,25 @@ export default {
         }
     }
 }
+.previewImgBox {
+        position: fixed;
+        z-index: 999;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,.6);
+        &>.previewImg {
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            min-width: 1000px;
+            height: 100%;
+            max-height: 80%;
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-position: center;
+            transform: translateX(-50%);
+        }
+    }
 </style>

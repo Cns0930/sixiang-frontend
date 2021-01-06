@@ -9,29 +9,34 @@
             <el-button class="operation-item" @click="reloadTable">搜索</el-button>
             
         </div>
-        <div class="upload-box">
-            <el-upload class="upload-demo" ref="upload" :action="url" :limit="1" accept=".xlsx" :with-credentials="true"
-                :on-success="upFile" :on-remove="handleRemove" :on-exceed="handleExceed" :auto-upload="false"
-                :before-upload="customUpload">
-                <el-button type="primary">选择材料字段数据Excel</el-button>
-                <div slot="tip" class="el-upload__tip">只能上传Excel文件</div>
-            </el-upload>
-            <el-button type="success" @click="upload()" class="upload-input">导入</el-button>
-
-        </div> 
-        <el-table :data="tableData" border style="margin-top: 10px;" :height="tableHeight" v-loading="loading">
-            <el-table-column prop="materialName" label="材料名称"></el-table-column>
-            <el-table-column prop="docxTemplateName" label="模板名称" ></el-table-column>
-            <el-table-column prop="fieldName" label="字段名称"  :show-overflow-tooltip="true"></el-table-column>
+        <div class="submitTip">
+            <div class="upload-box">
+                <el-upload class="upload-demo" ref="upload" :action="url" :limit="1" accept=".xlsx" :with-credentials="true"
+                    :on-success="upFile" :on-remove="handleRemove" :on-exceed="handleExceed" :auto-upload="false"
+                    :before-upload="customUpload">
+                    <el-button type="primary">选择材料字段数据Excel</el-button>
+                    <div slot="tip" class="el-upload__tip">只能上传Excel文件</div>
+                </el-upload>
+                <el-button type="success" @click="upload()" class="upload-input">导入</el-button>
+            </div> 
+            <div style="margin-right:10px">
+                <el-button type="primary" @click="updown" class="upload-input">导出到帮办字段</el-button>
+            </div>
+        </div>
+        <el-table ref="multipleTables" :data="tableData" border style="margin-top: 10px;" :row-style="{height:'60px'}" :header-row-style="{height:'50px'}" :height="tableHeight" v-loading="loading" :row-key="getRowKey"  @selection-change="handleSelectionChange">
+            <el-table-column type="selection" :reserve-selection='true'></el-table-column>
+            <el-table-column prop="docxTemplateName" label="模板名称" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="materialName" label="材料名称" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="fieldName" label="字段名称"  show-overflow-tooltip></el-table-column>
             <el-table-column prop="isRequired" label="是否必填" :formatter="isRequiredFormatter"></el-table-column>
-            <el-table-column prop="label" label="前端字段名称"></el-table-column>
-            <el-table-column prop="fieldNo" label="字段编号" ></el-table-column>
-            <el-table-column prop="valueSource" label="字段值来源"></el-table-column>
-            <el-table-column prop="defaultValue" label="默认值" ></el-table-column>
+            <el-table-column prop="label" label="前端字段名称" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="fieldNo" label="字段编号" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="valueSource" label="字段值来源" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="defaultValue" label="默认值" show-overflow-tooltip></el-table-column>
             <el-table-column prop="descriptionInfo" label="字段逻辑描述" show-overflow-tooltip width="200"></el-table-column>
             <!-- <el-table-column prop="note" label="备注"></el-table-column> -->
-            <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter"  ></el-table-column>
-            <el-table-column prop="updateTime" label="更新时间" :formatter="timeFormatter"></el-table-column>
+            <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter"  show-overflow-tooltip></el-table-column>
+            <el-table-column prop="updateTime" label="更新时间" :formatter="timeFormatter" show-overflow-tooltip></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
                     <el-button-group>
@@ -108,20 +113,17 @@
                 <el-form-item label="字段名称" required prop="fieldName">
                     <el-input v-model="editForm.fieldName"></el-input>
                 </el-form-item>
-                <el-form-item label="字段编号" required >
-                    <el-input v-model="editForm.fieldNo"></el-input>
-                </el-form-item>
-                <el-form-item label="前端字段名称" >
-                    <el-input v-model="editForm.label"></el-input>
-                </el-form-item>
-                 <el-form-item label="字段逻辑描述" >
-                    <el-input v-model="editForm.descriptionInfo"></el-input>
-                </el-form-item>
                 <el-form-item label="是否必填" >
                     <el-select v-model="editForm.isRequired" clearable placeholder="是否必填">
                         <el-option label="是" :value="Number(1)"></el-option>
                         <el-option label="否" :value="Number(0)"></el-option>
                     </el-select>
+                </el-form-item>
+                <el-form-item label="前端字段名称" >
+                    <el-input v-model="editForm.label"></el-input>
+                </el-form-item>
+                <el-form-item label="字段编号" required >
+                    <el-input v-model="editForm.fieldNo"></el-input>
                 </el-form-item>
                 <el-form-item label="字段值来源" >
                     <el-select v-model="editForm.valueSource" 
@@ -136,6 +138,9 @@
                 <el-form-item label="默认值">
                     <el-input v-model="editForm.defaultValue"></el-input>
                 </el-form-item>
+                <el-form-item label="字段逻辑描述" >
+                    <el-input type="textarea" v-model="editForm.descriptionInfo"></el-input>
+                </el-form-item>
                 <el-form-item label="备注">
                     <el-input v-model="editForm.note"></el-input>
                 </el-form-item>
@@ -145,6 +150,31 @@
                 <el-button type="primary" @click="editField">确 定</el-button>
             </span>
         </el-dialog>
+        <!-- 导出字段 -->
+        <el-dialog title="导出到帮办字段" :visible.sync="updownDialogVisible" width="60%" :close-on-click-modal="false">
+            <div style="margin-bottom:10px" v-if="taglists.length">已自动为您去除重复项
+                <el-tag type="info" v-for="(item,index) in taglists" :key="index" style="margin-left:10px">{{item}}</el-tag>
+            </div>
+            <el-table  class="workTable" :data="tableDataDown" style="width:95%;" border
+                tooltip-effect="dark">
+                <el-table-column label="序号" type="index" width="60" :index="indexMethod"></el-table-column>
+                <el-table-column prop="fieldNo" label="字段编号" width="200"></el-table-column>
+                <el-table-column prop="label" label="前端字段名称"></el-table-column>
+                <el-table-column prop="fieldComponentName" label="组件类型" fixed="right" >
+                    <template slot-scope="scope">
+                        <el-select v-model="scope.row.fieldComponentName" clearable placeholder="请选择组件类型" @change="(val)=>typeChange(val,scope.row)">
+                            <el-option v-for="(v,i) in typeOptions" :key="i" :label="v.label" :value="v.value"> </el-option>
+                        </el-select>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="close">取 消</el-button>
+                <el-button type='primary' @click="submitDown">确认导出</el-button>
+            </span>
+        </el-dialog>
+
+
         <!-- 导入字段 -->
         <el-dialog title="导入材料字段" :visible.sync="importDialogVisible" width="75%" :close-on-click-modal="false">
             <div class="searchBox">
@@ -235,11 +265,13 @@
 </template>
 
 <script>
+import defs from "../attributeComponents/index";
 import basicMixin from "./basicMixin";
+import { mapState } from "vuex";
 import {
     getField, addField, updateField, deleteField,
     getAllByApprovalItemId, listField,
-    listFieldUnionMaterial, listAllMaterial, importfields, lookfields
+    listFieldUnionMaterial, listAllMaterial, importfields, lookfields,listFieldNosByIds,updateFieldComponentName,saveBatch
 } from "@/api/basicInfo/field";
 import dayjs from "dayjs";
 import { getRolelist } from '@/api/item';
@@ -249,6 +281,7 @@ export default {
     mixins: [basicMixin],
     data() {
         return {
+            taglists:[],
             loading:false,
             // 页面信息
             type: "field",
@@ -307,14 +340,27 @@ export default {
                 关联材料不存在: null,
                 同情形下名称相同: null,
             },
-            tableHeight:0,
+            tableHeight:600,
+            //导出
+            multipleSelection: [],
+            tableDataDown:[],
+            subdownList:[],
+            updownDialogVisible:false,
+            typeOptions: defs.map(v => ({ value: v.value, label: v.label })),
         };
+    },
+    computed: {
+        ...mapState({
+            roles: state => state.config.roles,
+
+        })
     },
     async created() {
         await this.init();
         this.materialList();
         this.reloadTable();
-        this.getTableHeight()
+        await this.getTableHeight()
+        
     },
     //挂载window.onresize事件
     mounted() {
@@ -331,9 +377,9 @@ export default {
     },
     // 注销window.onresize事件
     beforeRouteLeave(to, from, next) {
-    //离开组件的时候触发
-    window.onresize = null
-    next()
+        //离开组件的时候触发
+        window.onresize = null
+        next()
     },
     methods: {
         // 查询表格
@@ -403,6 +449,96 @@ export default {
             }
 
 
+        },
+        // 导出到前端字段
+
+        handleSelectionChange (val) {
+            console.log(val)
+            this.multipleSelection = val;
+        },
+        getRowKey(row) {
+           return row.fieldId
+        },
+        // 导出到前端字段
+        async updown() {
+            let vm = this
+            let fieldIdList = this.multipleSelection.map(e=>e.fieldId)
+            let result = await listFieldNosByIds({fieldIdList})
+            this.taglists = result.data
+            console.log(result)
+            if(result.data.length) {
+               let lists = []
+                result.data.forEach(e=>{
+                    console.log(e)
+                    if(!lists.length) {
+                      lists = vm.multipleSelection.filter(ele=>ele.fieldNo != e)
+                    } else{
+                        lists = lists.filter(ele=>ele.fieldNo != e)
+                    }
+                })
+                this.tableDataDown = lists
+            } else {
+                this.tableDataDown = this.multipleSelection
+            }
+            this.updownDialogVisible = true
+        },
+        async close() {
+            await this.reloadTable();
+            this.updownDialogVisible = false
+        },
+        async typeChange(val,item) {
+           console.log(val,item)
+           let res = await updateFieldComponentName({fieldId:item.fieldId,fieldComponentName:val})
+           console.log(res)
+        },
+        // 确认导出
+        async submitDown() {
+            console.log(this.tableDataDown)
+            let vm = this
+            this.subdownList = []
+            this.tableDataDown.forEach(ele=>{
+                if(ele.fieldComponentName) {
+                    let def = defs.find(v => v.value == ele.fieldComponentName);
+                    console.log("def:",def)
+                    let ComponentDefClass = def.componentDef
+                    let fieldType = (ele.fieldComponentName == "computed" || ele.fieldComponentName == "checkpoint")? 2 : 1;
+                    let isList = !!def.isList;
+                    let v = {
+                        fieldNo: ele.fieldNo,
+                        type: ele.fieldComponentName,
+                        label: ele.label,
+                        fieldComponentName: ele.fieldComponentName,
+                        fieldType,
+                        isList,
+                        componentDefs: new ComponentDefClass()
+                    };
+                    let param = {
+                        fieldId:ele.fieldId,
+                        fieldNo: v.fieldNo,
+                        label: v.label,
+                        fieldComponentName: v.componentDefs?.type?.value,
+                        fieldName: ele.fieldName,
+                        approvalItemId: vm.itemId,
+                        descriptionInfo:ele.descriptionInfo,
+                        fieldType,
+                        object: v,
+                    }
+                    if(vm.roles.includes("admin") || vm.roles.includes("developer")){
+                        param.createRole = "developer";
+                    }else{
+                        param.createRole = "researcher";
+                    }
+                    vm.subdownList.push(param)
+             }
+            })
+            let res = await saveBatch({fieldsList:this.subdownList})
+            console.log(res)
+            if(res.success) {
+               this.$refs.multipleTables.clearSelection();
+               await this.close()
+               this.$message.success('导出字段成功')
+            }
+            
         },
         // 导入字段相关
         async reloadImportTable() {
@@ -549,7 +685,7 @@ export default {
         handleRemove(file, fileList) {
         },
         getTableHeight() {
-            let tableH = 280
+            let tableH = 285
             let tableHeightDetil = window.innerHeight - tableH
             if (tableHeightDetil <= 300) {
                 this.tableHeight = 300
@@ -566,6 +702,11 @@ export default {
 .workWrap {
     width: 99.9%;
     height: calc(100% - 22px);
+    .submitTip{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
     .operation-box {
         display: flex;
         align-items: center;

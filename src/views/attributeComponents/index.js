@@ -45,6 +45,7 @@ let mapping = [
     {label:"合成属性",value:"computed",componentDef:ComputedDef,isList:false},
     {label:"常量",value:"constant",componentDef:ConstantDef,isList:false},
     {label:"二维码上传文件",value:"QRCodeUpload",componentDef:QRCodeUploadDef,isList:false},
+    {label:"提取点",value:"checkpoint",componentDef:ComputedDef,isList:false}
 ]
 
 export function getMapping() {
@@ -127,9 +128,19 @@ export function deserializeTableData(fieldJSON){
         // 处理子项
         if(fieldJSON.children != null){
            
-            let children = fieldJSON.children.map(v => ({ id: v.id, fieldType: v.fieldType, ...v.object })).map(deserializeBaseField)
-            output.componentDefs.meta.value = children
-            output.list =children;
+            
+            if(fieldJSON.children.some(e=>e.validationInfo)||fieldJSON.children.some(e=>e.descriptionInfo)) {
+                let children = fieldJSON.children.map(v => ({ id: v.id, fieldType: v.fieldType,validationInfo:v.validationInfo,descriptionInfo:v.descriptionInfo, ...v.object })).map(deserializeBaseField)
+                output.componentDefs.meta.value = children
+                output.list =children;
+            } else {
+                let children = fieldJSON.children.map(v => ({ id: v.id, fieldType: v.fieldType, ...v.object })).map(deserializeBaseField)
+                output.componentDefs.meta.value = children
+                output.list =children;
+            }
+            
+            // output.componentDefs.meta.value = children
+            // output.list =children;
         }
        
         return output
@@ -142,7 +153,31 @@ export function deserializeTableData(fieldJSON){
     }
 }
 
-
+// export function deserializeTableDatas(fieldJSON){
+//     // console.log(fieldJSON)
+//     // type为1或2时分别调用其他方法
+//     if(fieldJSON.fieldType == 1){
+      
+        
+//         let output = deserializeBaseField(fieldJSON)
+        
+//         // 处理子项
+//         if(fieldJSON.children != null){
+           
+//             let children = fieldJSON.children.map(v => ({ id: v.id, fieldType: v.fieldType,validationInfo:v.validationInfo?v.validationInfo:null, ...v.object })).map(deserializeBaseField)
+//             output.componentDefs.meta.value = children
+//             output.list =children;
+//         }
+       
+//         return output
+//     }
+//     if(fieldJSON.fieldType == 2){
+//         return deserializeComputedField(fieldJSON)
+//     }
+//     if(fieldJSON.fieldType == 3){
+//         return deserializeBaseField(fieldJSON)
+//     }
+// }
 
 
 export default mapping

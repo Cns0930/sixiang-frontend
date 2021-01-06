@@ -23,3 +23,9 @@ export const deleteStepResearcher = params => axios.get('/superform/steps-resear
 
 // 批量保存步骤
 export const saveStepBatchResearcher = params => axios.post('/superform/steps-researcher/batchSave', params).then(res => res.data);
+
+// 根据传入类型判断查询步骤
+export const listStepsBytype = params => axios.get('/superform/steps/listStepsBytype', {params}).then(res => res.data);
+
+// 批量新增开发步骤
+export const batchSaveBytype = params => axios.post('/superform/steps/batchSaveBytype', params).then(res => res.data);

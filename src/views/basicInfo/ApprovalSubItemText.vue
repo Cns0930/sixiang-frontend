@@ -13,7 +13,7 @@
                 <!-- <el-button v-if="tableData.length < 1" type="primary" @click="addFirst">新增</el-button> -->
             </div>
             <div class="tableWrap">
-                <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%" border
+                <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%" border :row-style="{height:'60px'}" :header-row-style="{height:'50px'}"
                     tooltip-effect="dark" :default-sort="{ prop: 'createTime', order: 'descending' }">
                     <el-table-column label="序号" type="index" width="70" :index="indexMethod"></el-table-column>
                     <el-table-column prop="subitemName"  label="情形名称" width="200" show-overflow-tooltip>
@@ -40,14 +40,24 @@
                                 v-if="scope.row.flag"
                                 v-model="scope.row.globalDocumentSubId"
                                 placeholder="请选择子文档名称"
+                                clearable filterable
+                                remote reserve-keyword :remote-method="remoteMethod" :loading="loading"
                                 @change="globalDocumentSubNameChange"
                             >
                             <el-option
                                 v-for="item in approvalSubTextList"
-                                :key="item.globalDocumentSubName"
+                                :key="item.globalDocumentSubId"
                                 :label="item.globalDocumentSubName"
                                 :value="item.globalDocumentSubId"
                             />
+                            <div class="text-center" style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
+                                <a class="text-normal">
+                                    <el-pagination @size-change="handleSizeChangeSelect" @current-change="handleCurrentChangeSelect"
+                                        :current-page="currentPageSelect" :total="totalAim"
+                                        :page-size="pageSize"
+                                        layout="prev, pager, next"/>
+                                </a>
+                            </div>
                             </el-select>
                             <span v-else>{{scope.row.globalDocumentSubName}}</span>
                         </template>
@@ -112,6 +122,7 @@ export default {
     mixins: [basicMixin],
     data() {
         return {
+            loading:false,
             type: "ApprovalSubItemText",
             itemId: this.$route.query.itemId,
             singleWindowMaterials: [],
@@ -135,6 +146,7 @@ export default {
             
             currentPageSelect: 1,
             pageSize: 10,
+            totalAim:0,
             selectData: [],
             importDialogVisible: false,
             idd: "",
@@ -151,7 +163,6 @@ export default {
         await this.search();
         await this.getApprovalList()
         await this.getApprovalSubText()
-        // await this.getList();
     },
 
     methods: {
@@ -201,14 +212,39 @@ export default {
         // 子文档列表
         async getApprovalSubText() {
             this.approvalSubTextList = []
-            let result = await listGlobalDcumentSub();
+            let result = await listGlobalDcumentSub({pageNum: this.currentPageSelect,pageSize: this.pageSize});
             if (!result.success) return;
             this.approvalSubTextList = result.data.records
-            console.log(this.approvalSubTextList,'77777')
+            this.totalAim = result.data.total
         },
-        handleSelectionChange(val) {
-            this.multipleSelection = val;
+        //远程搜索
+        async remoteMethod(query){
+            console.log(query)
+            if(query !== ''){
+                let result = await listGlobalDcumentSub({globalDocumentSubNameAndCode:query, pageNum: this.currentPageSelect,pageSize: this.pageSize});
+                this.loading = true;
+                setTimeout(() => {
+                    this.loading = false;
+                    this.approvalSubTextList = result.data.records
+                    this.totalAim = result.data.total
+                    
+                })
+            }
         },
+        //下拉框带分页
+        async handleSizeChangeSelect(size){
+            console.log(size)
+            this.pageSize = size;
+            await this.getApprovalSubText()
+        },
+        async handleCurrentChangeSelect(current){
+            console.log(current)
+            this.currentPageSelect = current;
+            await this.getApprovalSubText()
+        },
+        // handleSelectionChange(val) {
+        //     this.multipleSelection = val;
+        // },
         async handleSizeChange(val) {
             console.log(`每页 ${val} 条`);
             let result = await listMaterial({

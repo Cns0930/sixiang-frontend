@@ -28,10 +28,13 @@ import Field from "@/views/basicInfo/Field"
 import Accessory from "@/views/basicInfo/Accessory"
 import AIdocument from "@/views/basicInfo/AIdocument"
 import singleWindow from "@/views/basicInfo/singleWindowMaterial"
+import ApprovalRules from "@/views/basicInfo/ApprovalRules"
+
 import OnlineDocumentEditor from "@/views/basicInfo/OnlineDocumentEditor"
 import UiCompilerComponent from "@/views/uiCompilerComponent/Index"
 import PublicDocument from "@/views/publicManagement/PublicDocument"
 import PublicSubDocument from "@/views/publicManagement/PublicSubDocument"
+import Examination from "@/views/publicManagement/Examination"
 import ReadMe from "@/views/readMe/ReadMe"
 Vue.use(VueRouter)
 import store from "@/vuex/store"
@@ -175,6 +178,11 @@ const routes = [
                         component: singleWindow
                     },
                     {
+                        path: '/basic/approvalRules',
+                        component: ApprovalRules
+                    },
+                    
+                    {
                         path: '/basic/onlineDocumentEditor',
                         name: 'OnlineDocumentEditor',
                         component: OnlineDocumentEditor
@@ -195,6 +203,11 @@ const routes = [
                 path: '/publicsubdocument',
                 name: 'PublicSubDocument',
                 component: PublicSubDocument,
+            },
+            {
+                path: '/examination',
+                name: 'examination',
+                component: Examination,
             },
             {
                 path:"/readme",
