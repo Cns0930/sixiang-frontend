@@ -20,6 +20,7 @@ import CascaderDef from "./CascaderDef"
 import RegionCascaderDef from "./RegionCascaderDef"
 import QingxingCommentDef from "./QingxingCommentDef"
 import ComputedTextDef from "./ComputedTextDef"
+import QRCodeUploadDef from './QRCodeUploadDef' 
 let mapping = [
     {label:"文本",value:"text",componentDef:TextInputLikeDef,isList:false},
     {label:"文本计算值",value:"computedText",componentDef:ComputedTextDef,isList:false},
@@ -43,6 +44,7 @@ let mapping = [
     {label:"出资方式",value:"chuzifangshi",componentDef:ChuzifangshiDef,isList:false},
     {label:"合成属性",value:"computed",componentDef:ComputedDef,isList:false},
     {label:"常量",value:"constant",componentDef:ConstantDef,isList:false},
+    {label:"二维码上传文件",value:"QRCodeUpload",componentDef:QRCodeUploadDef,isList:false},
 ]
 
 export function getMapping() {

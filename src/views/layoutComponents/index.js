@@ -8,6 +8,7 @@ import LayoutComponentMixin from "./LayoutComponentMixin"
 import Jingyingfanwei from "./Jingyingfanwei/Jingyingfanwei"
 import Jingyingqixian from "./Jingyingqixian/Jingyingqixian"
 import QingxingComment from "./QingxingComment/QingxingComment"
+import QRCodeUpload from "./QRCodeUpload/QRCodeUpload"
 // 选择器
 let ElSelectC = {
     name:"ElSelectC",
@@ -102,5 +103,6 @@ export default {
     Chuzifangshi,
     Jingyingfanwei,
     Jingyingqixian,
-    QingxingComment
+    QingxingComment,
+    QRCodeUpload
 }
