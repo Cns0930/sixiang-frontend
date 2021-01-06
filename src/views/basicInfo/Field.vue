@@ -501,7 +501,7 @@ export default {
                     let def = defs.find(v => v.value == ele.fieldComponentName);
                     console.log("def:",def)
                     let ComponentDefClass = def.componentDef
-                    let fieldType = ele.fieldComponentName == "computed" ? 2 : 1;
+                    let fieldType = (ele.fieldComponentName == "computed" || ele.fieldComponentName == "checkpoint")? 2 : 1;
                     let isList = !!def.isList;
                     let v = {
                         fieldNo: ele.fieldNo,

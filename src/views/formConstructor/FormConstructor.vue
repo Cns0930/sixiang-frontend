@@ -540,7 +540,7 @@ export default {
             let isList = !!def.isList;
 
             // 不可修改类型时给出提示
-            if (this.temp_change_type == "computed") {
+            if (this.temp_change_type == "computed" || this.temp_change_type == "checkpoint") {
                 if (this.temp_fieldObj.children != null || this.temp_fieldObj.fieldType == 3) {
                     this.$message({ type: "warning", message: "父项/子项不可修改为合成类型" });
                     return
@@ -548,7 +548,7 @@ export default {
             }
 
             this.temp_fieldObj =
-                this.temp_change_type == "computed" ?
+                (this.temp_change_type == "computed" || this.temp_change_type == "checkpoint")?
                     {
                         id: this.temp_fieldObj.id,
                         fieldNo: this.temp_fieldObj.fieldNo,
@@ -558,6 +558,7 @@ export default {
                         type: this.temp_change_type,
                         label: this.temp_fieldObj.label,
                         fieldType: 2,
+                        fieldComponentName: this.temp_change_type,
                         componentDefs: new ComponentDefClass()
                     } : {
                         id: this.temp_fieldObj.id,
@@ -799,7 +800,7 @@ export default {
                 fieldNo: v.fieldNo,
                 fieldName: v.fieldName,
                 label: v.label.trim(),
-                fieldComponentName: v.componentDefs?.type?.value,
+                fieldComponentName: (v.fieldType == 2)?v.fieldComponentName : v.componentDefs?.type?.value,
                 fieldType: v.fieldType,
                 object: vsimple,
                 remark: v.remark
