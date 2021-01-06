@@ -587,7 +587,7 @@ export default {
             let def = defs.find(v => v.value == this.temp_type);
             console.log("def:",def)
             let ComponentDefClass = def.componentDef
-            let fieldType = this.temp_type == "computed" ? 2 : 1;
+            let fieldType = (this.temp_type == "computed" || this.temp_type == "checkpoint") ? 2 : 1;
             let isList = !!def.isList;
 
             let v = {
@@ -602,7 +602,7 @@ export default {
             let param = {
                 fieldNo: v.fieldNo,
                 label: v.label,
-                fieldComponentName: v.componentDefs?.type?.value,
+                fieldComponentName: fieldType==1?v.componentDefs?.type?.value:v.fieldComponentName,
                 fieldName: this.temp_fieldName,
                 approvalItemId: this.itemId,
                 fieldType,

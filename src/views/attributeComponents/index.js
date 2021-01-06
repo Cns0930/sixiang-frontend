@@ -43,6 +43,7 @@ let mapping = [
     {label:"出资方式",value:"chuzifangshi",componentDef:ChuzifangshiDef,isList:false},
     {label:"合成属性",value:"computed",componentDef:ComputedDef,isList:false},
     {label:"常量",value:"constant",componentDef:ConstantDef,isList:false},
+    {label:"提取点",value:"checkpoint",componentDef:ComputedDef,isList:false}
 ]
 
 export function getMapping() {
