@@ -14,6 +14,7 @@ class QRCodeUploadDef extends CommonComponents{
         this.getImgUrlDev= new Renderer('ElInput', '',null,"获取图片接口地址-开发")
         this.getImgUrlProd= new Renderer('ElInput', '',null,"获取图片接口地址-生产")
         this.milliseconds = new Renderer('NumberInput', 2000,null,"轮询间隔（毫秒）")
+        this.disabled = new Renderer('ElSingleCheckboxC',false,{options:[true]})
     }
     getAttributes(){
         return {
@@ -25,7 +26,8 @@ class QRCodeUploadDef extends CommonComponents{
             uploadUrlProd:this.uploadUrlProd.value,
             getImgUrlDev:this.getImgUrlDev.value,
             getImgUrlProd:this.getImgUrlProd.value,
-            milliseconds:this.milliseconds.value
+            milliseconds:this.milliseconds.value,
+            disabled:this.disabled.value,
         }
     }
     

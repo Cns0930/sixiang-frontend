@@ -12,7 +12,7 @@
                     <p class="content">{{content}}</p>
                 </div>
             </div>
-            <div class="right" @click="handleOpenQR">
+            <div class="right" :class="{'right-active':!disabled,'right-disabled':disabled}" @click="handleOpenQR">
                 <img src="./img/urcode.png" />
                  <p class="content">二维码上传</p>
             </div>
@@ -47,7 +47,7 @@ import axios from 'axios'
 import dayjs from "dayjs"
 export default {
     name: "QRCodeUpload",
-    props: ["value", "content", "height", "borderRadius","uploadUrlDev","getImgUrlDev","uploadUrlProd","getImgUrlProd","milliseconds"],
+    props: ["value", "content", "height", "borderRadius","uploadUrlDev","getImgUrlDev","uploadUrlProd","getImgUrlProd","milliseconds","disabled"],
     data() {
         return {
             openQR:false,
@@ -84,6 +84,7 @@ export default {
     },
     methods:{
         handleOpenQR(){
+            if(this.disabled) return;
             this.openQR=true;
             //  轮询 查询图片
             console.log("询start",this.milliseconds)
@@ -192,7 +193,7 @@ export default {
         width: 100px;
         border-radius: 4px;
         width: 100px;
-        background: linear-gradient(153deg,#ffd85a 1%, #f2901e 83%);
+        
         display:flex;
         justify-content: center;
         align-items: center;
@@ -204,6 +205,14 @@ export default {
             line-height: 19px;
             font-size: 15px;
         }
+    }
+    .right-active{
+        background: linear-gradient(153deg,#ffd85a 1%, #f2901e 83%);
+    }
+    .right-disabled{
+        background: linear-gradient(153deg,rgba(185,199,220,0.48), rgba(119,127,141,0.30) 83%);
+ 
+
     }
 }
 .container-img{
