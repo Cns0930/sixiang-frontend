@@ -246,8 +246,7 @@ export default {
     methods: {
         async search() {
             let params = {
-                globalDocumentSubName: this.filterKeyword,
-
+                globalDocumentSubNameAndCode: this.filterKeyword,
                 pageNum: this.currentPage,
                 pageSize: this.pagesize,
                 category: this.categoryFilterKeyword,
