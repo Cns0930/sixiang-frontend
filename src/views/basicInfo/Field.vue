@@ -186,11 +186,10 @@
             <el-table ref="multipleTable" class="workTable" :data="tableDataImport" style="width: 100%;" border
                 tooltip-effect="dark">
                 <el-table-column label="序号" type="index" width="45" :index="indexMethod"></el-table-column>
-                <el-table-column prop="approvalItemId" label="审批事项编号" width="100" show-overflow-tooltip>
-                </el-table-column>
+                <el-table-column prop="projectName" label="项目名称" show-overflow-tooltip width="120"></el-table-column>
                 <el-table-column prop="itemName" label="审批事项名称"></el-table-column>
-                <el-table-column prop="materialCode" label="材料编码" width="100" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="materialId" label="材料ID" width="100" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="materialCode" label="材料编码" width="140" show-overflow-tooltip></el-table-column>
+                <!-- <el-table-column prop="materialId" label="材料ID" width="100" show-overflow-tooltip></el-table-column> -->
                 <el-table-column prop="materialName" label="材料名称"></el-table-column>
 
                 <el-table-column label="是否关联" fixed="right" width="80">

@@ -248,8 +248,9 @@
             <el-button icon="el-icon-search" circle @click="searchField"></el-button>
 
             <el-table ref="checkTable" :data="searchResult" border style="width: 100%" row-key="id" @selection-change="handleSelectionChange">
-                <el-table-column prop="itemName" label="事项名称" ></el-table-column>
-                <el-table-column prop="fieldNo" label="fieldNo" width="160"></el-table-column>
+                <el-table-column prop="projectName" label="项目名称" width="160"></el-table-column>
+                <el-table-column prop="itemName" label="事项名称" width="200"></el-table-column>
+                <el-table-column prop="fieldNo" label="fieldNo"></el-table-column>
                 <el-table-column prop="label" label="label" width="240"></el-table-column>
                 <el-table-column prop="fieldComponentName" label="组件名" width="160"></el-table-column>
                 <el-table-column type="selection" reserve-selection label="选择">
@@ -281,8 +282,8 @@
             <el-button icon="el-icon-search" circle @click="searchPublicField"></el-button>
 
             <el-table ref="checkTable1" :data="searchPublicResult" border style="width: 100%" row-key="id" @selection-change="handlePublicSelectionChange">
-                <el-table-column prop="itemName" label="事项名称" ></el-table-column>
-                <el-table-column prop="fieldNo" label="fieldNo" width="160"></el-table-column>
+                <el-table-column prop="itemName" label="事项名称" width="160"></el-table-column>
+                <el-table-column prop="fieldNo" label="fieldNo"></el-table-column>
                 <el-table-column prop="label" label="label" width="240"></el-table-column>
                 <el-table-column prop="fieldComponentName" label="组件名" width="160"></el-table-column>
                 <el-table-column type="selection" reserve-selection label="选择">
