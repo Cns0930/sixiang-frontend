@@ -152,12 +152,15 @@ export default {
         ...mapGetters({ hasManagePermission: 'config/hasManagePermission' })
     },
     async created() {
+        // 获取项目信息
+        await this.initProject();
         this.search();
     },
     methods: {
         async search() {
             let params = {
                 globalDocumentName: this.filterKeyword,
+                projectId: this.$route.query.projectId,
                 isStandard: this.standardFilter,
                 pageNum: this.currentPage,
                 pageSize: this.pagesize,

@@ -356,6 +356,8 @@ export default {
         })
     },
     async created() {
+        // 获取项目信息
+        await this.initProject();
         await this.init();
         this.materialList();
         this.reloadTable();

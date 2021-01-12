@@ -4,10 +4,10 @@
         </header>
         <section class="workBox">
             <div class="searchBox">
-                <el-select placeholder="筛选项目" v-model="filterProjectId" filterable clearable style="width: 200px;">
+                <!-- <el-select placeholder="筛选项目" v-model="filterProjectId" filterable clearable style="width: 200px;">
                     <el-option v-for="(v,i) in projectOptions" :key="i" :label="v.projectName" :value="v.projectId">
                     </el-option>
-                </el-select>
+                </el-select> -->
                 <el-select placeholder="筛选大项" v-model="filterApprovalId" filterable clearable style="width: 200px;">
                     <el-option v-for="(v,i) in approvalOptions" :key="i" :label="v.approvalName" :value="v.approvalId">
                     </el-option>
@@ -97,13 +97,13 @@
             <el-dialog title="事项属性填写" :visible.sync="dialogAddVisible" width="80%" :close-on-click-modal="false" :show-close='false'>
                 <div class="attribute-content">
                     <el-form :model='tempItem' ref="tempItem" :inline="false" label-position="left" class="demo-form-inline" :rules="rules">
-                        <el-form-item label="项目" prop="projectId">
+                        <!-- <el-form-item label="项目" prop="projectId">
                             <el-select v-model="tempItem.projectId" filterable>
                                 <el-option v-for="(v,i) in projectOptions" :key="i" :label="v.projectName"
                                     :value="v.projectId">
                                 </el-option>
                             </el-select>
-                        </el-form-item>
+                        </el-form-item> -->
                         <el-form-item label="大项" prop="approvalId">
                             <el-select v-model="tempItem.approvalId" filterable>
                                 <el-option v-for="(v,i) in approvalOptions" :key="i" :label="v.approvalName"
@@ -207,7 +207,7 @@ import Vue from "vue";
 import {mapGetters} from "vuex"
 import {
     listApprovalAll,
-    listProjectAll,
+    getByProjectId,
     addApprovalItem,
     updateApprovalItem,
     getByApprovalItemId,
@@ -239,9 +239,9 @@ export default {
             pagesize: 15,
             totalCount: 0,
             rules: {
-                projectId: [
-                    { required: true, message: '请选择项目', trigger: 'change' },
-                ],
+                // projectId: [
+                //     { required: true, message: '请选择项目', trigger: 'change' },
+                // ],
                 approvalId: [
                     { required: true, message: '请选择大项', trigger: 'change' }
                 ],
@@ -264,6 +264,8 @@ export default {
          ...mapGetters({hasManagePermission:'config/hasManagePermission'})
     },
     async created() {
+        // 获取项目信息
+        await this.initProject();
         await this.searchItem();
         await this.loadOptions();
 
@@ -276,9 +278,6 @@ export default {
         
     },
     methods: {
-        // inputs(val) {
-        //   console.log(this.model);
-        // },
         getTime(val) {
             console.log(val);
         },
@@ -313,6 +312,7 @@ export default {
         },
         // 新增保存
         async saveItem(tempItem) {
+            tempItem.projectId = this.$route.query.projectId;
             this.$refs.tempItem.validate(async (valid) => {
                 if (valid) {
                     this.tempItem.createBy = localStorage.getItem("username");
@@ -348,10 +348,10 @@ export default {
         },
         async loadOptions() {
             // 获取选项
-            let projectRes = await listProjectAll();
-            if (projectRes.success) {
-                this.projectOptions = projectRes.data;
-            }
+            // let projectRes = await listProjectAll();
+            // if (projectRes.success) {
+            //     this.projectOptions = projectRes.data;
+            // }
             let approvalRes = await listApprovalAll();
             if (approvalRes.success) {
                 this.approvalOptions = approvalRes.data;
@@ -375,12 +375,12 @@ export default {
             if (hasAdmin || hasResearcher) {
                 this.$router.push({
                     path: "/basic/subitem",
-                    query: { itemId: item.approvalItemId },
+                    query: { itemId: item.approvalItemId, projectId: this.$route.query.projectId },
                 });
             } else {
                 this.$router.push({
                     path: "/formconstructor",
-                    query: { itemId: item.approvalItemId },
+                    query: { itemId: item.approvalItemId, projectId: this.$route.query.projectId },
                 });
             }
         },
@@ -390,7 +390,7 @@ export default {
             sessionStorage.setItem('activeName', 'subitem');
             this.$router.push({
                 path: "/basic/subitem",
-                query: { itemId: item.approvalItemId },
+                query: { itemId: item.approvalItemId, projectId: this.$route.query.projectId },
             });
         },
         handleClickItemBangBan(item) {
@@ -399,7 +399,7 @@ export default {
             sessionStorage.setItem('activeTab', 'formconstructor');
             this.$router.push({
                 path: "/formconstructor",
-                query: { itemId: item.approvalItemId },
+                query: { itemId: item.approvalItemId, projectId: this.$route.query.projectId },
             });
         },
         async handleClose(item) {
@@ -419,7 +419,7 @@ export default {
         async list() {
             let params = {
                 approvalId: this.filterApprovalId,
-                projectId: this.filterProjectId,
+                projectId: this.$route.query.projectId,
                 keyword: this.filterKeyword,
                 pageSize: this.pagesize,
                 pageNum: this.currentPage,

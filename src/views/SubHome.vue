@@ -61,7 +61,7 @@ export default {
             if (this.activeTab === "formconstructor") {
                 this.$router.push({
                     path: "/formconstructor",
-                    query: { itemId: this.$route.query.itemId },
+                    query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
                 });
                 sessionStorage.setItem('activeTab', 'formconstructor');
                 this.$store.commit("config/setCrumbList", [{ path: "/formconstructor", label: '帮办工具' }])
@@ -69,7 +69,7 @@ export default {
             } else if (this.activeTab === "materialmanager") {
                 this.$router.push({
                     path: "/materialmanager",
-                    query: { itemId: this.$route.query.itemId },
+                    query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
                 });
                 sessionStorage.setItem('activeTab', 'materialmanager');
                 this.$store.commit("config/setCrumbList", [{ path: "/formconstructor", label: '帮办工具' }])
@@ -77,7 +77,7 @@ export default {
             } else if (this.activeTab === "pageconfigure") {
                 this.$router.push({
                     path: "/pageconfigure",
-                    query: { itemId: this.$route.query.itemId },
+                    query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
                 });
                 sessionStorage.setItem('activeTab', 'pageconfigure');
                 this.$store.commit("config/setCrumbList", [{ path: "/formconstructor", label: '帮办工具' }])
@@ -85,7 +85,7 @@ export default {
             } else if (this.activeTab === "pageconfigure2") {
                 this.$router.push({
                     path: "/pageconfigureresearcher",
-                    query: { itemId: this.$route.query.itemId },
+                    query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
                 });
                 sessionStorage.setItem('activeTab', 'pageconfigure2');
                 this.$store.commit("config/setCrumbList", [{ path: "/formconstructor", label: '帮办工具' }])
@@ -93,7 +93,7 @@ export default {
             } else if (this.activeTab === "setting") {
                 this.$router.push({
                     path: "/setting",
-                    query: { itemId: this.$route.query.itemId },
+                    query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
                 });
                 sessionStorage.setItem('activeTab', 'setting');
                 this.$store.commit("config/setCrumbList", [{ path: "/formconstructor", label: '帮办工具' }])

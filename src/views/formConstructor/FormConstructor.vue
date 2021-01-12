@@ -402,6 +402,8 @@ export default {
         })
     },
     async created() {
+        // 获取项目信息
+        await this.initProject();
         await this.init();
         await this.load();
         await this.getTableHeight()
@@ -882,7 +884,7 @@ export default {
         async handleImportPublic() {
             this.dialogPublicVisible = true;
             // 初始化公共事项列表
-            let result = await listPublicApprovalItem({pageSize: 100});
+            let result = await listPublicApprovalItem({pageSize: 100, projectId: this.$route.query.projectId});
             this.publicApprovalItemList = result.data.records;
         },
         handleSelect(){

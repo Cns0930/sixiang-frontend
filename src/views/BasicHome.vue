@@ -55,7 +55,7 @@ export default {
             if (this.activeName === "subitem") {
                 this.$router.push({
                     path: "/basic/subitem",
-                    query: { itemId: this.$route.query.itemId },
+                    query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
                 });
                 sessionStorage.setItem('activeName', 'subitem');
                 this.$store.commit("config/setCrumbList", [{ path: `/basic/subitem?itemId=${this.$route.query.itemId}`, label: '调研信息' }])
@@ -63,7 +63,7 @@ export default {
             } else if (this.activeName === "material") {
                 this.$router.push({
                     path: "/basic/material",
-                    query: { itemId: this.$route.query.itemId },
+                    query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
                 });
                 sessionStorage.setItem('activeName', 'material');
                 this.$store.commit("config/setCrumbList", [{ path: `/basic/subitem?itemId=${this.$route.query.itemId}`, label: '调研信息' }])
@@ -71,7 +71,7 @@ export default {
             } else if (this.activeName === "field") {
                 this.$router.push({
                     path: "/basic/field",
-                    query: { itemId: this.$route.query.itemId },
+                    query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
                 });
                 sessionStorage.setItem('activeName', 'field');
                 this.$store.commit("config/setCrumbList", [{ path: `/basic/subitem?itemId=${this.$route.query.itemId}`, label: '调研信息' }])
@@ -79,7 +79,7 @@ export default {
             } else if (this.activeName === "accessory") {
                 this.$router.push({
                     path: "/basic/accessory",
-                    query: { itemId: this.$route.query.itemId },
+                    query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
                 });
                 sessionStorage.setItem('activeName', 'accessory');
                 this.$store.commit("config/setCrumbList", [{ path: `/basic/subitem?itemId=${this.$route.query.itemId}`, label: '调研信息' }])
@@ -87,7 +87,7 @@ export default {
             } else if (this.activeName === "ApprovalSubItemText") {
                 this.$router.push({
                     path: "/basic/ApprovalSubItemText",
-                    query: { itemId: this.$route.query.itemId },
+                    query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
                 });
                 sessionStorage.setItem('activeName', 'ApprovalSubItemText');
                 this.$store.commit("config/setCrumbList", [{ path: `/basic/subitem?itemId=${this.$route.query.itemId}`, label: '调研信息' }])
@@ -95,7 +95,7 @@ export default {
             } else if (this.activeName === "singleWindow") {
                 this.$router.push({
                     path: "/basic/singleWindow",
-                    query: { itemId: this.$route.query.itemId },
+                    query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
                 });
                 sessionStorage.setItem('activeName', 'singleWindow');
                 this.$store.commit("config/setCrumbList", [{ path: `/basic/subitem?itemId=${this.$route.query.itemId}`, label: '调研信息' }])
@@ -104,7 +104,7 @@ export default {
              else if (this.activeName === "approvalRules") {
                 this.$router.push({
                     path: "/basic/approvalRules",
-                    query: { itemId: this.$route.query.itemId },
+                    query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
                 });
                 sessionStorage.setItem('activeName', 'approvalRules');
                 this.$store.commit("config/setCrumbList", [{ path: `/basic/subitem?itemId=${this.$route.query.itemId}`, label: '调研信息' }])

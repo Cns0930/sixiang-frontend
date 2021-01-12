@@ -1,6 +1,6 @@
 <template>
     <div class="workWrap">
-        <header>事项管理</header>
+        <header>公共事项管理</header>
         <section class="workBox">
             <div class="searchBox">
                 <el-select
@@ -267,6 +267,8 @@ export default {
     },
     computed: {},
     async created() {
+        // 获取项目信息
+        await this.initProject();
         await this.searchItem();
         await this.loadOptions();
         

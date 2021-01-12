@@ -68,7 +68,7 @@ export default {
             let hasAdmin = result.data.roles.includes('admin');
             let hasResearcher = result.data.roles.includes('researcher');
             // if(hasAdmin || hasResearcher) {
-                this.$router.push('/basic')
+                this.$router.push('/project')
             // } else {
             //     this.$router.push("/subhome");
             // }
