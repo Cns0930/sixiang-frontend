@@ -312,6 +312,7 @@ export default {
                         "黑体",
                         "宋体",
                         "Wingdings 2",
+                        "楷体"
                     ],
                     supportAllValues: true,
                 },

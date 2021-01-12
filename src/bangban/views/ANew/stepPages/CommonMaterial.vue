@@ -232,7 +232,8 @@ export default {
                             '仿宋',
                             '黑体',
                             '宋体',
-                            "Wingdings 2"
+                            "Wingdings 2",
+                            "楷体"
                         ],
 
                     },

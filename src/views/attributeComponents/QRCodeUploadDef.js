@@ -4,7 +4,7 @@ class QRCodeUploadDef extends CommonComponents{
     constructor(){
         super({type:"QRCodeUploadDef"})
         // this.value = rendererBuilder("text",["",""]);
-        this.value = new Renderer("QRCodeUploadDef","",{height:"200",borderRadius:"10",milliseconds:2000});
+        this.value = new Renderer("text","",{height:"200",borderRadius:"10",milliseconds:2000});
         this.component = rendererBuilder("text","QRCodeUpload")
         this.height =  new Renderer('ElInput', '200',null,"高度")
         this.borderRadius =  new Renderer('ElInput', '10',null,"圆角")
