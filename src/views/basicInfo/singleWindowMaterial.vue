@@ -199,6 +199,8 @@ export default {
     },
     computed: {},
     async created() {
+        // 获取项目信息
+        await this.initProject();
         await this.init();
         await this.search();
     },

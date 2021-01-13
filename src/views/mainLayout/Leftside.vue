@@ -60,7 +60,8 @@ export default {
             this.$store.commit("config/setCrumbListSecond", [{ path: "", label: '' }]);
             
                 this.$router.push({
-                    query: { itemId: store.state.home.item.approvalItemId },
+                    query: { itemId: store.state.home.item.approvalItemId,
+                    projectId: this.$route.query.projectId || store.state.home.project.projectId },
                 });
         },
     },

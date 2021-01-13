@@ -33,12 +33,11 @@
                 </el-popover> -->
             </div>
             <div class="right">
-                <div class="itemInfo-box" v-if="isShowItem()">
+                <div class="itemInfo-box" >
                     <!-- <span class="itemInfo-title">事项信息<i class="el-icon-document"></i> </span> -->
-
-                    <i class="itemInfo-text">事项名称：<i class="itemInfo-text-in">{{ itemInfo.itemName }}</i>
-                    </i>
-                    <i class="itemInfo-text">事项编号：<i class="itemInfo-text-in">{{ itemInfo.itemNo }}</i> </i>
+                    <i v-show="isShowProject()" class="itemInfo-text">项目名称：<i class="itemInfo-text-in">{{ projectInfo.projectName }}</i> </i>
+                    <i v-show="isShowItem()" class="itemInfo-text">事项名称：<i class="itemInfo-text-in">{{ itemInfo.itemName }}</i> </i>
+                    <i v-show="isShowItem()" class="itemInfo-text">事项编号：<i class="itemInfo-text-in">{{ itemInfo.itemNo }}</i> </i>
                 </div>
 
                 <el-dropdown @command="handleCommand" style="cursor: pointer;padding: 0 8px;" class="avatar">
@@ -80,9 +79,7 @@ export default {
     data() {
         return {
             // showList: false,
-            loginName: localStorage.getItem('username'),
-            topMenuList:[],
-
+            loginName: localStorage.getItem('username')
         };
     },
     components: {
@@ -94,6 +91,7 @@ export default {
         ...mapState({
             isCollapse: state => state.config.isCollapse,
             itemInfo: state => state.home.item,
+            projectInfo: state => state.home.project,
             roles:state=>state.config.roles,
         }),
         showList(){
@@ -106,10 +104,24 @@ export default {
             },false)
           
         },
+        topMenuList() {
+            let topMenuList = generaterTopMenuList(this.roles);
+            if (this.$route.path === '/project'){
+                topMenuList = topMenuList.filter(item => 
+                    item.label !== '事项管理' && item.label !== '文档管理' && item.label !== '说明'
+                )
+            }
+            else if (this.$route.path === '/user'){
+                topMenuList = topMenuList.filter(item => 
+                    item.label !== '事项管理' && item.label !== '文档管理' && item.label !== '说明'
+                )
+            }
+            return topMenuList
+
+        }
          
     },
     mounted() {
-        this.topMenuList = generaterTopMenuList(this.roles)
     },
     methods: {
         ...mapMutations('config', { handleCollapse: 'setCollapse' }),
@@ -129,8 +141,18 @@ export default {
                 this.$router.push("/login");
             });
         },
+        isShowProject() {
+            if (this.$route.path === '/user' || this.$route.path === '/project') {
+                return false;
+            } else {
+                return true;
+            }
+        },
         isShowItem() {
-            if (this.$route.path === '/user' || this.$route.path === '/basic') {
+            if (this.$route.path === '/user' || this.$route.path === '/basic' || this.$route.path === '/project'
+            || this.$route.path === '/publicdocument' || this.$route.path === '/publicsubdocument'
+            || this.$route.path === '/examination' || this.$route.path === '/readme'
+            || this.$route.path === '/public' || this.$route.path === '/allEdit') {
                 return false;
             } else {
                 return true;
@@ -140,9 +162,10 @@ export default {
             this.topMenuList.forEach(v=>{
                 this.$set(v,"visible",false)
             })
-           
-            this.$router.push(path);
-
+            this.$router.push({
+                path: path,
+                query: { projectId: this.$route.query.projectId || this.projectInfo.projectId }
+            });
         }
     }
 };

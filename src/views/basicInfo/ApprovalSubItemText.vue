@@ -159,6 +159,8 @@ export default {
   },
 
     async created() {
+        // 获取项目信息
+        await this.initProject();
         await this.init();
         await this.search();
         await this.getApprovalList()
@@ -212,7 +214,7 @@ export default {
         // 子文档列表
         async getApprovalSubText() {
             this.approvalSubTextList = []
-            let result = await listGlobalDcumentSub({pageNum: this.currentPageSelect,pageSize: this.pageSize});
+            let result = await listGlobalDcumentSub({pageNum: this.currentPageSelect,pageSize: this.pageSize,projectId: this.$route.query.projectId});
             if (!result.success) return;
             this.approvalSubTextList = result.data.records
             this.totalAim = result.data.total
@@ -221,7 +223,7 @@ export default {
         async remoteMethod(query){
             console.log(query)
             if(query !== ''){
-                let result = await listGlobalDcumentSub({globalDocumentSubNameAndCode:query, pageNum: this.currentPageSelect,pageSize: this.pageSize});
+                let result = await listGlobalDcumentSub({globalDocumentSubNameAndCode:query, pageNum: this.currentPageSelect,pageSize: this.pageSize,projectId: this.$route.query.projectId});
                 this.loading = true;
                 setTimeout(() => {
                     this.loading = false;

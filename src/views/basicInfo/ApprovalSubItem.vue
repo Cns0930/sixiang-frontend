@@ -76,20 +76,28 @@
         <el-dialog title="导入已有事项的情形" :visible.sync="importDialogVisible" width="50%" :close-on-click-modal="false">
 
             <el-form label="事项名称">
-                    <el-select clearable filterable placeholder="请选择事项名称或者输入关键词" v-model="idd" @change="selectOne" style="position:relative" 
+                <el-select v-model="temp_page_projectId" placeholder="请选择项目名称"  @change="selectProject" style="position:relative;margin: 10px 20px 10px 0px">
+                    <el-option
+                        v-for="item in projectOptions"
+                        :key="item.projectId"
+                        :label="item.projectName"
+                        :value="item.projectId">
+                    </el-option>
+                </el-select>
+                <el-select clearable filterable placeholder="请选择事项名称或者输入关键词" v-model="idd" @change="selectOne" style="position:relative;margin: 10px 0px" 
                     remote reserve-keyword :remote-method="remoteMethod" :loading="loading"> 
-                        <el-option v-for="(v,i) in typeSubItemOptions" :key="i" :label="v.itemName" :value="v.approvalItemId"> 
-                            
-                        </el-option>
+                    <el-option v-for="(v,i) in typeSubItemOptions" :key="i" :label="v.itemName" :value="v.approvalItemId"> 
+                    </el-option>
                    
                     <div class="text-center" style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
-                            <a class="text-normal">
-                                <el-pagination @size-change="handleSizeChangeSelect" @current-change="handleCurrentChangeSelect"
-                                            :current-page="currentPageSelect" :total="totalAim"
-                                            :page-size="pageSize"
-                                            layout="prev, pager, next"/>
-                            </a>
-                            </div> </el-select>
+                        <a class="text-normal">
+                            <el-pagination @size-change="handleSizeChangeSelect" @current-change="handleCurrentChangeSelect"
+                                :current-page="currentPageSelect" :total="totalAim"
+                                :page-size="pageSize"
+                                layout="prev, pager, next"/>
+                        </a>
+                    </div> 
+                </el-select>
             </el-form>
                 
             <el-table :data="tableDataSS" border>
@@ -108,7 +116,7 @@
 import basicMixin from "./basicMixin";
 import { getApprovalSub, addApprovalSub, updateApprovalSub, deleteApprovalSub, relateMaterial,listApprovalSubAll } from "@/api/basicInfo/approvalSub"
 import { getAllByApprovalItemId } from "@/api/basicInfo/field";
-import { listApprovalItem,copyApprovalSub } from "@/api/basicInfo/approval";
+import { listApprovalItem, copyApprovalSub, listProjectAll } from "@/api/basicInfo/approval";
 import dayjs from "dayjs"
 
 export default {
@@ -150,9 +158,15 @@ export default {
             },
             ids: [],
             idd: "",
+            // 导入字段
+            projectId: null,
+            temp_page_projectId: null,
+            projectOptions: [],
         };
     },
     async created() {
+        // 获取项目信息
+        await this.initProject();
         await this.init();
         this.reloadTable();
     },
@@ -187,19 +201,19 @@ export default {
         async handleSizeChangeSelect(size){
             this.selectData = [];
             this.pageSize = size;
-            let result = await listApprovalItem({pageNum: this.currentPageSelect,pageSize: this.pageSize});
+            let result = await listApprovalItem({pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.temp_page_projectId});
             this.typeSubItemOptions = result.data.records;
         },
         async handleCurrentChangeSelect(current){
             this.selectData = [];
             this.currentPageSelect = current;
-            let result = await listApprovalItem({pageNum: this.currentPageSelect,pageSize: this.pageSize});
+            let result = await listApprovalItem({pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.temp_page_projectId});
             this.typeSubItemOptions = result.data.records;
         },
         //远程搜索
         async remoteMethod(query){
             if(query !== ''){
-                let result = await listApprovalItem({keyword:query, pageNum: this.currentPageSelect,pageSize: this.pageSize});
+                let result = await listApprovalItem({keyword:query, pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.temp_page_projectId});
                 this.loading = true;
                 setTimeout(() => {
                     this.loading = false;
@@ -211,11 +225,20 @@ export default {
         },
         //导入情形
         async handleImport(){
-            let result = await listApprovalItem({pageNum: this.currentPageSelect,pageSize: this.pageSize});
-            this.typeSubItemOptions = result.data.records;
-            this.totalAim = result.data.total;
+            // let result = await listApprovalItem({pageNum: this.currentPageSelect,pageSize: this.pageSize,projectId: this.$route.query.projectId,});
+            // this.typeSubItemOptions = result.data.records;
+            // this.totalAim = result.data.total;
+            let resultProject = await listProjectAll();
+            this.projectOptions = resultProject.data;
             
             this.importDialogVisible = true;
+        },
+        async selectProject() {
+            this.idd = '';
+            this.tableDataSS = [];
+            let result = await listApprovalItem({pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.temp_page_projectId});
+            this.typeSubItemOptions = result.data.records;
+            this.totalAim = result.data.total;
         },
         async importSubApproval() {
             let result = await copyApprovalSub({

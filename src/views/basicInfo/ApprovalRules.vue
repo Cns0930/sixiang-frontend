@@ -466,6 +466,8 @@ export default {
         ...mapGetters({ hasManagePermission: 'config/hasManagePermission' })
     },
     async created() {
+        // 获取项目信息
+        await this.initProject();
         await this.search();
         await this.getApprovalSubText()
         await this.getApprovalList()
@@ -520,6 +522,7 @@ export default {
             this.filterKey = val
             let params = {
                 globalDocumentSubNameAndCode:val,
+                projectId: this.$route.query.projectId,
                 pageNum: this.currentPageSelects,
                 pageSize: this.pageSizes,
             }
@@ -536,7 +539,7 @@ export default {
         async remoteMethods(query){
             console.log(query)
             if(query !== ''){
-                let result = await listGlobalCheckpoint({checkpointName:query, pageNum: this.currentPageSelects,pageSize: this.pageSizes});
+                let result = await listGlobalCheckpoint({checkpointName:query,projectId: this.$route.query.projectId, pageNum: this.currentPageSelects,pageSize: this.pageSizes});
                 this.loading = true;
                 setTimeout(() => {
                     this.loading = false;

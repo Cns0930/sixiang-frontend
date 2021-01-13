@@ -2,7 +2,7 @@
     <div class="page-configure">
         <div class="op-bar">
             <el-button @click="importDefault">导入默认步骤</el-button>
-            <el-button @click="importPreview">导入字段步骤</el-button>
+            <el-button @click="importPreview">导入自选步骤</el-button>
             <el-button @click="createStepPage">创建步骤页面</el-button>
            <!-- <el-button @click="handlePreview">预览页面</el-button>-->
             <el-button @click="loadAll">载入页面</el-button>
@@ -131,6 +131,17 @@
         <!-- 导入字段步骤 -->
         
         <el-dialog title="导入自选步骤" :visible.sync="importPreviewVisible" width="50%" :close-on-click-modal="false">
+            <div style="margin:10px 0px">
+                项目选择:
+                <el-select v-model="temp_page_projectId"  @change="selectProject">
+                    <el-option
+                        v-for="item in projectOptions"
+                        :key="item.projectId"
+                        :label="item.projectName"
+                        :value="item.projectId">
+                    </el-option>
+                </el-select>
+            </div>
             <div>
                 事项名称:
                 <el-select clearable filterable placeholder="请选择事项名称" v-model="temp_page_itemId" @change="selectOne" style="position:relative" 
@@ -260,7 +271,7 @@ import { mapState } from "vuex";
 import { getStep, saveStep, deleteStep, saveStepBatch, transferJs,listStepsBytype,batchSaveBytype } from "@/api/step/index";
 import { getFieldAll,getSaveMaxTimeStep } from "@/api/superForm/index";
 import { getTemplate } from '@/api/template/index'
-import { listApprovalItem } from "@/api/basicInfo/approval";
+import { listApprovalItem, listProjectAll } from "@/api/basicInfo/approval";
 import { getById, addSysTransferLog,getUptoDateSysTransferLog } from "@/api/item/index";
 import ace from "ace-builds";
 import beautify from "ace-builds/src-noconflict/ext-beautify";
@@ -294,6 +305,9 @@ export default {
             temp_page_component: null,
             temp_configType: "",
             // 导入字段
+            projectId: null,
+            temp_page_projectId: null,
+            projectOptions: [],
             importPreviewVisible:false,
             currentPageSelect: 1,
             pageSize: 10,
@@ -364,6 +378,8 @@ export default {
         }
     },
     async mounted() {
+        // 获取项目信息
+        await this.initProject();
         await this.init();
         await this.loadAll();
         this.getLastUpdateInfo();
@@ -825,10 +841,16 @@ export default {
         },
         // 导入自选步骤
         async importPreview() {
-            let result = await listApprovalItem({pageNum: this.currentPageSelect,pageSize: this.pageSize});
+            let resultProject = await listProjectAll();
+            this.projectOptions = resultProject.data;
+            this.importPreviewVisible = true
+        },
+        async selectProject() {
+            this.temp_page_itemId = '';
+            this.stepList = '';
+            let result = await listApprovalItem({pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.temp_page_projectId});
             this.typeSubItemOptions = result.data.records;
             this.totalAim = result.data.total;
-            this.importPreviewVisible = true
         },
         // 获取选择后的步骤列表
         async getStepList() {
@@ -854,19 +876,19 @@ export default {
         async handleSizeChangeSelect(size){
             this.selectData = [];
             this.pageSize = size;
-            let result = await listApprovalItem({pageNum: this.currentPageSelect,pageSize: this.pageSize});
+            let result = await listApprovalItem({pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.temp_page_projectId});
             this.typeSubItemOptions = result.data.records;
         },
         async handleCurrentChangeSelect(current){
             this.selectData = [];
             this.currentPageSelect = current;
-            let result = await listApprovalItem({pageNum: this.currentPageSelect,pageSize: this.pageSize});
+            let result = await listApprovalItem({pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.temp_page_projectId});
             this.typeSubItemOptions = result.data.records;
         },
         //远程搜索
         async remoteMethod(query){
             if(query !== ''){
-                let result = await listApprovalItem({keyword:query, pageNum: this.currentPageSelect,pageSize: this.pageSize});
+                let result = await listApprovalItem({keyword:query, pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.temp_page_projectId});
                 this.loading = true;
                 setTimeout(() => {
                     this.loading = false;

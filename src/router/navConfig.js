@@ -28,6 +28,17 @@ const originList = [
 
 const topMenuList=[
     {
+        label: "项目管理",
+        authKey: ["admin","developer","researcher","test"],
+        children:[
+            {
+                path: "/project",
+                label: "项目管理",
+            }
+        ],
+        order: 1
+    },
+    {
         label: "事项管理",
         authKey: ["admin","developer","researcher","test"],
         children:[
@@ -44,7 +55,7 @@ const topMenuList=[
                 label: "批量编辑",
             },
         ],
-        order: 1
+        order: 2
     },
     {
         label: "用户管理",
@@ -55,7 +66,7 @@ const topMenuList=[
                 label: "用户管理",
             },
         ],
-        order: 2
+        order: 5
     },
     {
         label: "文档管理",
