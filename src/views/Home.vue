@@ -130,7 +130,8 @@ export default {
             });
         },
         isShowItem() {
-            if (this.$route.path === '/user' || this.$route.path === '/basic') {
+            if (this.$route.path === '/user' || this.$route.path === '/basic' || this.$route.path === '/publicdocument'|| this.$route.path === '/publicsubdocument'|| this.$route.path === '/examination'|| this.$route.path === '/readme'
+            || this.$route.path === '/public'|| this.$route.path === '/allEdit') {
                 return false;
             } else {
                 return true;

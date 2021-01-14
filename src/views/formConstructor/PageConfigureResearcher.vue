@@ -23,6 +23,7 @@
                     </el-button>
                     <el-button style="width:45px;margin:0" @click="handleDeleteStepPage(v)">删除</el-button>
                 </div>
+                <p v-if="!stepPages.length" style="color: #606266;text-align:center;margin-top:20px">暂无数据</p>
             </div>
 
             <!-- 页面属性填写 -->

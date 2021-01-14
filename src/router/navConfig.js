@@ -71,7 +71,7 @@ const topMenuList=[
             },
             {
                 path: "/examination",
-                label: "审批点管理",
+                label: "提取点管理",
             },
             
         ],
