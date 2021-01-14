@@ -36,6 +36,7 @@ import PublicDocument from "@/views/publicManagement/PublicDocument"
 import PublicSubDocument from "@/views/publicManagement/PublicSubDocument"
 import Examination from "@/views/publicManagement/Examination"
 import ReadMe from "@/views/readMe/ReadMe"
+import ProjectList from "@/views/projectManagement/ProjectList"
 Vue.use(VueRouter)
 import store from "@/vuex/store"
 import bangbanAxios from "@/api/ANew/config"
@@ -53,7 +54,7 @@ const routes = [
             // } else {
             //     return '/subhome'
             // }
-            return '/basic';
+            return '/project';
         },
         children: [
             {
@@ -134,6 +135,11 @@ const routes = [
                         component:Setting,
                     }
                 ]
+            },
+            {
+                path: '/project',
+                name: 'ProjectList',
+                component: ProjectList,
             },
             {
                 path: '/basic',

@@ -243,6 +243,8 @@ export default {
         ...mapGetters({hasManagePermission:'config/hasManagePermission'})
     },
     async created() {
+        // 获取项目信息
+        await this.initProject();
         await this.list();
         await this.loadOptions();
 
@@ -261,7 +263,7 @@ export default {
         async list() {
             let params = {
                 approvalId: this.filterApprovalId,
-                projectId: this.filterProjectId,
+                projectId: this.$route.query.projectId,
                 keyword: this.filterKeyword,
                 pageSize: this.pagesize,
                 pageNum: this.currentPage,

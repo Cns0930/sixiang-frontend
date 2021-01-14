@@ -267,6 +267,8 @@ export default {
         ...mapGetters({ hasManagePermission: 'config/hasManagePermission' })
     },
     async created() {
+        // 获取项目信息
+        await this.initProject();
         await this.search();
         await this.getApprovalSubText()
     },
@@ -275,6 +277,7 @@ export default {
             let params = {
                 globalDocumentSubName:this.globalDocumentSubName,
                 checkpointName:this.checkpointName,
+                projectId: this.$route.query.projectId,
                 aliasName: this.aliasName,
                 pageNum: this.currentPage,
                 pageSize: this.pagesize,
@@ -287,7 +290,7 @@ export default {
         // 子文档列表
         async getApprovalSubText() {
             this.approvalSubTextList = []
-            let result = await listGlobalDcumentSub({pageNum: this.currentPageSelect,pageSize: this.pageSize});
+            let result = await listGlobalDcumentSub({pageNum: this.currentPageSelect,pageSize: this.pageSize, projectId: this.$route.query.projectId});
             if (!result.success) return;
             this.approvalSubTextList = result.data.records
             this.totalAim = result.data.total
@@ -296,7 +299,7 @@ export default {
         async remoteMethod(query){
             console.log(query)
             if(query !== ''){
-                let result = await listGlobalDcumentSub({globalDocumentSubNameAndCode:query, pageNum: this.currentPageSelect,pageSize: this.pageSize});
+                let result = await listGlobalDcumentSub({globalDocumentSubNameAndCode:query, pageNum: this.currentPageSelect,pageSize: this.pageSize, projectId: this.$route.query.projectId});
                 this.loading = true;
                 setTimeout(() => {
                     this.loading = false;

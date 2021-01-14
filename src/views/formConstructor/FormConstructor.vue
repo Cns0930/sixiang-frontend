@@ -248,8 +248,9 @@
             <el-button icon="el-icon-search" circle @click="searchField"></el-button>
 
             <el-table ref="checkTable" :data="searchResult" border style="width: 100%" row-key="id" @selection-change="handleSelectionChange">
-                <el-table-column prop="itemName" label="事项名称" ></el-table-column>
-                <el-table-column prop="fieldNo" label="fieldNo" width="160"></el-table-column>
+                <el-table-column prop="projectName" label="项目名称" width="160"></el-table-column>
+                <el-table-column prop="itemName" label="事项名称" width="200"></el-table-column>
+                <el-table-column prop="fieldNo" label="fieldNo"></el-table-column>
                 <el-table-column prop="label" label="label" width="240"></el-table-column>
                 <el-table-column prop="fieldComponentName" label="组件名" width="160"></el-table-column>
                 <el-table-column type="selection" reserve-selection label="选择">
@@ -281,8 +282,8 @@
             <el-button icon="el-icon-search" circle @click="searchPublicField"></el-button>
 
             <el-table ref="checkTable1" :data="searchPublicResult" border style="width: 100%" row-key="id" @selection-change="handlePublicSelectionChange">
-                <el-table-column prop="itemName" label="事项名称" ></el-table-column>
-                <el-table-column prop="fieldNo" label="fieldNo" width="160"></el-table-column>
+                <el-table-column prop="itemName" label="事项名称" width="160"></el-table-column>
+                <el-table-column prop="fieldNo" label="fieldNo"></el-table-column>
                 <el-table-column prop="label" label="label" width="240"></el-table-column>
                 <el-table-column prop="fieldComponentName" label="组件名" width="160"></el-table-column>
                 <el-table-column type="selection" reserve-selection label="选择">
@@ -402,6 +403,8 @@ export default {
         })
     },
     async created() {
+        // 获取项目信息
+        await this.initProject();
         await this.init();
         await this.load();
         await this.getTableHeight()
@@ -540,7 +543,7 @@ export default {
             let isList = !!def.isList;
 
             // 不可修改类型时给出提示
-            if (this.temp_change_type == "computed") {
+            if (this.temp_change_type == "computed" || this.temp_change_type == "checkpoint") {
                 if (this.temp_fieldObj.children != null || this.temp_fieldObj.fieldType == 3) {
                     this.$message({ type: "warning", message: "父项/子项不可修改为合成类型" });
                     return
@@ -548,7 +551,7 @@ export default {
             }
 
             this.temp_fieldObj =
-                this.temp_change_type == "computed" ?
+                (this.temp_change_type == "computed" || this.temp_change_type == "checkpoint")?
                     {
                         id: this.temp_fieldObj.id,
                         fieldNo: this.temp_fieldObj.fieldNo,
@@ -558,6 +561,7 @@ export default {
                         type: this.temp_change_type,
                         label: this.temp_fieldObj.label,
                         fieldType: 2,
+                        fieldComponentName: this.temp_change_type,
                         componentDefs: new ComponentDefClass()
                     } : {
                         id: this.temp_fieldObj.id,
@@ -587,7 +591,7 @@ export default {
             let def = defs.find(v => v.value == this.temp_type);
             console.log("def:",def)
             let ComponentDefClass = def.componentDef
-            let fieldType = this.temp_type == "computed" ? 2 : 1;
+            let fieldType = (this.temp_type == "computed" || this.temp_type == "checkpoint") ? 2 : 1;
             let isList = !!def.isList;
 
             let v = {
@@ -602,7 +606,7 @@ export default {
             let param = {
                 fieldNo: v.fieldNo,
                 label: v.label,
-                fieldComponentName: v.componentDefs?.type?.value,
+                fieldComponentName: fieldType==1?v.componentDefs?.type?.value:v.fieldComponentName,
                 fieldName: this.temp_fieldName,
                 approvalItemId: this.itemId,
                 fieldType,
@@ -799,7 +803,7 @@ export default {
                 fieldNo: v.fieldNo,
                 fieldName: v.fieldName,
                 label: v.label.trim(),
-                fieldComponentName: v.componentDefs?.type?.value,
+                fieldComponentName: (v.fieldType == 2)?v.fieldComponentName : v.componentDefs?.type?.value,
                 fieldType: v.fieldType,
                 object: vsimple,
                 remark: v.remark
@@ -882,7 +886,7 @@ export default {
         async handleImportPublic() {
             this.dialogPublicVisible = true;
             // 初始化公共事项列表
-            let result = await listPublicApprovalItem({pageSize: 100});
+            let result = await listPublicApprovalItem({pageSize: 100, projectId: this.$route.query.projectId});
             this.publicApprovalItemList = result.data.records;
         },
         handleSelect(){

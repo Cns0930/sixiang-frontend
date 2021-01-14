@@ -297,6 +297,8 @@ export default {
 
     },
     async mounted() {
+        // 获取项目信息
+        await this.initProject();
         await this.init();
         await this.loadAll();
         this.getLastUpdateInfo();

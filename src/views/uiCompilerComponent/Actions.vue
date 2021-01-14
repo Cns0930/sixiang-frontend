@@ -14,8 +14,10 @@
 
                         <template slot="title">
                             <span style="margin-right:20px">{{action.value.fact || '（未设置）'}}</span>
-                            <button @click.stop="switchMultiChosen(action,i)">页面字段设置</button>
-                            <button @click.stop="deleteAction(i)">删除行为</button>
+                            <button @click.stop="switchMultiChosen(action,i)" style="margin-right:15px">页面字段设置</button>
+                            <button @click.stop="deleteAction(i)" style="margin-right:15px">删除行为</button>
+                            <button @click.stop="goUp(i)" v-if="i!=0" style="margin-right:15px">上移</button>
+                            <button @click.stop="goDown(i)"  v-if="i!=actionBlock.actions.length-1">下移</button>
                         </template>
 
                         <draggable v-model=" action.value.fields" @start="drag=true" @end="drag=false">
@@ -139,6 +141,26 @@ export default {
             this.tempChosenValue = { fact: "", fields: [] };
             this.tempActionIndex = null;
         },
+        goUp(index) {
+            if (index - 1 < 0) return;
+            let originIndex = index;
+            let targetIndex = index - 1;
+
+            let temp = this.actionBlock.actions[targetIndex];
+
+            this.$set(this.actionBlock.actions, targetIndex, this.actionBlock.actions[originIndex]);
+            this.$set(this.actionBlock.actions, originIndex, temp);
+        },
+        goDown(index) {
+            if (index + 1 > this.actionBlock.actions.length - 1) return;
+            let originIndex = index;
+            let targetIndex = index + 1;
+
+            let temp = this.actionBlock.actions[targetIndex];
+
+            this.$set(this.actionBlock.actions, targetIndex, this.actionBlock.actions[originIndex]);
+            this.$set(this.actionBlock.actions, originIndex, temp);
+        }
     }
 }
 </script>

@@ -231,9 +231,12 @@ export default {
         ...mapGetters({ hasManagePermission: 'config/hasManagePermission' })
     },
     async created() {
+        // 获取项目信息
+        await this.initProject();
         this.search();
         this.getApprovalSubText()
         let result = await listGlobalDcument({
+            projectId: this.$route.query.projectId,
             pageNum: 1,
             pageSize: 99999,
         });
@@ -246,8 +249,8 @@ export default {
     methods: {
         async search() {
             let params = {
-                globalDocumentSubName: this.filterKeyword,
-
+                globalDocumentSubNameAndCode: this.filterKeyword,
+                projectId: this.$route.query.projectId,
                 pageNum: this.currentPage,
                 pageSize: this.pagesize,
                 category: this.categoryFilterKeyword,
@@ -325,7 +328,7 @@ export default {
         // 子文档列表
         async getApprovalSubText() {
             this.approvalSubTextList = []
-            let result = await listGlobalDcumentSub();
+            let result = await listGlobalDcumentSub({projectId: this.$route.query.projectId});
             if (!result.success) return;
             this.approvalSubTextList = result.data.records
         },

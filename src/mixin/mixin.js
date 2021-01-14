@@ -1,4 +1,4 @@
-import { getByApprovalItemId } from "@/api/basicInfo/approval";
+import { getByApprovalItemId, getByProjectId } from "@/api/basicInfo/approval";
 import dayjs from "dayjs"
 export const mixin={
     methods: {
@@ -11,6 +11,17 @@ export const mixin={
                 return;
                 }
                 this.$store.commit("changeItem", result.data);
+            }
+        },
+        async initProject(){
+            if(this.$store.state.home.project.projectId === undefined){
+                let projectId = this.$route.query.projectId;
+                let result = await getByProjectId({projectId: projectId});
+                if (!result.success) {
+                    this.$message({ type: "warning", message: "获取初始项目信息失败" });
+                    return;
+                }
+                this.$store.commit("changeProject", result.data);
             }
         },
         timeFormatter(row, column, cellValue, index) {

@@ -10,7 +10,19 @@ export const listMaterial = params => { return axios.get(`/ss/material/listMater
 export const listApprovalAll = params => { return axios.get(`/ss/approval/listApprovalAll`, params).then(res=>res.data); };
 
 // 获取项目列表
-export const listProjectAll = params => { return axios.get(`/ss/project/listProjectAll`, params).then(res=>res.data); };
+export const listProjectAll = params => { return axios.get(`/ss/project/listProjectAll`, {params}).then(res=>res.data); };
+
+// 新增项目
+export const addProject = params => { return axios.post(`/ss/project/addProject`, params).then(res=>res.data); };
+
+// 编辑项目
+export const updateProject = params => { return axios.post(`/ss/project/updateProject`, params).then(res=>res.data); };
+
+// 删除项目
+export const deleteProject = params => { return axios.get(`/ss/project/deleteProject`, {params}).then(res=>res.data); };
+
+// 根据项目Id查项目信息 
+export const getByProjectId = params => { return axios.get(`/ss/project/getByProjectId`, {params}).then(res=>res.data); };
 
 // 添加事项
 export const addApprovalItem = params => { return axios.post(`/ss/approvalItem/addApprovalItem`, params).then(res=>res.data); };

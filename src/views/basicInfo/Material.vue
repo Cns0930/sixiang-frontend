@@ -208,8 +208,16 @@
         <el-dialog title="导入自选材料" :visible.sync="importDialogVisible" width="50%" :close-on-click-modal="false">
 
             <el-form label="事项名称">
+                <el-select v-model="temp_page_projectId" placeholder="请选择项目名称"  @change="selectProject" style="position:relative;margin: 10px 20px 10px 0px">
+                    <el-option
+                        v-for="item in projectOptions"
+                        :key="item.projectId"
+                        :label="item.projectName"
+                        :value="item.projectId">
+                    </el-option>
+                </el-select>
                 <el-select clearable filterable placeholder="请选择事项名称或者输入关键词" v-model="idd" @change="selectOne"
-                    style="position:relative" remote reserve-keyword :remote-method="remoteMethod" :loading="loading">
+                    remote reserve-keyword :remote-method="remoteMethod" :loading="loading" style="position:relative;margin: 10px 20px 10px 0px">
                     <el-option v-for="(v,i) in typeSubItemOptions" :key="i" :label="v.itemName"
                         :value="v.approvalItemId">
 
@@ -249,7 +257,7 @@
 import basicMixin from "./basicMixin";
 import Vue from "vue";
 import { listMaterial, addMaterial, delMaterial, getTemplateByMaterialId, updateMaterial, getByMaterialId, copySelectedMaterial, getAllByApprovalItemId } from "../../api/basicInfo/material";
-import { listApprovalItem } from "@/api/basicInfo/approval";
+import { listApprovalItem, listProjectAll } from "@/api/basicInfo/approval";
 export default {
     name: "Material",
     mixins: [basicMixin],
@@ -292,10 +300,16 @@ export default {
             totalAim: 0,
             multipleSelection: [],
             tableHeight:0,
+            // 导入字段
+            projectId: null,
+            temp_page_projectId: null,
+            projectOptions: [],
         };
     },
     computed: {},
     async created() {
+        // 获取项目信息
+        await this.initProject();
         await this.init();
         await this.search();
         this.getTableHeight()
@@ -362,19 +376,19 @@ export default {
         async handleSizeChangeSelect(size) {
             this.selectData = [];
             this.pageSize = size;
-            let result = await listApprovalItem({ pageNum: this.currentPageSelect, pageSize: this.pageSize });
+            let result = await listApprovalItem({ pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.$route.query.projectId });
             this.typeSubItemOptions = result.data.records;
         },
         async handleCurrentChangeSelect(current) {
             this.selectData = [];
             this.currentPageSelect = current;
-            let result = await listApprovalItem({ pageNum: this.currentPageSelect, pageSize: this.pageSize });
+            let result = await listApprovalItem({ pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.$route.query.projectId });
             this.typeSubItemOptions = result.data.records;
         },
         //远程搜索
         async remoteMethod(query) {
             if (query !== '') {
-                let result = await listApprovalItem({ keyword: query, pageNum: this.currentPageSelect, pageSize: this.pageSize });
+                let result = await listApprovalItem({ keyword: query, pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.$route.query.projectId });
                 this.loading = true;
                 setTimeout(() => {
                     this.loading = false;
@@ -429,11 +443,19 @@ export default {
         },
         //导入材料
         async handleImport() {
-            let result = await listApprovalItem({ pageNum: this.currentPageSelect, pageSize: this.pageSize });
-            this.totalAim = result.data.total;
-            this.typeSubItemOptions = result.data.records;
-            console.log("resulthhh:", this.typeSubItemOptions);
+            // let result = await listApprovalItem({ pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.$route.query.projectId });
+            // this.totalAim = result.data.total;
+            // this.typeSubItemOptions = result.data.records;
+            let resultProject = await listProjectAll();
+            this.projectOptions = resultProject.data;
             this.importDialogVisible = true;
+        },
+        async selectProject() {
+            this.idd = '';
+            this.tableDataSS = [];
+            let result = await listApprovalItem({pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.temp_page_projectId});
+            this.typeSubItemOptions = result.data.records;
+            this.totalAim = result.data.total;
         },
         async selectOne() {
             this.tableDataSS = [];

@@ -2,7 +2,7 @@
     
 </template>
 <script>
-import { listApprovalItem , getByApprovalItemId, listPublicApprovalItem } from "../../api/basicInfo/approval";
+import { listApprovalItem , getByApprovalItemId, listPublicApprovalItem, getByProjectId } from "../../api/basicInfo/approval";
 import { listRule } from '@/api/basicInfo/ApprovalRules'
 import { listMaterial } from "../../api/basicInfo/material";
 import { listitemNoSinglewindow } from "../../api/basicInfo/singleWindow";
@@ -94,7 +94,18 @@ export default {
                 }
                 this.$store.commit("changeItem", result.data);
             }
-        }
+        },
+        async initProject(){
+            if(this.$store.state.home.project.projectId === undefined){
+                let projectId = this.$route.query.projectId;
+                let result = await getByProjectId({projectId: projectId});
+                if (!result.success) {
+                    this.$message({ type: "warning", message: "获取初始项目信息失败" });
+                    return;
+                }
+                this.$store.commit("changeProject", result.data);
+            }
+        },
     }
 }
 </script>
