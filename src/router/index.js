@@ -12,6 +12,7 @@ import FormConstructor from "@/views/formConstructor/FormConstructor"
 import Preview from "@/views/formConstructor/PreviewLayout"
 import PageConfigure from "@/views/formConstructor/PageConfigure"
 import PageConfigureResearcher from "@/views/formConstructor/PageConfigureResearcher"
+import TestCase from "@/views/formConstructor/TestCase"
 import TemplateManager from "@/views/formConstructor/TemplateManager"
 import MaterialManager from "@/views/formConstructor/MaterialManager"
 import Run from "@/views/formConstructor/Run"
@@ -128,7 +129,11 @@ const routes = [
                         name:"itemManeger",
                         component:ItemManager
                     },
-                    
+                    {
+                        path: "/testcase",
+                        name: "testcase",
+                        component: TestCase
+                    },
                     {
                         path:"/setting",
                         name:"setting",
