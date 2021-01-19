@@ -26,7 +26,8 @@
                                 <p class="title">
                                     <el-tag type="primary" effect="dark" size="small">{{v}}</el-tag>
                                 </p>
-                                <p style="">{{list.find(obj=>obj.fieldNo == v).label}}</p>
+                                <p v-if="list.find(obj=>obj.fieldNo == v)" style="">{{list.find(obj=>obj.fieldNo == v).label}}</p>
+                                <p v-else style="color: red">{{'字段未找到，请检查'}}</p>
                                 <!-- <p>{{list.find(obj=>obj.fieldNo == v).remark}}</p> -->
 
                             </div>
