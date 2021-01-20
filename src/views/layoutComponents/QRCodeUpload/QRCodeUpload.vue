@@ -51,6 +51,7 @@ export default {
             uid: "",
             timer: null,
             updateTime: null,
+            uploadUrl: ''
         }
     },
     beforeDestroy() {
@@ -60,12 +61,9 @@ export default {
 
     },
     components: { VueQr },
-    async created() {
-        let uploadUrl = process.env.NODE_ENV === 'development' ? this.uploadUrlDev : this.uploadUrlProd
-        let result = await axios.get(uploadUrl).then(res => res.data)
-        if (result.message != "SUCCESS") return;
-        this.url = result.data.url;
-        this.uid = result.data.uid
+    created() {
+        this.uploadUrl = process.env.NODE_ENV === 'development' ? this.uploadUrlDev : this.uploadUrlProd
+        
     },
     computed: {
         srcList() {
@@ -79,8 +77,13 @@ export default {
         }
     },
     methods: {
-        handleOpenQR() {
+        async handleOpenQR() {
             if (this.disabled) return;
+            let result = await axios.get(this.uploadUrl).then(res => res.data)
+            console.log(this.uploadUrl,result);
+            if(result.message!="SUCCESS") return;
+            this.url = result.data.url;
+            this.uid= result.data.uid
             this.openQR = true;
             //  轮询 查询图片
             console.log("询start", this.milliseconds)
