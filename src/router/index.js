@@ -15,7 +15,7 @@ import PageConfigureResearcher from "@/views/formConstructor/PageConfigureResear
 import TemplateManager from "@/views/formConstructor/TemplateManager"
 import MaterialManager from "@/views/formConstructor/MaterialManager"
 import Run from "@/views/formConstructor/Run"
-import ItemManager from "@/views/formConstructor/ItemManager"
+// import ItemManager from "@/views/formConstructor/ItemManager"
 import Login from "@/views/login/Login"
 import Setting from "@/views/setting/Setting"
 
@@ -124,11 +124,11 @@ const routes = [
                         name:"run",
                         component:Run
                     },
-                    {
-                        path:"/subhome",
-                        name:"itemManeger",
-                        component:ItemManager
-                    },
+                    // {
+                    //     path:"/subhome",
+                    //     name:"itemManeger",
+                    //     component:ItemManager
+                    // },
                     
                     {
                         path:"/setting",
