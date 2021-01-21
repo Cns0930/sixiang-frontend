@@ -26,6 +26,7 @@
 
                     <el-table-column prop="template.materialName" label="材料名称"></el-table-column>
                     <el-table-column prop="template.templateName" label="模板名称(自取)"></el-table-column>
+                    <el-table-column prop="template.produceSource" label="产生方式"></el-table-column>
                     <el-table-column label="操作" width="150px">
                         <template slot-scope="scope">
                             <el-button @click="openDetail(scope.row)">编辑</el-button>
@@ -64,9 +65,16 @@
                 <!-- 模板名称(必填)<el-input v-model="temp_template.docxTemplateName"></el-input>
             材料中文名(必填)<el-input v-model="temp_template.documentName"></el-input>
             材料序号(必填)<el-input v-model="temp_template.documentSeq"></el-input> -->
+            <div>
                 备注<el-input type="textarea" :autosize="{ minRows: 1, maxRows: 15 }" v-model="temp_template.notes">
                 </el-input>
+            </div>
+            <div>
                 page配置<CodeEditor ref="scriptEditor" v-model="temp_template.script"></CodeEditor>
+            </div>
+            <div>
+                产生方式配置<CodeEditor ref="producescriptEditor" v-model="temp_template.produceScript"></CodeEditor>
+            </div>
             </div>
         </div>
         <!-- 创建模板弹窗 -->
@@ -263,10 +271,13 @@ export default {
         openDetail(v) {
             if (this.temp_template) {
                 this.$refs.scriptEditor.open = false;
+                this.$refs.producescriptEditor.open = false;
             }
             this.temp_template = v.template;
             this.temp_template.script ||
                 (this.temp_template.script = "");
+            this.temp_template.produceScript || 
+                (this.temp_template.produceScript = "");
         },
         async saveTemplate() {
             console.log(this.temp_template);

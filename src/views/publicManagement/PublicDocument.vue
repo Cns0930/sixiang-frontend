@@ -14,6 +14,7 @@
             <el-select placeholder="来源" v-model="sourceFilter" filterable clearable style="width: 200px;">
                 <el-option label="现场制作" value="现场制作"></el-option>
                 <el-option label="用户自带" value="用户自带"></el-option>
+                <el-option label="电子证照" value="电子证照"></el-option>
             </el-select>
             <el-button @click="search" type="primary">搜索</el-button>
         </div>
@@ -63,9 +64,10 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="来源">
-                        <el-select placeholder="来源" v-model="addForm.produceSource" filterable clearable >
+                        <el-select placeholder="来源" v-model="produceSource" filterable clearable multiple>
                             <el-option label="现场制作" value="现场制作"></el-option>
                             <el-option label="用户自带" value="用户自带"></el-option>
+                            <el-option label="电子证照" value="电子证照"></el-option>
                         </el-select>
                     </el-form-item>
                    <el-form-item label="材料编码">
@@ -95,9 +97,10 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="来源">
-                        <el-select placeholder="来源" v-model="editForm.produceSource" filterable clearable >
+                        <el-select placeholder="来源" v-model="produceSource" filterable clearable multiple>
                             <el-option label="现场制作" value="现场制作"></el-option>
                             <el-option label="用户自带" value="用户自带"></el-option>
+                            <el-option label="电子证照" value="电子证照"></el-option>
                         </el-select>
                     </el-form-item>
                    <el-form-item label="材料编码">
@@ -145,7 +148,9 @@ export default {
             addDialogVisible:false,
             addForm:{},
             addBtnLoading:false,
-
+            
+            // 产生来源编辑
+            produceSource: [], 
         }
     },
     computed: {
@@ -177,15 +182,20 @@ export default {
         },
         async edit(){
             this.editBtnLoading=true;
-            
+            let produce = this.produceSource.toString();
+            console.log(produce);
+            this.editForm.produceSource = produce;
+            this.editForm.projectId = this.$route.query.projectId;
             let result= await updateGlobalDcument(this.editForm);
             this.editBtnLoading=false;
             this.editDialogVisible=false;
+            this.produceSource = [];
             this.search();
 
         },
         handleEdit(row){
             this.editForm = _.pick(row,['globalDocumentCode','globalDocumentName','isStandard','produceSource','globalDocumentId']);
+            this.produceSource = this.editForm.produceSource === null ? [] : this.editForm.produceSource.split(',');
             this.editDialogVisible=true;
         },
         async handleDelete(row){
@@ -209,13 +219,18 @@ export default {
             this.addDialogVisible=true;
         },
         async add(){
-             this.addBtnLoading=true;
+            this.addBtnLoading=true;
+            let produce = this.produceSource.toString();
+            console.log(produce);
+            this.addForm.produceSource = produce;
+            this.addForm.projectId = this.$route.query.projectId;
             let result = await addGlobalDcument(this.addForm);
             this.addBtnLoading=false;
             
             if(!result.success) return;
            
             this.addDialogVisible=false;
+            this.produceSource = [];
             this.search();
         }
     },

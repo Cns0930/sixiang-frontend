@@ -57,6 +57,9 @@
                     <el-table-column prop="isNavigation" label="是否显示在左侧导航" width="90px"
                         :formatter="isRequiredFormatter">
                     </el-table-column>
+                    <el-table-column prop="uploadRequired" label="是否必须上传" width="60px"
+                        :formatter="isRequiredFormatter">
+                    </el-table-column>
                     <el-table-column prop="navigationOrder" label="导航顺序" width="50px"></el-table-column>
                     <el-table-column prop="descriptionInfo" label="材料逻辑" show-overflow-tooltip width="300">
                     </el-table-column>
@@ -133,6 +136,12 @@
                             <el-option label="否" :value="Number(0)"></el-option>
                         </el-select>
                     </el-form-item>
+                    <el-form-item label="是否必须上传">
+                        <el-select v-model="materialT.uploadRequired">
+                            <el-option label="是" :value="Number(1)"></el-option>
+                            <el-option label="否" :value="Number(0)"></el-option>
+                        </el-select>
+                    </el-form-item>
                     <el-form-item label="导航顺序">
                         <el-input v-model="materialT.navigationOrder" placeholder="请输入数字"></el-input>
                     </el-form-item>
@@ -141,9 +150,10 @@
                     </el-form-item>
                     <div>
                         <el-form-item label="产生方式">
-                            <el-select v-model="materialT.produceSource" placeholder="材料的产生来源">
+                            <el-select v-model="produceSource" placeholder="材料的产生来源" multiple>
                                 <el-option label="用户自带" value="用户自带"></el-option>
                                 <el-option label="现场制作" value="现场制作"></el-option>
+                                <el-option label="电子证照" value="电子证照"></el-option>
                             </el-select>
                         </el-form-item>
                     </div>
@@ -178,13 +188,19 @@
                         <el-input v-model="materialTEdit.templateName"></el-input>
                     </el-form-item>
                     <el-form-item label="超级帮办word模板名称">
-                        <el-input v-model="materialTEdit.docxTemplateName" @change="writeDocumentNumberEdit"></el-input>
+                        <el-input v-model="materialTEdit.docxTemplateName"></el-input>
                     </el-form-item>
                     <el-form-item label="文档序号">
                         <el-input v-model="materialTEdit.documentSeq"></el-input>
                     </el-form-item>
                     <el-form-item label="是否显示在左侧导航">
                         <el-select v-model="materialTEdit.isNavigation">
+                            <el-option label="是" :value="Number(1)"></el-option>
+                            <el-option label="否" :value="Number(0)"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="是否必须上传">
+                        <el-select v-model="materialTEdit.uploadRequired">
                             <el-option label="是" :value="Number(1)"></el-option>
                             <el-option label="否" :value="Number(0)"></el-option>
                         </el-select>
@@ -197,9 +213,10 @@
                     </el-form-item>
                     <div>
                         <el-form-item label="产生方式">
-                            <el-select v-model="materialTEdit.produceSource" placeholder="材料的产生来源">
+                            <el-select v-model="produceSource" placeholder="材料的产生来源" multiple>
                                 <el-option label="用户自带" value="用户自带"></el-option>
                                 <el-option label="现场制作" value="现场制作"></el-option>
+                                <el-option label="电子证照" value="电子证照"></el-option>
                             </el-select>
                         </el-form-item>
                     </div>
@@ -330,6 +347,9 @@ export default {
             pageSizeBang: 10,
             totalBang: 0,
             loadingBang: false,
+
+            // 产生来源编辑
+            produceSource: [], 
         };
     },
     computed: {},
@@ -457,6 +477,8 @@ export default {
                 if(item.globalDocumentId === id) {
                     this.materialT.produceSource = item.produceSource;
                     this.materialT.materialName = item.globalDocumentName;
+                    this.materialT.documentSeq = item.globalDocumentCode;
+                    this.produceSource = item.produceSource === null ? [] : item.produceSource.split(',');
                 }
             })
         },
@@ -506,6 +528,7 @@ export default {
             item = await getByMaterialId({ materialId: id });
             item = item.data;
             this.materialTEdit = item;
+            this.produceSource = item.produceSource === null ? [] : item.produceSource.split(',');
             console.log('this.materialTEdit');
             console.log(this.materialTEdit);
             this.editMaterialWriteVisible = true;
@@ -585,6 +608,7 @@ export default {
         //增加材料
         async addMaterial() {
             let res;
+            this.materialT.produceSource = this.produceSource.toString();
             if (!this.materialT.materialId) {
                 this.materialT["materialStatus"] = "Y";
                 this.materialT["approvalItemId"] = this.$route.query.itemId;
@@ -598,6 +622,7 @@ export default {
 
             this.$message.success('保存成功');
             this.materialWriteVisible = false;
+            this.produceSource = [];
             // this.materialT_item_id = '';
             if (!this.materialT.materialId) {
                 await this.search();
@@ -608,6 +633,7 @@ export default {
         },
         // 编辑材料
         async editMaterial() {
+            this.materialTEdit.produceSource = this.produceSource.toString();
             let res = await updateMaterial(this.materialTEdit);
             if (!res.success) return;
 
