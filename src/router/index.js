@@ -23,6 +23,7 @@ import ApprovalItem from "@/views/publicManagement/ApprovalItem"
 import ApprovalSubItemText from "@/views/basicInfo/ApprovalSubItemText"
 import PublicApprovalItem from "@/views/basicInfo/PublicApprovalItem"
 import Material from "@/views/basicInfo/Material"
+import ApprovalDetail from "@/views/basicInfo/ApprovalDetail"
 import ApprovalSubItem from "@/views/basicInfo/ApprovalSubItem"
 import Field from "@/views/basicInfo/Field"
 import Accessory from "@/views/basicInfo/Accessory"
@@ -157,6 +158,11 @@ const routes = [
                         path: '/basic/material',
                         name: 'Material',
                         component: Material,
+                    },
+                    {
+                        path: '/basic/approvalDetail',
+                        name: 'ApprovalDetail',
+                        component: ApprovalDetail,
                     },
                     {
                         path: '/basic/subitem',

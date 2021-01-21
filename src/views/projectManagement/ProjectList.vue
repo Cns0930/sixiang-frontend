@@ -318,8 +318,8 @@ export default {
             margin-left: 10px;
         }
         .handle {
-            margin-left: auto;
-            margin-top: -55px;
+            // margin-left: auto;
+            margin-top: 1px;
         }
     }
     .titleBox {
