@@ -6,7 +6,8 @@ import { listApprovalItem , getByApprovalItemId, listPublicApprovalItem, getByPr
 import { listRule } from '@/api/basicInfo/ApprovalRules'
 import { listMaterial } from "../../api/basicInfo/material";
 import { listitemNoSinglewindow } from "../../api/basicInfo/singleWindow";
-import { listSubitemAndDocumentNew } from "../../api/basicInfo/approvalSub";
+import { listDocument } from "../../api/basicInfo/AIdocument";
+import { listItemAndDocumentSub, listSubitemAndDocumentNew } from "../../api/basicInfo/approvalSub";
 import _ from "lodash";
 import dayjs from "dayjs";
 export default {
@@ -38,8 +39,8 @@ export default {
                 result = await listitemNoSinglewindow({itemNo: this.$store.state.home.item.itemNo});
                 this.tableData = result.data;
             } else if(this.type === 'ApprovalSubItemText') {
-                result = await listSubitemAndDocumentNew({itemId: this.$route.query.itemId,pageNum: this.currentPage,
-                pageSize: this.pagesize,subitemNameAndDocumentSubName:this.subitemNameAndDocumentSubName});
+                result = await listItemAndDocumentSub({approvalItemId: this.$route.query.itemId,pageNum: this.currentPage,
+                pageSize: this.pagesize});
                 this.tableData = result.data.records;
             } 
             else if(this.type === 'ApprovalRules') {
