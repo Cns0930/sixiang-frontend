@@ -106,14 +106,14 @@
 </template>
 
 <script>
-import basicMixin from "./basicMixin";
+import {mixin} from "@/mixin/mixin"
 import { getField, addField, updateField, deleteField, getAllByApprovalItemId, listField, listFieldUnionMaterial } from "@/api/basicInfo/field";
 import { listAccessory, downloadFile, uploadFile } from "@/api/basicInfo/accessory"
 import dayjs from "dayjs";
 import axios from "axios";
 export default {
     name: "FieldItem",
-    mixins: [basicMixin],
+    mixins: [mixin],
     data() {
         return {
             // 页面信息

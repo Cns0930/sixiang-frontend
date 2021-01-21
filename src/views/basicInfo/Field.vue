@@ -266,6 +266,7 @@
 <script>
 import defs from "../attributeComponents/index";
 import basicMixin from "./basicMixin";
+import {mixin} from "@/mixin/mixin"
 import { mapState } from "vuex";
 import {
     getField, addField, updateField, deleteField,
@@ -277,7 +278,7 @@ import { getRolelist } from '@/api/item';
 import axios from "axios";
 export default {
     name: "FieldItem",
-    mixins: [basicMixin],
+    mixins: [basicMixin, mixin],
     data() {
         return {
             taglists:[],

@@ -113,7 +113,7 @@
 </template>
 
 <script>
-import basicMixin from "./basicMixin";
+import {mixin} from "@/mixin/mixin";
 import { getApprovalSub, addApprovalSub, updateApprovalSub, deleteApprovalSub, relateMaterial,listApprovalSubAll } from "@/api/basicInfo/approvalSub"
 import { getAllByApprovalItemId } from "@/api/basicInfo/field";
 import { listApprovalItem, copyApprovalSub, listProjectAll } from "@/api/basicInfo/approval";
@@ -121,7 +121,7 @@ import dayjs from "dayjs"
 
 export default {
     name: "ApprovalSubItem",
-    mixins: [basicMixin],
+    mixins: [mixin],
     data() {
         return {
             // 页面信息

@@ -255,12 +255,13 @@
 
 <script>
 import basicMixin from "./basicMixin";
+import {mixin} from "@/mixin/mixin"
 import Vue from "vue";
 import { listMaterial, addMaterial, delMaterial, getTemplateByMaterialId, updateMaterial, getByMaterialId, copySelectedMaterial, getAllByApprovalItemId } from "../../api/basicInfo/material";
 import { listApprovalItem, listProjectAll } from "@/api/basicInfo/approval";
 export default {
     name: "Material",
-    mixins: [basicMixin],
+    mixins: [basicMixin, mixin],
     data() {
         return {
             // model: {

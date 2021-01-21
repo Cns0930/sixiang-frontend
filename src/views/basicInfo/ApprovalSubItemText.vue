@@ -112,6 +112,7 @@
 
 <script>
 import basicMixin from "./basicMixin";
+import {mixin} from "@/mixin/mixin"
 import Vue from "vue";
 import { listMaterial, getTemplateByMaterialId, copySelectedMaterial, getAllByApprovalItemId } from "../../api/basicInfo/material";
 import { listGlobalDcumentSub } from "../../api/basicInfo/publicDocument";
@@ -119,7 +120,7 @@ import { listSubitemAndDocumentNew,getApprovalSub,addSubitemAndDocumentNew,delet
 // import { delete } from 'node_modules/vue/types/umd';
 export default {
     name: "ApprovalSubItemText",
-    mixins: [basicMixin],
+    mixins: [basicMixin, mixin],
     data() {
         return {
             loading:false,

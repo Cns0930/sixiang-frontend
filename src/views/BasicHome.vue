@@ -5,11 +5,11 @@
 
             <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
                 <el-tab-pane label="情形管理" name="subitem"></el-tab-pane>
-                <!-- <el-tab-pane label="AI文档" name="AIdocument"></el-tab-pane> -->
+                <el-tab-pane label="情形提取规则" name="subitemRule"></el-tab-pane>
                 <el-tab-pane label="情形子文档" name="ApprovalSubItemText"></el-tab-pane>
                 <el-tab-pane label="帮办材料" name="material"></el-tab-pane>
                 <el-tab-pane label="材料字段" name="field"></el-tab-pane>
-                <el-tab-pane label="前端字段" name="" disabled></el-tab-pane>
+                <!-- <el-tab-pane label="前端字段" name="" disabled></el-tab-pane> -->
                 <el-tab-pane label="单窗材料" name="singleWindow"></el-tab-pane>
                 <el-tab-pane label="附件管理" name="accessory"></el-tab-pane>
                 <el-tab-pane label="审批规则管理" name="approvalRules"></el-tab-pane>
@@ -109,6 +109,14 @@ export default {
                 sessionStorage.setItem('activeName', 'approvalRules');
                 this.$store.commit("config/setCrumbList", [{ path: `/basic/subitem?itemId=${this.$route.query.itemId}`, label: '调研信息' }])
                 this.$store.commit("config/setCrumbListSecond", [{ path: "/basic/approvalRules", label: '审批规则管理' }])
+            }else if (this.activeName === "subitemRule") {
+                this.$router.push({
+                    path: "/basic/subitemRule",
+                    query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
+                });
+                sessionStorage.setItem('activeName', 'subitemRule');
+                this.$store.commit("config/setCrumbList", [{ path: `/basic/subItemRule?itemId=${this.$route.query.itemId}`, label: '调研信息' }])
+                this.$store.commit("config/setCrumbListSecond", [{ path: "/basic/subItemRule", label: '情形提取规则' }])
             }
             
         },

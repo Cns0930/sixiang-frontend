@@ -30,3 +30,17 @@ export const deleteSubitemAndDocumentNew = params => { return axios.get(`/ss/app
 // 修改情形与子文档引用关系
 export const updateSubitemAndDocumentNew = params => { return axios.post(`/ss/approvalSubitemAndDocumentNew/updateSubitemAndDocumentNew`, params).then(res=>res.data); };
 
+// 新增情形提取规则
+export const addApprovalSubitemSubkey = params => { return axios.post(`/ss/approvalSub/addApprovalSubitemSubkey`, params).then(res=>res.data); };
+
+// 删除情形提取规则
+export const deleteApprovalSubitemSubkey = params => { return axios.get(`/ss/approvalSub/deleteApprovalSubitemSubkey`, {params}).then(res=>res.data); };
+
+// 修改情形提取规则
+export const updateApprovalSubitemSubkey = params => { return axios.post(`/ss/approvalSub/updateApprovalSubitemSubkey`, params).then(res=>res.data); };
+
+// 查询情形提取规则-分页
+export const listApprovalSubitemSubkey = params => { return axios.get(`/ss/approvalSub/listApprovalSubitemSubkey`, {params}).then(res=>res.data); };
+
+// id查询情形提取规则表
+export const getByApprovalSubitemSubkeyId = params => { return axios.get(`/ss/approvalSub/getByApprovalSubitemSubkeyId`, {params}).then(res=>res.data); };

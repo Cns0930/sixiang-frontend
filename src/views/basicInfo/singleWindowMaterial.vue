@@ -141,6 +141,7 @@
 
 <script>
 import basicMixin from "./basicMixin";
+import {mixin} from "@/mixin/mixin"
 import Vue from "vue";
 import { listSinglewindow, addSinglewindow, getBySinglewindowId, updateSinglewindow, delSinglewindow } from "../../api/basicInfo/singleWindow";
 import { listApprovalItem } from "@/api/basicInfo/approval";
@@ -148,7 +149,7 @@ import { log } from 'handlebars';
 import axios from "axios";
 export default {
     name: "singleWindowMaterial",
-    mixins: [basicMixin],
+    mixins: [basicMixin,mixin],
     data() {
         return {
             type: "singleWindow",

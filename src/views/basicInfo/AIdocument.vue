@@ -147,13 +147,14 @@
 
 <script>
 import basicMixin from "./basicMixin";
+import {mixin} from "@/mixin/mixin"
 import Vue from "vue";
 import { listMaterial, getTemplateByMaterialId, copySelectedMaterial, getAllByApprovalItemId } from "../../api/basicInfo/material";
 import { addDocument, updateDocument, getByDocumentId, delDocument } from "../../api/basicInfo/AIdocument";
 import { listitemNoSinglewindow } from "../../api/basicInfo/singleWindow";
 export default {
     name: "AIdocument",
-    mixins: [basicMixin],
+    mixins: [basicMixin, mixin],
     data() {
         return {
             type: "AIdocument",

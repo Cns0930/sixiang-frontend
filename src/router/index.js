@@ -26,9 +26,9 @@ import Material from "@/views/basicInfo/Material"
 import ApprovalSubItem from "@/views/basicInfo/ApprovalSubItem"
 import Field from "@/views/basicInfo/Field"
 import Accessory from "@/views/basicInfo/Accessory"
-import AIdocument from "@/views/basicInfo/AIdocument"
 import singleWindow from "@/views/basicInfo/singleWindowMaterial"
 import ApprovalRules from "@/views/basicInfo/ApprovalRules"
+import ApprovalSubItemRule from "@/views/basicInfo/ApprovalSubitemRule"
 
 import OnlineDocumentEditor from "@/views/basicInfo/OnlineDocumentEditor"
 import UiCompilerComponent from "@/views/uiCompilerComponent/Index"
@@ -171,10 +171,6 @@ const routes = [
                         component: Accessory
                     },
                     {
-                        path: '/basic/AIdocument',
-                        component: AIdocument
-                    },
-                    {
                         path: '/basic/ApprovalSubItemText',
                         component: ApprovalSubItemText
                     },
@@ -193,6 +189,11 @@ const routes = [
                         name: 'OnlineDocumentEditor',
                         component: OnlineDocumentEditor
                     },
+                    {
+                        path: '/basic/subItemRule',
+                        name: 'ApprovalSubItemRule',
+                        component: ApprovalSubItemRule
+                    }
                 ]
             }, 
             {
