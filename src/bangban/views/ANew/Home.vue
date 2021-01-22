@@ -1,6 +1,6 @@
 <template>
     <div>
-        <section class="previewImgBox" @click="dialogTableVisible = false" v-if="dialogTableVisible">
+        <section class="previewImgBox" @click="imgNext()" v-if="dialogTableVisible">
             <div class="previewImg" :style="{backgroundImage: `url(${imgUrl})`}"></div>
         </section>
         <div class="home new" ref="imageWrapper">
@@ -14,12 +14,48 @@
                 <!-- <template v-for="(step,index) in stepsData" >
                     <component  v-if="index == active" :is="step.component" :config="step.configType ==1 ? step.config:step.configFn(itemState,itemGetters)" @goNext="goNext" @goPrev="goPrevious" :stepData="step" ref="components"></component>
                 </template> -->
-                <component v-if="step" :is="step.component"
-                    :config="getStepConfig()" @goNext="goNext"
+                <component v-if="step" :is="step.component" :config="getStepConfig()" @goNext="goNext"
                     @goPrev="goPrevious" :stepData="step" ref="components" :isLastStep="active==stepsData.length-1">
                 </component>
             </div>
         </div>
+        <div class="operate-btn changePosition">
+            <el-button type="primary" class="big-btn btn-default" size="small" @click="toImage">生成截图</el-button>
+        </div>
+        <el-dialog class="message-dialog" title="系统提示" :visible.sync="showTestCommitDialog" append-to-body
+            :close-on-click-modal="false" width="800px">
+            <div class="message-dialog-content">
+                <div class="info">是否确认生成测试用例</div>
+                <div slot="footer" class="dialog-footer" style="display: flex;justify-content: space-around">
+                    <el-button type="primary" class="dialog-primary-btn" @click="showTestCommitDialog = false">取 消
+                    </el-button>
+                    <el-button type="warning" class="dialog-warn-btn" @click="commitTestConfirm">确 定</el-button>
+                </div>
+            </div>
+        </el-dialog>
+        <el-dialog class="message-dialog" title="生成测试用例" :visible.sync="showAddTestDialog" append-to-body
+            :close-on-click-modal="false" width="800px">
+            <div class="message-dialog-content">
+                <el-form ref="testAddform" :model="testAddform" label-width="150px">
+                    <el-form-item label="情形选择：">
+                        <el-select v-model="testAddform.approvalSubList" multiple collapse-tags style="width: 610px;"
+                            placeholder="请选择情形名称">
+                            <el-option v-for="item in approvalSubOptions" :key="item.approvalSubitemId"
+                                :label="item.subitemName" :value="item.approvalSubitemId">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="用例名称：">
+                        <el-input v-model="testAddform.name"></el-input>
+                    </el-form-item>
+                </el-form>
+                <div slot="footer" class="dialog-footer" style="display: flex;justify-content: space-around">
+                    <el-button type="primary" class="dialog-primary-btn" @click="showAddTestDialog = false">取 消
+                    </el-button>
+                    <el-button type="warning" class="dialog-warn-btn" @click="commitTestcase">确 定</el-button>
+                </div>
+            </div>
+        </el-dialog>
         <processing v-if="msg" :msg="msg" />
         <el-dialog :show-close="false" class="message-dialog" title="系统提示" :visible.sync="showValidation" append-to-body
             :close-on-click-modal="false" width="800px">
@@ -41,7 +77,6 @@
                 </div>
             </div>
         </el-dialog>
-    <el-button type="success" size="small" @click="toImage">生成截图</el-button>
     </div>
 </template>
 
@@ -53,11 +88,13 @@ import _ from "lodash"
 // img
 import stepIcon from '@/assets/png/step-icon.png'
 // api
-import { getStep, getStepResearcher} from "@/api/step/index";
+import { getStep, getStepResearcher } from "@/api/step/index";
 import { getFieldAll } from "@/api/superForm/index";
 import { getTemplate } from '@/api/template/index'
 import { getById } from '@/api/item/index'
 import { CommitSelfRecord, QueryBarcodeApi } from '@/api/ANew/index'
+import { addTestcase } from '@/api/basicInfo/testcase'
+import { listApprovalSubAll } from "@/api/basicInfo/approvalSub";
 // 组件
 import LeftSteper from './LeftSteper'
 import ContentCard from './components/ContentCard'
@@ -87,7 +124,7 @@ import CommonForm from "./components/CommonForm"
 export default {
     name: "Home",
     mixins: [CommonMixin, initMixin],
-    
+
     provide() {
         return {
             $itemState: () => {
@@ -96,7 +133,7 @@ export default {
 
             $itemGetters: () => {
 
-                
+
 
                 return this.itemGetters
             },
@@ -105,7 +142,7 @@ export default {
     },
     data() {
         return {
-            dialogTableVisible:false,
+            dialogTableVisible: false,
             stepIcon,
             rules: {},
             // stepPagesMap,
@@ -119,11 +156,19 @@ export default {
             dev_barcode: this.$route.query.barcode,
             barcode: "",
             // itemId: this.$route.query.itemId,
-            type:this.$route.query.type,
-            imgUrl:'',
+            type: this.$route.query.type,
+
+            // 测试用例相关
+            imgUrl: '',
+            showTestCommitDialog: false,
+            showAddTestDialog: false,
+            testAddform: {
+                approvalSubList: []
+            },
+            approvalSubOptions: [],
         }
     },
-    components: { LeftSteper, ApprovalSelectContent, MaterialExtract, FormPage, IdCardInfo, CommonMaterial, BaseFormPage, BusinessFormPage, ContentCard,LastStep,processing },
+    components: { LeftSteper, ApprovalSelectContent, MaterialExtract, FormPage, IdCardInfo, CommonMaterial, BaseFormPage, BusinessFormPage, ContentCard, LastStep, processing },
     computed: {
 
         // ...mapGetters(['sid', "item_code"]),
@@ -143,7 +188,7 @@ export default {
         // itemName() {
         //     return this.$store.state.home.item.name
         // },
-        itemId(){
+        itemId() {
             return this.$store.state.home.item.approvalItemId
         }
 
@@ -154,25 +199,25 @@ export default {
         await this.fetchBookInfo();
         // 获取 step data 和 field
         let result;
-        if(this.type === 'researcher'){
+        if (this.type === 'researcher') {
             result = await Promise.all([
-            getStepResearcher({ approvalItemId: this.itemId  }),
-            getFieldAll({ approvalItemId: this.itemId  }),
-        ])
-        }else{
-        result = await Promise.all([
-            getStep({ approvalItemId: this.itemId  }),
-            getFieldAll({ approvalItemId: this.itemId  }),
-        ])
+                getStepResearcher({ approvalItemId: this.itemId }),
+                getFieldAll({ approvalItemId: this.itemId }),
+            ])
+        } else {
+            result = await Promise.all([
+                getStep({ approvalItemId: this.itemId }),
+                getFieldAll({ approvalItemId: this.itemId }),
+            ])
         }
         this.stepsData = result[0].data.map(v => {
 
             if (typeof v.stepObject.configFn == "string" && v.stepObject.configFn.indexOf('function') > -1) {
-           
+
                 v.stepObject.configFn = functionReviverRuntime(v.stepObject.configFn, v.stepObject.component);
             }
-            if (v.stepObject.configType==3  && typeof v.stepObject.configFnFromUiCompiler == "string" && v.stepObject.configFnFromUiCompiler.indexOf('function') > -1) {
-           
+            if (v.stepObject.configType == 3 && typeof v.stepObject.configFnFromUiCompiler == "string" && v.stepObject.configFnFromUiCompiler.indexOf('function') > -1) {
+
                 v.stepObject.configFnFromUiCompiler = functionReviverRuntime(v.stepObject.configFnFromUiCompiler, v.stepObject.component);
             }
             if (v.stepObject.useBeforeEnter) {
@@ -185,9 +230,11 @@ export default {
             return { ...v.stepObject, stepPagenum: v.stepPagenum }
         }).sort((a, b) => a.stepPagenum - b.stepPagenum)
 
-        this.allFields = result[1].data.map(v => ({ id: v.id, fieldType: v.fieldType, fieldName: v.fieldName,
-                remark: v.remark,
-                children: v.children, ...v.object })).map(deserializeTableData);
+        this.allFields = result[1].data.map(v => ({
+            id: v.id, fieldType: v.fieldType, fieldName: v.fieldName,
+            remark: v.remark,
+            children: v.children, ...v.object
+        })).map(deserializeTableData);
         let baseFields = this.allFields.filter(v => v.fieldType == 1)
 
         let itemState = convertDefToConfigEventRuntime(baseFields);
@@ -202,10 +249,10 @@ export default {
 
             return result;
         }, {});
-        console.log("baseFields:",baseFields)
-        console.log("itemGetters:",itemGetters)
+        console.log("baseFields:", baseFields)
+        console.log("itemGetters:", itemGetters)
         let gettersList = Object.keys(itemGetters)
-        
+
 
         // 注册模块
         let module = {
@@ -221,7 +268,7 @@ export default {
         // console.log(JSON.stringify(module.state, null, 4));
         this.$store.registerModule("run", module);
 
-        
+
         this.$store.commit("putGettersList", gettersList)
         console.log(this.itemGetters)
         this.rules = new Rules(this.itemState, this.itemGetters).rules;
@@ -241,24 +288,42 @@ export default {
         // },
         toImage() {
             html2canvas(this.$refs.imageWrapper).then(canvas => {
-            let dataURL = canvas.toDataURL("image/png");
-            this.imgUrl = dataURL;
-            console.log(this.imgUrl)
-            if (this.imgUrl !== "") {
-                this.dialogTableVisible = true;
-            }
+                let dataURL = canvas.toDataURL("image/png");
+                this.imgUrl = dataURL;
+                console.log(this.imgUrl)
+                if (this.imgUrl !== "") {
+                    this.dialogTableVisible = true;
+                }
             });
-      },
-        getStepConfig(){
-            console.log("计算config",this.itemState,this.itemGetters)
-            if(this.step.configType ==1){
+        },
+        imgNext() {
+            this.dialogTableVisible = false;
+            this.showTestCommitDialog = true;
+        },
+        commitTestConfirm() {
+            this.showTestCommitDialog = false;
+            this.showAddTestDialog = true;
+            this.getApprovalSubOptions();
+        },
+        // 生成测试用例
+        commitTestcase() {
+            this.showAddTestDialog = false;
+        },
+        // 情形选项
+        async getApprovalSubOptions() {
+            let result = await listApprovalSubAll({ approvalItemId: this.$route.query.itemId })
+            this.approvalSubOptions = result.data;
+        },
+        getStepConfig() {
+            console.log("计算config", this.itemState, this.itemGetters)
+            if (this.step.configType == 1) {
                 return this.step.config
-            }else if(this.step.configType ==2){
-                return this.step.configFn(this.itemState,this.itemGetters)
-            }else{
-                return this.step.configFnFromUiCompiler(this.itemState,this.itemGetters)
+            } else if (this.step.configType == 2) {
+                return this.step.configFn(this.itemState, this.itemGetters)
+            } else {
+                return this.step.configFnFromUiCompiler(this.itemState, this.itemGetters)
             }
-            
+
         },
         async init() {
 
@@ -507,9 +572,7 @@ export default {
 <style scoped lang="scss">
 //  @import "~@/assets/css/index.css";
 
-
 .new {
-    
     &.home {
         height: calc(100vh - 105px);
         color: white;
@@ -518,9 +581,6 @@ export default {
     }
 }
 .home {
-   
-
-
     height: 100%;
     display: flex;
     padding: 20px 60px 20px 60px;
@@ -542,24 +602,28 @@ export default {
     }
 }
 .previewImgBox {
-        position: fixed;
-        z-index: 999;
-        top: 0;
-        left: 0;
-        width: 100%;
+    position: fixed;
+    z-index: 999;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    & > .previewImg {
+        position: absolute;
+        top: 10%;
+        left: 50%;
+        min-width: 1000px;
         height: 100%;
-        background: rgba(0,0,0,.6);
-        &>.previewImg {
-            position: absolute;
-            top: 10%;
-            left: 50%;
-            min-width: 1000px;
-            height: 100%;
-            max-height: 80%;
-            background-repeat: no-repeat;
-            background-size: contain;
-            background-position: center;
-            transform: translateX(-50%);
-        }
+        max-height: 80%;
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center;
+        transform: translateX(-50%);
     }
+}
+.changePosition {
+    transform: translate(-50px, -115px);
+    width: 300px;
+}
 </style>
