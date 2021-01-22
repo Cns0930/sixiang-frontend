@@ -1,9 +1,5 @@
 <template>
     <div class="workWrap">
-        <!-- <header>
-            <span class="title">情形子文档</span>
-            <el-button type="primary" icon="el-icon-plus" @click="addText(0,tableData.length,tableData)">新增</el-button>
-        </header> -->
         <section class="workBox">
             <div class="searchBox">
                 <!-- <el-input placeholder="情形名称或子文档名称查询" v-model="subitemNameAndDocumentSubName" clearable style="width: 200px;"

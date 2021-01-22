@@ -19,9 +19,10 @@
                 </component>
             </div>
         </div>
-        <div class="operate-btn changePosition">
+        <!-- 重要注释，要保留！！ -->
+        <!-- <div class="operate-btn changePosition">
             <el-button type="primary" class="big-btn btn-default" size="small" @click="toImage">生成截图</el-button>
-        </div>
+        </div> -->
         <el-dialog class="message-dialog" title="系统提示" :visible.sync="showTestCommitDialog" append-to-body
             :close-on-click-modal="false" width="800px">
             <div class="message-dialog-content">
@@ -304,9 +305,15 @@ export default {
             this.showTestCommitDialog = false;
             this.showAddTestDialog = true;
             this.getApprovalSubOptions();
+            console.log('this.stepsData');
+            console.log(this.stepsData);
+            console.log('this.step');
+            console.log(this.step);
         },
         // 生成测试用例
         commitTestcase() {
+            console.log('this.testAddform');
+            console.log(this.testAddform);
             this.showAddTestDialog = false;
         },
         // 情形选项
