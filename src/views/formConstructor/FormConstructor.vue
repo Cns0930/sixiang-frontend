@@ -166,14 +166,14 @@
         </el-dialog>
 
         <!-- 创建基本字段 -->
-        <el-dialog title="创建基本字段" :visible.sync="dialogVisible" width="80%" :close-on-click-modal="false">
+        <el-dialog title="创建基本字段" :visible.sync="dialogVisible" width="600px" :close-on-click-modal="false">
+            <div>
+                字段前端标签(label):
+                <el-input v-model="temp_label" @change="changeLable"></el-input>
+            </div>
             <div>
                 字段编号(fieldNo):
                 <el-input v-model="temp_fieldNo"></el-input>
-            </div>
-            <div>
-                字段前端标签(label):
-                <el-input v-model="temp_label"></el-input>
             </div>
             <div>
                 字段名称(fieldName):
@@ -326,6 +326,7 @@ import { listPublicApprovalItem } from "../../api/basicInfo/approval";
 import { functionReviverEventRuntime, convertDefToConfigEventRuntime, functionReviverRuntime } from "./util"
 import { log } from 'handlebars';
 import { mixin } from "@/mixin/mixin"
+var pinyin = require("pinyin");
 export default {
     name: "FormConstructor",
     components: {
@@ -449,6 +450,18 @@ export default {
         // 创建 基本字段
         handleAddBaseField() {
             this.dialogVisible = true;
+        },
+        changeLable() {
+            // console.log('this.temp_label');
+            // console.log(this.temp_label);
+            // console.log(pinyin(this.temp_label, {
+            //     style: pinyin.STYLE_NORMAL, // 设置拼音风格
+            //     heteronym: false
+            // }));
+            this.temp_fieldNo = pinyin(this.temp_label, {
+                style: pinyin.STYLE_NORMAL, // 设置拼音风格
+                heteronym: false
+            }).join('');
         },
         // 创建计算字段
         handleAddComputedField() {
@@ -1023,9 +1036,9 @@ export default {
         
     }
 .form-constructor {
-    ::v-deep .el-dialog{
-        margin:0 30px 50px auto;
-    }
+    // ::v-deep .el-dialog{
+    //     margin:0 30px 50px auto;
+    // }
     display: flex;
     flex-direction: column;
     .op-bar {

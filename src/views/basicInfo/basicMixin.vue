@@ -40,7 +40,7 @@ export default {
                 this.tableData = result.data;
             } else if(this.type === 'ApprovalSubItemText') {
                 result = await listItemAndDocumentSub({approvalItemId: this.$route.query.itemId,pageNum: this.currentPage,
-                pageSize: this.pagesize});
+                pageSize: this.pagesize, globalDocumentSubNameAndCode: this.subitemNameAndDocumentSubName});
                 this.tableData = result.data.records;
             } 
             else if(this.type === 'ApprovalRules') {

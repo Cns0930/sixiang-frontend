@@ -4,7 +4,7 @@
            
 
             <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
-                <!-- <el-tab-pane label="事项详情" name="approvalDetail"></el-tab-pane> -->
+                <el-tab-pane label="事项详情" name="approvalDetail"></el-tab-pane>
                 <el-tab-pane label="情形管理" name="subitem"></el-tab-pane>
                 <el-tab-pane label="情形提取规则" name="subitemRule"></el-tab-pane>
                 <el-tab-pane label="AI材料" name="ApprovalSubItemText"></el-tab-pane>
