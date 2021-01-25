@@ -273,8 +273,13 @@ export default {
             this.editBtnLoading = true;
 
             let result = await updateGlobalDcumentSub(this.editForm);
+            if (!result.success) {
+                this.$message({ type: "error", message: result.data })
+                return;
+            }
             this.editBtnLoading = false;
             this.editDialogVisible = false;
+            this.$message({ type: "success", message: "保存成功" })
             this.search();
 
         },
@@ -352,10 +357,12 @@ export default {
         },
         async add() {
             this.addBtnLoading = true;
+            this.addForm.projectId = this.$route.query.projectId;
             let result = await addGlobalDcumentSub(this.addForm);
             this.addBtnLoading = false;
 
             if (!result.success) return;
+            this.$message({ type: "success", message: "添加成功" })
 
             this.addDialogVisible = false;
             this.search();

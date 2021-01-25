@@ -190,6 +190,7 @@ export default {
             this.editBtnLoading=false;
             this.editDialogVisible=false;
             this.produceSource = [];
+            this.$message({ type: "success", message: "保存成功" })
             this.search();
 
         },
@@ -228,6 +229,7 @@ export default {
             this.addBtnLoading=false;
             
             if(!result.success) return;
+            this.$message({ type: "success", message: "添加成功" })
            
             this.addDialogVisible=false;
             this.produceSource = [];
