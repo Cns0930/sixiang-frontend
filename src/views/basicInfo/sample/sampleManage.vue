@@ -4,24 +4,29 @@
             <span class="title">样本管理</span>
         </header>
         <div class="workHandleBox">
-            <el-upload class="upload-demo" ref="upload" :action="urlImg" :multiple="true" :limit="50" :with-credentials="true"
-                :on-success="uploadSuccess" :on-remove="handleRemove" :on-exceed="handleExceed" :auto-upload='true'
-                :before-upload="customUpload">
-                <el-button type="primary" icon="el-icon-upload" class="button" :loading="loadings" @click="upload()">上传</el-button>
+            <el-upload class="upload-demo" ref="upload" :action="urlImg" :multiple="true" :limit="50"
+                :with-credentials="true" :on-success="uploadSuccess" :on-remove="handleRemove" :on-exceed="handleExceed"
+                :auto-upload='true' :before-upload="customUpload">
+                <el-button type="primary" icon="el-icon-upload" class="button" :loading="loadings" @click="upload()">上传
+                </el-button>
             </el-upload>
             <el-upload class="upload-demo" ref="uploadZip" :action="urlZip" :limit="1" :with-credentials="true"
                 :on-success="uploadSuccess" :on-remove="handleRemove" :on-exceed="handleExceed" :auto-upload='true'
                 :before-upload="customUploadZip">
-                <el-button type="plain" icon="el-icon-upload2" class="button" :loading="loadingZip" @click="upLoadZip">压缩包上传</el-button>
+                <el-button type="plain" icon="el-icon-upload2" class="button" :loading="loadingZip" @click="upLoadZip">
+                    压缩包上传</el-button>
             </el-upload>
             <el-button type="plain" icon="el-icon-upload2" class="button" disabled @click="upLoadAI">AI2.0导入</el-button>
-            <el-button type="plain" icon="el-icon-download" class="button" @click="downLoad">下载</el-button>
-            <el-button type="plain" icon="el-icon-edit" class="button" @click="reName">重命名</el-button>
-            <el-button type="danger" icon="el-icon-delete" class="button" @click="deleteDcument">删除</el-button>
+            <el-button type="plain" icon="el-icon-download" class="button" :disabled="multipleSelection.length === 0"
+                @click="downLoad">下载</el-button>
+            <el-button type="plain" icon="el-icon-edit" class="button" :disabled="multipleSelection.length !== 1"
+                @click="reName">重命名</el-button>
+            <el-button type="danger" icon="el-icon-delete" class="button" :disabled="multipleSelection.length === 0"
+                @click="deleteDcument">删除</el-button>
         </div>
         <div class="workBox">
             <div class="history-navigation">
-                <div v-for="file in filePathQueue" :key="file.path">
+                <div v-for="file in filePathQueue" :key="file.path" class="textName">
                     <i :class="[file.path === '/' ? 'el-icon-s-home' : 'el-icon-folder']"></i>
                     <span style="cursor: pointer; margin-right: 10px;" @click="goBefore(file)">{{file.name}} / </span>
                 </div>
@@ -56,6 +61,21 @@
                 </div>
             </div>
         </div>
+        <!-- rename弹窗 -->
+        <el-dialog title="重命名文件" :visible.sync="dialogVisible" width="30%">
+            <el-form ref="form" :model="form" label-width="100px">
+                <el-form-item label="文件名称：">
+                    <el-input v-model="form.name"></el-input>
+                </el-form-item>
+                <el-form-item label="重命名提示：" style="background: #EAF0FF; height: 60px; border-radius: 10px">
+                    <span>修改文件名不会改变文件属性，如重命名 1.png 为 1.jpg ，源文件属性仍为 png 文件</span>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="confirmEdit">确 定</el-button>
+            </span>
+        </el-dialog>
 
     </div>
 </template>
@@ -69,15 +89,17 @@ import state from '@/vuex/home/state';
 import dayjs from "dayjs";
 // 接口
 // import { getByApprovalItemId } from "@/api/basicInfo/approval"
-import { getFileList, } from "@/api/basicInfo/sample/document"
+import { getFileList, deleteDoc, modifyFileName } from "@/api/basicInfo/sample/document"
 
 export default {
     name: "SampleManage",
     mixins: [mixin],
     data() {
         return {
+            // 初始参数
             itemId: this.$route.query.itemId,
             projectId: this.$route.query.projectId,
+            // 文件表格相关
             tableData: [],
             multipleSelection: [],
             filePath: '/',
@@ -86,7 +108,14 @@ export default {
             loadings: false,
             loadingZip: false,
             urlImg: process.env.VUE_APP_BASE_IP + '/docInfo/uploadImg',
-            urlZip: process.env.VUE_APP_BASE_IP + '/docInfo/upload'
+            urlZip: process.env.VUE_APP_BASE_IP + '/docInfo/upload',
+            // 编辑名字
+            dialogVisible: false,
+            form: {
+                name: ''
+            },
+            // 预览图片相关
+            imgInfo: []
         }
     },
     computed: {
@@ -144,8 +173,16 @@ export default {
             return dayjs(row.createTime).format("YYYY-MM-DD HH:mm:ss");
         },
         // 改变文件目录列表
-        changeFileTable(row) {
-            if (!row.isdir) return;
+        async changeFileTable(row) {
+            if (!row.isdir) {
+                const a = document.createElement("a");
+                a.href = process.env.VUE_APP_BASE_IP + `/docInfo/getPic?fileId=${row.fileId}`
+                a.target = "_blank";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                return;
+            }
             this.filePath = row.filePath;
             this.filePathQueue.push({ path: row.filePath, name: row.fileName, index: this.filePathQueue.length });
             // console.log('this.filePathQueue');
@@ -240,10 +277,41 @@ export default {
         upLoadAI() {
 
         },
+        // 编辑文件名
         reName() {
-
+            this.form.name = this.multipleSelection[0].fileName;
+            this.dialogVisible = true;
         },
-        deleteDcument() {
+        async confirmEdit() {
+            const docId = this.multipleSelection[0].id;
+            console.log('docId');
+            console.log(docId);
+            let result = await modifyFileName({ docId: docId, newName: this.form.name });
+            if (!result.success) return;
+            this.dialogVisible = false;
+            await this.getFileListTable();
+        },
+        async deleteDcument() {
+            const idsArray = this.multipleSelection.map(item => item.id);
+            const confirmResult = await this.$confirm('该操作不可撤销，是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).catch(err => err)
+            /*如果用户确认打印confirm,如果用户取消显示cancel*/
+            if (confirmResult !== 'confirm') {
+                return this.$message.info('已取消删除!');
+            }
+            console.log('确认了删除');
+            let request = {
+                approvalId: this.itemId,
+                ids: idsArray
+            }
+            let result = await deleteDoc(request);
+            if (result.success) {
+                this.$message.success('删除成功');
+            }
+            await this.getFileListTable();
 
         },
         // 下载 支持压缩包和单个图片文件的下载
@@ -325,6 +393,9 @@ export default {
             align-items: center;
             flex-direction: row;
             justify-content: flex-start;
+            .textName:hover {
+                color: #f5527a;
+            }
         }
         .sampleTable {
             margin: 20px;

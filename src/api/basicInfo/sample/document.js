@@ -6,7 +6,7 @@ export const getFileList = params => { return axios.get(`/docInfo/getFileList`, 
 // 删除事项材料
 export const deleteDoc = params => { return axios.post(`/docInfo/deleteDoc`, params).then(res=>res.data); };
 
-// 获取材料
+// 获取材料/图片
 export const getPic = params => { return axios.get(`/docInfo/getPic`, {params}).then(res=>res.data); };
 
 // 修改文件名称
