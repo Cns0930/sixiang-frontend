@@ -14,8 +14,7 @@
                 :before-upload="customUploadZip">
                 <el-button type="plain" icon="el-icon-upload2" class="button" :loading="loadingZip" @click="upLoadZip">压缩包上传</el-button>
             </el-upload>
-            <el-button type="plain" icon="el-icon-upload2" class="button" @click="upLoadZip">压缩包上传</el-button>
-            <el-button type="plain" icon="el-icon-upload2" class="button" @click="upLoadAI">AI2.0导入</el-button>
+            <el-button type="plain" icon="el-icon-upload2" class="button" disabled @click="upLoadAI">AI2.0导入</el-button>
             <el-button type="plain" icon="el-icon-download" class="button" @click="downLoad">下载</el-button>
             <el-button type="plain" icon="el-icon-edit" class="button" @click="reName">重命名</el-button>
             <el-button type="danger" icon="el-icon-delete" class="button" @click="deleteDcument">删除</el-button>
