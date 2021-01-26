@@ -734,7 +734,6 @@ export default {
         },
         upload() {
             this.$refs.upload.submit();
-            
         },
         // 成功上传文件
         uploadSuccess(res, file) {
