@@ -476,6 +476,7 @@ export default {
                     sid: this.$store.state.home.item.itemNo,
                     script: v.template.script,
                     proDocId: v.template.proDocId,
+                    itemInternalNo: this.$store.state.home.item.itemInternalNo
                 });
                 let pagelist = v.templatePagesList;
                 for (let i in pagelist) {
