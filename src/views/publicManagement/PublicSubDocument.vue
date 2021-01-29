@@ -78,7 +78,7 @@
                         <el-input v-model="addForm.category"></el-input>
                     </el-form-item>
                     <el-form-item label="子文档编号">
-                        <el-input v-model="addForm.globalDocumentSubCode"></el-input>
+                        <el-input v-model="addForm.globalDocumentSubCode"></el-input><span style="font-size:50%;color:orange"> 非必填, 系统会自动生成</span>
                     </el-form-item>
                 </el-form>
             </div>

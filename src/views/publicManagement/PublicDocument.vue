@@ -71,7 +71,7 @@
                         </el-select>
                     </el-form-item>
                    <el-form-item label="材料编码">
-                        <el-input v-model="addForm.globalDocumentCode"></el-input>
+                        <el-input v-model="addForm.globalDocumentCode"></el-input><span style="font-size:50%;color:orange"> 非必填, 系统会自动生成</span>
                     </el-form-item>
 
                    
