@@ -166,7 +166,7 @@
                                                 </div>
                                                 <div>
                                                     <el-button-group style="margin-left: 30%">
-                                                        <el-button type="primary" icon="el-icon-arrow-left" :disabled="goBeforeDisable" @click="goBefore">上一个
+                                                        <el-button type="primary" icon="el-icon-arrow-left" :disabled="goBeforeDisable" @click="goBeforeOne">上一个
                                                         </el-button>
                                                         <el-button type="primary" :disabled="goNextDisable" @click="goNext">下一个<i
                                                                 class="el-icon-arrow-right el-icon--right"></i>
@@ -458,7 +458,7 @@ export default {
             console.log(result);
         },
         // 按钮上一个、下一个
-        goBefore() {
+        goBeforeOne() {
             let index = this.ruleClassList.indexOf(this.ruleInfo);
             console.log('index be');
             console.log(index);
