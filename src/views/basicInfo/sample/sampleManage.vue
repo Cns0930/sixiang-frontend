@@ -54,6 +54,11 @@
                     </el-table-column>
                     <el-table-column prop="createTime" label="创建时间" :formatter="formatter" show-overflow-tooltip>
                     </el-table-column>
+                    <el-table-column label="标定">
+                        <template slot-scope="scope">
+                             <el-button type="text" style="font-size: 16px" @click="goCaseDem(scope.row)">标定</el-button>
+                        </template>
+                    </el-table-column>
                 </el-table>
                 <div style="margin-top: 20px">
                     <!-- <el-button @click="toggleSelection([tableData[1], tableData[2]])">切换第二、第三行的选中状态</el-button> -->
@@ -88,7 +93,6 @@ import { mapGetters, mapState } from "vuex"
 import state from '@/vuex/home/state';
 import dayjs from "dayjs";
 // 接口
-// import { getByApprovalItemId } from "@/api/basicInfo/approval"
 import { getFileList, deleteDoc, modifyFileName } from "@/api/basicInfo/sample/document"
 
 export default {
@@ -356,6 +360,21 @@ export default {
             document.body.removeChild(a);
             window.URL.revokeObjectURL(href);
         },
+        // 跳转到样本标定
+        goCaseDem(row) {
+            console.log('row');
+            console.log(row);
+            this.filePathQueue.push({ path: row.filePath, name: row.fileName, index: this.filePathQueue.length });
+            this.$router.push({
+                path: "/basic/sampleDemarcate",
+                query: { 
+                    itemId: this.itemId,
+                    projectId: this.projectId,
+                    filePath: row.filePath,
+                    filePathQueue: JSON.stringify(this.filePathQueue)
+                },
+            });
+        }
 
     },
 
