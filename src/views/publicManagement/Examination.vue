@@ -360,6 +360,7 @@ export default {
         },
         async add(){
             this.addBtnLoading=true;
+            this.addForm.projectId = this.$route.query.projectId;
             let result = await addGlobalCheckpoint(this.addForm);
             this.addBtnLoading=false;
             

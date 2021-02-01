@@ -938,6 +938,7 @@ export default {
                 fieldsJson: fieldRes.data,
                 sid: this.$store.state.home.item.itemNo,
                 sixiangUserName: localStorage.getItem('username'),
+                itemInternalNo: this.$store.state.home.item.itemInternalNo
             };
 
             // // output

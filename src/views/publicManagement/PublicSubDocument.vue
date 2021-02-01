@@ -53,18 +53,18 @@
         <!-- 新建窗口 -->
         <el-dialog title="新增子文档" :visible.sync="addDialogVisible" width="50%" :close-on-click-modal="false">
             <div class="form-content">
-                <el-form label-width="120px">
-                    <el-form-item label="子文档名称">
+                <el-form :model="addForm" label-width="120px" :rules="rules">
+                    <el-form-item label="子文档名称" prop="globalDocumentSubName">
                         <el-input v-model="addForm.globalDocumentSubName"></el-input>
                     </el-form-item>
-                    <el-form-item label="所属材料">
+                    <el-form-item label="所属材料" prop="globalDocumentId">
                         <el-select placeholder="所属材料" v-model="addForm.globalDocumentId" filterable clearable>
                             <el-option v-for="(v,i) in allGlobalDocuments" :label="v.label" :value="v.value" :key="i">
                             </el-option>
 
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="是否多页">
+                    <el-form-item label="是否多页" prop="isMultiplePage">
                         <el-select placeholder="类型" v-model="addForm.isMultiplePage" filterable clearable>
                             <el-option label="是" :value="1"></el-option>
                             <el-option label="否" :value="0"></el-option>
@@ -78,7 +78,7 @@
                         <el-input v-model="addForm.category"></el-input>
                     </el-form-item>
                     <el-form-item label="子文档编号">
-                        <el-input v-model="addForm.globalDocumentSubCode"></el-input>
+                        <el-input v-model="addForm.globalDocumentSubCode"></el-input><span style="font-size:50%;color:orange"> 非必填, 系统会自动生成</span>
                     </el-form-item>
                 </el-form>
             </div>
@@ -91,7 +91,7 @@
         <!-- 编辑窗口 -->
         <el-dialog title="编辑子文档" :visible.sync="editDialogVisible" width="50%" :close-on-click-modal="false">
             <div class="form-content">
-                <el-form label-width="120px">
+                <el-form :model="editForm" label-width="120px" :rules="rules">
                     <el-form-item label="材料名称">
                         <el-input v-model="editForm.globalDocumentSubName"></el-input>
                     </el-form-item>
@@ -224,7 +224,20 @@ export default {
             refresh:null,
             lookTitle:null,
             lookTableData:[],
-            multipleSelection: []
+            multipleSelection: [],
+
+            // 表单校验
+            rules: {
+                globalDocumentSubName: [{
+                    required: true, message:'请输入子材料名称', trigger: 'change'
+                }],
+                globalDocumentId: [{
+                    required: true, message:'请选择所属材料', trigger: 'change'
+                }],
+                isMultiplePage:[{
+                    required: true, message:'请选择是否多页', trigger: 'change'
+                }]
+            }
         }
     },
     computed: {
@@ -273,8 +286,13 @@ export default {
             this.editBtnLoading = true;
 
             let result = await updateGlobalDcumentSub(this.editForm);
+            if (!result.success) {
+                this.$message({ type: "error", message: result.data })
+                return;
+            }
             this.editBtnLoading = false;
             this.editDialogVisible = false;
+            this.$message({ type: "success", message: "保存成功" })
             this.search();
 
         },
@@ -352,10 +370,12 @@ export default {
         },
         async add() {
             this.addBtnLoading = true;
+            this.addForm.projectId = this.$route.query.projectId;
             let result = await addGlobalDcumentSub(this.addForm);
             this.addBtnLoading = false;
 
             if (!result.success) return;
+            this.$message({ type: "success", message: "添加成功" })
 
             this.addDialogVisible = false;
             this.search();

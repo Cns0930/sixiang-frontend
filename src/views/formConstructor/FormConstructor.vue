@@ -190,14 +190,14 @@
             </span>
         </el-dialog>
         <!-- 创建子项字段 -->
-        <el-dialog title="创建子项字段" :visible.sync="dialogChildVisible" width="80%" :close-on-click-modal="false">
-             <div>
-                字段编号(fieldNo):
-                <el-input v-model="temp_fieldNo"></el-input>
-            </div>
+        <el-dialog title="创建子项字段" :visible.sync="dialogChildVisible" width="600px" :close-on-click-modal="false">
             <div>
                 字段前端标签(label):
-                <el-input v-model="temp_label"></el-input>
+                <el-input v-model="temp_label" @change="changeLable"></el-input>
+            </div>
+            <div>
+                字段编号(fieldNo):
+                <el-input v-model="temp_fieldNo"></el-input>
             </div>
             <div>
                 字段名称(fieldName):
@@ -452,12 +452,6 @@ export default {
             this.dialogVisible = true;
         },
         changeLable() {
-            // console.log('this.temp_label');
-            // console.log(this.temp_label);
-            // console.log(pinyin(this.temp_label, {
-            //     style: pinyin.STYLE_NORMAL, // 设置拼音风格
-            //     heteronym: false
-            // }));
             this.temp_fieldNo = pinyin(this.temp_label, {
                 style: pinyin.STYLE_NORMAL, // 设置拼音风格
                 heteronym: false
@@ -515,6 +509,11 @@ export default {
         },
         // 确定添加子项
         async addChildFieldConfirm() {
+            const pattern = /^[0-9a-zA-Z_]{1,}$/;
+            if (!pattern.test(this.temp_fieldNo)) {
+                this.$message({type:"warning",message:"fieldNo只能包含字母、数字、下划线"})
+                return;
+            }
             if(this.temp_fieldNo.startsWith('$')){
                 this.$message({type:"warning",message:"fieldNo不能以$开头"})
                 return;
@@ -595,6 +594,11 @@ export default {
         },
         // 确定添加字段
         async addFieldConfirm() {
+            const pattern = /^[0-9a-zA-Z_]{1,}$/;
+            if (!pattern.test(this.temp_fieldNo)) {
+                this.$message({type:"warning",message:"fieldNo只能包含字母、数字、下划线"})
+                return;
+            }
             
             if(this.temp_fieldNo.startsWith('$')){
                 this.$message({type:"warning",message:"fieldNo不能以$开头"})

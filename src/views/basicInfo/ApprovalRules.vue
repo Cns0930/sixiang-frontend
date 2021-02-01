@@ -50,7 +50,7 @@
             </el-table>
         </div>
         <div class="tablePagination">
-            <el-pagination @current-change="search" :current-page.sync="currentPage" :page-size="pagesize"
+            <el-pagination @current-change="search()" :current-page.sync="currentPage" :page-size="pagesize"
                 layout="total, prev, pager, next" :total="totalCount">
             </el-pagination>
         </div>

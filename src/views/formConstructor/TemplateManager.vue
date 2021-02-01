@@ -392,6 +392,7 @@ export default {
                 htmlPath: '/' + this.$store.state.home.item.itemNo + '/' + this.templates.template.docxTemplateName + "_page" + this.currentPagenum + ".html",
                 // documentSeq: this.templates.template.documentSeq // 不需要传
                 html: this.temp_page.htmlContent,
+                itemInternalNo: this.$store.state.home.item.itemInternalNo
             }
             console.log(params)
             let result = await axios.post(serviceBaseUrl + "/api/sixiang/saveHtml", params).then(res => res.data);
