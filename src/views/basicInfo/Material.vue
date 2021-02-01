@@ -125,7 +125,7 @@
                         <el-input v-model="materialT.templateName"></el-input>
                     </el-form-item>
                     <el-form-item label="超级帮办word模板名称">
-                        <el-input v-model="materialT.docxTemplateName" @change="writeDocumentNumberAdd"></el-input>
+                        <el-input v-model="materialT.docxTemplateName"></el-input>
                     </el-form-item>
                     <el-form-item label="文档序号">
                         <el-input v-model="materialT.documentSeq"></el-input>
@@ -292,6 +292,7 @@
 import basicMixin from "./basicMixin";
 import {mixin} from "@/mixin/mixin"
 import Vue from "vue";
+import { mapState, mapMutations } from 'vuex';
 import { listMaterial, addMaterial, delMaterial, getTemplateByMaterialId, updateMaterial, getByMaterialId, copySelectedMaterial, getAllByApprovalItemId } from "../../api/basicInfo/material";
 import { listApprovalItem, listProjectAll } from "@/api/basicInfo/approval";
 import { listGlobalDcument } from '@/api/basicInfo/publicDocument';
@@ -311,12 +312,15 @@ export default {
             type: "material",
             materialT: {
                 documentSeq: '',
+                docxTemplateName: '',
             },
             materialInit: {
                 documentSeq: '',
+                docxTemplateName: '',
             },
             materialTEdit: {
                 documentSeq: '',
+                docxTemplateName: '',
             },
             materialWriteVisible: false,
             editMaterialWriteVisible: false,
@@ -352,7 +356,11 @@ export default {
             produceSource: [], 
         };
     },
-    computed: {},
+    computed: {
+        ...mapState({
+            itemInfo: state => state.home.item,
+        }),
+    },
     async created() {
         // 获取项目信息
         await this.initProject();
@@ -478,6 +486,7 @@ export default {
                     this.materialT.produceSource = item.produceSource;
                     this.materialT.materialName = item.globalDocumentName;
                     this.materialT.documentSeq = item.globalDocumentCode;
+                    this.materialT.docxTemplateName = `${this.itemInfo.itemNo}_${item.globalDocumentCode}_tpl`;
                     this.produceSource = item.produceSource === null ? [] : item.produceSource.split(',');
                 }
             })
@@ -691,25 +700,6 @@ export default {
             // }
         },
         // 自动填写文档编号
-        writeDocumentNumberAdd() {
-            if (this.materialT.docxTemplateName) {
-                let index = this.materialT.docxTemplateName.indexOf('_');
-                console.log('index');
-                console.log(index);
-                if (index === -1) return;
-                let DocumentNumber = this.materialT.docxTemplateName.slice(index + 1);
-                index = DocumentNumber.indexOf('_');
-                console.log('index2');
-                console.log(index);
-                if (index === -1) return;
-                DocumentNumber = DocumentNumber.slice(0, index);
-                this.materialT.documentSeq = DocumentNumber;
-                console.log('DocumentNumber');
-                console.log(DocumentNumber);
-                console.log('materialT.documentSeq');
-                console.log(this.materialT.documentSeq);
-            }
-        },
         writeDocumentNumberEdit() {
             if (this.materialTEdit.docxTemplateName) {
                 let index = this.materialTEdit.docxTemplateName.indexOf('_');
