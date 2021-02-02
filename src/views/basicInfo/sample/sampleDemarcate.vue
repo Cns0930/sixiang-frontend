@@ -316,6 +316,9 @@ export default {
                 this.$message({ type: "warning", message: "获取规则列表信息失败" });
                 return;
             }
+            if(result.data.length === 0) {
+                return;
+            }
             this.ruleClassList = result.data;
             this.ruleInfo = this.ruleClassList[0];
             this.goBeforeDisable = true;
