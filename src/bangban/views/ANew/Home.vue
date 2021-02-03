@@ -20,9 +20,9 @@
             </div>
         </div>
         <!-- 重要注释，要保留！！ -->
-        <!-- <div class="operate-btn changePosition">
+        <div class="operate-btn changePosition">
             <el-button type="primary" class="big-btn btn-default" size="small" @click="toImage">生成截图</el-button>
-        </div> -->
+        </div>
         <el-dialog class="message-dialog" title="系统提示" :visible.sync="showTestCommitDialog" append-to-body
             :close-on-click-modal="false" width="800px">
             <div class="message-dialog-content">
@@ -46,8 +46,26 @@
                             </el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="用例名称：">
+                    <el-form-item label="模块：">
+                        <el-input v-model="testAddform.module"></el-input>
+                    </el-form-item>
+                    <el-form-item label="需求点：">
+                        <el-input v-model="testAddform.demandPoint"></el-input>
+                    </el-form-item>
+                    <!-- <el-form-item label="用例名称：">
                         <el-input v-model="testAddform.name"></el-input>
+                    </el-form-item> -->
+                    <el-form-item label="测试步骤：">
+                        <el-input v-model="testAddform.testStep"></el-input>
+                    </el-form-item>
+                    <el-form-item label="测试结果：">
+                        <el-input v-model="testAddform.expectedResult"></el-input>
+                    </el-form-item>
+                    <el-form-item label="测试状态：">
+                        <el-input v-model="testAddform.testState"></el-input>
+                    </el-form-item>
+                    <el-form-item label="开发状态：">
+                        <el-input v-model="testAddform.devState"></el-input>
                     </el-form-item>
                 </el-form>
                 <div slot="footer" class="dialog-footer" style="display: flex;justify-content: space-around">
@@ -164,7 +182,8 @@ export default {
             showTestCommitDialog: false,
             showAddTestDialog: false,
             testAddform: {
-                approvalSubList: []
+                approvalSubList: [],
+                module: null,
             },
             approvalSubOptions: [],
         }
@@ -291,7 +310,7 @@ export default {
             html2canvas(this.$refs.imageWrapper).then(canvas => {
                 let dataURL = canvas.toDataURL("image/png");
                 this.imgUrl = dataURL;
-                console.log(this.imgUrl)
+                console.log('截图',this.imgUrl);
                 if (this.imgUrl !== "") {
                     this.dialogTableVisible = true;
                 }
@@ -309,11 +328,30 @@ export default {
             console.log(this.stepsData);
             console.log('this.step');
             console.log(this.step);
+            this.testAddform.module = this.step.stepPagenum;
+            this.testAddform.testStep = this.step.title;
         },
         // 生成测试用例
-        commitTestcase() {
+        async commitTestcase() {
             console.log('this.testAddform');
             console.log(this.testAddform);
+            let index = this.imgUrl.indexOf(',');
+            this.imgUrl = this.imgUrl.slice(index + 1);
+            let request = {
+                approvalItemId: this.$route.query.itemId,
+                approvalSubitemIdlist: this.testAddform.approvalSubList,
+                demandPoint: this.testAddform.demandPoint,
+                figureBase: this.imgUrl,
+                developmentStatus: this.testAddform.devState,
+                // exampleCode: this.testAddform
+                module: this.testAddform.module,
+                testResult: this.testAddform.expectedResult,
+                testStatus: this.testAddform.testState,
+                testStep: this.testAddform.testStep,
+            }
+            console.log('request', request);
+            let result = await addTestcase(request);
+            console.log('addTestcaseResult', result);
             this.showAddTestDialog = false;
         },
         // 情形选项
@@ -565,11 +603,6 @@ export default {
                 // }
 
             }
-
-
-
-
-
         },
     }
 
