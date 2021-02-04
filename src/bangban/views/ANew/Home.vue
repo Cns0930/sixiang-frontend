@@ -61,12 +61,12 @@
                     <el-form-item label="测试结果：">
                         <el-input v-model="testAddform.expectedResult"></el-input>
                     </el-form-item>
-                    <el-form-item label="测试状态：">
+                    <!-- <el-form-item label="测试状态：">
                         <el-input v-model="testAddform.testState"></el-input>
                     </el-form-item>
                     <el-form-item label="开发状态：">
                         <el-input v-model="testAddform.devState"></el-input>
-                    </el-form-item>
+                    </el-form-item> -->
                 </el-form>
                 <div slot="footer" class="dialog-footer" style="display: flex;justify-content: space-around">
                     <el-button type="primary" class="dialog-primary-btn" @click="showAddTestDialog = false">取 消
@@ -342,16 +342,20 @@ export default {
                 approvalSubitemIdlist: this.testAddform.approvalSubList,
                 demandPoint: this.testAddform.demandPoint,
                 figureBase: this.imgUrl,
-                developmentStatus: this.testAddform.devState,
-                // exampleCode: this.testAddform
+                // developmentStatus: this.testAddform.devState,
                 module: this.testAddform.module,
                 testResult: this.testAddform.expectedResult,
-                testStatus: this.testAddform.testState,
+                // testStatus: this.testAddform.testState,
                 testStep: this.testAddform.testStep,
             }
             console.log('request', request);
             let result = await addTestcase(request);
-            console.log('addTestcaseResult', result);
+            if (!result.success) {
+                this.$message.warning('添加失败');
+                return;
+            } else {
+                this.$message.success('添加成功');
+            }
             this.showAddTestDialog = false;
         },
         // 情形选项

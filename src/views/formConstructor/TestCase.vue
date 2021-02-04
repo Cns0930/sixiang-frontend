@@ -15,7 +15,7 @@
             </div>
             <div class="tableWrap">
                 <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%" border
-                    :row-style="{height:'60px'}" :header-row-style="{height:'50px'}" tooltip-effect="dark"
+                    :row-style="{height:'60px'}" :header-row-style="{height:'50px'}" tooltip-effect="light"
                     :default-sort="{ prop: 'createTime', order: 'descending' }">
                     <el-table-column label="序号" type="index" width="70"></el-table-column>
                     <el-table-column prop="subitemName" label="情形名称" width="200" show-overflow-tooltip>
@@ -34,9 +34,9 @@
                     </el-table-column>
                     <el-table-column prop="exampleCode" label="用例编号">
                     </el-table-column>
-                    <el-table-column prop="testStep" label="测试步骤" width="200" show-overflow-tooltip>
+                    <el-table-column prop="testStep" label="测试步骤" width="190" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="testResult" label="测试结果" width="200" show-overflow-tooltip>
+                    <el-table-column prop="testResult" label="测试结果" width="190" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="developmentStatus" label="开发状态" width="200" show-overflow-tooltip>
                         <template slot-scope="scope">
@@ -77,7 +77,7 @@
             </div>
             <div class="tablePagination">
                 <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                    :current-page.sync="currentPageTable" :page-size="pageSizeTable" layout="total, prev, pager, next"
+                    :current-page.sync="currentPageTable" :page-size="pageSizeTable" layout="total, sizes, prev, pager, next"
                     :total="totalTable"></el-pagination>
             </div>
         </section>
@@ -219,10 +219,15 @@ export default {
 
         // 分页
         handleSizeChange(val) {
-            console.log(`每页 ${val} 条`);
+            // console.log(`每页 ${val} 条`);
+            this.pageSizeTable = val;
+            this.currentPageTable = 1;
+            this.getTestcaseList();
         },
         handleCurrentChange(val) {
-            console.log(`当前页: ${val}`);
+            // console.log(`当前页: ${val}`);
+            this.currentPageTable = val;
+            this.getTestcaseList();
         },
 
         // 放大图片
@@ -321,9 +326,11 @@ export default {
         closeText(item, index, rows) {
             console.log(item, index, rows, '0000')
             if (item.edits) {
-                this.$set(item, 'flag', null)
+                this.$set(item, 'flag', null);
+                this.$set(item, 'developmentStatus', '');
+                this.$set(item, 'testStatus', '');
             } else {
-                rows.splice(index, 1)
+                rows.splice(index, 1);
             }
 
         },
