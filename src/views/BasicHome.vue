@@ -14,6 +14,8 @@
                 <el-tab-pane label="单窗材料" name="singleWindow"></el-tab-pane>
                 <el-tab-pane label="附件管理" name="accessory"></el-tab-pane>
                 <el-tab-pane label="审批规则管理" name="approvalRules"></el-tab-pane>
+                <el-tab-pane label="样本管理" name="sampleManage"></el-tab-pane>
+                <el-tab-pane label="样本标定" name="sampleDemarcate"></el-tab-pane>
             </el-tabs>
         </div>
 
@@ -126,6 +128,18 @@ export default {
                 sessionStorage.setItem('activeName', 'subitemRule');
                 this.$store.commit("config/setCrumbList", [{ path: `/basic/subItemRule?itemId=${this.$route.query.itemId}`, label: '调研信息' }])
                 this.$store.commit("config/setCrumbListSecond", [{ path: "/basic/subItemRule", label: '情形提取规则' }])
+            }else if (this.activeName === "sampleManage") {
+                this.$router.push({
+                    path: "/basic/sampleManage",
+                    query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
+                });
+                sessionStorage.setItem('activeName', 'sampleManage');
+            }else if (this.activeName === "sampleDemarcate") {
+                this.$router.push({
+                    path: "/basic/sampleDemarcate",
+                    query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
+                });
+                sessionStorage.setItem('activeName', 'sampleDemarcate');
             }
             
         },

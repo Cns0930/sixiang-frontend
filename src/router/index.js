@@ -16,7 +16,6 @@ import TestCase from "@/views/formConstructor/TestCase"
 import TemplateManager from "@/views/formConstructor/TemplateManager"
 import MaterialManager from "@/views/formConstructor/MaterialManager"
 import Run from "@/views/formConstructor/Run"
-// import ItemManager from "@/views/formConstructor/ItemManager"
 import Login from "@/views/login/Login"
 import Setting from "@/views/setting/Setting"
 
@@ -31,6 +30,8 @@ import Accessory from "@/views/basicInfo/Accessory"
 import singleWindow from "@/views/basicInfo/singleWindowMaterial"
 import ApprovalRules from "@/views/basicInfo/ApprovalRules"
 import ApprovalSubItemRule from "@/views/basicInfo/ApprovalSubitemRule"
+import SampleManage from "@/views/basicInfo/sample/sampleManage"
+import SampleDemarcate from "@/views/basicInfo/sample/sampleDemarcate"
 
 import OnlineDocumentEditor from "@/views/basicInfo/OnlineDocumentEditor"
 import UiCompilerComponent from "@/views/uiCompilerComponent/Index"
@@ -125,11 +126,6 @@ const routes = [
                         name:"run",
                         component:Run
                     },
-                    // {
-                    //     path:"/subhome",
-                    //     name:"itemManeger",
-                    //     component:ItemManager
-                    // },
                     {
                         path: "/testcase",
                         name: "testcase",
@@ -204,6 +200,16 @@ const routes = [
                         path: '/basic/subItemRule',
                         name: 'ApprovalSubItemRule',
                         component: ApprovalSubItemRule
+                    },
+                    {
+                        path: '/basic/sampleManage',
+                        name: 'SampleManage',
+                        component: SampleManage
+                    },
+                    {
+                        path: '/basic/sampleDemarcate',
+                        name: 'SampleDemarcate',
+                        component: SampleDemarcate
                     }
                 ]
             }, 
