@@ -56,7 +56,7 @@
                     </el-table-column>
                     <el-table-column label="标定">
                         <template slot-scope="scope">
-                             <el-button type="text" style="font-size: 16px" @click="goCaseDem(scope.row)">标定</el-button>
+                            <el-button v-show="scope.row.isdir" type="text" style="font-size: 16px" @click="goCaseDem(scope.row)">标定</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
