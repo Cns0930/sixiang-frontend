@@ -27,7 +27,7 @@
                 <el-tab-pane label="步骤页面管理" name="pageconfigure"></el-tab-pane>
                 <el-tab-pane label="步骤页面-调研" name="pageconfigure2"></el-tab-pane>
                 <!-- 重要注释，要保留！！ -->
-                <!-- <el-tab-pane label="测试用例管理" name="testcase"></el-tab-pane> -->
+                <el-tab-pane label="测试用例管理" name="testcase"></el-tab-pane>
                 <el-tab-pane label="设置" name="setting"></el-tab-pane>
             </el-tabs>
         </div>
