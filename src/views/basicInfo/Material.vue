@@ -1,10 +1,10 @@
 <template>
     <div class="workWrap">
-        <header>帮办材料</header>
+        <header>一级材料</header>
         <section class="workBox">
             <div class="searchBox">
-                <el-input placeholder="筛选材料名称或者模板名称" v-model="valueM" clearable style="width: 200px;"></el-input>
-                <el-button @click="materialSearch()">搜索</el-button>
+                <el-input placeholder="筛选材料名称或者模板名称" v-model="valueM" clearable style="width: 200px;" @change="materialSearch"></el-input>
+                <el-button @click="materialSearch">搜索</el-button>
                 <div class="handle">
                     <el-button type="primary" @click="materialVisible(materialInit)">新建材料</el-button>
                     <!-- <el-button type="primary">导出</el-button> -->
@@ -61,9 +61,15 @@
                         :formatter="isRequiredFormatter">
                     </el-table-column>
                     <el-table-column prop="navigationOrder" label="导航顺序" width="50px"></el-table-column>
-                    <el-table-column prop="descriptionInfo" label="材料逻辑" show-overflow-tooltip width="300">
+                    <el-table-column prop="descriptionInfo" label="材料逻辑" show-overflow-tooltip width="200">
                     </el-table-column>
                     <el-table-column prop="produceSource" label="产生方式" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="materialNameNotes" label="清单补充说明信息" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="uploadDescription" label="上传逻辑说明" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="logicType" label="子材料逻辑" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable width="160">
                     </el-table-column>
@@ -164,6 +170,18 @@
                     <el-form-item label="市证照编码">
                         <el-input v-model="materialT.catMainCode"></el-input>
                     </el-form-item>
+                    <el-form-item label="清单补充说明信息">
+                        <el-input v-model="materialT.materialNameNotes"></el-input>
+                    </el-form-item>
+                    <el-form-item label="上传逻辑说明">
+                        <el-input v-model="materialT.uploadDescription"></el-input>
+                    </el-form-item>
+                    <el-form-item label="子材料逻辑">
+                        <el-select v-model="materialT.logicType" placeholder="材料的产生来源">
+                            <el-option label="and" value="and"></el-option>
+                            <el-option label="or" value="or"></el-option>
+                        </el-select>
+                    </el-form-item>
                     <el-form-item label="备注">
                         <el-input v-model="materialT.note"></el-input>
                     </el-form-item>
@@ -174,7 +192,7 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="materialWriteVisible = false">取 消</el-button>
-                <el-button type="primary" @click="addMaterial();materialWriteVisible = false">确 定</el-button>
+                <el-button type="primary" @click="addMaterial()">确 定</el-button>
             </span>
         </el-dialog>
         <!-- 编辑窗口 -->
@@ -227,6 +245,18 @@
                     <el-form-item label="市证照编码">
                         <el-input v-model="materialTEdit.catMainCode"></el-input>
                     </el-form-item>
+                    <el-form-item label="清单补充说明信息">
+                        <el-input v-model="materialTEdit.materialNameNotes"></el-input>
+                    </el-form-item>
+                    <el-form-item label="上传逻辑说明">
+                        <el-input v-model="materialTEdit.uploadDescription"></el-input>
+                    </el-form-item>
+                    <el-form-item label="子材料逻辑">
+                        <el-select v-model="materialTEdit.logicType" placeholder="材料的产生来源">
+                            <el-option label="and" value="and"></el-option>
+                            <el-option label="or" value="or"></el-option>
+                        </el-select>
+                    </el-form-item>
                     <el-form-item label="备注">
                         <el-input v-model="materialTEdit.note"></el-input>
                     </el-form-item>
@@ -237,7 +267,7 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editMaterialWriteVisible = false">取 消</el-button>
-                <el-button type="primary" @click="editMaterial();editMaterialWriteVisible = false">确 定</el-button>
+                <el-button type="primary" @click="editMaterial()">确 定</el-button>
             </span>
         </el-dialog>
         <!-- 导入自选材料 -->
@@ -633,12 +663,12 @@ export default {
             this.materialWriteVisible = false;
             this.produceSource = [];
             // this.materialT_item_id = '';
-            if (!this.materialT.materialId) {
-                await this.search();
-            } else {
-                await this.materialSearch();
-            }
-
+            // if (!this.materialT.materialId) {
+            //     await this.search();
+            // } else {
+            //     await this.materialSearch();
+            // }
+            await this.search();
         },
         // 编辑材料
         async editMaterial() {
@@ -649,13 +679,14 @@ export default {
             this.$message.success('编辑成功');
             this.editMaterialWriteVisible = false;
             // this.materialT_item_id = '';
-            if (!this.materialTEdit.materialId) {
-                await this.search();
-            } else {
-                this.materialT.approvalItemId = this.materialTEdit.approvalItemId;
-                this.materialT.materialStatus = this.materialTEdit.materialStatus;
-                await this.materialSearch();
-            }
+            // if (!this.materialTEdit.materialId) {
+            //     await this.search();
+            // } else {
+            //     this.materialT.approvalItemId = this.materialTEdit.approvalItemId;
+            //     this.materialT.materialStatus = this.materialTEdit.materialStatus;
+            //     await this.materialSearch();
+            // }
+            await this.search();
         },
         // 删除
         async handleDeleteMaterial(v) {

@@ -1,15 +1,15 @@
 <template>
     <div class="workWrap">
         <header>
-            <span class="title">AI材料</span>
+            <span class="title">二级材料</span>
             <el-button type="primary" icon="el-icon-plus" @click="addText(0,tableData.length,tableData)">新增</el-button>
         </header>
         <section class="workBox">
             <div class="searchBox">
                 <!-- <el-input placeholder="按情形名称查询" v-model="approvalName" clearable style="width: 200px"></el-input> -->
                 <el-input placeholder="子文档名称/编号查询" v-model="subitemNameAndDocumentSubName" clearable
-                    style="width: 200px;" @keyup.native.enter="search"></el-input>
-                <el-button @click="textSearch()">搜索</el-button>
+                    style="width: 200px;" @change="textSearch"></el-input>
+                <el-button @click="textSearch">搜索</el-button>
                 <!-- <el-button v-if="tableData.length < 1" type="primary" @click="addFirst">新增</el-button> -->
             </div>
             <div class="tableWrap">
@@ -38,7 +38,7 @@
                             <span v-else>{{scope.row.subitemName}}</span>
                         </template>
                     </el-table-column> -->
-                    <el-table-column prop="globalDocumentSubName" label="子文档名称">
+                    <el-table-column prop="globalDocumentSubName" label="子文档名称" width="200">
                         <template slot-scope="scope">
                             <el-select v-if="scope.row.flag" v-model="scope.row.globalDocumentSubId"
                                 placeholder="请选择子文档名称" clearable filterable remote reserve-keyword
@@ -58,7 +58,7 @@
                             <span v-else>{{scope.row.globalDocumentSubName}}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="isRequired" label="是否必须" width="200">
+                    <el-table-column prop="isRequired" label="是否必须"  width="80">
 
                         <template slot-scope="scope">
                             <el-select v-if="scope.row.flag" v-model="scope.row.isRequired" placeholder="请选择是否必须"
@@ -66,7 +66,27 @@
                                 <el-option label="是" :value="Number(1)"></el-option>
                                 <el-option label="否" :value="Number(0)"></el-option>
                             </el-select>
-                            <span v-else>{{scope.row.isRequired == Number(1)? '是':'否'}}</span>
+                            <span v-else-if="scope.row.isRequired == Number(1)">是</span>
+                            <span v-else-if="scope.row.isRequired == Number(0)">否</span>
+                            <span v-else></span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="requiredDescription" label="是否必须逻辑">
+                        <template slot-scope="scope">
+                            <el-input v-if="scope.row.flag" v-model="scope.row.requiredDescription"></el-input>
+                            <span v-else>{{scope.row.requiredDescription}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="documentsubDisplayname" label="展示材料名称">
+                        <template slot-scope="scope">
+                            <el-input v-if="scope.row.flag" v-model="scope.row.documentsubDisplayname"></el-input>
+                            <span v-else>{{scope.row.documentsubDisplayname}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="displayNotes" label="补充说明信息">
+                        <template slot-scope="scope">
+                            <el-input v-if="scope.row.flag" v-model="scope.row.displayNotes"></el-input>
+                            <span v-else>{{scope.row.displayNotes}}</span>
                         </template>
                     </el-table-column>
                     <!-- <el-table-column prop="notes" label="备注"></el-table-column> -->
@@ -98,7 +118,7 @@
             </div>
             <div class="tablePagination">
                 <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                    :current-page.sync="currentPage" :page-size="pagesize" layout="total, prev, pager, next"
+                    :current-page.sync="currentPage" :page-size="pagesize" layout="total, sizes, prev, pager, next"
                     :total="totalCount"></el-pagination>
             </div>
         </section>
@@ -214,6 +234,7 @@ export default {
         },
         //远程搜索
         async remoteMethod(query) {
+            this.currentPageSelect = 1;
             console.log(query)
             if (query !== '') {
                 let result = await listGlobalDcumentSub({ globalDocumentSubNameAndCode: query, pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.$route.query.projectId });
@@ -241,24 +262,14 @@ export default {
         //     this.multipleSelection = val;
         // },
         async handleSizeChange(val) {
-            console.log(`每页 ${val} 条`);
-            let result = await listMaterial({
-                keyword: this.valueM,
-                pageNum: this.currentPage,
-                pageSize: val,
-                approvalItemId: this.$route.query.itemId,
-            });
-            this.tableData = result.data.records;
+            // console.log(`每页 ${val} 条`);
+            this.pagesize = val;
+            await this.search();
         },
         async handleCurrentChange(val) {
-            console.log(`当前页: ${val}`);
-            let result = await listMaterial({
-                keyword: this.valueM,
-                pageNum: val,
-                pageSize: this.pagesize,
-                approvalItemId: this.$route.query.itemId,
-            });
-            this.tableData = result.data.records;
+            // console.log(`当前页: ${val}`);
+            this.currentPage = val;
+            await this.search();
         },
         documentVisible(item) {
             this.documentAdd = item;
@@ -319,6 +330,15 @@ export default {
 
         // 保存
         async saveText(item, index, rows) {
+            // console.log('item', item);
+            if(!item.globalDocumentSubId || item.globalDocumentSubId === '') {
+                this.$message.warning('二级材料名称不能为空');
+                return;
+            } 
+            if(item.isRequired === undefined) {
+                this.$message.warning('是否必须不能为空');
+                return;
+            }
             if (item.edits) {
                 // delete item.edits // 删除属性会产生接口请求失败后的页面bug
                 // delete item.flag
@@ -326,7 +346,10 @@ export default {
                     approvalItemId: Number(this.itemId),
                     globalDocumentSubId: item.globalDocumentSubId,
                     isRequired: item.isRequired,
-                    id: item.id
+                    id: item.id,
+                    requiredDescription: item.requiredDescription,
+                    documentsubDisplayname: item.documentsubDisplayname,
+                    displayNotes: item.displayNotes
                 }
                 const result = await updateItemAndDocumentSub(request)
                 console.log(result, 'result')
@@ -335,7 +358,10 @@ export default {
                 let request = {
                     approvalItemId: Number(this.itemId),
                     globalDocumentSubId: item.globalDocumentSubId,
-                    isRequired: item.isRequired 
+                    isRequired: item.isRequired,
+                    requiredDescription: item.requiredDescription,
+                    documentsubDisplayname: item.documentsubDisplayname,
+                    displayNotes: item.displayNotes
                 }
                 const res = await addItemAndDocumentSub(request)
                 console.log(res, 'res')

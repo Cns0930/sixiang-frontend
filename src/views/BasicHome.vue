@@ -7,8 +7,8 @@
                 <el-tab-pane label="事项详情" name="approvalDetail"></el-tab-pane>
                 <el-tab-pane label="情形管理" name="subitem"></el-tab-pane>
                 <el-tab-pane label="情形提取规则" name="subitemRule"></el-tab-pane>
-                <el-tab-pane label="AI材料" name="ApprovalSubItemText"></el-tab-pane>
-                <el-tab-pane label="帮办材料" name="material"></el-tab-pane>
+                <el-tab-pane label="二级材料" name="ApprovalSubItemText"></el-tab-pane>
+                <el-tab-pane label="一级材料" name="material"></el-tab-pane>
                 <el-tab-pane label="材料字段" name="field"></el-tab-pane>
                 <!-- <el-tab-pane label="前端字段" name="" disabled></el-tab-pane> -->
                 <el-tab-pane label="单窗材料" name="singleWindow"></el-tab-pane>
@@ -100,7 +100,7 @@ export default {
                 });
                 sessionStorage.setItem('activeName', 'ApprovalSubItemText');
                 this.$store.commit("config/setCrumbList", [{ path: `/basic/subitem?itemId=${this.$route.query.itemId}`, label: '调研信息' }])
-                this.$store.commit("config/setCrumbListSecond", [{ path: "/basic/ApprovalSubItemText", label: 'AI材料' }])
+                this.$store.commit("config/setCrumbListSecond", [{ path: "/basic/ApprovalSubItemText", label: '二级材料' }])
             } else if (this.activeName === "singleWindow") {
                 this.$router.push({
                     path: "/basic/singleWindow",

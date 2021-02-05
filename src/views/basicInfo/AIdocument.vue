@@ -1,6 +1,6 @@
 <template>
     <div class="workWrap">
-        <header>AI文档</header>
+        <header>二级材料</header>
         <section class="workBox">
             <div class="searchBox">
                 <el-input placeholder="筛选文档名称或者文档编号" v-model="valueM" clearable style="width: 200px"></el-input>
@@ -45,7 +45,7 @@
             </div>
         </section>
         <!-- 创建模板弹窗 -->
-        <el-dialog title="新建AI文档" :visible.sync="addDialogVisible" width="40%" :close-on-click-modal="false">
+        <el-dialog title="新建二级材料" :visible.sync="addDialogVisible" width="40%" :close-on-click-modal="false">
             <el-form :model="documentAdd" label-width="25%" class="demo-ruleForm">
                 <div>
                     <el-form-item label="文档名称">
