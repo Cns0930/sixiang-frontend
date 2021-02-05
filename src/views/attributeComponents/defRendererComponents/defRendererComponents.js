@@ -11,7 +11,12 @@ let NumberInput = {
     props: ["value"],
 
     render() {
-        return <ElInput value={this.value} onInput={($event) => this.$emit("input", parseFloat($event))}></ElInput>
+        return <ElInput value={this.value} onInput={($event) => {
+            if ($event === '') {
+                $event = 0;
+            }
+            this.$emit("input", parseFloat($event))
+        } }></ElInput>
     }
 }
 // 选择器组件
