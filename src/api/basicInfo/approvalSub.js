@@ -68,3 +68,6 @@ export const deleItemAndDocumentSub = params => { return axios.delete(`/ss/appro
 
 // 修改事项关联子文档
 export const updateItemAndDocumentSub = params => { return axios.post(`/ss/approvalItemAndDocumentSub/updateItemAndDocumentSub`, params).then(res=>res.data); };
+
+// 查询材料模板对应的二级材料
+export const listSubitemAndDocumentNewByTemplateId = params => { return axios.get(`/ss/approvalItemAndDocumentSub/listSubitemAndDocumentNewByTemplateId`, {params}).then(res=>res.data); };

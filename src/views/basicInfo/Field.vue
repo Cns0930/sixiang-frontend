@@ -20,6 +20,7 @@
                 <el-button type="success" @click="upload()" class="upload-input">导入</el-button>
             </div> 
             <div style="margin-right:10px">
+                <el-button type="primary" @click="upToBangban" class="upload-input">导出成提取点</el-button>
                 <el-button type="primary" @click="updown" class="upload-input">导出到帮办字段</el-button>
             </div>
         </div>
@@ -66,13 +67,13 @@
         <el-dialog title="添加材料字段" :visible.sync="addDialogVisible" width="50%" :close-on-click-modal="false">
 
             <el-form label-width="90px" :model="addForm">
-                <el-form-item label="材料名称" prop="materialName">
+                <el-form-item label="材料名称" prop="materialName" required>
                     <el-select v-model="addForm.materialW" clearable placeholder="请选择材料名称" @focus="changeMaterialValue">
                         <el-option v-for="(v,i) in typeMaterialOptions" :key="i" :label="v.materialName"
                             :value="v.materialId"> </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="关联二级材料名称">
+                <el-form-item label="关联二级材料名称" required>
                     <el-select v-model="addForm.approvalItemAndDocumentsubId" clearable placeholder="请选择二级材料名称">
                         <el-option v-for="(v,i) in secondaryMaterialOptions" :key="i" :label="v.globalDocumentSubName"
                             :value="v.id"> </el-option>
@@ -165,13 +166,13 @@
         <el-dialog title="编辑材料字段" :visible.sync="editDialogVisible" width="50%" :close-on-click-modal="false">
             <el-form label-width="80px" :model="editForm">
                 <el-form-item label="材料名称" prop="materialName">
-                    <el-select v-model="editForm.materialId" clearable placeholder="请选择材料名称">
+                    <el-select v-model="editForm.materialId" placeholder="请选择材料名称">
                         <el-option v-for="(v,i) in typeMaterialOptions" :key="i" :label="v.materialName"
                             :value="v.materialId"> </el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="关联二级材料名称">
-                    <el-select v-model="editForm.approvalItemAndDocumentsubId" clearable placeholder="请选择二级材料名称">
+                    <el-select v-model="editForm.approvalItemAndDocumentsubId" placeholder="请选择二级材料名称">
                         <el-option v-for="(v,i) in secondaryMaterialOptions" :key="i" :label="v.globalDocumentSubName"
                             :value="v.id"> </el-option>
                     </el-select>
@@ -380,7 +381,8 @@ import { mapState } from "vuex";
 import {
     getField, addField, updateField, deleteField,
     getAllByApprovalItemId, listField,
-    listFieldUnionMaterial, listAllMaterial, importfields, lookfields,listFieldNosByIds,updateFieldComponentName,saveBatch
+    listFieldUnionMaterial, listAllMaterial, importfields, lookfields,listFieldNosByIds,updateFieldComponentName,saveBatch,
+    saveBatchCheck
 } from "@/api/basicInfo/field";
 import { listItemAndDocumentSub } from "@/api/basicInfo/approvalSub";
 import dayjs from "dayjs";
@@ -600,6 +602,14 @@ export default {
                 this.tableDataDown = this.multipleSelection
             }
             this.updownDialogVisible = true
+        },
+        async upToBangban() {
+            let result = await saveBatchCheck({approvalItemId: this.itemId});
+            if(!result.success) {
+                this.$message.warning('转到帮办字段失败')
+            } else {
+                this.$message.success('转到帮办字段成功')
+            }
         },
         async close() {
             await this.reloadTable();

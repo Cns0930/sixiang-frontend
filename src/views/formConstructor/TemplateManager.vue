@@ -39,7 +39,12 @@
                                 <el-badge :is-dot="!page.isLast">
                                     输出时间：{{page.outputTime}}
                                 </el-badge>
-
+                            </div>
+                            <div class="list">
+                                <el-select v-model="page.approvalItemAndDocumentsubId" :disabled="!(temp_page && page.id == temp_page.id)" placeholder="请选择二级材料名称">
+                                    <el-option v-for="(v,i) in secondaryMaterialOptions" :key="i" :label="v.globalDocumentSubName"
+                                        :value="v.id"> </el-option>
+                                </el-select>
                             </div>
                             <el-button-group>
 
@@ -163,6 +168,7 @@ import inlineEditor from "@/views/inlineEditorComponent/InlineEditor"
 
 import { mixin } from "@/mixin/mixin"
 import { CodeEditor, CSSEditor } from "@/views/attributeComponents/defRendererComponents/defRendererComponents"
+import { listSubitemAndDocumentNewByTemplateId } from"@/api/basicInfo/approvalSub"
 import axios from 'axios';
 import dayjs from "dayjs"
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
@@ -216,6 +222,9 @@ export default {
             defaultCss: ".ck-content p {   margin: 0;   white-space: pre-wrap;   word-break: break-all;   word-wrap: break-word;   overflow-wrap: break-word;}.ck-content .table {   margin: 1em auto;   display: table;}.ck-content .table table {   margin-left: -1.6cm;   width: 16.19cm;   border-collapse: collapse;   border-spacing: 0;   height: 100%;   border: 1px solid black;}#row-table > table {   margin-left: -1.6cm;   width: 26.54cm;   border-collapse: collapse;   border-spacing: 0;   height: 100%;   border: 1px solid black;}.ck-content .table table td,.ck-content .table table th {   min-width: 2em;   padding: 0;   border: 1px solid black;}.ck-content .custom-block-indent-2 {   text-indent: 2em;}.ck-content .custom-block-indent-4 {   text-indent: 4em;}.ck-content .custom-block-indent-6 {   text-indent: 6em;}.ck-content .custom-block-indent-8 {   text-indent: 8em;}.ck-content .custom-block-indent-10 {   text-indent: 10em;}.image {   display: inline-block;}.image img {   width: 7.9cm;}",
             laodingField:false,
 
+            // 关联二级材料
+            secondaryMaterialOptions: [],
+            // approvalItemAndDocumentsubId: null
         }
     },
     computed: {
@@ -238,6 +247,8 @@ export default {
         await this.init()
         this.getTemplate()
         this.getFieldAll();
+        // 获取关联二级材料列表
+        this.getSecondaryMaterialOptions();
     },
     filters: {
         formatTime(v) {
@@ -264,6 +275,11 @@ export default {
             console.log(updateInfoRes)
 
 
+        },
+        async getSecondaryMaterialOptions() {
+            let res = await listSubitemAndDocumentNewByTemplateId({ approvalItemId: this.itemId, templateId: this.$route.query.id});
+            if(!res.success) return;
+            this.secondaryMaterialOptions = res.data;
         },
         // async addTemplate() {
         //     if (!this.temp_template_name) return;
@@ -302,6 +318,7 @@ export default {
                 pageNum: length, // 第几页
                 templateType: "",
                 contentCss: this.defaultCss,
+                approvalItemAndDocumentsubId: null,  // 关联的二级材料 
             })
             // this.currentPagenum = length;
         },
@@ -335,6 +352,7 @@ export default {
                 templateType: this.temp_page.templateType,
                 contentCss: this.temp_page.contentCss ? this.temp_page.contentCss : this.defaultCss,
                 script: this.temp_page.script,
+                approvalItemAndDocumentsubId: this.temp_page.approvalItemAndDocumentsubId,
             })
 
             if (!res.success) return;

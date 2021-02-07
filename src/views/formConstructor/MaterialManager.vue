@@ -265,6 +265,7 @@ export default {
                 query: {
                     itemId: this.$store.state.home.item.approvalItemId,
                     id: id,
+                    projectId: this.$route.query.projectId
                 },
             });
         },
