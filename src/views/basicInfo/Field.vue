@@ -18,8 +18,17 @@
                     <div slot="tip" class="el-upload__tip">只能上传Excel文件</div>
                 </el-upload>
                 <el-button type="success" @click="upload()" class="upload-input">导入</el-button>
+            </div>
+            <div class="upload-box" style="margin-left: 20px">
+                <el-upload class="upload-demo" ref="uploadNew" :action="url" :limit="1" accept=".xlsx" :with-credentials="true"
+                    :on-success="upFile" :on-remove="handleRemove" :on-exceed="handleExceed" :auto-upload="false"
+                    :before-upload="customUpload">
+                    <el-button type="primary">选择新模板材料Excel</el-button>
+                    <div slot="tip" class="el-upload__tip">只能上传Excel文件</div>
+                </el-upload>
+                <el-button type="success" @click="uploadNew()" class="upload-input">导入</el-button>
             </div> 
-            <div style="margin-right:10px">
+            <div style="margin-left: 55%">
                 <el-button type="primary" @click="upToBangban" class="upload-input">导出成提取点</el-button>
                 <el-button type="primary" @click="updown" class="upload-input">导出到帮办字段</el-button>
             </div>
@@ -444,6 +453,8 @@ export default {
             // 文件上传
             fileList: [],
             url: process.env.VUE_APP_BASE_IP + "/ss/Import/ssFieldImportData",
+            urlNew: process.env.VUE_APP_BASE_IP + "/ss/Import/ssFieldNewImportData",
+            uploadUrl: '',
             uploadDialogVisible: false,
             uploadBackInfo: {
                 关联材料不存在: null,
@@ -762,14 +773,15 @@ export default {
         },
         // 上传文件
         customUpload(file) {
-             this.loading = true
+            this.loading = true
             let fd = new FormData();
             fd.append("file", file);
             fd.append("approvalItemId", this.itemId);
             console.log('fd');
             console.log(fd);
+            // console.log('this.uploadUrl', this.uploadUrl)
             axios.post(
-                this.url,
+                this.uploadUrl,
                 fd
             )
                 .then(
@@ -778,6 +790,12 @@ export default {
                         console.log(res);
                         if (res.data.success) {
                             this.$message.success('上传成功');
+                            const h = this.$createElement;
+                            this.$notify({
+                                title: 'Excel上传消息提示',
+                                message: h('i', { style: 'color: teal'}, JSON.stringify(res.data.data)),
+                                duration: 0
+                            });
                             this.reloadTable();
                             this.$refs.upload.clearFiles();
                             this.uploadBackInfo = res.data.data;
@@ -791,14 +809,24 @@ export default {
             return false;
         },
         upload() {
+            this.uploadUrl = this.url;
             this.$confirm('会全部覆盖，是否继续导入？', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning',
         }).then(() => {
             this.$refs.upload.submit();
-        }).catch(_ => {});
-            
+        }).catch(_ => {});    
+        },
+        uploadNew() {
+            this.uploadUrl = this.urlNew;
+            this.$confirm('会全部覆盖，是否继续导入？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+        }).then(() => {
+            this.$refs.uploadNew.submit();
+        }).catch(_ => {});    
         },
         // 成功上传文件
         upFile(res, file) {
@@ -833,7 +861,7 @@ export default {
     height: calc(100% - 22px);
     .submitTip{
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-start;
         align-items: center;
     }
     .operation-box {
