@@ -15,7 +15,7 @@
         <div class="main">
             <!-- 模板列表 -->
             <div class="material-list">
-                <el-table :data="templates">
+                <el-table :data="templates" border>
                     <el-table-column label="word模板命令">
                         <template slot-scope="scope">
                             <el-button type="text" style="color: orange"
@@ -566,11 +566,11 @@ export default {
     }
     .main {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         .material-list {
-            width: 600px;
+            width: 1100px;
             margin-top: 10px;
-            padding: 20px;
+            padding: 5px;
             border: 1px solid green;
             .material-item {
                 margin-bottom: 10px;
@@ -578,8 +578,9 @@ export default {
         }
         .material-detail {
             border: 1px solid blue;
-            width: 600px;
+            width: 1100px;
             margin-top: 10px;
+            padding: 10px;
         }
     }
 }

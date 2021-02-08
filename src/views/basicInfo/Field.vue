@@ -86,7 +86,7 @@
         <el-dialog title="添加材料字段" :visible.sync="addDialogVisible" width="50%" :close-on-click-modal="false">
 
             <el-form label-width="90px" :model="addForm">
-                <el-form-item label="材料名称" prop="materialName" required>
+                <el-form-item label="材料名称" required>
                     <el-select v-model="addForm.materialW" clearable placeholder="请选择材料名称" @focus="changeMaterialValue">
                         <el-option v-for="(v,i) in typeMaterialOptions" :key="i" :label="v.materialName"
                             :value="v.materialId"> </el-option>
@@ -629,6 +629,7 @@ export default {
                 this.$message.warning('转到帮办字段失败')
             } else {
                 this.$message.success('转到帮办字段成功')
+                if(result.data.length === 0) return;
                 const h = this.$createElement;
                 this.$notify({
                     title: '以下字段缺少二级材料未导出提取点',
@@ -814,10 +815,11 @@ export default {
                             this.reloadTable();
                             this.$refs.upload.clearFiles();
                             this.uploadBackInfo = res.data.data;
-                            this.loading = false
+                            this.loading = false;
                             // this.uploadDialogVisible = true;
                         } else {
                             this.$message.warning('上传失败,请重新上传');
+                            this.loading = false;
                         }
                     },
                 );
