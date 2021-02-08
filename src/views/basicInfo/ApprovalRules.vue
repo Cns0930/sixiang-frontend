@@ -142,9 +142,9 @@
                             >
                             <el-option
                                 v-for="item2 in checkpointList"
-                                :key="item2.checkpointId"
-                                :label="item2.checkpointName"
-                                :value="item2.checkpointName"
+                                :key="item2.fieldId"
+                                :label="item2.fieldName"
+                                :value="item2.fieldName"
                             />
                             <div class="text-center" style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
                                     <a class="text-normal">
@@ -540,8 +540,6 @@ export default {
         },
         //远程搜索
         async remoteMethods(query){
-            console.log(query)
-            if(query !== ''){
                 let result = await listCheckpoint({fieldName:query, approvalItemId: this.$route.query.itemId, pageNum: this.currentPageSelects,pageSize: this.pageSizes});
                 this.loading = true;
                 setTimeout(() => {
@@ -551,7 +549,6 @@ export default {
                     this.totals = result.data.total
                     
                 })
-            }
         },
         subitemNameChange(val) {
         //    this.remoteMethod(val)
