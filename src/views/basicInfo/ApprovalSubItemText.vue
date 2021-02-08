@@ -58,6 +58,7 @@
                             <span v-else>{{scope.row.globalDocumentSubName}}</span>
                         </template>
                     </el-table-column>
+                    <el-table-column prop="globalDocumentSubCode" label="子文档编码" width="120"></el-table-column>
                     <el-table-column prop="isRequired" label="是否必须"  width="80">
 
                         <template slot-scope="scope">
