@@ -104,6 +104,12 @@
                 <el-form-item label="字段编号" required>
                     <el-input v-model="addForm.fieldNo"></el-input>
                 </el-form-item>
+                <el-form-item label="是否提取点">
+                    <el-select v-model="addForm.isCheckpoint" clearable placeholder="是否为提取点">
+                        <el-option label="是" :value="Number(1)"></el-option>
+                        <el-option label="否" :value="Number(0)"></el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item label="前端字段名称">
                     <el-input v-model="addForm.label"></el-input>
                 </el-form-item>
@@ -134,12 +140,6 @@
                 </el-form-item>
                 <el-form-item label="前端字段模块">
                     <el-input v-model="addForm.module" placeholder="只允许填入纯数字"></el-input>
-                </el-form-item>
-                <el-form-item label="是否提取点">
-                    <el-select v-model="addForm.isCheckpoint" clearable placeholder="是否为提取点">
-                        <el-option label="是" :value="Number(1)"></el-option>
-                        <el-option label="否" :value="Number(0)"></el-option>
-                    </el-select>
                 </el-form-item>
                 <el-form-item label="是否为截图">
                     <el-select v-model="addForm.isScreenshot" clearable placeholder="是否为截图">
@@ -201,6 +201,12 @@
                 <el-form-item label="字段编号" required>
                     <el-input v-model="editForm.fieldNo"></el-input>
                 </el-form-item>
+                <el-form-item label="是否提取点">
+                    <el-select v-model="editForm.isCheckpoint" clearable placeholder="是否为提取点">
+                        <el-option label="是" :value="Number(1)"></el-option>
+                        <el-option label="否" :value="Number(0)"></el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item label="前端字段名称">
                     <el-input v-model="editForm.label"></el-input>
                 </el-form-item>
@@ -231,12 +237,6 @@
                 </el-form-item>
                 <el-form-item label="前端字段模块">
                     <el-input v-model="editForm.module" placeholder="只允许填入纯数字"></el-input>
-                </el-form-item>
-                <el-form-item label="是否提取点">
-                    <el-select v-model="editForm.isCheckpoint" clearable placeholder="是否为提取点">
-                        <el-option label="是" :value="Number(1)"></el-option>
-                        <el-option label="否" :value="Number(0)"></el-option>
-                    </el-select>
                 </el-form-item>
                 <el-form-item label="是否为截图">
                     <el-select v-model="editForm.isScreenshot" clearable placeholder="是否为截图">
