@@ -222,7 +222,7 @@
             </el-table>
 
             <el-tag size="mini" style="margin-right: 10px" closable v-for="(v,i) in temp_page.stepObject.config" :key="i"
-                @close="handleDeleteFromTempChosenFields(i)">{{ v + ' ' + tag_label(v) }}</el-tag>
+                @close="handleDeleteFromTempChosenFields(i)">{{ v + ' : ' + tag_label(v) }}</el-tag>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="addFieldDialogVisible = false">取 消</el-button>
                 <el-button type="primary" @click="save">添 加</el-button>
