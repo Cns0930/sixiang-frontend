@@ -6,7 +6,7 @@
             <el-button @click="createStepPage">创建步骤页面</el-button>
            <!-- <el-button @click="handlePreview">预览页面</el-button>-->
             <el-button @click="loadAll">载入页面</el-button>
-            <el-button @click="$router.push({path:'/run',query:{itemId}})">运行页面</el-button>
+            <el-button @click="$router.push({path:'/run',query:{itemId, projectId: $route.query.projectId}})">运行页面</el-button>
             <el-button @click="handleOutput">输出</el-button>
             <el-link :href="`bangban.html#/?itemId=${itemId}&barcode=${barcode}`" target="_blank">超级帮办模拟运行</el-link>barcode<el-input v-model="barcode" style="width:100px"></el-input>
 
@@ -104,7 +104,7 @@
 
                         <div ref="configEdit" style="width:100%;height:300px"></div>
                     </div>
-                    <div v-else="temp_page.stepObject.configType ==3">
+                    <div v-else-if="temp_page.stepObject.configType ==3">
 
                       <UiCompilerComponent :fields="fields" ref="uiCompiler" :models="temp_page.stepObject.UiCompilerModels"></UiCompilerComponent>
                     </div>
@@ -221,8 +221,8 @@
                 </el-table-column>
             </el-table>
 
-            <el-tag size="mini" closable v-for="(v,i) in temp_page.stepObject.config" :key="i"
-                @close="handleDeleteFromTempChosenFields(i)">{{v}}</el-tag>
+            <el-tag size="mini" style="margin-right: 10px" closable v-for="(v,i) in temp_page.stepObject.config" :key="i"
+                @close="handleDeleteFromTempChosenFields(i)">{{ v + ' ' + tag_label(v) }}</el-tag>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="addFieldDialogVisible = false">取 消</el-button>
                 <el-button type="primary" @click="save">添 加</el-button>
@@ -293,6 +293,7 @@ export default {
     components:{UiCompilerComponent,draggable},
     data() {
         return {
+            projectId: this.$route.query.projectId,
             backend: process.env.VUE_APP_BASE_IP,
             // 创建页面用
             stepPageCreateVisible: false,
@@ -369,6 +370,11 @@ export default {
             let materials = this.temp_page.stepObject.config;
 
             return this.materials.map(v => v.template).filter(material => materials.includes(material.docxTemplateName))
+        },
+        tag_label() {
+            return (fieldNo) => {
+                return this.fields.find(field => field.fieldNo === fieldNo).label;
+            }
         }
 
     },
