@@ -112,7 +112,7 @@
                 <div>
                     <el-form-item label="材料名称">
                         <!-- <el-input v-model="materialT.materialName"></el-input> -->
-                        <el-select  v-model="materialT.globalDocumentId" placeholder="请选择帮办材料"
+                        <el-select  v-model="materialT.globalDocumentId" placeholder="请选择关联的公共一级材料"
                             clearable filterable remote reserve-keyword :remote-method="remoteMethodBang" :loading="loadingBang"
                             @change="globalDocumentChange" ref="globalDocument">
                             <el-option v-for="item in approvalTextList" :key="item.globalDocumentId"
@@ -262,6 +262,22 @@
                     </el-form-item>
                     <el-form-item label="排序">
                         <el-input v-model="materialTEdit.sort"></el-input>
+                    </el-form-item>
+                    <el-form-item label="修改关联公共材料">
+                        <!-- <el-input v-model="materialT.materialName"></el-input> -->
+                        <el-select  v-model="materialTEdit.globalDocumentId" placeholder="请选择关联的公共一级材料"
+                            clearable filterable remote reserve-keyword :remote-method="remoteMethodBang" :loading="loadingBang">
+                            <el-option v-for="item in approvalTextList" :key="item.globalDocumentId"
+                                :label="item.globalDocumentName" :value="item.globalDocumentId" />
+                            <div class="text-center"
+                                style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
+                                <a class="text-normal">
+                                    <el-pagination @size-change="handleSizeChangeSelectBang"
+                                        @current-change="handleCurrentChangeSelectBang" :current-page="currentPageSelectBang"
+                                        :total="totalBang" :page-size="pageSizeBang" layout="prev, pager, next" />
+                                </a>
+                            </div>
+                        </el-select>
                     </el-form-item>
                 </div>
             </el-form>
@@ -570,6 +586,7 @@ export default {
             this.produceSource = item.produceSource === null ? [] : item.produceSource.split(',');
             console.log('this.materialTEdit');
             console.log(this.materialTEdit);
+            this.getApprovalTextList();
             this.editMaterialWriteVisible = true;
         },
         //导入材料
