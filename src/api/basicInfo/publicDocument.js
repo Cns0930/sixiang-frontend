@@ -38,3 +38,5 @@ export const listSubitemAndDocumentNewNoPage = params => { return axios.get(`/ss
 // 批量修改记录关联子文档
 export const batchEditDocumentSub = params => { return axios.post(`/ss/approvalSubitemAndDocumentNew/batchEditDocumentSub`, params).then(res=>res.data); };
 
+// 级联查询公共文档
+export const listGlobalDcumentSubByCascade = params => { return axios.get(`/ss/globalDocumentSubList/listGlobalDcumentSubByCascade`, {params}).then(res=>res.data); };
