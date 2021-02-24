@@ -737,7 +737,7 @@ export default {
         // 重新定义删除
         async handleDeleteField(v) {
             try {
-                await this.$confirm('确定删除?', '提示', {
+                await this.$confirm('确定删除? 步骤页面-调研中也会删除相应的配置', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'

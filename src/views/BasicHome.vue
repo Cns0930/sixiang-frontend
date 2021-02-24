@@ -7,8 +7,8 @@
                 <el-tab-pane label="事项详情" name="approvalDetail"></el-tab-pane>
                 <el-tab-pane label="情形管理" name="subitem"></el-tab-pane>
                 <el-tab-pane label="情形提取规则" name="subitemRule"></el-tab-pane>
-                <el-tab-pane label="二级材料" name="ApprovalSubItemText"></el-tab-pane>
                 <el-tab-pane label="一级材料" name="material"></el-tab-pane>
+                <el-tab-pane label="二级材料" name="ApprovalSubItemText"></el-tab-pane>
                 <el-tab-pane label="材料字段" name="field"></el-tab-pane>
                 <!-- <el-tab-pane label="前端字段" name="" disabled></el-tab-pane> -->
                 <el-tab-pane label="单窗材料" name="singleWindow"></el-tab-pane>

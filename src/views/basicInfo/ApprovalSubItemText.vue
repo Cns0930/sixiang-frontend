@@ -38,14 +38,17 @@
                             <span v-else>{{scope.row.subitemName}}</span>
                         </template>
                     </el-table-column> -->
+                    
                     <el-table-column prop="globalDocumentSubName" label="子文档名称" width="200">
                         <template slot-scope="scope">
-                            <el-select v-if="scope.row.flag" v-model="scope.row.globalDocumentSubId"
+                            <el-cascader v-if="scope.row.flag" v-model="scope.row.globalDocumentSubId"
                                 placeholder="请选择子文档名称" clearable filterable remote reserve-keyword
-                                :remote-method="remoteMethod" :loading="loading" @change="globalDocumentSubNameChange">
-                                <el-option v-for="item in approvalSubTextList" :key="item.globalDocumentSubId"
-                                    :label="item.globalDocumentSubName" :value="item.globalDocumentSubId" />
-                                <div class="text-center"
+                                :remote-method="remoteMethod" :loading="loading" @change="globalDocumentSubNameChange"
+                                :options="approvalSubTextList" :props="{emitPath:false}"
+                                >
+                                <!-- <el-option v-for="item in approvalSubTextList" :key="item.globalDocumentSubId"
+                                    :label="item.globalDocumentSubName" :value="item.globalDocumentSubId" /> -->
+                                <!-- <div class="text-center"
                                     style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
                                     <a class="text-normal">
                                         <el-pagination @size-change="handleSizeChangeSelect"
@@ -53,11 +56,12 @@
                                             :current-page="currentPageSelect" :total="totalAim" :page-size="pageSize"
                                             layout="prev, pager, next" />
                                     </a>
-                                </div>
-                            </el-select>
+                                </div> -->
+                            </el-cascader>
                             <span v-else>{{scope.row.globalDocumentSubName}}</span>
                         </template>
                     </el-table-column>
+                    <el-table-column prop="globalDocumentName" label="所属一级材料" width="150"></el-table-column>
                     <el-table-column prop="globalDocumentSubCode" label="子文档编码" width="120"></el-table-column>
                     <el-table-column prop="isRequired" label="是否必须"  width="80">
 
@@ -133,7 +137,7 @@ import basicMixin from "./basicMixin";
 import {mixin} from "@/mixin/mixin"
 import Vue from "vue";
 import { listMaterial, getTemplateByMaterialId, copySelectedMaterial, getAllByApprovalItemId } from "../../api/basicInfo/material";
-import { listGlobalDcumentSub } from "../../api/basicInfo/publicDocument";
+import { listGlobalDcumentSub, listGlobalDcumentSubByCascade } from "../../api/basicInfo/publicDocument";
 import { getApprovalSub, addItemAndDocumentSub, deleItemAndDocumentSub, updateItemAndDocumentSub
 } from "../../api/basicInfo/approvalSub";
 // import { delete } from 'node_modules/vue/types/umd';
@@ -228,22 +232,22 @@ export default {
         // 子文档列表
         async getApprovalSubText() {
             this.approvalSubTextList = []
-            let result = await listGlobalDcumentSub({ pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.$route.query.projectId });
+            let result = await listGlobalDcumentSubByCascade({ projectId: this.$route.query.projectId });
             if (!result.success) return;
-            this.approvalSubTextList = result.data.records
-            this.totalAim = result.data.total
+            this.approvalSubTextList = result.data
+            // this.totalAim = result.data.total
         },
         //远程搜索
         async remoteMethod(query) {
             this.currentPageSelect = 1;
             console.log(query)
             if (query !== '') {
-                let result = await listGlobalDcumentSub({ globalDocumentSubNameAndCode: query, pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.$route.query.projectId });
+                let result = await listGlobalDcumentSub({ globalDocumentSubNameAndCode: query, projectId: this.$route.query.projectId });
                 this.loading = true;
                 setTimeout(() => {
                     this.loading = false;
-                    this.approvalSubTextList = result.data.records
-                    this.totalAim = result.data.total
+                    this.approvalSubTextList = result.data
+                    // this.totalAim = result.data.total
 
                 })
             }
