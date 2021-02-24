@@ -13,13 +13,15 @@ class InputDef extends CommonComponents{
         this.$autosize = new Renderer("ElSingleCheckboxC",false,{options:[true]},'自适应高度')
         this.value = new Renderer("ElInput","",null,"默认值")
         this.disabled = new Renderer("ElSingleCheckboxC",false,{options:[true]},'不可编辑')
+        this.rows = new Renderer("ElInput","4",null,"行高默认值")
     }
     getAttributes(){
         return {
             disabled: this.disabled.value,
             autosize: this.$autosize.value,
             type:this.$type.value,
-            placeholder:this.placeholder.value
+            placeholder:this.placeholder.value,
+            rows:this.rows.value
         }
     }
 }

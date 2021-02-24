@@ -105,9 +105,9 @@
                             >
                             <el-option
                                 v-for="item2 in checkpointList"
-                                :key="item2.checkpointId"
-                                :label="item2.checkpointName"
-                                :value="item2.checkpointName"
+                                :key="item2.fieldId"
+                                :label="item2.fieldName"
+                                :value="item2.fieldName"
                             />
                             <div class="text-center" style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
                                     <a class="text-normal">
@@ -182,9 +182,9 @@
                             >
                             <el-option
                                 v-for="item2 in checkpointList"
-                                :key="item2.checkpointId"
-                                :label="item2.checkpointName"
-                                :value="item2.checkpointName"
+                                :key="item2.fieldId"
+                                :label="item2.fieldName"
+                                :value="item2.fieldName"
                             />
                             <div class="text-center" style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
                                     <a class="text-normal">
@@ -220,7 +220,8 @@
 import axios from 'axios'
 import Vue from "vue";
 import {mixin} from "@/mixin/mixin"
-import { listGlobalCheckpoint} from '@/api/basicInfo/examination'
+// import { listGlobalCheckpoint} from '@/api/basicInfo/examination'
+import {listCheckpoint} from '@/api/basicInfo/field';
 import { getApprovalSub, addApprovalSubitemSubkey, deleteApprovalSubitemSubkey, updateApprovalSubitemSubkey
 ,listApprovalSubitemSubkey, getByApprovalSubitemSubkeyId} from "../../api/basicInfo/approvalSub";
 import { listDocumentSubByItemId } from '@/api/basicInfo/ApprovalRules'
@@ -346,12 +347,12 @@ export default {
             console.log(val)
             this.filterKey = val
             let params = {
-                globalDocumentSubNameAndCode:val,
-                projectId: this.$route.query.projectId,
+                globalDocumentSubCode:val,
+                approvalItemId: this.$route.query.itemId,
                 pageNum: this.currentPageSelects,
                 pageSize: this.pageSizes,
             }
-            let result = await listGlobalCheckpoint(params);
+            let result = await listCheckpoint(params);
             if(!result.success) return
             this.checkpointList = result.data.records;
             this.totals = result.data.total
@@ -364,7 +365,7 @@ export default {
         async remoteMethods(query){
             console.log(query)
             if(query !== ''){
-                let result = await listGlobalCheckpoint({checkpointName:query,projectId: this.$route.query.projectId, pageNum: this.currentPageSelects,pageSize: this.pageSizes});
+                let result = await listCheckpoint({fieldName:query, approvalItemId: this.$route.query.itemId, pageNum: this.currentPageSelects,pageSize: this.pageSizes});
                 this.loading = true;
                 setTimeout(() => {
                     this.loading = false;
