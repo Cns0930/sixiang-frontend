@@ -37,6 +37,10 @@ import PublicSubDocument from "@/views/publicManagement/PublicSubDocument"
 import Examination from "@/views/publicManagement/Examination"
 import ReadMe from "@/views/readMe/ReadMe"
 import ProjectList from "@/views/projectManagement/ProjectList"
+
+
+import TipsCommon from '@/views/layoutComponents/TipsCommon/TipsCommon'
+
 Vue.use(VueRouter)
 import store from "@/vuex/store"
 import bangbanAxios from "@/api/ANew/config"
@@ -231,6 +235,11 @@ const routes = [
         path: '/test',
         name: 'test',
         component: UiCompilerComponent
+    },
+    {
+        path: '/tipsCommon',
+        name: 'TipsCommon',
+        component: TipsCommon
     },
 
 

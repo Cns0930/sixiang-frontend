@@ -9,6 +9,7 @@ import Jingyingfanwei from "./Jingyingfanwei/Jingyingfanwei"
 import Jingyingqixian from "./Jingyingqixian/Jingyingqixian"
 import QingxingComment from "./QingxingComment/QingxingComment"
 import QRCodeUpload from "./QRCodeUpload/QRCodeUpload"
+import TipsCommon from "./TipsCommon/TipsCommon"
 // 选择器
 let ElSelectC = {
     name:"ElSelectC",
@@ -104,5 +105,6 @@ export default {
     Jingyingfanwei,
     Jingyingqixian,
     QingxingComment,
-    QRCodeUpload
+    QRCodeUpload,
+    TipsCommon
 }
