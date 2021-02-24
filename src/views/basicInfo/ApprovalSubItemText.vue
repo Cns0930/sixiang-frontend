@@ -1,22 +1,26 @@
 <template>
     <div class="workWrap">
         <header>
-            <span class="title">情形子文档</span>
+            <span class="title">二级材料</span>
             <el-button type="primary" icon="el-icon-plus" @click="addText(0,tableData.length,tableData)">新增</el-button>
-            </header>
+        </header>
         <section class="workBox">
             <div class="searchBox">
                 <!-- <el-input placeholder="按情形名称查询" v-model="approvalName" clearable style="width: 200px"></el-input> -->
-                <el-input placeholder="情形名称或子文档名称查询" v-model="subitemNameAndDocumentSubName" clearable style="width: 200px;"
-                @keyup.native.enter="search"></el-input>
-                <el-button @click="textSearch()">搜索</el-button>
+                <el-input placeholder="子文档名称/编号查询" v-model="subitemNameAndDocumentSubName" clearable
+                    style="width: 200px;" @change="textSearch"></el-input>
+                <el-button @click="textSearch">搜索</el-button>
                 <!-- <el-button v-if="tableData.length < 1" type="primary" @click="addFirst">新增</el-button> -->
             </div>
             <div class="tableWrap">
-                <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%" border :row-style="{height:'60px'}" :header-row-style="{height:'50px'}"
-                    tooltip-effect="dark" :default-sort="{ prop: 'createTime', order: 'descending' }">
+                <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%" border
+                    :row-style="{height:'60px'}" :header-row-style="{height:'50px'}" tooltip-effect="dark">
+                    <!-- <el-table-column type="expand">
+                        <template slot-scope="scope">
+                        </template>
+                    </el-table-column> -->
                     <el-table-column label="序号" type="index" width="70" :index="indexMethod"></el-table-column>
-                    <el-table-column prop="subitemName"  label="情形名称" width="200" show-overflow-tooltip>
+                    <!-- <el-table-column prop="subitemName"  label="情形名称" width="200" show-overflow-tooltip>
                         <template slot-scope="scope">
                             <el-select
                                 v-if="scope.row.flag"
@@ -33,48 +37,61 @@
                             </el-select>
                             <span v-else>{{scope.row.subitemName}}</span>
                         </template>
-                    </el-table-column>
-                    <el-table-column prop="globalDocumentSubName" label="子文档名称">
+                    </el-table-column> -->
+                    
+                    <el-table-column prop="globalDocumentSubName" label="子文档名称" width="200">
                         <template slot-scope="scope">
-                            <el-select
-                                v-if="scope.row.flag"
-                                v-model="scope.row.globalDocumentSubId"
-                                placeholder="请选择子文档名称"
-                                clearable filterable
-                                remote reserve-keyword :remote-method="remoteMethod" :loading="loading"
-                                @change="globalDocumentSubNameChange"
-                            >
-                            <el-option
-                                v-for="item in approvalSubTextList"
-                                :key="item.globalDocumentSubId"
-                                :label="item.globalDocumentSubName"
-                                :value="item.globalDocumentSubId"
-                            />
-                            <div class="text-center" style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
-                                <a class="text-normal">
-                                    <el-pagination @size-change="handleSizeChangeSelect" @current-change="handleCurrentChangeSelect"
-                                        :current-page="currentPageSelect" :total="totalAim"
-                                        :page-size="pageSize"
-                                        layout="prev, pager, next"/>
-                                </a>
-                            </div>
-                            </el-select>
+                            <el-cascader v-if="scope.row.flag" v-model="scope.row.globalDocumentSubId"
+                                placeholder="请选择子文档名称" clearable filterable remote reserve-keyword
+                                :remote-method="remoteMethod" :loading="loading" @change="globalDocumentSubNameChange"
+                                :options="approvalSubTextList" :props="{emitPath:false}"
+                                >
+                                <!-- <el-option v-for="item in approvalSubTextList" :key="item.globalDocumentSubId"
+                                    :label="item.globalDocumentSubName" :value="item.globalDocumentSubId" /> -->
+                                <!-- <div class="text-center"
+                                    style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
+                                    <a class="text-normal">
+                                        <el-pagination @size-change="handleSizeChangeSelect"
+                                            @current-change="handleCurrentChangeSelect"
+                                            :current-page="currentPageSelect" :total="totalAim" :page-size="pageSize"
+                                            layout="prev, pager, next" />
+                                    </a>
+                                </div> -->
+                            </el-cascader>
                             <span v-else>{{scope.row.globalDocumentSubName}}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="isRequired" label="是否必须" width="200">
-                        
+                    <el-table-column prop="globalDocumentName" label="所属一级材料" width="150"></el-table-column>
+                    <el-table-column prop="globalDocumentSubCode" label="子文档编码" width="120"></el-table-column>
+                    <el-table-column prop="isRequired" label="是否必须"  width="80">
+
                         <template slot-scope="scope">
-                            <el-select
-                                v-if="scope.row.flag"
-                                v-model="scope.row.isRequired"
-                                placeholder="请选择是否必须"
-                                @change="isRequiredChange"
-                            >
-                            <el-option label="是" :value="Number(1)"></el-option>
-                            <el-option label="否" :value="Number(0)"></el-option>
+                            <el-select v-if="scope.row.flag" v-model="scope.row.isRequired" placeholder="请选择是否必须"
+                                @change="isRequiredChange">
+                                <el-option label="是" :value="Number(1)"></el-option>
+                                <el-option label="否" :value="Number(0)"></el-option>
                             </el-select>
-                            <span v-else>{{scope.row.isRequired == Number(1)? '是':'否'}}</span>
+                            <span v-else-if="scope.row.isRequired == Number(1)">是</span>
+                            <span v-else-if="scope.row.isRequired == Number(0)">否</span>
+                            <span v-else></span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="requiredDescription" label="是否必须逻辑">
+                        <template slot-scope="scope">
+                            <el-input v-if="scope.row.flag" v-model="scope.row.requiredDescription"></el-input>
+                            <span v-else>{{scope.row.requiredDescription}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="documentsubDisplayname" label="展示材料名称">
+                        <template slot-scope="scope">
+                            <el-input v-if="scope.row.flag" v-model="scope.row.documentsubDisplayname"></el-input>
+                            <span v-else>{{scope.row.documentsubDisplayname}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="displayNotes" label="补充说明信息">
+                        <template slot-scope="scope">
+                            <el-input v-if="scope.row.flag" v-model="scope.row.displayNotes"></el-input>
+                            <span v-else>{{scope.row.displayNotes}}</span>
                         </template>
                     </el-table-column>
                     <!-- <el-table-column prop="notes" label="备注"></el-table-column> -->
@@ -86,14 +103,19 @@
                     <el-table-column label="操作" fixed="right" width="300">
                         <template slot-scope="scope">
                             <div v-if="scope.row.flag">
-                                <el-button  size="mini" icon="el-icon-close" @click="closeText(scope.row,scope.$index, tableData)"></el-button>
-                                <el-button  size="mini" type="primary" icon="el-icon-check" @click="saveText(scope.row,scope.$index, tableData)"></el-button>
+                                <el-button size="mini" icon="el-icon-close"
+                                    @click="closeText(scope.row,scope.$index, tableData)"></el-button>
+                                <el-button size="mini" type="primary" icon="el-icon-check"
+                                    @click="saveText(scope.row,scope.$index, tableData)"></el-button>
                             </div>
                             <div v-else>
-                                <el-button size="mini" @click="addText(scope.row,scope.$index, tableData)" style="margin-left: 20px" icon="el-icon-plus">
+                                <!-- <el-button size="mini" @click="addText(scope.row,scope.$index, tableData)" style="margin-left: 20px" icon="el-icon-plus">
+                                </el-button> -->
+                                <el-button size="mini" type="danger"
+                                    @click="handleDelete(scope.row,scope.$index, tableData)" icon="el-icon-minus">
                                 </el-button>
-                                <el-button size="mini" type="danger" @click="handleDelete(scope.row,scope.$index, tableData)" icon="el-icon-minus"></el-button>
-                                <el-button size="mini" type="primary" @click="Edit(scope.row,scope.$index, tableData)" icon="el-icon-edit"></el-button>
+                                <el-button size="mini" type="primary" @click="Edit(scope.row,scope.$index, tableData)"
+                                    icon="el-icon-edit"></el-button>
                             </div>
                         </template>
                     </el-table-column>
@@ -101,7 +123,7 @@
             </div>
             <div class="tablePagination">
                 <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                    :current-page.sync="currentPage" :page-size="pagesize" layout="total, prev, pager, next"
+                    :current-page.sync="currentPage" :page-size="pagesize" layout="total, sizes, prev, pager, next"
                     :total="totalCount"></el-pagination>
             </div>
         </section>
@@ -112,24 +134,26 @@
 
 <script>
 import basicMixin from "./basicMixin";
+import {mixin} from "@/mixin/mixin"
 import Vue from "vue";
 import { listMaterial, getTemplateByMaterialId, copySelectedMaterial, getAllByApprovalItemId } from "../../api/basicInfo/material";
-import { listGlobalDcumentSub } from "../../api/basicInfo/publicDocument";
-import { listSubitemAndDocumentNew,getApprovalSub,addSubitemAndDocumentNew,deleteSubitemAndDocumentNew,updateSubitemAndDocumentNew } from "../../api/basicInfo/approvalSub";
+import { listGlobalDcumentSub, listGlobalDcumentSubByCascade } from "../../api/basicInfo/publicDocument";
+import { getApprovalSub, addItemAndDocumentSub, deleItemAndDocumentSub, updateItemAndDocumentSub
+} from "../../api/basicInfo/approvalSub";
 // import { delete } from 'node_modules/vue/types/umd';
 export default {
     name: "ApprovalSubItemText",
-    mixins: [basicMixin],
+    mixins: [basicMixin, mixin],
     data() {
         return {
-            loading:false,
+            loading: false,
             type: "ApprovalSubItemText",
             itemId: this.$route.query.itemId,
             singleWindowMaterials: [],
-            subitemNameAndDocumentSubName:'',
+            subitemNameAndDocumentSubName: '',
             tableData: [],
-            approvalSubList:[], // 情形列表
-            approvalSubTextList:[], // 子文档列表
+            approvalSubList: [], // 情形列表
+            approvalSubTextList: [], // 子文档列表
             addDialogVisible: false,
             editDialogVisible: false,
             documentAdd: {
@@ -137,16 +161,16 @@ export default {
             documentEdit: {
             },
             // 可删
-           
-            
+
+
             materialInit: {
                 documentSeq: '',
             },
-            
-            
+
+
             currentPageSelect: 1,
             pageSize: 10,
-            totalAim:0,
+            totalAim: 0,
             selectData: [],
             importDialogVisible: false,
             idd: "",
@@ -154,34 +178,28 @@ export default {
     },
     computed: {},
     watch: {
-    tableData(val) {
+        tableData(val) {
+        },
     },
-  },
 
     async created() {
         // 获取项目信息
         await this.initProject();
         await this.init();
         await this.search();
-        await this.getApprovalList()
+        // await this.getApprovalList()
         await this.getApprovalSubText()
     },
 
     methods: {
-        subitemNameChange(v){
-          console.log(v)
+        subitemNameChange(v) {
+            console.log(v)
         },
-        globalDocumentSubNameChange(v){
-          console.log(v)
+        globalDocumentSubNameChange(v) {
+            console.log(v)
         },
-        isRequiredChange(v){
-          console.log(v)
-        },
-        async getList() {
-             let result = await listSubitemAndDocumentNew();
-             console.log(result)
-            if (!result.success) return;
-            this.tableData = result.data.records
+        isRequiredChange(v) {
+            console.log(v)
         },
         getTime(val) {
             console.log(val);
@@ -203,43 +221,44 @@ export default {
         // 情形列表
         async getApprovalList() {
             this.approvalSubList = []
-            let result = await getApprovalSub({approvalItemId: this.$route.query.itemId});
+            let result = await getApprovalSub({ approvalItemId: this.$route.query.itemId });
             console.log(result)
             if (!result.success) return;
-            result.data.records.forEach(ele=>{
+            result.data.records.forEach(ele => {
                 this.approvalSubList.push(ele.approvalSubitem)
             })
-            
+
         },
         // 子文档列表
         async getApprovalSubText() {
             this.approvalSubTextList = []
-            let result = await listGlobalDcumentSub({pageNum: this.currentPageSelect,pageSize: this.pageSize,projectId: this.$route.query.projectId});
+            let result = await listGlobalDcumentSubByCascade({ projectId: this.$route.query.projectId });
             if (!result.success) return;
-            this.approvalSubTextList = result.data.records
-            this.totalAim = result.data.total
+            this.approvalSubTextList = result.data
+            // this.totalAim = result.data.total
         },
         //远程搜索
-        async remoteMethod(query){
+        async remoteMethod(query) {
+            this.currentPageSelect = 1;
             console.log(query)
-            if(query !== ''){
-                let result = await listGlobalDcumentSub({globalDocumentSubNameAndCode:query, pageNum: this.currentPageSelect,pageSize: this.pageSize,projectId: this.$route.query.projectId});
+            if (query !== '') {
+                let result = await listGlobalDcumentSub({ globalDocumentSubNameAndCode: query, projectId: this.$route.query.projectId });
                 this.loading = true;
                 setTimeout(() => {
                     this.loading = false;
-                    this.approvalSubTextList = result.data.records
-                    this.totalAim = result.data.total
-                    
+                    this.approvalSubTextList = result.data
+                    // this.totalAim = result.data.total
+
                 })
             }
         },
         //下拉框带分页
-        async handleSizeChangeSelect(size){
+        async handleSizeChangeSelect(size) {
             console.log(size)
             this.pageSize = size;
             await this.getApprovalSubText()
         },
-        async handleCurrentChangeSelect(current){
+        async handleCurrentChangeSelect(current) {
             console.log(current)
             this.currentPageSelect = current;
             await this.getApprovalSubText()
@@ -248,24 +267,14 @@ export default {
         //     this.multipleSelection = val;
         // },
         async handleSizeChange(val) {
-            console.log(`每页 ${val} 条`);
-            let result = await listMaterial({
-                keyword: this.valueM,
-                pageNum: this.currentPage,
-                pageSize: val,
-                approvalItemId: this.$route.query.itemId,
-            });
-            this.tableData = result.data.records;
+            // console.log(`每页 ${val} 条`);
+            this.pagesize = val;
+            await this.search();
         },
         async handleCurrentChange(val) {
-            console.log(`当前页: ${val}`);
-            let result = await listMaterial({
-                keyword: this.valueM,
-                pageNum: val,
-                pageSize: this.pagesize,
-                approvalItemId: this.$route.query.itemId,
-            });
-            this.tableData = result.data.records;
+            // console.log(`当前页: ${val}`);
+            this.currentPage = val;
+            await this.search();
         },
         documentVisible(item) {
             this.documentAdd = item;
@@ -282,31 +291,30 @@ export default {
             this.editDialogVisible = true;
         },
         // 新增
-        async addText(item,index, rows) {            
-            console.log(item,index,rows)
-            if(item == 0) {
+        async addText(item, index, rows) {
+            console.log(item, index, rows)
+            if (item == 0) {
                 rows.splice(index + 1, 0, {
-                    approvalSubitemId: '',
-                    subitemName:'',
-                    globalDocumentSubId: '',
-                    isRequired:'',
-                    flag:true
+                    // approvalSubitemId: '',
+                    // subitemName:'',
+                    // globalDocumentSubId: '',
+                    // isRequired:'',
+                    flag: true
                 })
-            } else{
+            } else {
                 rows.splice(index + 1, 0, {
-                approvalSubitemId: Number(item.approvalSubitemId),
-                subitemName:item.subitemName,
-                globalDocumentSubId: '',
-                isRequired:'',
-                flag:true
-            });
+                    // approvalSubitemId: Number(item.approvalSubitemId),
+                    // subitemName:item.subitemName,
+                    // globalDocumentSubId: '',
+                    // isRequired:'',
+                    flag: true
+                });
             }
-            
         },
         // 删除
-        async handleDelete(item,index, rows) {
-           console.log(item,index, rows)
-           try {
+        async handleDelete(item, index, rows) {
+            console.log(item, index, rows)
+            try {
                 await this.$confirm('此操作将永久删除该文档, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
@@ -315,40 +323,65 @@ export default {
             } catch (e) {
                 return;
             }
-            let result = await deleteSubitemAndDocumentNew({ SubitemAndDocumentNewId:item.id });
+            let result = await deleItemAndDocumentSub({ id: item.id });
             if (!result.success) return;
             await this.search();
         },
         // 修改
-        Edit(item,index, rows) {
-            this.$set(item,'flag',true)
-            this.$set(item,'edits',true)
+        Edit(item, index, rows) {
+            this.$set(item, 'flag', true)
+            this.$set(item, 'edits', true)
         },
-        
+
         // 保存
-        async saveText(item,index, rows) {
-            if(item.edits) {
-                delete item.edits
-                delete item.flag
-                const result = await updateSubitemAndDocumentNew(item)
-                console.log(result,'result')
-            } else {
-              delete item.flag
-              const res = await addSubitemAndDocumentNew(item)
-              console.log(res,'res')
+        async saveText(item, index, rows) {
+            // console.log('item', item);
+            if(!item.globalDocumentSubId || item.globalDocumentSubId === '') {
+                this.$message.warning('二级材料名称不能为空');
+                return;
+            } 
+            if(item.isRequired === undefined) {
+                this.$message.warning('是否必须不能为空');
+                return;
             }
-            
+            if (item.edits) {
+                // delete item.edits // 删除属性会产生接口请求失败后的页面bug
+                // delete item.flag
+                let request = {
+                    approvalItemId: Number(this.itemId),
+                    globalDocumentSubId: item.globalDocumentSubId,
+                    isRequired: item.isRequired,
+                    id: item.id,
+                    requiredDescription: item.requiredDescription,
+                    documentsubDisplayname: item.documentsubDisplayname,
+                    displayNotes: item.displayNotes
+                }
+                const result = await updateItemAndDocumentSub(request)
+                console.log(result, 'result')
+            } else {
+                // delete item.flag
+                let request = {
+                    approvalItemId: Number(this.itemId),
+                    globalDocumentSubId: item.globalDocumentSubId,
+                    isRequired: item.isRequired,
+                    requiredDescription: item.requiredDescription,
+                    documentsubDisplayname: item.documentsubDisplayname,
+                    displayNotes: item.displayNotes
+                }
+                const res = await addItemAndDocumentSub(request)
+                console.log(res, 'res')
+            }
+
             await this.search();
         },
         // 取消
-        closeText(item,index, rows) {
-            console.log(item,index, rows,'0000')
-            if(item.edits) {
-               this.$set(item,'flag',null)
+        closeText(item, index, rows) {
+            console.log(item, index, rows, '0000')
+            if (item.edits) {
+                this.$set(item, 'flag', null)
             } else {
-                rows.splice(index,1)
+                rows.splice(index, 1)
             }
-            
         },
         //增加文档
         async addDocumentButton() {

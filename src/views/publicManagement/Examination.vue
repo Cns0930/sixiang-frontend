@@ -51,11 +51,11 @@
                 <el-table-column prop="checkpointName" label="字段名" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="aliasName" label="字段别名" show-overflow-tooltip></el-table-column>
                
-                <el-table-column prop="isMultiplePage" label="是否多页" width="100">
+                <!-- <el-table-column prop="isMultiplePage" label="是否多页" width="100">
                     <template slot-scope="scope">
                        {{scope.row.isMultiplePage == 1? '是':'否'}}
                     </template>
-                </el-table-column>
+                </el-table-column> -->
                 <el-table-column prop="isScreenshot" label="是否为截图" width="100">
                     <template slot-scope="scope">
                        {{scope.row.isScreenshot == 1? '是':'否'}}
@@ -120,12 +120,12 @@
                     <el-form-item label="字段别名">
                         <el-input style="width:79%" v-model="addForm.aliasName" type='textarea' ></el-input>
                     </el-form-item>
-                    <el-form-item label="是否多页">
+                    <!-- <el-form-item label="是否多页">
                          <el-select v-model="addForm.isMultiplePage" filterable clearable >
                             <el-option label="是" :value="1"></el-option>
                             <el-option label="否" :value="0"></el-option>
                         </el-select>
-                    </el-form-item>
+                    </el-form-item> -->
                     <el-form-item label="是否为截图">
                         <el-select  v-model="addForm.isScreenshot" filterable clearable >
                             <el-option label="是" :value="1"></el-option>
@@ -185,12 +185,12 @@
                     <el-form-item label="字段别名">
                         <el-input style="width:79%" v-model="editForm.aliasName" type='textarea' ></el-input>
                     </el-form-item>
-                    <el-form-item label="是否多页">
+                    <!-- <el-form-item label="是否多页">
                          <el-select v-model="editForm.isMultiplePage" filterable clearable >
                             <el-option label="是" :value="1"></el-option>
                             <el-option label="否" :value="0"></el-option>
                         </el-select>
-                    </el-form-item>
+                    </el-form-item> -->
                     <el-form-item label="是否为截图">
                         <el-select  v-model="editForm.isScreenshot" filterable clearable >
                             <el-option label="是" :value="1"></el-option>
@@ -360,6 +360,7 @@ export default {
         },
         async add(){
             this.addBtnLoading=true;
+            this.addForm.projectId = this.$route.query.projectId;
             let result = await addGlobalCheckpoint(this.addForm);
             this.addBtnLoading=false;
             

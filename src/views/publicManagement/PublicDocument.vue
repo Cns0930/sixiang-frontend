@@ -14,6 +14,7 @@
             <el-select placeholder="来源" v-model="sourceFilter" filterable clearable style="width: 200px;">
                 <el-option label="现场制作" value="现场制作"></el-option>
                 <el-option label="用户自带" value="用户自带"></el-option>
+                <el-option label="电子证照" value="电子证照"></el-option>
             </el-select>
             <el-button @click="search" type="primary">搜索</el-button>
         </div>
@@ -52,24 +53,25 @@
         <!-- 新建窗口 -->
         <el-dialog title="新增材料信息" :visible.sync="addDialogVisible" width="50%" :close-on-click-modal="false">
             <div class="form-content">
-                <el-form  label-width="120px" >
-                     <el-form-item label="材料名称">
+                <el-form :model="addForm" label-width="120px" :rules="rules">
+                     <el-form-item label="材料名称" prop="globalDocumentName">
                         <el-input v-model="addForm.globalDocumentName" ></el-input>
                     </el-form-item>
-                    <el-form-item label="是否标准文档">
+                    <el-form-item label="是否标准文档" prop="isStandard">
                          <el-select placeholder="类型" v-model="addForm.isStandard" filterable clearable >
                             <el-option label="标准文档" :value="1"></el-option>
                             <el-option label="非标文档" :value="0"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="来源">
-                        <el-select placeholder="来源" v-model="addForm.produceSource" filterable clearable >
+                        <el-select placeholder="来源" v-model="produceSource" filterable clearable multiple>
                             <el-option label="现场制作" value="现场制作"></el-option>
                             <el-option label="用户自带" value="用户自带"></el-option>
+                            <el-option label="电子证照" value="电子证照"></el-option>
                         </el-select>
                     </el-form-item>
                    <el-form-item label="材料编码">
-                        <el-input v-model="addForm.globalDocumentCode"></el-input>
+                        <el-input v-model="addForm.globalDocumentCode"></el-input><span style="font-size:50%;color:orange"> 非必填, 系统会自动生成</span>
                     </el-form-item>
 
                    
@@ -84,20 +86,21 @@
         <!-- 编辑窗口 -->
         <el-dialog title="编辑材料信息" :visible.sync="editDialogVisible" width="50%" :close-on-click-modal="false">
             <div class="form-content">
-                <el-form  label-width="120px" >
-                     <el-form-item label="材料名称">
+                <el-form :model="editForm" label-width="120px" :rules="rules">
+                     <el-form-item label="材料名称" prop="globalDocumentName">
                         <el-input v-model="editForm.globalDocumentName" ></el-input>
                     </el-form-item>
-                    <el-form-item label="是否标准文档">
+                    <el-form-item label="是否标准文档" prop="isStandard">
                          <el-select placeholder="类型" v-model="editForm.isStandard" filterable clearable >
                             <el-option label="标准文档" :value="1"></el-option>
                             <el-option label="非标文档" :value="0"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="来源">
-                        <el-select placeholder="来源" v-model="editForm.produceSource" filterable clearable >
+                        <el-select placeholder="来源" v-model="produceSource" filterable clearable multiple>
                             <el-option label="现场制作" value="现场制作"></el-option>
                             <el-option label="用户自带" value="用户自带"></el-option>
+                            <el-option label="电子证照" value="电子证照"></el-option>
                         </el-select>
                     </el-form-item>
                    <el-form-item label="材料编码">
@@ -145,7 +148,19 @@ export default {
             addDialogVisible:false,
             addForm:{},
             addBtnLoading:false,
+            
+            // 产生来源编辑
+            produceSource: [],
 
+            // 表单校验
+            rules: {
+                globalDocumentName: [{
+                    required: true, message:'请输入材料名称', trigger: 'change'
+                }],
+                isStandard:[{
+                    required: true, message:'请选择是否标准文档', trigger: 'change'
+                }]
+            }
         }
     },
     computed: {
@@ -177,15 +192,21 @@ export default {
         },
         async edit(){
             this.editBtnLoading=true;
-            
+            let produce = this.produceSource.toString();
+            console.log(produce);
+            this.editForm.produceSource = produce;
+            this.editForm.projectId = this.$route.query.projectId;
             let result= await updateGlobalDcument(this.editForm);
             this.editBtnLoading=false;
             this.editDialogVisible=false;
+            this.produceSource = [];
+            this.$message({ type: "success", message: "保存成功" })
             this.search();
 
         },
         handleEdit(row){
             this.editForm = _.pick(row,['globalDocumentCode','globalDocumentName','isStandard','produceSource','globalDocumentId']);
+            this.produceSource = this.editForm.produceSource === null ? [] : this.editForm.produceSource.split(',');
             this.editDialogVisible=true;
         },
         async handleDelete(row){
@@ -209,13 +230,19 @@ export default {
             this.addDialogVisible=true;
         },
         async add(){
-             this.addBtnLoading=true;
+            this.addBtnLoading=true;
+            let produce = this.produceSource.toString();
+            console.log(produce);
+            this.addForm.produceSource = produce;
+            this.addForm.projectId = this.$route.query.projectId;
             let result = await addGlobalDcument(this.addForm);
             this.addBtnLoading=false;
             
             if(!result.success) return;
+            this.$message({ type: "success", message: "添加成功" })
            
             this.addDialogVisible=false;
+            this.produceSource = [];
             this.search();
         }
     },

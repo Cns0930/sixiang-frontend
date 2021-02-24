@@ -41,3 +41,8 @@ export const updateFieldComponentName = params => { return axios.post(`/ss/field
 // 保存批量字段(只新增,field_no去重)
 export const saveBatch = params => { return axios.post(`/superform/fields/saveBatch`, params).then(res=>res.data); };
 
+// 根据事项id 转到帮办字段类型为checkpoint
+export const saveBatchCheck = params => axios.get('/superform/fields/saveBatchCheck', {params}).then(res => res.data);
+
+// 查询事项下提取点-分页-可根据子文档编号筛选
+export const listCheckpoint = params => { return axios.get(`/ss/field/listCheckpoint`, {params}).then(res=>res.data); };

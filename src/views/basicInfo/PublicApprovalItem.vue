@@ -232,6 +232,7 @@
 
 <script>
 import basicMixin from "./basicMixin";
+import {mixin} from "@/mixin/mixin"
 import Vue from "vue";
 import {
     listApprovalAll,
@@ -244,7 +245,7 @@ import {
 
 export default {
     name: "PublicApprovalItem",
-    mixins: [basicMixin],
+    mixins: [basicMixin,mixin],
     data() {
         return {
             // 页面信息

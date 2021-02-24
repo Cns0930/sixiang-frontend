@@ -51,8 +51,8 @@
                     </el-table-column>
                     <el-table-column prop="itemType" label="事项类型" >
                     </el-table-column>
-                    <el-table-column prop="itemCode" label="事项实施编码"  show-overflow-tooltip>
-                    </el-table-column>
+                    <!-- <el-table-column prop="itemCode" label="事项实施编码"  show-overflow-tooltip> -->
+                    <!-- </el-table-column> -->
                     <el-table-column prop="createBy" label="创建人" >
                     </el-table-column>
                     <el-table-column prop="itemStatus" label="状态" sortable  width="50">
@@ -119,10 +119,10 @@
                             <el-input v-model="tempItem.itemInternalNo">
                             </el-input>
                         </el-form-item>
-                        <el-form-item label="事项实施编码" prop="itemCode">
+                        <!-- <el-form-item label="事项实施编码" prop="itemCode">
                             <el-input v-model="tempItem.itemCode">
                             </el-input>
-                        </el-form-item>
+                        </el-form-item> -->
                         <el-form-item label="事项名称" prop="itemName">
                             <el-input v-model="tempItem.itemName">
                             </el-input>
@@ -166,10 +166,10 @@
                             <el-input v-model="tempItem.itemInternalNo">
                             </el-input>
                         </el-form-item> -->
-                        <el-form-item label="事项实施编码" prop="itemCode">
+                        <!-- <el-form-item label="事项实施编码" prop="itemCode">
                             <el-input v-model="tempItem.itemCode">
                             </el-input>
-                        </el-form-item>
+                        </el-form-item> -->
                         <el-form-item label="事项名称" prop="itemName">
                             <el-input v-model="tempItem.itemName">
                             </el-input>
@@ -248,9 +248,9 @@ export default {
                 itemNo: [
                     { required: true, message: '请输入事项编号', trigger: 'blur' },
                 ],
-                itemCode: [
-                    { required: true, message: '请输入事项实施编号', trigger: 'blur' }
-                ],
+                // itemCode: [
+                //     { required: true, message: '请输入事项实施编号', trigger: 'blur' }
+                // ],
                 itemName: [
                     { required: true, message: '请输入事项名称', trigger: 'blur' },
                 ],

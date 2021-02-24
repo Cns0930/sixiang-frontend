@@ -12,10 +12,10 @@ import FormConstructor from "@/views/formConstructor/FormConstructor"
 import Preview from "@/views/formConstructor/PreviewLayout"
 import PageConfigure from "@/views/formConstructor/PageConfigure"
 import PageConfigureResearcher from "@/views/formConstructor/PageConfigureResearcher"
+import TestCase from "@/views/formConstructor/TestCase"
 import TemplateManager from "@/views/formConstructor/TemplateManager"
 import MaterialManager from "@/views/formConstructor/MaterialManager"
 import Run from "@/views/formConstructor/Run"
-import ItemManager from "@/views/formConstructor/ItemManager"
 import Login from "@/views/login/Login"
 import Setting from "@/views/setting/Setting"
 
@@ -23,12 +23,15 @@ import ApprovalItem from "@/views/publicManagement/ApprovalItem"
 import ApprovalSubItemText from "@/views/basicInfo/ApprovalSubItemText"
 import PublicApprovalItem from "@/views/basicInfo/PublicApprovalItem"
 import Material from "@/views/basicInfo/Material"
+import ApprovalDetail from "@/views/basicInfo/ApprovalDetail"
 import ApprovalSubItem from "@/views/basicInfo/ApprovalSubItem"
 import Field from "@/views/basicInfo/Field"
 import Accessory from "@/views/basicInfo/Accessory"
-import AIdocument from "@/views/basicInfo/AIdocument"
 import singleWindow from "@/views/basicInfo/singleWindowMaterial"
 import ApprovalRules from "@/views/basicInfo/ApprovalRules"
+import ApprovalSubItemRule from "@/views/basicInfo/ApprovalSubitemRule"
+import SampleManage from "@/views/basicInfo/sample/sampleManage"
+import SampleDemarcate from "@/views/basicInfo/sample/sampleDemarcate"
 
 import OnlineDocumentEditor from "@/views/basicInfo/OnlineDocumentEditor"
 import UiCompilerComponent from "@/views/uiCompilerComponent/Index"
@@ -128,11 +131,10 @@ const routes = [
                         component:Run
                     },
                     {
-                        path:"/subhome",
-                        name:"itemManeger",
-                        component:ItemManager
+                        path: "/testcase",
+                        name: "testcase",
+                        component: TestCase
                     },
-                    
                     {
                         path:"/setting",
                         name:"setting",
@@ -163,6 +165,11 @@ const routes = [
                         component: Material,
                     },
                     {
+                        path: '/basic/approvalDetail',
+                        name: 'ApprovalDetail',
+                        component: ApprovalDetail,
+                    },
+                    {
                         path: '/basic/subitem',
                         component: ApprovalSubItem
                     },
@@ -173,10 +180,6 @@ const routes = [
                     {
                         path: '/basic/accessory',
                         component: Accessory
-                    },
-                    {
-                        path: '/basic/AIdocument',
-                        component: AIdocument
                     },
                     {
                         path: '/basic/ApprovalSubItemText',
@@ -197,6 +200,21 @@ const routes = [
                         name: 'OnlineDocumentEditor',
                         component: OnlineDocumentEditor
                     },
+                    {
+                        path: '/basic/subItemRule',
+                        name: 'ApprovalSubItemRule',
+                        component: ApprovalSubItemRule
+                    },
+                    {
+                        path: '/basic/sampleManage',
+                        name: 'SampleManage',
+                        component: SampleManage
+                    },
+                    {
+                        path: '/basic/sampleDemarcate',
+                        name: 'SampleDemarcate',
+                        component: SampleDemarcate
+                    }
                 ]
             }, 
             {

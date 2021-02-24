@@ -26,6 +26,8 @@
                 <el-tab-pane label="材料管理" name="materialmanager"></el-tab-pane>
                 <el-tab-pane label="步骤页面管理" name="pageconfigure"></el-tab-pane>
                 <el-tab-pane label="步骤页面-调研" name="pageconfigure2"></el-tab-pane>
+                <!-- 重要注释，要保留！！ -->
+                <el-tab-pane label="测试用例管理" name="testcase"></el-tab-pane>
                 <el-tab-pane label="设置" name="setting"></el-tab-pane>
             </el-tabs>
         </div>
@@ -64,40 +66,46 @@ export default {
                     query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
                 });
                 sessionStorage.setItem('activeTab', 'formconstructor');
-                this.$store.commit("config/setCrumbList", [{ path: "/formconstructor", label: '帮办工具' }])
-                this.$store.commit("config/setCrumbListSecond", [{ path: "/formconstructor", label: '字段管理' }])
+                // this.$store.commit("config/setCrumbList", [{ path: "/formconstructor", label: '帮办工具' }])
+                // this.$store.commit("config/setCrumbListSecond", [{ path: "/formconstructor", label: '字段管理' }])
             } else if (this.activeTab === "materialmanager") {
                 this.$router.push({
                     path: "/materialmanager",
                     query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
                 });
                 sessionStorage.setItem('activeTab', 'materialmanager');
-                this.$store.commit("config/setCrumbList", [{ path: "/formconstructor", label: '帮办工具' }])
-                this.$store.commit("config/setCrumbListSecond", [{ path: "/materialmanager", label: '材料管理' }])
+                // this.$store.commit("config/setCrumbList", [{ path: "/formconstructor", label: '帮办工具' }])
+                // this.$store.commit("config/setCrumbListSecond", [{ path: "/materialmanager", label: '材料管理' }])
             } else if (this.activeTab === "pageconfigure") {
                 this.$router.push({
                     path: "/pageconfigure",
                     query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
                 });
                 sessionStorage.setItem('activeTab', 'pageconfigure');
-                this.$store.commit("config/setCrumbList", [{ path: "/formconstructor", label: '帮办工具' }])
-                this.$store.commit("config/setCrumbListSecond", [{ path: "/pageconfigure", label: '步骤页面管理' }])
+                // this.$store.commit("config/setCrumbList", [{ path: "/formconstructor", label: '帮办工具' }])
+                // this.$store.commit("config/setCrumbListSecond", [{ path: "/pageconfigure", label: '步骤页面管理' }])
             } else if (this.activeTab === "pageconfigure2") {
                 this.$router.push({
                     path: "/pageconfigureresearcher",
                     query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
                 });
                 sessionStorage.setItem('activeTab', 'pageconfigure2');
-                this.$store.commit("config/setCrumbList", [{ path: "/formconstructor", label: '帮办工具' }])
-                this.$store.commit("config/setCrumbListSecond", [{ path: "/pageconfigureresearcher", label: '步骤页面-调研' }])
+                // this.$store.commit("config/setCrumbList", [{ path: "/formconstructor", label: '帮办工具' }])
+                // this.$store.commit("config/setCrumbListSecond", [{ path: "/pageconfigureresearcher", label: '步骤页面-调研' }])
+            } else if (this.activeTab === "testcase") {
+                this.$router.push({
+                    path: "/testcase",
+                    query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
+                });
+                sessionStorage.setItem('activeTab', 'testcase');
             } else if (this.activeTab === "setting") {
                 this.$router.push({
                     path: "/setting",
                     query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
                 });
                 sessionStorage.setItem('activeTab', 'setting');
-                this.$store.commit("config/setCrumbList", [{ path: "/formconstructor", label: '帮办工具' }])
-                this.$store.commit("config/setCrumbListSecond", [{ path: "/setting", label: '设置' }])
+                // this.$store.commit("config/setCrumbList", [{ path: "/formconstructor", label: '帮办工具' }])
+                // this.$store.commit("config/setCrumbListSecond", [{ path: "/setting", label: '设置' }])
             } 
         },
         

@@ -15,7 +15,7 @@
         <div class="main">
             <!-- 模板列表 -->
             <div class="material-list">
-                <el-table :data="templates">
+                <el-table :data="templates" border>
                     <el-table-column label="word模板命令">
                         <template slot-scope="scope">
                             <el-button type="text" style="color: orange"
@@ -26,6 +26,7 @@
 
                     <el-table-column prop="template.materialName" label="材料名称"></el-table-column>
                     <el-table-column prop="template.templateName" label="模板名称(自取)"></el-table-column>
+                    <el-table-column prop="template.produceSource" label="产生方式"></el-table-column>
                     <el-table-column label="操作" width="150px">
                         <template slot-scope="scope">
                             <el-button @click="openDetail(scope.row)">编辑</el-button>
@@ -64,9 +65,16 @@
                 <!-- 模板名称(必填)<el-input v-model="temp_template.docxTemplateName"></el-input>
             材料中文名(必填)<el-input v-model="temp_template.documentName"></el-input>
             材料序号(必填)<el-input v-model="temp_template.documentSeq"></el-input> -->
+            <div>
                 备注<el-input type="textarea" :autosize="{ minRows: 1, maxRows: 15 }" v-model="temp_template.notes">
                 </el-input>
+            </div>
+            <div>
                 page配置<CodeEditor ref="scriptEditor" v-model="temp_template.script"></CodeEditor>
+            </div>
+            <div>
+                产生方式配置<CodeEditor ref="producescriptEditor" v-model="temp_template.produceScript"></CodeEditor>
+            </div>
             </div>
         </div>
         <!-- 创建模板弹窗 -->
@@ -257,16 +265,20 @@ export default {
                 query: {
                     itemId: this.$store.state.home.item.approvalItemId,
                     id: id,
+                    projectId: this.$route.query.projectId
                 },
             });
         },
         openDetail(v) {
             if (this.temp_template) {
                 this.$refs.scriptEditor.open = false;
+                this.$refs.producescriptEditor.open = false;
             }
             this.temp_template = v.template;
             this.temp_template.script ||
                 (this.temp_template.script = "");
+            this.temp_template.produceScript || 
+                (this.temp_template.produceScript = "");
         },
         async saveTemplate() {
             console.log(this.temp_template);
@@ -465,6 +477,7 @@ export default {
                     sid: this.$store.state.home.item.itemNo,
                     script: v.template.script,
                     proDocId: v.template.proDocId,
+                    itemInternalNo: this.$store.state.home.item.itemInternalNo
                 });
                 let pagelist = v.templatePagesList;
                 for (let i in pagelist) {
@@ -553,11 +566,11 @@ export default {
     }
     .main {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         .material-list {
-            width: 600px;
+            width: 1100px;
             margin-top: 10px;
-            padding: 20px;
+            padding: 5px;
             border: 1px solid green;
             .material-item {
                 margin-bottom: 10px;
@@ -565,8 +578,9 @@ export default {
         }
         .material-detail {
             border: 1px solid blue;
-            width: 600px;
+            width: 1100px;
             margin-top: 10px;
+            padding: 10px;
         }
     }
 }

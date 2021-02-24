@@ -74,15 +74,15 @@ const topMenuList=[
         children:[
             {
                 path: "/publicdocument",
-                label: "材料",
+                label: "公共一级材料",
             },
             {
                 path: "/publicsubdocument",
-                label: "材料子文档",
+                label: "公共二级材料",
             },
             {
                 path: "/examination",
-                label: "提取点管理",
+                label: "信息点管理",
             },
             
         ],

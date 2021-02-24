@@ -1,22 +1,20 @@
 <template>
     <div class="workWrap">
         <header>
-            <span class="title">审批规则管理</span>
+            <span class="title">情形提取规则</span>
             <el-button icon="el-icon-plus" type="primary" @click="handleAdd">新增</el-button>
         </header>
         <div class="workBox">
-        <el-input placeholder="按规则编号查询" v-model="ruleIds" clearable style="width: 200px;margin-right:20px"
-                @keyup.native.enter="search(ruleIds)"></el-input>
-        <!-- <el-input placeholder="按字段别名查询" v-model="aliasName" clearable style="width: 200px;"
-        @keyup.native.enter="search"></el-input> -->
-            <el-button @click="search(ruleIds)" type="primary">搜索</el-button>
-            <div class="upload-box" style="float:right">
+        <!-- <el-input placeholder="情形名称搜索" v-model="subitemName" clearable style="width: 200px;margin-right:20px"
+                @keyup.native.enter="search(subitemName)"></el-input>
+            <el-button @click="search(subitemName)" type="primary">搜索</el-button> -->
+            <!-- <div class="upload-box" style="float:right">
                 <el-upload class="upload-demo" ref="upload" :action="url" :limit="1" :with-credentials="true"
                     :on-success="uploadSuccess" :on-remove="handleRemove" :on-exceed="handleExceed" :auto-upload='true'
                     :before-upload="customUpload">
                     <el-button type="primary" @click="upload()">Excel上传</el-button>
                 </el-upload>
-            </div> 
+            </div>  -->
         </div>
 
         <!-- 表格 -->
@@ -26,11 +24,11 @@
                     element-loading-spinner="el-icon-loading"
                 tooltip-effect="dark" :default-sort="{prop: 'createTime', order: 'descending'}" :row-style="{height:'40px'}" :header-row-style="{height:'50px'}">
 
-                <el-table-column prop="ruleCode" label="规则编号" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="subitemName" label="情形名称" width="240" show-overflow-tooltip></el-table-column>
                 
-                <el-table-column prop="rulePoint" label="审批点" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="ruleDesc" label="描述" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="ruleType" label="判断方式" show-overflow-tooltip>
+                <el-table-column prop="subitemInput" label="输入" show-overflow-tooltip :formatter="jsonFormatter"></el-table-column>
+                <el-table-column prop="subitemJudgmentWay" label="判断方式" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="subitemAdditionalParameter" label="附加参数" show-overflow-tooltip :formatter="jsonFormatter">
                 </el-table-column>
                 <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip :formatter="timeFormatter" sortable></el-table-column>
                 <el-table-column prop="updateTime" label="更新时间" show-overflow-tooltip :formatter="timeFormatter" sortable></el-table-column>  
@@ -55,23 +53,12 @@
             </el-pagination>
         </div>
         <!-- 新建窗口 -->
-        <el-dialog title="新增审批规则" :visible.sync="addDialogVisible" width="50%" :close-on-click-modal="false">
+        <el-dialog title="新增情形提取规则" :visible.sync="addDialogVisible" width="50%" :close-on-click-modal="false">
             <div class="form-content">
                 <el-form :model="addForm" ref="addForm" label-width="120px">
-                    <el-form-item label="规则编号" prop="ruleCode">
-                        <el-input v-model="addForm.ruleCode" ></el-input>
-                        
-                    </el-form-item>
-                    <el-form-item label="触发条件" prop="ruleTrigger">
-                        <el-input v-model="addForm.ruleTrigger" ></el-input>
-                    </el-form-item>
-                    <el-form-item label="审批点" prop="rulePoint">
-                        <el-input v-model="addForm.rulePoint" ></el-input>
-                    </el-form-item>
-                    <el-form-item label="关联情形">
+                    <el-form-item label="选择情形">
                         <el-select
-                                v-model="addApprovalSub"
-                                multiple
+                                v-model="addForm.approvalSubitemId"
                                 placeholder="请选择情形名称"
                                 @change="subitemNameChange"
                                 style="width:100%"
@@ -82,30 +69,14 @@
                                 :label="item.subitemName"
                                 :value="item.approvalSubitemId"
                             />
-                            <!-- <div class="text-center" style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
-                                <a class="text-normal">
-                                    <el-pagination @size-change="handleSizeChangeSelect" @current-change="handleCurrentChangeSelect"
-                                        :current-page="currentPageSelect" :total="totalAim"
-                                        :page-size="pageSize"
-                                        layout="prev, pager, next"/>
-                                </a>
-                            </div> -->
+
                             </el-select>
                     </el-form-item>
-                    <el-form-item label="判断方式" prop="ruleType">
-                        <el-select  v-model="addForm.ruleType" filterable clearable allow-create style="width:100%">
+                    <el-form-item label="判断方式" prop="subitemJudgmentWay">
+                        <el-select  v-model="addForm.subitemJudgmentWay" filterable clearable allow-create style="width:100%">
                             <el-option v-for="item in sortList" :key="item" :label="item" :value="item"></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="依据" class="ruleItem">
-                        <div v-for="(item,i) in ruleLawList" :key="i" class="ruleItems">
-                           <el-input type='textarea' v-model="item.ruleLaw"></el-input>
-                           <i v-if="ruleLawList.length>1" style="margin-left:10px;color:red;cursor: pointer;" class="el-icon-delete" @click="deletAdd(i)"></i>
-                        </div>
-                        
-                        <i class="el-icon-plus" style="margin-left:10px;color:#409EFF;cursor: pointer;" @click="addRuleLawList('law')"></i>
-                    </el-form-item>
-                    
                     <el-form-item label="输入" class="ruleItem">
                         <div v-for="(item,i) in ruleInputsList" :key="i" class="ruleItems">
                             <el-select
@@ -121,14 +92,6 @@
                                 :label="item1.globalDocumentSubName"
                                 :value="item1.globalDocumentSubCode"
                             />
-                                <!-- <div class="text-center" style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
-                                    <a class="text-normal">
-                                        <el-pagination @size-change="handleSizeChangeSelect" @current-change="handleCurrentChangeSelect"
-                                            :current-page="currentPageSelect" :total="totalAim"
-                                            :page-size="pageSize"
-                                            layout="prev, pager, next"/>
-                                    </a>
-                                </div> -->
                             </el-select>
 
                             <el-select
@@ -142,9 +105,9 @@
                             >
                             <el-option
                                 v-for="item2 in checkpointList"
-                                :key="item2.fieldId"
-                                :label="item2.fieldName"
-                                :value="item2.fieldName"
+                                :key="item2.checkpointId"
+                                :label="item2.checkpointName"
+                                :value="item2.checkpointName"
                             />
                             <div class="text-center" style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
                                     <a class="text-normal">
@@ -165,35 +128,6 @@
                            <i v-if="ruleArgsList.length>1" style="margin-left:10px;color:red;cursor: pointer;" class="el-icon-delete" @click="deletArgs(i)"></i>
                         </div>
                         <i class="el-icon-plus" style="margin-left:10px;color:#409EFF;cursor: pointer;" @click="addRuleLawList('args')"></i>
-                    </el-form-item>
-                    <el-form-item label="描述" prop="ruleDesc">
-                        <el-input v-model="addForm.ruleDesc" type='textarea'></el-input>
-                    </el-form-item>
-                    <el-form-item label="提示信息" prop="ruleTips">
-                        <el-collapse >
-                            <el-collapse-item v-model="addForm.ruleTips" name="1">
-                                <template slot="title">
-                                    <span style="margin-left:45%">信息提示</span>
-                                </template>
-                                <el-form-item v-for="(item,i) in ruleTipsList" :key="i" :label="item.lables">
-                                    <el-input v-model="item.ruleTips" :placeholder="`请输入${item.lables}`"></el-input>
-                                </el-form-item>
-                            </el-collapse-item>
-                        </el-collapse>
-                        
-                    </el-form-item>
-                    <el-form-item label="提示信息(办事人)" prop="ruleTipsForUser">
-                        <el-collapse >
-                            <el-collapse-item v-model="addForm.ruleTipsForUser" name="1">
-                                <template slot="title">
-                                    <span style="margin-left:45%">信息提示</span>
-                                </template>
-                                <el-form-item v-for="(item,i) in ruleTipsForUserList" :key="i" :label="item.lables">
-                                    <el-input v-model="item.ruleTipsForUser" :placeholder="`请输入${item.lables}`"></el-input>
-                                </el-form-item>
-                            </el-collapse-item>
-                        </el-collapse>
-                        
                     </el-form-item>
                 </el-form>
             </div>
@@ -206,55 +140,12 @@
         <!-- 编辑窗口 -->
         <el-dialog title="编辑审批规则" :visible.sync="editDialogVisible" width="50%" :close-on-click-modal="false">
             <div class="form-content">
-                <el-form :model="editForm" ref="editForm" label-width="120px" >
-                    <el-form-item label="规则编号">
-                        <el-input v-model="editForm.ruleCode" ></el-input>
-                        
-                    </el-form-item>
-                    <el-form-item label="触发条件">
-                        <el-input v-model="editForm.ruleTrigger" ></el-input>
-                    </el-form-item>
-                    <el-form-item label="审批点">
-                        <el-input v-model="editForm.rulePoint" ></el-input>
-                    </el-form-item>
-                    <el-form-item label="关联情形">
-                        <el-select
-                                v-model="addApprovalSub"
-                                multiple
-                                placeholder="请选择情形名称"
-                                @change="subitemNameChange"
-                                style="width:100%"
-                            >
-                            <el-option
-                                v-for="item in approvalSubList"
-                                :key="item.approvalSubitemId"
-                                :label="item.subitemName"
-                                :value="item.approvalSubitemId"
-                            />
-                            <!-- <div class="text-center" style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
-                                <a class="text-normal">
-                                    <el-pagination @size-change="handleSizeChangeSelect" @current-change="handleCurrentChangeSelect"
-                                        :current-page="currentPageSelect" :total="totalAim"
-                                        :page-size="pageSize"
-                                        layout="prev, pager, next"/>
-                                </a>
-                            </div> -->
-                            </el-select>
-                    </el-form-item>
+                <el-form :model="editForm" ref="editForm" label-width="120px" >           
                     <el-form-item label="判断方式">
-                        <el-select  v-model="editForm.ruleType" filterable clearable allow-create style="width:100%">
+                        <el-select  v-model="editForm.subitemJudgmentWay" filterable clearable allow-create style="width:100%">
                             <el-option v-for="item in sortList" :key="item" :label="item" :value="item"></el-option>
                         </el-select>
-                    </el-form-item>
-                    <el-form-item label="依据" class="ruleItem">
-                        <div v-for="(item,i) in ruleLawList" :key="i" class="ruleItems">
-                           <el-input type='textarea' v-model="item.ruleLaw"></el-input>
-                           <i v-if="ruleLawList.length>1" style="margin-left:10px;color:red;cursor: pointer;" class="el-icon-delete" @click="deletAdd(i)"></i>
-                        </div>
-                        
-                        <i class="el-icon-plus" style="margin-left:10px;color:#409EFF;cursor: pointer;" @click="addRuleLawList('law')"></i>
-                    </el-form-item>
-                    
+                    </el-form-item>       
                     <el-form-item label="输入" class="ruleItem">
                         <div v-for="(item,i) in ruleInputsList" :key="i" class="ruleItems">
                             <el-select
@@ -291,9 +182,9 @@
                             >
                             <el-option
                                 v-for="item2 in checkpointList"
-                                :key="item2.fieldId"
-                                :label="item2.fieldName"
-                                :value="item2.fieldName"
+                                :key="item2.checkpointId"
+                                :label="item2.checkpointName"
+                                :value="item2.checkpointName"
                             />
                             <div class="text-center" style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
                                     <a class="text-normal">
@@ -314,35 +205,6 @@
                            <i v-if="ruleArgsList.length>1" style="margin-left:10px;color:red;cursor: pointer;" class="el-icon-delete" @click="deletArgs(i)"></i>
                         </div>
                         <i class="el-icon-plus" style="margin-left:10px;color:#409EFF;cursor: pointer;" @click="addRuleLawList('args')"></i>
-                    </el-form-item>
-                    <el-form-item label="描述">
-                        <el-input v-model="editForm.ruleDesc" type='textarea'></el-input>
-                    </el-form-item>
-                    <el-form-item label="提示信息">
-                        <el-collapse >
-                            <el-collapse-item v-model="editForm.ruleTips" name="1">
-                                <template slot="title">
-                                    <span style="margin-left:45%">信息提示</span>
-                                </template>
-                                <el-form-item v-for="(item,i) in ruleTipsList" :key="i" :label="item.lables">
-                                    <el-input v-model="item.ruleTips" :placeholder="`请输入${item.lables}`"></el-input>
-                                </el-form-item>
-                            </el-collapse-item>
-                        </el-collapse>
-                        
-                    </el-form-item>
-                    <el-form-item label="提示信息(办事人)">
-                        <el-collapse >
-                            <el-collapse-item v-model="editForm.ruleTipsForUser" name="1">
-                                <template slot="title">
-                                    <span style="margin-left:45%">信息提示</span>
-                                </template>
-                                <el-form-item v-for="(item,i) in ruleTipsForUserList" :key="i" :label="item.lables">
-                                    <el-input v-model="item.ruleTipsForUser" :placeholder="`请输入${item.lables}`"></el-input>
-                                </el-form-item>
-                            </el-collapse-item>
-                        </el-collapse>
-                        
                     </el-form-item>
                 </el-form>
             </div>
@@ -357,34 +219,23 @@
 <script>
 import axios from 'axios'
 import Vue from "vue";
-import basicMixin from "./basicMixin";
 import {mixin} from "@/mixin/mixin"
-// import {listGlobalDcumentSub} from '@/api/basicInfo/publicDocument'
-import { getApprovalSub} from "../../api/basicInfo/approvalSub";
-// import { listGlobalCheckpoint} from '@/api/basicInfo/examination'
-import {listCheckpoint} from '@/api/basicInfo/field';
-import { listRule, addRule, getByRuleId, updateRule, deleteGlobalCheckpoint,AddSubitemAndRule,UpdateSubitemAndRule,saveSubitemAndRuleBatch,
-listSubitemNameByRuleId,listDocumentSubNameByCode,listDocumentSubByItemId,listGlobalDcumentSub } from '@/api/basicInfo/ApprovalRules'
+import { listGlobalCheckpoint} from '@/api/basicInfo/examination'
+import { getApprovalSub, addApprovalSubitemSubkey, deleteApprovalSubitemSubkey, updateApprovalSubitemSubkey
+,listApprovalSubitemSubkey, getByApprovalSubitemSubkeyId} from "../../api/basicInfo/approvalSub";
+import { listDocumentSubByItemId } from '@/api/basicInfo/ApprovalRules'
 import { mapGetters } from "vuex"
 export default {
-    name: "ApprovalRules",
-    mixins: [basicMixin, mixin],
+    name: "ApprovalSubItemRule",
+    mixins: [mixin],
     data() {
         return {
             tableData: [],
-            type:'ApprovalRules',
             itemId: this.$route.query.itemId,
             url: process.env.VUE_APP_BASE_IP + "/ss/Import/globalRuleImportData",
             /* 筛选条件 */
             // 名称模糊查询
-            globalDocumentSubName:'',
-            // checkpointName:'',
-            ruleIds:'',
-            aliasName: "",
-            // 类型查询
-            standardFilter: "",
-            // 来源查询
-            sourceFilter: "",
+            subitemName: "",
 
             // 分页
             currentPage: 1,
@@ -411,34 +262,6 @@ export default {
                 ruleType:'',
 
             },
-            ruleTipsList:[
-                {
-                  lables:'正确信息',
-                  ruleTips:''
-                },
-                {
-                  lables:'错误信息',
-                  ruleTips:''
-                },
-                {
-                  lables:'人工判断',
-                  ruleTips:''
-                },
-            ],
-            ruleTipsForUserList:[
-                {
-                  lables:'正确信息',
-                  ruleTipsForUser:''
-                },
-                {
-                  lables:'错误信息',
-                  ruleTipsForUser:''
-                },
-                {
-                  lables:'人工判断',
-                  ruleTipsForUser:''
-                },
-            ],
             ruleInputsList:[{
                 value1:'',
                 value2:'',
@@ -469,8 +292,8 @@ export default {
     },
     async created() {
         // 获取项目信息
-        await this.initProject();
-        await this.search();
+        await this.initItemAndProject();
+        await this.getSubitemRules()
         await this.getApprovalSubText()
         await this.getApprovalList()
     },
@@ -523,15 +346,14 @@ export default {
             console.log(val)
             this.filterKey = val
             let params = {
-                globalDocumentSubCode:val,
-                approvalItemId: this.$route.query.itemId,
+                globalDocumentSubNameAndCode:val,
+                projectId: this.$route.query.projectId,
                 pageNum: this.currentPageSelects,
                 pageSize: this.pageSizes,
             }
-            let result = await listCheckpoint(params);
+            let result = await listGlobalCheckpoint(params);
             if(!result.success) return
             this.checkpointList = result.data.records;
-            console.log(this.checkpointList)
             this.totals = result.data.total
             this.approvalSubTextChange = false
         },
@@ -540,15 +362,17 @@ export default {
         },
         //远程搜索
         async remoteMethods(query){
-                let result = await listCheckpoint({fieldName:query, approvalItemId: this.$route.query.itemId, pageNum: this.currentPageSelects,pageSize: this.pageSizes});
+            console.log(query)
+            if(query !== ''){
+                let result = await listGlobalCheckpoint({checkpointName:query,projectId: this.$route.query.projectId, pageNum: this.currentPageSelects,pageSize: this.pageSizes});
                 this.loading = true;
                 setTimeout(() => {
                     this.loading = false;
                     this.checkpointList = result.data.records;
-                    console.log(this.checkpointList)
                     this.totals = result.data.total
                     
                 })
+            }
         },
         subitemNameChange(val) {
         //    this.remoteMethod(val)
@@ -565,6 +389,13 @@ export default {
             this.currentPageSelects = current;
             await this.getCheckpoint(this.filterKey)
         },
+        // 获取情形提取规则数据
+        async getSubitemRules() {
+            // this.approvalSubTextList = []
+            let result = await listApprovalSubitemSubkey({approvalItemId:this.itemId});
+            if (!result.success) return;
+            this.tableData = result.data.records
+        },
         // 子文档列表
         async getApprovalSubText() {
             // this.approvalSubTextList = []
@@ -579,7 +410,7 @@ export default {
         async remoteMethod(query){
             console.log(query)
             if(query !== ''){
-                let result = await listDocumentSubByItemId({approvalItemId:this.itemId,globalDocumentSubNameAndCode:query});
+                let result = await listDocumentSubByItemId({approvalItemId:this.itemId});
                 this.loading = true;
                 setTimeout(() => {
                     this.loading = false;
@@ -604,52 +435,28 @@ export default {
         async edit(){
             this.editBtnLoading=true;
             let ruleInputs = this.ruleInputsList.map(v=>({'材料编号':v.value1,'字段名':v.value2}))
-            this.editForm.ruleInputs = ruleInputs
-            this.editForm.ruleTips = this.ruleTipsList.map(e=>e.ruleTips)
-            this.editForm.ruleTipsForUser =this.ruleTipsForUserList.map(e=>e.ruleTipsForUser)
-            this.editForm.ruleLaw = this.ruleLawList.map(e=>e.ruleLaw)
-            this.editForm.ruleArgs = this.ruleArgsList.map(e=>e.ruleArgs)
+            this.editForm.subitemInput = ruleInputs
+            this.editForm.subitemAdditionalParameter = this.ruleArgsList.map(e=>e.ruleArgs)
 
-            let result= await updateRule(this.editForm);
+            let result= await updateApprovalSubitemSubkey(this.editForm);
             if(!result.success) return;
             this.$message.success('编辑成功')
-            let params = {
-                ruleId:this.editForm.ruleId,
-                approvalSubitemIdList:this.addApprovalSub
-            }
-            console.log(params)
-            let res = await saveSubitemAndRuleBatch(params)
-            console.log(res)
             this.editBtnLoading=false;
             this.editDialogVisible=false; 
             this.$refs.editForm.resetFields()
             this.resetForms()
-            this.search();
+            this.getSubitemRules();
 
         },
         async handleEdit(row){
-            let res = await getByRuleId({ruleId :row.ruleId })
-            let result = await listSubitemNameByRuleId({RuleId :row.ruleId })
+            let res = await getByApprovalSubitemSubkeyId({id :row.id })
+            // let result = await listSubitemNameByRuleId({RuleId :row.ruleId })
             console.log(res)
-            this.addApprovalSub = result.data
-            console.log(this.approvalSubList,'111')
-            console.log(result)
+            // console.log(this.approvalSubList,'111')
+            // console.log(result)
             this.editForm = res.data;
-            let vm = this
-            if(Array.isArray(this.editForm.ruleTips)) {
-                this.editForm.ruleTips.forEach((ele,i )=> {
-                    vm.ruleTipsList[i].ruleTips = ele   
-                });
-            }
-            if(Array.isArray(this.editForm.ruleTipsForUser)) {
-                this.editForm.ruleTipsForUser.forEach((ele,i )=> {
-                    vm.ruleTipsForUserList[i].ruleTipsForUser = ele   
-                });
-            }
-
-            if(Array.isArray(this.editForm.ruleInputs)) {this.ruleInputsList = this.editForm.ruleInputs.map(e=>({value1:e.材料编号,value2:e.字段名}))} 
-            if(Array.isArray(this.editForm.ruleLaw)) {this.ruleLawList = this.editForm.ruleLaw.map(e=>({ruleLaw:e}))}
-            if(Array.isArray(this.editForm.ruleArgs)) {this.ruleArgsList = this.editForm.ruleArgs.map(e=>({ruleArgs:e}))}
+            if(Array.isArray(this.editForm.subitemInput)) {this.ruleInputsList = this.editForm.subitemInput.map(e=>({value1:e.材料编号,value2:e.字段名}))} 
+            if(Array.isArray(this.editForm.subitemAdditionalParameter)) {this.ruleArgsList = this.editForm.subitemAdditionalParameter.map(e=>({ruleArgs:e}))}
             this.editDialogVisible=true;
             this.checkpointList = []
             this.approvalSubTextChange = true
@@ -657,12 +464,12 @@ export default {
         async handleDelete(row){
             try{
                 await this.$confirm("是否确定删除",'提示')
-                let result = await deleteGlobalCheckpoint({ruleId :row.ruleId});
+                let result = await deleteApprovalSubitemSubkey({id :row.id});
                 if(!result.success){
                     this.$message.error("删除失败")
                 }
                 this.$message.success("删除成功");
-                this.search();
+                this.getSubitemRules();
                 return;
 
             }catch (e) {
@@ -674,8 +481,6 @@ export default {
         // 取消，关闭
         resetForms() {
             this.checkpointList = []
-            this.ruleTipsList=[{lables:'正确信息',ruleTips:''},{lables:'错误信息',ruleTips:''},{lables:'人工判断', ruleTips:''},],
-            this.ruleTipsForUserList=[{lables:'正确信息', ruleTipsForUser:''},{ lables:'错误信息',ruleTipsForUser:''},{lables:'人工判断', ruleTipsForUser:''},],
             this.ruleInputsList=[{ value1:'', value2:'',}],
             //依据
             this.ruleLawList=[{ruleLaw:''}],
@@ -689,26 +494,16 @@ export default {
         },
         async add(){
             let ruleInputs = this.ruleInputsList.map(v=>({'材料编号':v.value1,'字段名':v.value2}))
-            this.addForm.ruleInputs = ruleInputs
-            this.addForm.ruleTips = this.ruleTipsList.map(e=>e.ruleTips)
-            this.addForm.ruleTipsForUser =this.ruleTipsForUserList.map(e=>e.ruleTipsForUser)
-            this.addForm.ruleLaw = this.ruleLawList.map(e=>e.ruleLaw)
-            this.addForm.ruleArgs = this.ruleArgsList.map(e=>e.ruleArgs)
+            this.addForm.subitemInput = ruleInputs
+            this.addForm.subitemAdditionalParameter = this.ruleArgsList.map(e=>e.ruleArgs)
             this.addForm.approvalItemId = this.itemId
-            let result = await addRule(this.addForm);
+            let result = await addApprovalSubitemSubkey(this.addForm);
             if(!result.success) return
-            let params = {
-                ruleId:result.data,
-                approvalSubitemIdList:this.addApprovalSub
-            }
-            let res = await saveSubitemAndRuleBatch(params)
-            console.log(res)
-            if(!res.success) return
-            this.$message.success('新增审批规则成功')
+            this.$message.success('新增情形提取规则成功')
             this.addDialogVisible = false
             this.$refs.addForm.resetFields()
             this.resetForms()
-            console.log(this.addForm,'9999')
+            this.getSubitemRules();
         },
         // 上传文件
         customUpload(file) {
@@ -734,6 +529,7 @@ export default {
         },
         upload() {
             this.$refs.upload.submit();
+            
         },
         // 成功上传文件
         uploadSuccess(res, file) {

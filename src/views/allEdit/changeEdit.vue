@@ -343,6 +343,7 @@ export default {
                     fieldsJson: fieldRes[i].data,
                     sid: ele.itemNo,
                     sixiangUserName: localStorage.getItem('username'),
+                    itemInternalNo: ele.itemInternalNo
                 };
                 lists.push(params)
             })

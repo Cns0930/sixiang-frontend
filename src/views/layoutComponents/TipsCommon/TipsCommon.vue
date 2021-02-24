@@ -10,7 +10,7 @@
             <el-dialog :show-close="false" class="message-dialog" title="系统提示" :visible.sync="ifShowDialog" :close-on-click-modal="false" width="50%">
                 <div class="content-box">
                     <div class="msgs" v-html="msg"></div>
-                    <el-checkbox class="tips" v-model="extraAttribute.value" @change="handleExtraChange">{{extraAttribute.label}}</el-checkbox>
+                    <el-checkbox class="tips" v-model="attribute.value" @change="handleExtraChange">{{attribute.label}}</el-checkbox>
                 </div>
                     <div slot="footer" class="dialog-footer" style="display: flex;justify-content: space-around">
                         <el-button type="primary" class="dialog-primary-btn" @click="ifShow = false">取消</el-button>
@@ -29,10 +29,10 @@ export default {
     props: ["value",'buttonName'],
     data() {
         return {
-            options: ["是", "否"],
-            radioValue: "",
+            // options: ["是", "否"],
+            // radioValue: "",
             ifShowDialog:false,
-            extraAttribute:{
+            attribute:{
                value:true,
                label:'我已阅读'
             },
@@ -73,7 +73,7 @@ export default {
            console.log(v)
         },
         commitConfirm() {
-            if(!this.extraAttribute.value) {
+            if(!this.attribute.value) {
                this.$message.warning('请先阅读')
             } else{
                this.ifShowDialog = false

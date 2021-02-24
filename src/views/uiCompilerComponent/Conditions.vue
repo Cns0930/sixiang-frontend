@@ -13,7 +13,7 @@
         <div v-for="condition,i in conditionBlock.conditions">
             <template v-if="condition.type=='logical'">
                 <select v-model="condition.subject" @change="handleSubjectChange(condition)">
-                    <option v-for="field,i in list" :value="field.fieldNo">{{field.fieldNo}}
+                    <option v-for="field,i in list" :value="field.fieldNo">{{field.fieldNo+' : '+field.label}}
                     </option>
                 </select>
                 的
