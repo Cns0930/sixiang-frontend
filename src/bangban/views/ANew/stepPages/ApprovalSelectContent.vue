@@ -39,6 +39,7 @@ import TestFormItem from "@/components/TestFormItem"
 // import rules from "../config/ruleConfig"
 import { mapState } from "vuex"
 import CommonMixin from "@/bangban/views/ANew/CommonMixin"
+// import Tipscommon from "@/views/layoutComponents/TipsCommon/TipsCommon"
 export default {
     name: 'ApprovalSelectContent',
     components: { ContentCard, ElFormItem: TestFormItem },
@@ -165,8 +166,18 @@ export default {
 .select-form {
     padding: 20px;
 }
+ /deep/ .el-dialog{
+    background: rgba(6, 59, 152, 0.8);
+    .el-dialog__body{
+        background: transparent;
+    }
+    .el-dialog__header{
+        justify-content: center;
+    }
+}
 </style>
 <style lang="scss">
+
 .approval {
     .el-radio {
         color: #fff;

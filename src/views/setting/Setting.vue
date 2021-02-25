@@ -14,7 +14,7 @@ export default {
     mixins: [mixin],
     computed:{
         ...mapState({
-            bangbanUrl:state=>state.setting.bangbanUrl
+            bangbanUrl:state=>state.setting.bangbanUrl!=''?state.setting.bangbanUrl:"http://10.0.103.187:8081"
         })
     },
     async created() {
