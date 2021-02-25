@@ -78,8 +78,8 @@
             </el-table-column>
         </el-table>
         <div class="tablePagination">
-            <el-pagination @current-change="handleCurrentChange" :current-page.sync="currentPage" :page-size="pageSize"
-                layout="total, prev, pager, next" :total="total"></el-pagination>
+            <el-pagination @current-change="handleCurrentChange" @size-change="handleSizeChange" :current-page.sync="currentPage" :page-size="pageSize"
+                layout="total, sizes, prev, pager, next, jumper" :total="total"></el-pagination>
         </div>
 
         <!--添加字段-->
@@ -422,7 +422,7 @@ export default {
             fieldKeyword: '',
             tableData: [],
             material_change: "",
-            pageSize: 10,
+            pageSize: 50,
             currentPage: 1,
             typeMaterialOptions: [],
             secondaryMaterialOptions: [],
@@ -524,6 +524,10 @@ export default {
         },
         //  切页
         handleCurrentChange() {
+            this.reloadTable();
+        },
+        handleSizeChange(val) {
+            this.pageSize = val;
             this.reloadTable();
         },
         // 查询当前事项下的所有材料

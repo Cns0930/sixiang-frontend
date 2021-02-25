@@ -22,12 +22,12 @@
             <el-button @click="$router.push({path:'/pageconfigure', query:{'itemId':$store.state.home.item.approvalItemId}})">步骤页面管理</el-button>
             <el-button @click="$router.push({path:'/setting'})">设置</el-button> -->
             <el-tabs v-model="activeTab" type="card" @tab-click="handleClick">
-                <el-tab-pane label="字段管理" name="formconstructor"></el-tab-pane>
-                <el-tab-pane label="材料管理" name="materialmanager"></el-tab-pane>
-                <el-tab-pane label="步骤页面管理" name="pageconfigure"></el-tab-pane>
+                <el-tab-pane label="材料字段" name="field"></el-tab-pane>
+                <el-tab-pane label="帮办字段" name="formconstructor"></el-tab-pane>
+                <el-tab-pane label="模板管理" name="materialmanager"></el-tab-pane>
+                <el-tab-pane label="步骤页面" name="pageconfigure"></el-tab-pane>
                 <el-tab-pane label="步骤页面-调研" name="pageconfigure2"></el-tab-pane>
-                <!-- 重要注释，要保留！！ -->
-                <el-tab-pane label="测试用例管理" name="testcase"></el-tab-pane>
+                <el-tab-pane label="测试用例" name="testcase"></el-tab-pane>
                 <el-tab-pane label="设置" name="setting"></el-tab-pane>
             </el-tabs>
         </div>
@@ -98,6 +98,12 @@ export default {
                     query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
                 });
                 sessionStorage.setItem('activeTab', 'testcase');
+            } else if (this.activeTab === "field") {
+                this.$router.push({
+                    path: "/field",
+                    query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
+                });
+                sessionStorage.setItem('activeTab', 'field');
             } else if (this.activeTab === "setting") {
                 this.$router.push({
                     path: "/setting",

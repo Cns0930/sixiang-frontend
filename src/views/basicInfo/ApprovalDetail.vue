@@ -4,7 +4,11 @@
             <span class="title">事项详情</span>
         </header>
         <div class="workBox">
-            <el-form :inline="true" :model="formInline" class="formStyle demo-form" label-width="100px" label-position="left">
+            <el-form :inline="true" :model="formInline" class="formStyle demo-form" label-width="100px"
+                label-position="left">
+                <el-form-item label="大项名称：">
+                    <div class="formItem"><span>{{ formInline.approvalName }}</span></div>
+                </el-form-item>
                 <el-form-item label="事项名称：">
                     <div class="formItem"><span>{{ formInline.itemName }}</span></div>
                 </el-form-item>
@@ -17,7 +21,7 @@
                 <el-form-item label="内部编号：">
                     <div class="formItem"><span>{{ formInline.itemInternalNo }}</span></div>
                 </el-form-item>
-                
+
                 <el-form-item label="事项类型：">
                     <div class="formItem"><span>{{ formInline.itemType }}</span></div>
                 </el-form-item>
@@ -39,8 +43,50 @@
                 <p class="title">下载配置开发模板</p>
                 <el-button type="primary" icon="el-icon-download" @click="downLoad">点击下载</el-button>
             </div>
+            <div class="handleBox">
+                <p class="title">编辑事项信息</p>
+                <el-button type="primary" icon="el-icon-edit" @click="edit">编辑事项</el-button>
+            </div>
         </div>
-
+        <!-- 事项编辑弹窗 -->
+        <el-dialog title="事项属性填写" :visible.sync="dialogUpdateVisible" width="50%" :close-on-click-modal="false">
+            <div class="attribute-content">
+                <el-form :model="tempItem" ref="tempItem" :rules="rules" :inline="false" label-position="left"
+                    class="demo-form-inline">
+                    <el-form-item label="大项" prop="approvalId">
+                        <el-select v-model="tempItem.approvalId" filterable>
+                            <el-option v-for="(v,i) in approvalOptions" :key="i" :label="v.approvalName"
+                                :value="v.approvalId">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="事项编号" prop="itemNo">
+                        <el-input v-model="tempItem.itemNo">
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item label="事项名称" prop="itemName">
+                        <el-input v-model="tempItem.itemName">
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item label="事项类型(如新增/变更)" prop="itemType">
+                        <el-input v-model="tempItem.itemType">
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item label="排序">
+                        <el-input v-model="tempItem.sort">
+                        </el-input>
+                    </el-form-item>
+                </el-form>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogUpdateVisible = false">
+                    取消
+                </el-button>
+                <el-button type="primary" @click="updateItem">
+                    确定
+                </el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -51,8 +97,9 @@ import { mixin } from "@/mixin/mixin"
 import { mapGetters, mapState } from "vuex"
 import state from '@/vuex/home/state';
 import dayjs from "dayjs";
+import _ from "lodash"
 // 接口
-import { getByApprovalItemId } from "@/api/basicInfo/approval"
+import { getByApprovalItemId, listApprovalAll, updateApprovalItem } from "@/api/basicInfo/approval"
 
 export default {
     name: "ApprovalDetail",
@@ -64,7 +111,11 @@ export default {
             formInline: {
                 user: '',
                 region: ''
-            }
+            },
+            // 编辑事项相关
+            dialogUpdateVisible: false,
+            tempItem: {},
+            approvalOptions: [],
         }
     },
     computed: {
@@ -128,6 +179,31 @@ export default {
             a.click();
             document.body.removeChild(a);
             window.URL.revokeObjectURL(href);
+        },
+        async edit() {
+            // 获取选项
+            let approvalRes = await listApprovalAll();
+            if (approvalRes.success) {
+                this.approvalOptions = approvalRes.data;
+            }
+            this.tempItem = _.cloneDeep(this.formInline);
+            this.dialogUpdateVisible = true;
+        },
+        async updateItem() {
+            let res = await updateApprovalItem(this.tempItem);
+            if (res.success) {
+                this.$message.success("事项修改成功!");
+                this.dialogUpdateVisible = false;
+                let result = await getByApprovalItemId({ approvalItemId: this.itemId });
+                if (!result.success) {
+                    this.$message({ type: "warning", message: "事项信息更新失败" });
+                    return;
+                }
+                this.$store.commit("changeItem", result.data);
+                this.getApprovalDetailInfo();
+            } else {
+                this.$message.success("事项修改失败!");
+            }
         }
 
     },

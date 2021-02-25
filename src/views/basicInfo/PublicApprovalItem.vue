@@ -3,7 +3,7 @@
         <header>公共事项管理</header>
         <section class="workBox">
             <div class="searchBox">
-                <el-select
+                <!-- <el-select
                     placeholder="筛选项目"
                     v-model="filterProjectId"
                     filterable clearable
@@ -14,7 +14,7 @@
                         :label="v.projectName"
                         :value="v.projectId"
                     ></el-option>
-                </el-select>
+                </el-select> -->
                 <el-select
                     placeholder="筛选大项"
                     v-model="filterApprovalId"
@@ -63,8 +63,8 @@
                     :default-sort="{prop: 'createTime', order: 'descending'}"
                 >
                     <el-table-column label="序号" type="index" width="45" :index="indexMethod"></el-table-column>
-                    <el-table-column prop="projectName" label="项目" sortable width="80"></el-table-column>
-                    <el-table-column prop="approvalName" label="大项" show-overflow-tooltip sortable width="80"></el-table-column>
+                    <!-- <el-table-column prop="projectName" label="项目" sortable></el-table-column> -->
+                    <el-table-column prop="approvalName" label="大项" show-overflow-tooltip sortable></el-table-column>
                     <el-table-column
                         prop="itemInternalNo"
                         label="内部事项编号"
@@ -72,7 +72,7 @@
                         show-overflow-tooltip
                     ></el-table-column>
                     <el-table-column prop="itemNo" label="事项编号" width="100" show-overflow-tooltip></el-table-column>
-                    <el-table-column label="事项名称" width="200">
+                    <el-table-column label="事项名称" width="250">
                         <template slot-scope="scope">
                         <el-button
                             @click="handleClickItemDefault(scope.row)"
@@ -81,15 +81,14 @@
                         >{{scope.row.itemName}}</el-button>
                     </template>
                     </el-table-column>
-                    <el-table-column prop="itemType" label="事项类型" width="80"></el-table-column>
+                    <!-- <el-table-column prop="itemType" label="事项类型" width="80"></el-table-column> -->
                     <el-table-column
                         prop="itemCode"
                         label="事项实施编码"
-                        width="100"
                         show-overflow-tooltip
                     ></el-table-column>
                     <el-table-column prop="createBy" label="创建人" width="80"></el-table-column>
-                    <el-table-column prop="itemStatus" label="状态" sortable width="80"></el-table-column>
+                    <!-- <el-table-column prop="itemStatus" label="状态" sortable width="80"></el-table-column> -->
                     <el-table-column
                         prop="createTime"
                         label="创建时间"
@@ -105,7 +104,7 @@
                         sortable
                         show-overflow-tooltip
                     ></el-table-column>
-                    <el-table-column label="操作" fixed="right">
+                    <el-table-column label="操作" fixed="right" width="300">
                         <template slot-scope="scope">
                             <!-- <el-button size="mini" @click="handleClickItem(scope.row)">调研信息</el-button> -->
                             <el-button size="mini" @click="handleClickItemBangBan(scope.row)">帮办工具</el-button>
@@ -137,7 +136,7 @@
             >
                 <div class="attribute-content">
                     <el-form :inline="false" label-position="left" class="demo-form-inline">
-                        <el-form-item label="项目">
+                        <!-- <el-form-item label="项目">
                             <el-select v-model="tempItem.projectId" filterable>
                                 <el-option
                                     v-for="(v,i) in projectOptions"
@@ -146,7 +145,7 @@
                                     :value="v.projectId"
                                 ></el-option>
                             </el-select>
-                        </el-form-item>
+                        </el-form-item> -->
                         <el-form-item label="大项">
                             <el-select v-model="tempItem.approvalId" filterable>
                                 <el-option
@@ -250,6 +249,7 @@ export default {
         return {
             // 页面信息
             type: "public",
+            projectId: this.$route.query.projectId,
             // 筛选
             filterProjectId: null,
             filterApprovalId: null,
@@ -261,7 +261,7 @@ export default {
             dialogAddVisible: false,
             dialogUpdateVisible: false,
             tempItem: {},
-            projectOptions: [],
+            // projectOptions: [],
             approvalOptions: [],
             pagesize: 15,
         };
@@ -316,6 +316,7 @@ export default {
         async saveItem() {
             this.tempItem.createBy = localStorage.getItem("username");
             this.tempItem.isPublic = 1;
+            this.tempItem.projectId = Number(this.projectId);
             let res = await addApprovalItem(this.tempItem);
             if (res.success) {
                 this.$message.success("事项保存成功!");
@@ -336,10 +337,10 @@ export default {
         },
         async loadOptions() {
             // 获取选项
-            let projectRes = await listProjectAll();
-            if (projectRes.success) {
-                this.projectOptions = projectRes.data;
-            }
+            // let projectRes = await listProjectAll();
+            // if (projectRes.success) {
+            //     this.projectOptions = projectRes.data;
+            // }
             let approvalRes = await listApprovalAll();
             if (approvalRes.success) {
                 this.approvalOptions = approvalRes.data;
@@ -407,7 +408,7 @@ export default {
         async list(){
             let params = {
                 approvalId: this.filterApprovalId,
-                projectId: this.filterProjectId,
+                projectId: this.projectId,
                 keyword: this.filterKeyword,
                 pageSize: this.pagesize,
                 pageNum: this.currentPage,

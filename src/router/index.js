@@ -86,6 +86,10 @@ const routes = [
                 },
                 children: [
                     {
+                        path: '/field',
+                        component: Field
+                    },
+                    {
                         path:"/formconstructor",
                         name:"FormConstructor",
                         component:FormConstructor
@@ -214,6 +218,16 @@ const routes = [
                         path: '/basic/sampleDemarcate',
                         name: 'SampleDemarcate',
                         component: SampleDemarcate
+                    },
+                    {
+                        path: '/basic/pageconfigureresearcher',
+                        name: 'PageConfigureResearcher',
+                        component: PageConfigureResearcher
+                    },
+                    {
+                        path: '/basic/formconstructor',
+                        name: 'FormConstructor',
+                        component: FormConstructor
                     }
                 ]
             }, 
