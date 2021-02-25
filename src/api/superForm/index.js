@@ -37,3 +37,6 @@ export const forkPublic = params => axios.post('/superform/fields/forkPublic', p
 
 //  获取最新的step配置保存时间
 export const getSaveMaxTimeStep = params => axios.get('/superform/steps/getSaveMaxTime', {params}).then(res => res.data);
+
+// 子字段转基础字段
+export const childToParent = params => axios.get('/superform/fields/childToParent', {params}).then(res => res.data);

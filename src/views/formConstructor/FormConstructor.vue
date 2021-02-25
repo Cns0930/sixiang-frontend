@@ -64,8 +64,9 @@
                             <el-button @click="handleClickField(scope.row);" type="text" size="small"> 编辑</el-button>
                             <el-button @click="handleClickChangeType(scope);" type="text" size="small">更改组件类型
                             </el-button>
-                            <el-button @click="handleClickAddChild(scope.row);" type="text" size="small"
-                                :disabled="!scope.row.isList">添加子项
+                            <el-button v-if="scope.row.isList" @click="handleClickAddChild(scope.row);" type="text" size="small">添加子项
+                            </el-button>
+                            <el-button v-if="scope.row.fieldType==3" @click="handleClickChildToParent(scope.row);" type="text" size="small">转为基本字段
                             </el-button>
                             <el-button @click="handleDeleteField(scope.row)" type="text" size="small">删除</el-button>
                         </template>
@@ -320,7 +321,7 @@ import { mapState } from "vuex";
 import _ from "lodash";
 import defRenderers from "@/views/attributeComponents/defRendererComponents/index";
 import { getField, saveOne, deleteOne, getFieldById,searchFields,forkSelectedFields, getFieldAll,
- searchPublic, forkPublic } from "@/api/superForm/index";
+ searchPublic, forkPublic, childToParent } from "@/api/superForm/index";
 import { listMaterialFieldLayer } from "@/api/basicInfo/field";
 import { listPublicApprovalItem } from "../../api/basicInfo/approval";
 import { functionReviverEventRuntime, convertDefToConfigEventRuntime, functionReviverRuntime } from "./util"
@@ -1020,6 +1021,27 @@ export default {
             } else {
                 this.tableHeight = window.innerHeight - tableH
             }
+        },
+        async handleClickChildToParent(v){
+            try {
+                await this.$confirm('确定要把子字段转为基本字段吗?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                })
+            } catch (e) {
+                return;
+            }
+            let param = {
+                id: v.id
+            };
+    
+            let result = await childToParent(param);
+            if (!result.success) {
+                return;
+            }
+            this.$message({ type: "success", message: "修改成功" });
+            this.load();
         }
     }
 };
