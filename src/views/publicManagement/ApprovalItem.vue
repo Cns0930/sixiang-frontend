@@ -34,8 +34,8 @@
                     tooltip-effect="dark" :default-sort="{prop: 'createTime', order: 'descending'}">
                    
                
-                    <el-table-column prop="projectName" label="项目" sortable >
-                    </el-table-column>
+                    <!-- <el-table-column prop="projectName" label="项目" sortable >
+                    </el-table-column> -->
                     <el-table-column prop="approvalName" label="大项" show-overflow-tooltip sortable>
                     </el-table-column>
                     <el-table-column prop="itemInternalNo" label="内部事项编号" show-overflow-tooltip>
@@ -49,14 +49,14 @@
                             </el-button>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="itemType" label="事项类型" >
-                    </el-table-column>
+                    <!-- <el-table-column prop="itemType" label="事项类型" >
+                    </el-table-column> -->
                     <!-- <el-table-column prop="itemCode" label="事项实施编码"  show-overflow-tooltip> -->
                     <!-- </el-table-column> -->
                     <el-table-column prop="createBy" label="创建人" >
                     </el-table-column>
-                    <el-table-column prop="itemStatus" label="状态" sortable  width="50">
-                    </el-table-column>
+                    <!-- <el-table-column prop="itemStatus" label="状态" sortable  width="50">
+                    </el-table-column> -->
                     <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable >
                     </el-table-column>
                     <el-table-column prop="updateTime" label="最后修改时间" :formatter="timeFormatter" sortable

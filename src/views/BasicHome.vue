@@ -5,17 +5,19 @@
 
             <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
                 <el-tab-pane label="事项详情" name="approvalDetail"></el-tab-pane>
-                <el-tab-pane label="情形管理" name="subitem"></el-tab-pane>
-                <el-tab-pane label="情形提取规则" name="subitemRule"></el-tab-pane>
                 <el-tab-pane label="一级材料" name="material"></el-tab-pane>
                 <el-tab-pane label="二级材料" name="ApprovalSubItemText"></el-tab-pane>
+                <el-tab-pane label="情形管理" name="subitem"></el-tab-pane>            
                 <el-tab-pane label="材料字段" name="field"></el-tab-pane>
+                <el-tab-pane label="帮办字段" name="formconstructor"></el-tab-pane>
+                <el-tab-pane label="步骤页面-调研" name="pageconfigure2"></el-tab-pane>
                 <!-- <el-tab-pane label="前端字段" name="" disabled></el-tab-pane> -->
                 <el-tab-pane label="单窗材料" name="singleWindow"></el-tab-pane>
-                <el-tab-pane label="附件管理" name="accessory"></el-tab-pane>
-                <el-tab-pane label="审批规则管理" name="approvalRules"></el-tab-pane>
                 <el-tab-pane label="样本管理" name="sampleManage"></el-tab-pane>
                 <el-tab-pane label="样本标定" name="sampleDemarcate"></el-tab-pane>
+                <el-tab-pane label="附件管理" name="accessory"></el-tab-pane>
+                <el-tab-pane label="审批规则管理" name="approvalRules"></el-tab-pane>
+                <el-tab-pane label="情形提取规则" name="subitemRule"></el-tab-pane>
             </el-tabs>
         </div>
 
@@ -140,6 +142,18 @@ export default {
                     query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
                 });
                 sessionStorage.setItem('activeName', 'sampleDemarcate');
+            }else if (this.activeName === "pageconfigure2") {
+                this.$router.push({
+                    path: "/basic/pageconfigureresearcher",
+                    query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
+                });
+                sessionStorage.setItem('activeName', 'pageconfigure2');
+            }else if (this.activeName === "formconstructor") {
+                this.$router.push({
+                    path: "/basic/formconstructor",
+                    query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
+                });
+                sessionStorage.setItem('activeName', 'formconstructor');
             }
             
         },
