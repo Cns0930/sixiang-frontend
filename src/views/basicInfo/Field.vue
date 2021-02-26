@@ -2,7 +2,7 @@
     <div class="workWrap">
         <header>材料字段</header>
         <div class="operation-box">
-            <el-button @click="addDialogVisible = true" type="primary">添加</el-button>
+            <el-button @click="addFiledOpen" type="primary">添加</el-button>
             <el-button class="operation-item" @click="openImportDialog" type="primary">导入</el-button>
             <el-input class="operation-item" placeholder="筛选材料名称或者模板名称" v-model="materialKeyword" clearable
                 style="width: 200px;" @change="reloadTable"></el-input>
@@ -64,6 +64,10 @@
             <el-table-column prop="checkpointSourceField" label="来源字段" show-overflow-tooltip></el-table-column>
             <el-table-column prop="isOcr" label="是否OCR" :formatter="isRequiredFormatter" show-overflow-tooltip>
             </el-table-column>
+            <el-table-column prop="fieldComponentType" label="字段格式" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="optionsValue" label="枚举值" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="frontDescriptionInfo" label="前端字段填写逻辑" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="globalCheckpointId" label="关联公共信息点主键" show-overflow-tooltip></el-table-column>
             <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" show-overflow-tooltip>
             </el-table-column>
             <el-table-column prop="updateTime" label="更新时间" :formatter="timeFormatter" show-overflow-tooltip>
@@ -171,6 +175,22 @@
                         <el-option label="否" :value="Number(0)"></el-option>
                     </el-select>
                 </el-form-item>
+                <!-- 2021/2/25新增 -->
+                <el-form-item label="字段格式">
+                    <el-input v-model="addForm.fieldComponentType"></el-input>
+                </el-form-item>
+                <el-form-item label="枚举值">
+                    <el-input v-model="addForm.optionsValue"></el-input>
+                </el-form-item>
+                <el-form-item label="前端字段填写逻辑">
+                    <el-input type="textarea" :rows="2" v-model="addForm.frontDescriptionInfo"></el-input>
+                </el-form-item>
+                <el-form-item label="关联公共信息点主键">
+                    <el-select v-model="addForm.globalCheckpointId" clearable filterable placeholder="公共信息名称">
+                        <el-option v-for="(v,i) in globalCheckpointOptions" :key="i" :label="v.aliasName"
+                            :value="v.checkpointId"> </el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item label="备注">
                     <el-input v-model="addForm.note"></el-input>
                 </el-form-item>
@@ -266,6 +286,22 @@
                     <el-select v-model="editForm.isOcr" clearable placeholder="是否为OCR">
                         <el-option label="是" :value="Number(1)"></el-option>
                         <el-option label="否" :value="Number(0)"></el-option>
+                    </el-select>
+                </el-form-item>
+                <!-- 2021/2/25新增 -->
+                <el-form-item label="字段格式">
+                    <el-input v-model="editForm.fieldComponentType"></el-input>
+                </el-form-item>
+                <el-form-item label="枚举值">
+                    <el-input v-model="editForm.optionsValue"></el-input>
+                </el-form-item>
+                <el-form-item label="前端字段填写逻辑">
+                    <el-input type="textarea" :rows="2" v-model="editForm.frontDescriptionInfo"></el-input>
+                </el-form-item>
+                <el-form-item label="关联公共信息点主键">
+                    <el-select v-model="editForm.globalCheckpointId" clearable filterable placeholder="公共信息名称">
+                        <el-option v-for="(v,i) in globalCheckpointOptions" :key="i" :label="v.aliasName"
+                            :value="v.checkpointId"> </el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="备注">
@@ -402,6 +438,7 @@ import {
     listFieldUnionMaterial, listAllMaterial, importfields, lookfields, listFieldNosByIds, updateFieldComponentName, saveBatch,
     saveBatchCheck
 } from "@/api/basicInfo/field";
+import { listGlobalCheckpoint} from '@/api/basicInfo/examination'
 import { listItemAndDocumentSub } from "@/api/basicInfo/approvalSub";
 import dayjs from "dayjs";
 import { getRolelist } from '@/api/item';
@@ -425,6 +462,7 @@ export default {
             pageSize: 50,
             currentPage: 1,
             typeMaterialOptions: [],
+            globalCheckpointOptions: [],
             secondaryMaterialOptions: [],
             total: 0,
             addForm: {
@@ -550,6 +588,19 @@ export default {
                 }
             })
         },
+        // 打开添加弹窗
+        async addFiledOpen() {
+            this.addDialogVisible = true;
+            let params = {
+                // globalDocumentSubName:this.globalDocumentSubName,
+                // checkpointName:this.checkpointName,
+                projectId: this.$route.query.projectId,
+                // aliasName: this.aliasName,
+            }
+            let result = await listGlobalCheckpoint(params);
+            if(!result.success) return;
+            this.globalCheckpointOptions = result.data.records;
+        },
         // 添加
         async addField() {
             this.addForm.approvalItemId = this.itemId
@@ -568,10 +619,16 @@ export default {
         },
 
         // 处理编辑
-        handleEdit(scope) {
+        async handleEdit(scope) {
             this.editForm = _.clone(scope.row);
             this.material_change = scope.row.materialName;
             this.editDialogVisible = true;
+            let params = {
+                projectId: this.$route.query.projectId,
+            }
+            let result = await listGlobalCheckpoint(params);
+            if(!result.success) return;
+            this.globalCheckpointOptions = result.data.records;
         },
         // 编辑
         async editField() {

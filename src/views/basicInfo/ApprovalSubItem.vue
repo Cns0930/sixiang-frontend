@@ -10,7 +10,7 @@
             <el-table-column type="expand">
                 <template slot-scope="scope">
                     <div class="title-box">
-                        <span style="margin-right: 20px">关联帮办材料</span>
+                        <span style="margin-right: 20px">关联一级材料</span>
                         <el-switch v-model="scope.row.materialShow" active-color="#13ce66" inactive-color="#ff4949">
                         </el-switch>
                         <el-button type="primary" style="margin-left: 20px"
@@ -40,6 +40,15 @@
                                 <span v-else>{{scopeD.row.subAndMaterialDescriptionInfo}}</span>
                             </template>
                         </el-table-column>
+                        <el-table-column prop="uploadDescription" label="是否必需上传逻辑说明" show-overflow-tooltip>
+                            <template slot-scope="scopeD">
+                                <el-input v-if="scopeD.row.flag"
+                                    type="textarea" :rows="2" placeholder="逻辑说明"
+                                    v-model="scopeD.row.uploadDescription" clearable>
+                                </el-input>
+                                <span v-else>{{scopeD.row.uploadDescription}}</span>
+                            </template>
+                        </el-table-column>
                         <el-table-column label="操作">
                             <template slot-scope="scopeHandle">
                                 <div v-if="scopeHandle.row.flag">
@@ -67,7 +76,7 @@
                         </el-table-column>
                     </el-table>
                     <div class="title-box">
-                        <span style="margin-right: 20px">关联AI材料</span>
+                        <span style="margin-right: 20px">关联二级材料</span>
                         <el-switch v-model="scope.row.documentShow" active-color="#13ce66" inactive-color="#ff4949">
                         </el-switch>
                         <el-button type="primary" style="margin-left: 20px"
@@ -93,6 +102,15 @@
                                     <el-option label="否" :value="Number(0)"></el-option>
                                 </el-select>
                                 <span v-else>{{scopeR.row.isRequired == Number(1)? '是':'否'}}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="requiredDescription" label="是否必需上传逻辑说明" show-overflow-tooltip>
+                            <template slot-scope="scopeD">
+                                <el-input v-if="scopeD.row.flagAI"
+                                    type="textarea" :rows="2" placeholder="逻辑说明"
+                                    v-model="scopeD.row.requiredDescription" clearable>
+                                </el-input>
+                                <span v-else>{{scopeD.row.requiredDescription}}</span>
                             </template>
                         </el-table-column>
                         <el-table-column label="操作">
@@ -549,13 +567,14 @@ export default {
             }
         },
         // 取消
-        closeText(item, index, rows) {
+        async closeText(item, index, rows) {
             console.log(item, index, rows, '0000')
             if (item.edits) {
                 this.$set(item, 'flag', null)
             } else {
                 rows.splice(index, 1)
             }
+            await this.reloadTable();
         },
         // 保存
         async saveText(item, index, rows, approvalSubitemId) {
@@ -567,7 +586,8 @@ export default {
                     approvalSubitemId: approvalSubitemId,
                     id: item.id,
                     subAndMaterialDescriptionInfo: item.subAndMaterialDescriptionInfo,
-                    materialId: item.materialId
+                    materialId: item.materialId,
+                    uploadDescription: item.uploadDescription
                 }
                 const result = await updateSubitemAndMaterial(request)
                 console.log(result, 'result')
@@ -577,7 +597,9 @@ export default {
                     approvalItemId: Number(this.itemId),
                     approvalSubitemId: approvalSubitemId,
                     subAndMaterialDescriptionInfo: item.subAndMaterialDescriptionInfo,
-                    materialId: item.materialId
+                    materialId: item.materialId,
+                    uploadDescription: item.uploadDescription
+
                 }
                 const res = await addSubitemAndMaterial(request)
                 console.log(res, 'res')
@@ -637,13 +659,14 @@ export default {
             }
         },
         // 取消
-        closeTextAI(item, index, rows) {
+        async closeTextAI(item, index, rows) {
             console.log(item, index, rows, '0000')
             if (item.editsAI) {
                 this.$set(item, 'flagAI', null)
             } else {
                 rows.splice(index, 1)
             }
+            await this.reloadTable();
         },
         // 保存
         async saveTextAI(item, index, rows, approvalSubitemId) {
@@ -654,7 +677,8 @@ export default {
                     approvalSubitemId: approvalSubitemId,
                     id: item.id,
                     globalDocumentSubId: item.globalDocumentSubId,
-                    isRequired: item.isRequired
+                    isRequired: item.isRequired,
+                    requiredDescription: item.requiredDescription
                 }
                 const result = await updateSubitemAndDocumentNew(request)
                 console.log(result, 'result')
@@ -664,7 +688,8 @@ export default {
                     approvalItemId: Number(this.itemId),
                     approvalSubitemId: approvalSubitemId,
                     globalDocumentSubId: item.globalDocumentSubId,
-                    isRequired: item.isRequired
+                    isRequired: item.isRequired,
+                    requiredDescription: item.requiredDescription
                 }
                 const res = await addSubitemAndDocumentNew(request)
                 console.log(res, 'res')

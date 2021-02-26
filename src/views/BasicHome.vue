@@ -12,7 +12,7 @@
                 <el-tab-pane label="帮办字段" name="formconstructor"></el-tab-pane>
                 <el-tab-pane label="步骤页面-调研" name="pageconfigure2"></el-tab-pane>
                 <!-- <el-tab-pane label="前端字段" name="" disabled></el-tab-pane> -->
-                <el-tab-pane label="单窗材料" name="singleWindow"></el-tab-pane>
+                <!-- <el-tab-pane label="单窗材料" name="singleWindow"></el-tab-pane> -->
                 <el-tab-pane label="样本管理" name="sampleManage"></el-tab-pane>
                 <el-tab-pane label="样本标定" name="sampleDemarcate"></el-tab-pane>
                 <el-tab-pane label="附件管理" name="accessory"></el-tab-pane>

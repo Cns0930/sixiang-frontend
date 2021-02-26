@@ -3,6 +3,9 @@
         <header>
             <span class="title">事项详情</span>
         </header>
+        <div class="handleBox">
+            <el-button type="primary" icon="el-icon-edit" style="margin-left: 20px" @click="edit">编辑事项</el-button>
+        </div>
         <div class="workBox">
             <el-form :inline="true" :model="formInline" class="formStyle demo-form" label-width="100px"
                 label-position="left">
@@ -21,9 +24,15 @@
                 <el-form-item label="内部编号：">
                     <div class="formItem"><span>{{ formInline.itemInternalNo }}</span></div>
                 </el-form-item>
-
                 <el-form-item label="事项类型：">
                     <div class="formItem"><span>{{ formInline.itemType }}</span></div>
+                </el-form-item>
+                <el-form-item label="补充业务信息描述(键-值)：">
+                    <div v-for="(item,i) in formInline.extraInfoList" :key="i">
+                        <div>
+                            <span>{{item.keyValue + ' - ' + item.labelValue}}</span>
+                        </div>
+                    </div>
                 </el-form-item>
                 <el-form-item label="创建时间：">
                     <div class="formItem"><span>{{ formInline.createTime }}</span></div>
@@ -42,10 +51,6 @@
             <div class="handleBox">
                 <p class="title">下载配置开发模板</p>
                 <el-button type="primary" icon="el-icon-download" @click="downLoad">点击下载</el-button>
-            </div>
-            <div class="handleBox">
-                <p class="title">编辑事项信息</p>
-                <el-button type="primary" icon="el-icon-edit" @click="edit">编辑事项</el-button>
             </div>
         </div>
         <!-- 事项编辑弹窗 -->
@@ -67,6 +72,22 @@
                     <el-form-item label="事项名称" prop="itemName">
                         <el-input v-model="tempItem.itemName">
                         </el-input>
+                    </el-form-item>
+                    <!-- <el-form-item label="补充业务信息描述" prop="extraInfo">
+                        <el-input v-model="tempItem.extraInfo">
+                        </el-input>
+                    </el-form-item> -->
+                    <el-form-item label="补充业务信息描述" class="ruleItem">
+                        <div v-for="(item,i) in extraInfoList" :key="i" class="ruleItems">
+                            <el-input v-model="item.keyValue" placeholder="请填入业务信息key值" clearable style="width:45%">
+                            </el-input>
+                            <el-input v-model="item.labelValue" placeholder="请填入业务信息value值" style="width:45%" clearable>
+                            </el-input>
+                            <i v-if="extraInfoList.length>1" style="margin-left:10px;color:red;cursor: pointer;"
+                                class="el-icon-delete" @click="deletInputs(i)"></i>
+                        </div>
+                        <i class="el-icon-plus" style="margin-left:10px;color:#409EFF;cursor: pointer;"
+                            @click="addExtraInfoList()"></i>
                     </el-form-item>
                     <el-form-item label="事项类型(如新增/变更)" prop="itemType">
                         <el-input v-model="tempItem.itemType">
@@ -112,10 +133,15 @@ export default {
                 user: '',
                 region: ''
             },
+            showExtraInfoList: [],
             // 编辑事项相关
             dialogUpdateVisible: false,
             tempItem: {},
             approvalOptions: [],
+            extraInfoList: [{
+                keyValue: '',
+                labelValue: '',
+            }],
         }
     },
     computed: {
@@ -143,6 +169,14 @@ export default {
             // dayjs(cellValue).format("YYYY-MM-DD HH:mm:ss")
             this.itemInfo.createTime = dayjs(this.itemInfo.createTime).format("YYYY-MM-DD HH:mm:ss");
             this.itemInfo.updateTime = dayjs(this.itemInfo.updateTime).format("YYYY-MM-DD HH:mm:ss");
+            if (this.itemInfo.extraInfo) {
+                this.itemInfo.extraInfoList = JSON.parse(this.itemInfo.extraInfo);
+            } else {
+                this.itemInfo.extraInfoList = [{
+                    keyValue: '',
+                    labelValue: '',
+                }];
+            }
             this.formInline = Object.assign({}, this.formInline, this.itemInfo)
             // console.log('this.formInline');
             // console.log(this.formInline);
@@ -180,6 +214,16 @@ export default {
             document.body.removeChild(a);
             window.URL.revokeObjectURL(href);
         },
+        // 编辑事项相关
+        addExtraInfoList() {
+            this.extraInfoList.push({
+                keyValue: '',
+                labelValue: '',
+            })
+        },
+        deletInputs(i) {
+            this.extraInfoList.splice(i, 1);
+        },
         async edit() {
             // 获取选项
             let approvalRes = await listApprovalAll();
@@ -187,9 +231,11 @@ export default {
                 this.approvalOptions = approvalRes.data;
             }
             this.tempItem = _.cloneDeep(this.formInline);
+            this.extraInfoList = this.tempItem.extraInfoList;
             this.dialogUpdateVisible = true;
         },
         async updateItem() {
+            this.tempItem.extraInfo = JSON.stringify(this.extraInfoList);
             let res = await updateApprovalItem(this.tempItem);
             if (res.success) {
                 this.$message.success("事项修改成功!");
@@ -237,10 +283,13 @@ export default {
         .formStyle {
             margin-left: 40px;
             font-size: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
             // background: rgb(222, 226, 255);
-            .formItem {
-                margin-right: 500px;
-            }
+            // .formItem {
+            //     margin-right: 700px;
+            // }
         }
     }
     .workHandleBox {

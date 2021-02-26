@@ -11,7 +11,7 @@
                 @keyup.native.enter="search"></el-input>
 
             <el-button @click="search" type="primary">搜索</el-button>
-            
+
         </div>
         <div class="tableWrap">
             <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%;" border
@@ -25,6 +25,10 @@
                     show-overflow-tooltip></el-table-column>
                 <!-- <el-table-column prop="subType" label="类型" show-overflow-tooltip></el-table-column> -->
                 <el-table-column prop="category" label="归类" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="pageLocation" label="标准格式下的页码" show-overflow-tooltip width="100">
+                </el-table-column>
+                <el-table-column prop="catalogDocumentSubId" label="关联全局二级文档主键" show-overflow-tooltip width="100">
+                </el-table-column>
                 <el-table-column prop="updateTime" label="更新时间" :formatter="timeFormatter" show-overflow-tooltip>
                 </el-table-column>
 
@@ -53,7 +57,7 @@
         <!-- 新建窗口 -->
         <el-dialog title="新增子文档" :visible.sync="addDialogVisible" width="50%" :close-on-click-modal="false">
             <div class="form-content">
-                <el-form :model="addForm" label-width="120px" :rules="rules">
+                <el-form :model="addForm" label-width="120px" ref="addForm" :rules="rules">
                     <el-form-item label="子文档名称" prop="globalDocumentSubName">
                         <el-input v-model="addForm.globalDocumentSubName"></el-input>
                     </el-form-item>
@@ -61,7 +65,6 @@
                         <el-select placeholder="所属材料" v-model="addForm.globalDocumentId" filterable clearable>
                             <el-option v-for="(v,i) in allGlobalDocuments" :label="v.label" :value="v.value" :key="i">
                             </el-option>
-
                         </el-select>
                     </el-form-item>
                     <el-form-item label="是否多页" prop="isMultiplePage">
@@ -78,7 +81,19 @@
                         <el-input v-model="addForm.category"></el-input>
                     </el-form-item>
                     <el-form-item label="子文档编号">
-                        <el-input v-model="addForm.globalDocumentSubCode"></el-input><span style="font-size:50%;color:orange"> 非必填, 系统会自动生成</span>
+                        <el-input v-model="addForm.globalDocumentSubCode"></el-input><span
+                            style="font-size:50%;color:orange"> 非必填, 系统会自动生成</span>
+                    </el-form-item>
+                    <el-form-item label="标准格式下的页码" prop="pageLocation">
+                        <el-input v-model="addForm.pageLocation"></el-input>
+                    </el-form-item>
+                    <el-form-item label="关联全局二级文档主键">
+                        <el-select placeholder="请选择关联全局二级文档名称" v-model="addForm.catalogDocumentSubId" filterable
+                            clearable>
+                            <el-option v-for="(v,i) in globalDocumentsSubOption" :label="v.catalogDocumentSubName"
+                                :value="v.catalogDocumentSubId" :key="i">
+                            </el-option>
+                        </el-select>
                     </el-form-item>
                 </el-form>
             </div>
@@ -91,11 +106,11 @@
         <!-- 编辑窗口 -->
         <el-dialog title="编辑子文档" :visible.sync="editDialogVisible" width="50%" :close-on-click-modal="false">
             <div class="form-content">
-                <el-form :model="editForm" label-width="120px" :rules="rules">
-                    <el-form-item label="材料名称">
+                <el-form :model="editForm" label-width="120px" ref="editForm" :rules="rules">
+                    <el-form-item label="子文档名称" prop="globalDocumentSubName">
                         <el-input v-model="editForm.globalDocumentSubName"></el-input>
                     </el-form-item>
-                    <el-form-item label="是否多页">
+                    <el-form-item label="是否多页"  prop="isMultiplePage">
                         <el-select placeholder="类型" v-model="editForm.isMultiplePage" filterable clearable>
                             <el-option label="是" :value="1"></el-option>
                             <el-option label="否" :value="0"></el-option>
@@ -111,6 +126,17 @@
                     <el-form-item label="子文档编号">
                         <el-input v-model="editForm.globalDocumentSubCode"></el-input>
                     </el-form-item>
+                    <el-form-item label="标准格式下的页码" prop="pageLocation">
+                        <el-input v-model="editForm.pageLocation"></el-input>
+                    </el-form-item>
+                    <el-form-item label="关联全局二级文档主键">
+                        <el-select placeholder="请选择关联全局二级文档名称" v-model="editForm.catalogDocumentSubId" filterable
+                            clearable>
+                            <el-option v-for="(v,i) in globalDocumentsSubOption" :label="v.catalogDocumentSubName"
+                                :value="v.catalogDocumentSubId" :key="i">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
                 </el-form>
             </div>
             <span slot="footer" class="dialog-footer">
@@ -122,21 +148,21 @@
         <el-dialog :title="lookTitle" :visible.sync="lookDialogVisible" width="60%" :close-on-click-modal="false">
             <div class="filter-box">
                 <el-input placeholder="事项名称查询" v-model="itemName" clearable style="width: 200px;"
-                @keyup.native.enter="search"></el-input>
+                    @keyup.native.enter="search"></el-input>
                 <el-input placeholder="情形名称查询" v-model="subitemName" clearable style="width: 200px;"
-                @keyup.native.enter="search"></el-input>
+                    @keyup.native.enter="search"></el-input>
                 <el-button @click="shixiangList(refresh)" type='primary'>搜索</el-button>
                 <el-button style="float:right;margin-bottom:10px" @click="toggleSelection">取消选择</el-button>
             </div>
             <div class="tableWrap">
                 <el-table ref="multipleTables" class="workTable" :data="lookTableData" style="width: 100%;" border
-                    tooltip-effect="dark"  @selection-change="handleSelectionChange">>
+                    tooltip-effect="dark" @selection-change="handleSelectionChange">>
                     <el-table-column type="selection" width="70"></el-table-column>
-                    <el-table-column prop="itemName" label="事项名称" >
+                    <el-table-column prop="itemName" label="事项名称">
                     </el-table-column>
-                    <el-table-column prop="subitemName" label="情形名称" show-overflow-tooltip >
+                    <el-table-column prop="subitemName" label="情形名称" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="isRequired" label="是否必须"  show-overflow-tooltip>
+                    <el-table-column prop="isRequired" label="是否必须" show-overflow-tooltip>
                         <template slot-scope="scope">
                             {{scope.row.isRequired == Number(1)? '是':'否'}}
                         </template>
@@ -157,26 +183,19 @@
                     :total="totalCount">
                 </el-pagination>
             </div> -->
-            
+
             <span slot="footer" class="dialog-footer" v-if="lookTableData.length>0">
-                
+
                 <div style="float:left;margin-left:20px">
-                    <el-select
-                            v-model="globalDocumentSubId"
-                            placeholder="请选择子文档名称"
-                            clearable
-                            @change="globalDocumentSubNameChange"
-                        >
-                        <el-option
-                            v-for="item in approvalSubTextList"
-                            :key="item.globalDocumentSubName"
-                            :label="item.globalDocumentSubName"
-                            :value="item.globalDocumentSubId"
-                        />
-                        </el-select>
-                    <el-button style="margin-left:10px" type="primary" @click="changeText" :loading="editBtnLoading">修改关联文档</el-button>
-                   </div>
-                   <el-button @click="lookDialogVisible = false">关 闭</el-button>
+                    <el-select v-model="globalDocumentSubId" placeholder="请选择子文档名称" clearable
+                        @change="globalDocumentSubNameChange">
+                        <el-option v-for="item in approvalSubTextList" :key="item.globalDocumentSubName"
+                            :label="item.globalDocumentSubName" :value="item.globalDocumentSubId" />
+                    </el-select>
+                    <el-button style="margin-left:10px" type="primary" @click="changeText" :loading="editBtnLoading">
+                        修改关联文档</el-button>
+                </div>
+                <el-button @click="lookDialogVisible = false">关 闭</el-button>
             </span>
         </el-dialog>
     </div>
@@ -185,9 +204,9 @@
 <script>
 import { mixin } from "@/mixin/mixin"
 import {
-    addGlobalDcumentSub, delDcumentSub, getByGlobalDcumentSubId, listGlobalDcumentSub, updateGlobalDcumentSub, listGlobalDcument,listSubitemAndDocumentNewNoPage,batchEditDocumentSub
+    addGlobalDcumentSub, delDcumentSub, getByGlobalDcumentSubId, listGlobalDcumentSub, updateGlobalDcumentSub, listGlobalDcument, listSubitemAndDocumentNewNoPage, batchEditDocumentSub
 } from '@/api/basicInfo/publicDocument'
-
+import { listCatalogDocumentSub } from '@/api/basicInfo/catalogDocumentSub'
 import { mapGetters } from "vuex"
 export default {
     name: "PublicSubDocument",
@@ -215,27 +234,35 @@ export default {
             addForm: {},
             addBtnLoading: false,
             allGlobalDocuments: [],
+            globalDocumentsSubOption: [],
             // dialog look
-            lookDialogVisible:false,
-            subitemName:'', // 情形
-            itemName:'', // 事项
-            approvalSubTextList:[], // 子文档列表
-            globalDocumentSubId:'',
-            refresh:null,
-            lookTitle:null,
-            lookTableData:[],
+            lookDialogVisible: false,
+            subitemName: '', // 情形
+            itemName: '', // 事项
+            approvalSubTextList: [], // 子文档列表
+            globalDocumentSubId: '',
+            refresh: null,
+            lookTitle: null,
+            lookTableData: [],
             multipleSelection: [],
 
             // 表单校验
             rules: {
                 globalDocumentSubName: [{
-                    required: true, message:'请输入子材料名称', trigger: 'change'
+                    required: true, message: '请输入子材料名称', trigger: 'change'
                 }],
                 globalDocumentId: [{
-                    required: true, message:'请选择所属材料', trigger: 'change'
+                    required: true, message: '请选择所属材料', trigger: 'change'
                 }],
-                isMultiplePage:[{
-                    required: true, message:'请选择是否多页', trigger: 'change'
+                isMultiplePage: [{
+                    required: true, message: '请选择是否多页', trigger: 'change'
+                }],
+                pageLocation: [{
+                    required: false, message: '请填写标准格式下的页码', trigger: 'change'
+                },
+                {
+                    pattern: /^\d+(,\d+)*$/,
+                    message: "请填写正确的页码格式，如：1,2,3,4", trigger: "blur"
                 }]
             }
         }
@@ -253,11 +280,11 @@ export default {
             pageNum: 1,
             pageSize: 99999,
         });
-        if (!result.success){
+        if (!result.success) {
             this.$message.error("获取材料失败");
             return;
         }
-        this.allGlobalDocuments = result.data.records.map(v=>({label:v.globalDocumentName,value:v.globalDocumentId}));
+        this.allGlobalDocuments = result.data.records.map(v => ({ label: v.globalDocumentName, value: v.globalDocumentId }));
     },
     methods: {
         async search() {
@@ -278,23 +305,32 @@ export default {
 
             return cellValue == 1 ? "是" : "否"
         },
-        handleEdit(row) {
-            this.editForm = _.pick(row, ['globalDocumentSubName', 'isMultiplePage', 'description', 'category', 'globalDocumentSubCode', 'globalDocumentSubId', 'globalDocumentId']);
+        async handleEdit(row) {
+            this.editForm = _.cloneDeep(row);
             this.editDialogVisible = true;
+            let res = await listCatalogDocumentSub();
+            if (!res.success) return;
+            this.globalDocumentsSubOption = res.data;
         },
         async edit() {
-            this.editBtnLoading = true;
+            this.$refs.editForm.validate(async (valid) => {
+                if (valid) {
+                    this.editBtnLoading = true;
 
-            let result = await updateGlobalDcumentSub(this.editForm);
-            if (!result.success) {
-                this.$message({ type: "error", message: result.data })
-                return;
-            }
-            this.editBtnLoading = false;
-            this.editDialogVisible = false;
-            this.$message({ type: "success", message: "保存成功" })
-            this.search();
-
+                    let result = await updateGlobalDcumentSub(this.editForm);
+                    if (!result.success) {
+                        this.$message({ type: "error", message: result.data })
+                        return;
+                    }
+                    this.editBtnLoading = false;
+                    this.editDialogVisible = false;
+                    this.$message({ type: "success", message: "保存成功" })
+                    this.search();
+                } else {
+                    console.log('error submit!!');
+                    return false;
+                }
+            });
         },
 
         async handleDelete(row) {
@@ -316,20 +352,20 @@ export default {
         },
         // 查看相关事项
         async handleLook(v) {
-           this.refresh = v
-           this.lookTitle = `⼦⽂档编号：${v.globalDocumentSubCode} \xa0 \xa0 ⼦⽂档名称：${v.globalDocumentSubName}`
-           await this.shixiangList(v)
-           this.lookDialogVisible = true
+            this.refresh = v
+            this.lookTitle = `⼦⽂档编号：${v.globalDocumentSubCode} \xa0 \xa0 ⼦⽂档名称：${v.globalDocumentSubName}`
+            await this.shixiangList(v)
+            this.lookDialogVisible = true
         },
         // 事项列表
-        async shixiangList (item) {
+        async shixiangList(item) {
             let params = {
-              globalDocumentSubId:item.globalDocumentSubId,
-              itemName:this.itemName,
-              subitemName:this.subitemName
+                globalDocumentSubId: item.globalDocumentSubId,
+                itemName: this.itemName,
+                subitemName: this.subitemName
             }
-           let res = await listSubitemAndDocumentNewNoPage(params)
-           this.lookTableData = res.data 
+            let res = await listSubitemAndDocumentNewNoPage(params)
+            this.lookTableData = res.data
         },
         //  checkbox多选
         handleSelectionChange(val) {
@@ -337,48 +373,58 @@ export default {
         },
         // 取消选择
         toggleSelection() {
-           this.$refs.multipleTables.clearSelection();
+            this.$refs.multipleTables.clearSelection();
         },
         // 
-        globalDocumentSubNameChange(v){
-          console.log(v)
+        globalDocumentSubNameChange(v) {
+            console.log(v)
         },
         // 子文档列表
         async getApprovalSubText() {
             this.approvalSubTextList = []
-            let result = await listGlobalDcumentSub({projectId: this.$route.query.projectId});
+            let result = await listGlobalDcumentSub({ projectId: this.$route.query.projectId });
             if (!result.success) return;
             this.approvalSubTextList = result.data.records
         },
         // 修改关联文档
         async changeText() {
-            let ids = this.multipleSelection.map(ele=>ele.id)
+            let ids = this.multipleSelection.map(ele => ele.id)
             let params = {
-                ids:ids,
-                targetGlobalDocumentSubId:this.globalDocumentSubId
+                ids: ids,
+                targetGlobalDocumentSubId: this.globalDocumentSubId
             }
             const result = await batchEditDocumentSub(params)
-            if(result.success) {
+            if (result.success) {
                 this.$message.success('修改关联文档成功');
                 this.globalDocumentSubId = ''
                 await this.shixiangList(this.refresh)
             }
-           console.log(result)
+            console.log(result)
         },
-        handleAdd() {
+        async handleAdd() {
             this.addDialogVisible = true;
+            let res = await listCatalogDocumentSub();
+            if (!res.success) return;
+            this.globalDocumentsSubOption = res.data;
         },
         async add() {
-            this.addBtnLoading = true;
-            this.addForm.projectId = this.$route.query.projectId;
-            let result = await addGlobalDcumentSub(this.addForm);
-            this.addBtnLoading = false;
+            this.$refs.addForm.validate(async (valid) => {
+                if (valid) {
+                    this.addBtnLoading = true;
+                    this.addForm.projectId = this.$route.query.projectId;
+                    let result = await addGlobalDcumentSub(this.addForm);
+                    this.addBtnLoading = false;
 
-            if (!result.success) return;
-            this.$message({ type: "success", message: "添加成功" })
+                    if (!result.success) return;
+                    this.$message({ type: "success", message: "添加成功" })
 
-            this.addDialogVisible = false;
-            this.search();
+                    this.addDialogVisible = false;
+                    this.search();
+                } else {
+                    console.log('error submit!!');
+                    return false;
+                }
+            });
         }
     },
 
@@ -392,13 +438,13 @@ export default {
     header {
         display: flex;
         align-items: center;
-        .title{
+        .title {
             font-size: 20px;
             font-weight: 700;
             height: 50px;
             line-height: 50px;
             letter-spacing: 1px;
-            margin-right:20px;
+            margin-right: 20px;
         }
     }
     & > * {
@@ -422,18 +468,18 @@ export default {
     }
 }
 .tableWrap {
-        // margin-top: 16px;
-        margin-left: 20px;
-        width: calc(100% - 20px);
-        overflow: hidden;
-        .workTable {
-            width: 100%;
-        }
-        .tips{
-            text-align: left;
-            font-size: 12px;
-            color: grey;
-            margin-top: 8px;
-        }
+    // margin-top: 16px;
+    margin-left: 20px;
+    width: calc(100% - 20px);
+    overflow: hidden;
+    .workTable {
+        width: 100%;
     }
+    .tips {
+        text-align: left;
+        font-size: 12px;
+        color: grey;
+        margin-top: 8px;
+    }
+}
 </style>
