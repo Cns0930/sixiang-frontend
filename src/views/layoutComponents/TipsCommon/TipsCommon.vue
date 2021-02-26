@@ -184,11 +184,10 @@ export default {
             //   width: 80%;
               
           }
-          .tipContent{
-            //   position: absolute;
-              margin-top: 20px;
-            //   left: 10%;
-            //   bottom: 0;
+          .tip-content{
+              margin-bottom: 20px;
+              width: 100%;
+              text-align: center;
           }
       }
   }
