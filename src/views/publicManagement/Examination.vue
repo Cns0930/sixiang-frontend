@@ -26,8 +26,8 @@
                 </a>
             </div>
         </el-select>
-        <el-input placeholder="按字段名查询" v-model="checkpointName" clearable style="width: 200px;"
-                @keyup.native.enter="search"></el-input>
+        <!-- <el-input placeholder="按字段名查询" v-model="checkpointName" clearable style="width: 200px;"
+                @keyup.native.enter="search"></el-input> -->
         <el-input placeholder="按字段别名查询" v-model="aliasName" clearable style="width: 200px;"
         @keyup.native.enter="search"></el-input>
             <el-button @click="search" type="primary">搜索</el-button>
@@ -48,7 +48,9 @@
                 tooltip-effect="dark" :default-sort="{prop: 'createTime', order: 'descending'}" :row-style="{height:'40px'}" :header-row-style="{height:'50px'}">
 
                 <el-table-column prop="globalDocumentSubName" label="所属子文档" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="checkpointName" label="字段名" show-overflow-tooltip></el-table-column>
+                <!-- <el-table-column prop="checkpointName" label="字段名" show-overflow-tooltip></el-table-column> -->
+                <el-table-column prop="catalogPointId" label="全局信息点主键" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="fieldMeaning" label="定义字段名称" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="aliasName" label="字段别名" show-overflow-tooltip></el-table-column>
                
                 <!-- <el-table-column prop="isMultiplePage" label="是否多页" width="100">
@@ -90,8 +92,8 @@
         <!-- 新建窗口 -->
         <el-dialog title="新增提取点" :visible.sync="addDialogVisible" width="50%" :close-on-click-modal="false">
             <div class="form-content">
-                <el-form  label-width="120px" >
-                    <el-form-item label="所属子文档">
+                <el-form :model="addForm" label-width="120px" ref="addForm" :rules="rules">
+                    <el-form-item label="所属子文档" prop="globalDocumentSubId">
                         <el-select
                                 v-model="addForm.globalDocumentSubId"
                                 placeholder="请选择子文档名称"
@@ -114,10 +116,19 @@
                             </div>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="字段名">
+                    <!-- <el-form-item label="字段名">
                         <el-input style="width:79%" v-model="addForm.checkpointName" type='textarea'></el-input>
+                    </el-form-item> -->
+                    <el-form-item label="全局信息点主键">
+                        <el-select v-model="addForm.catalogPointId" clearable filterable placeholder="请选择全局信息点名称">
+                            <el-option v-for="(v,i) in catalogPointOption" :key="i" :label="v.catalogPointName"
+                            :value="v.catalogPointId"> </el-option>
+                        </el-select>
                     </el-form-item>
-                    <el-form-item label="字段别名">
+                    <el-form-item label="定义字段名称" prop="fieldMeaning">
+                        <el-input v-model="addForm.fieldMeaning"></el-input>
+                    </el-form-item>
+                    <el-form-item label="字段别名" >
                         <el-input style="width:79%" v-model="addForm.aliasName" type='textarea' ></el-input>
                     </el-form-item>
                     <!-- <el-form-item label="是否多页">
@@ -155,8 +166,8 @@
         <!-- 编辑窗口 -->
         <el-dialog title="编辑提取点" :visible.sync="editDialogVisible" width="50%" :close-on-click-modal="false">
             <div class="form-content">
-                <el-form  label-width="120px" >
-                    <el-form-item label="所属子文档">
+                <el-form :model="editForm" label-width="120px" ref="editForm" :rules="rules">
+                    <el-form-item label="所属子文档" prop="globalDocumentSubId">
                         <el-select
                                 v-model="editForm.globalDocumentSubId"
                                 placeholder="请选择子文档名称"
@@ -179,8 +190,17 @@
                             </div>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="字段名">
+                    <!-- <el-form-item label="字段名">
                         <el-input style="width:79%" v-model="editForm.checkpointName" type='textarea'></el-input>
+                    </el-form-item> -->
+                    <el-form-item label="全局信息点主键">
+                        <el-select v-model="editForm.catalogPointId" clearable filterable placeholder="请选择全局信息点名称">
+                            <el-option v-for="(v,i) in catalogPointOption" :key="i" :label="v.catalogPointName"
+                            :value="v.catalogPointId"> </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="定义字段名称" prop="fieldMeaning">
+                        <el-input v-model="editForm.fieldMeaning"></el-input>
                     </el-form-item>
                     <el-form-item label="字段别名">
                         <el-input style="width:79%" v-model="editForm.aliasName" type='textarea' ></el-input>
@@ -224,6 +244,7 @@ import axios from 'axios'
 import { mixin } from "@/mixin/mixin"
 import {listGlobalDcumentSub} from '@/api/basicInfo/publicDocument'
 import { listGlobalCheckpoint, addGlobalCheckpoint, getByGlobalCheckpointId, updateGlobalCheckpoint, deleteGlobalCheckpoint } from '@/api/basicInfo/examination'
+import { listCatalogPoint } from '@/api/basicInfo/catalogPoint'
 import { mapGetters } from "vuex"
 export default {
     name: "Examination",
@@ -250,12 +271,21 @@ export default {
             editDialogVisible:false,
             editForm:{},
             editBtnLoading:false,
+            rules: {
+                globalDocumentSubId: [{
+                    required: true, message: '请选择子文档', trigger: 'change'
+                }],
+                fieldMeaning: [{
+                    required: true, message: '请填写定义字段名称', trigger: 'blur'
+                }]
+            },
             // dialog add
             addDialogVisible:false,
             sortList:['WHAT','WHEN','WHO','WHERE','SIGN'],
             addForm:{},
             addBtnLoading:false,
             approvalSubTextList:[],
+            catalogPointOption: [],
             currentPageSelect: 1,
             pageSize: 10,
             totalAim:0,
@@ -276,7 +306,7 @@ export default {
         async search() {
             let params = {
                 globalDocumentSubName:this.globalDocumentSubName,
-                checkpointName:this.checkpointName,
+                // checkpointName:this.checkpointName,
                 projectId: this.$route.query.projectId,
                 aliasName: this.aliasName,
                 pageNum: this.currentPage,
@@ -337,6 +367,9 @@ export default {
             console.log(res)
             this.editForm = res.data;
             this.editDialogVisible=true;
+            let result = await listCatalogPoint();
+            if(!result.success) return;
+            this.catalogPointOption = result.data.records;
         },
         async handleDelete(row){
             try{
@@ -355,12 +388,15 @@ export default {
           
         
         },
-        handleAdd(){
+        async handleAdd(){
             this.addDialogVisible=true;
+            let result = await listCatalogPoint();
+            if(!result.success) return;
+            this.catalogPointOption = result.data.records;
         },
         async add(){
             this.addBtnLoading=true;
-            this.addForm.projectId = this.$route.query.projectId;
+            this.addForm.projectId = Number(this.$route.query.projectId);
             let result = await addGlobalCheckpoint(this.addForm);
             this.addBtnLoading=false;
             
@@ -374,6 +410,7 @@ export default {
             this.loadings = true
             let fd = new FormData();
             fd.append("file", file);
+            fd.append("projectId", this.$route.query.projectId);
             axios.post(
                 this.url,
                 fd
