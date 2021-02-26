@@ -325,7 +325,7 @@ export default {
             let res = {
                 "code": 200,
                 "message": "SUCCESS",
-                "data": ["http://172.16.2.195/sjtu_image/202005/19/88c7caba1750481b9491082cfcfc84f7.jpg", "http://172.16.2.195/sjtu_image/202005/19/70c38b5102a64da5b3f67ce069e2deb3.jpg"]
+                "data": ["http://10.0.101.144/sjtu_image/202010/15/33e401b40c94404e956afbeb9ecf5f98.gif", "http://10.0.101.144/sjtu_image/202010/15/3437060b50c34d7781120dac96a73c50.gif"]
             }
             const { code, message, data } = res;
             if (code === 200 && data) {
