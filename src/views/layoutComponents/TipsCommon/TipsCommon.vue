@@ -1,10 +1,10 @@
 <template>
     <div class="box">
         <!-- <div class="headers">
-            <h4 style="margin-right:20px">通知</h4>
+            <h4 style="margin-right:20px">通知</h4> -->
             <el-radio :label="rv" v-model="radioValue" v-for="(rv,ri) in options" :key="ri"
                 @input="handleRadioInput">{{rv}}</el-radio>
-        </div> -->
+        <!-- </div> -->
         <!-- <div class="content"> -->
             <!-- <el-button type="primary" v-show="value" @click="ifShowDialog = !ifShowDialog">是否显示</el-button> -->
             <el-dialog :show-close="false" center class="message-dialog" title="提示信息"  :visible.sync="ifShowDialog" :close-on-click-modal="false" width="60%">
@@ -13,7 +13,7 @@
                     <el-checkbox class="tip-content" v-model="attribute.value" @change="handleExtraChange">{{attribute.label}}</el-checkbox>
                 </div>
                 <div slot="footer" class="dialog-footer" style="display: flex;justify-content: space-around">
-                    <el-button type="primary" class="dialog-primary-btn" @click="ifShowDialog = false">取消</el-button>
+                    <el-button type="primary" class="dialog-primary-btn" @click="ifShowDialog = false,radioValue = '否'">取消</el-button>
                     <el-button type="warning" class="dialog-warn-btn" @click="commitConfirm" :disabled='!attribute.value'>确 定</el-button>
                 </div>
             </el-dialog>
@@ -29,9 +29,9 @@ export default {
     props: ["value"],
     data() {
         return {
-            // options: ["是", "否"],
-            // radioValue: "",
-            ifShowDialog:true,
+            options: ["是", "否"],
+            radioValue: "否",
+            ifShowDialog:false,
             attribute:{
                value:false,
                label:'已阅知'
@@ -135,14 +135,14 @@ export default {
         // }
     },
     methods: {
-        // handleRadioInput(v) {
-        //     if(v == '是') {
-        //        this.showButton = true
-        //     }else{
-        //         this.showButton = false
-        //     }
+        handleRadioInput(v) {
+            if(v == '是') {
+               this.ifShowDialog = true
+            }else{
+                this.ifShowDialog = false
+            }
             
-        // },
+        },
         handleExtraChange(v) {
            console.log(v)
         },
@@ -151,7 +151,7 @@ export default {
                this.$message.warning('请先阅读')
             } else{
                this.ifShowDialog = false
-               this.$emit('change', false)
+            //    this.$emit('change', false)
             }
             
         }

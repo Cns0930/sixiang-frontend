@@ -5,13 +5,12 @@ class TipsCommonDef extends CommonComponents{
         super({type:"tipscommon"})
         this.component = rendererBuilder("text","Tipscommon")
         this.value = new Renderer("text",false)
-        // this.value = new Renderer("ElInput","")
-        
-        // this.$ifRead = new Renderer('ElSingleCheckboxC', true,{options:[true]},"是否已阅读")
+        this.msg = new Renderer("textarea","")
 
     }
     getAttributes(){
         return {
+            msg:this.$msg.value
             // ifRead:this.$ifRead.value,
         }
     }
