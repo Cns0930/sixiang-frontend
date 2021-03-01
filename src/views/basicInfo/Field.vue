@@ -67,7 +67,7 @@
             <el-table-column prop="fieldComponentType" label="字段格式" show-overflow-tooltip></el-table-column>
             <el-table-column prop="optionsValue" label="枚举值" show-overflow-tooltip></el-table-column>
             <el-table-column prop="frontDescriptionInfo" label="前端字段填写逻辑" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="globalCheckpointId" label="关联公共信息点主键" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="checkpointFieldMeaning" label="关联公共信息点" show-overflow-tooltip></el-table-column>
             <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" show-overflow-tooltip>
             </el-table-column>
             <el-table-column prop="updateTime" label="更新时间" :formatter="timeFormatter" show-overflow-tooltip>
@@ -185,8 +185,8 @@
                 <el-form-item label="前端字段填写逻辑">
                     <el-input type="textarea" :rows="2" v-model="addForm.frontDescriptionInfo"></el-input>
                 </el-form-item>
-                <el-form-item label="关联公共信息点主键">
-                    <el-select v-model="addForm.globalCheckpointId" clearable filterable placeholder="公共信息名称">
+                <el-form-item label="关联公共信息点">
+                    <el-select v-model="addForm.globalCheckpointId" clearable filterable placeholder="公共信息点名称">
                         <el-option v-for="(v,i) in globalCheckpointOptions" :key="i" :label="v.aliasName"
                             :value="v.checkpointId"> </el-option>
                     </el-select>
@@ -298,8 +298,8 @@
                 <el-form-item label="前端字段填写逻辑">
                     <el-input type="textarea" :rows="2" v-model="editForm.frontDescriptionInfo"></el-input>
                 </el-form-item>
-                <el-form-item label="关联公共信息点主键">
-                    <el-select v-model="editForm.globalCheckpointId" clearable filterable placeholder="公共信息名称">
+                <el-form-item label="关联公共信息点">
+                    <el-select v-model="editForm.globalCheckpointId" clearable filterable placeholder="公共信息点名称">
                         <el-option v-for="(v,i) in globalCheckpointOptions" :key="i" :label="v.aliasName"
                             :value="v.checkpointId"> </el-option>
                     </el-select>

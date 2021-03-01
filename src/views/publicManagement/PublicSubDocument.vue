@@ -27,7 +27,7 @@
                 <el-table-column prop="category" label="归类" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="pageLocation" label="标准格式下的页码" show-overflow-tooltip width="100">
                 </el-table-column>
-                <el-table-column prop="catalogDocumentSubId" label="关联全局二级文档主键" show-overflow-tooltip width="100">
+                <el-table-column prop="catalogDocumentSubName" label="关联全局二级文档" show-overflow-tooltip width="100">
                 </el-table-column>
                 <el-table-column prop="updateTime" label="更新时间" :formatter="timeFormatter" show-overflow-tooltip>
                 </el-table-column>
@@ -87,7 +87,7 @@
                     <el-form-item label="标准格式下的页码" prop="pageLocation">
                         <el-input v-model="addForm.pageLocation"></el-input>
                     </el-form-item>
-                    <el-form-item label="关联全局二级文档主键">
+                    <el-form-item label="关联全局二级文档">
                         <el-select placeholder="请选择关联全局二级文档名称" v-model="addForm.catalogDocumentSubId" filterable
                             clearable>
                             <el-option v-for="(v,i) in globalDocumentsSubOption" :label="v.catalogDocumentSubName"
@@ -129,7 +129,7 @@
                     <el-form-item label="标准格式下的页码" prop="pageLocation">
                         <el-input v-model="editForm.pageLocation"></el-input>
                     </el-form-item>
-                    <el-form-item label="关联全局二级文档主键">
+                    <el-form-item label="关联全局二级文档">
                         <el-select placeholder="请选择关联全局二级文档名称" v-model="editForm.catalogDocumentSubId" filterable
                             clearable>
                             <el-option v-for="(v,i) in globalDocumentsSubOption" :label="v.catalogDocumentSubName"

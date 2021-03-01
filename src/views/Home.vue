@@ -106,7 +106,7 @@ export default {
         },
         topMenuList() {
             let topMenuList = generaterTopMenuList(this.roles);
-            if (this.$route.path === '/project'){
+            if (this.$route.path === '/project' || this.$route.path === '/document'){
                 topMenuList = topMenuList.filter(item => 
                     item.label !== '事项管理' && item.label !== '文档管理' && item.label !== '说明'
                 )
@@ -142,7 +142,7 @@ export default {
             });
         },
         isShowProject() {
-            if (this.$route.path === '/user' || this.$route.path === '/project') {
+            if (this.$route.path === '/user' || this.$route.path === '/project' || this.$route.path === '/document') {
                 return false;
             } else {
                 return true;
@@ -152,7 +152,7 @@ export default {
             if (this.$route.path === '/user' || this.$route.path === '/basic' || this.$route.path === '/project'
             || this.$route.path === '/publicdocument' || this.$route.path === '/publicsubdocument'
             || this.$route.path === '/examination' || this.$route.path === '/readme'
-            || this.$route.path === '/public' || this.$route.path === '/allEdit') {
+            || this.$route.path === '/public' || this.$route.path === '/allEdit' || this.$route.path === '/document') {
                 return false;
             } else {
                 return true;
