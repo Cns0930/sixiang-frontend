@@ -90,16 +90,17 @@
                         width="100"
                         show-overflow-tooltip
                     ></el-table-column> -->
-                    <el-table-column prop="docxTemplateName" label="超级帮办word模板命名" width="160"></el-table-column>
-                    <el-table-column prop="materialCode" label="材料编码" width="100" show-overflow-tooltip>
-                    </el-table-column>
-                    <el-table-column prop="materialName" label="材料名称" width="160"></el-table-column>
-                    <el-table-column prop="materialStatus" label="材料状态" width="80"></el-table-column>
+                    <el-table-column prop="docxTemplateName" label="超级帮办word模板命名"></el-table-column>
+                    <el-table-column prop="templateName" label="模板名称(自取)" width="120"></el-table-column>
+                    <!-- <el-table-column prop="materialCode" label="材料编码" width="100" show-overflow-tooltip>
+                    </el-table-column> -->
+                    <el-table-column prop="materialName" label="材料展示名称" width="160"></el-table-column>
+                    <!-- <el-table-column prop="materialStatus" label="材料状态" width="80"></el-table-column> -->
                     <el-table-column prop="documentSeq" label="文档编号" width="80"></el-table-column>
-                    <el-table-column prop="note" label="备注" width="100"></el-table-column>
-                    <el-table-column prop="proDocId" label="proDocId" width="100"></el-table-column>
+                    <el-table-column prop="note" label="备注" width="80" show-overflow-tooltip></el-table-column>
+                    <!-- <el-table-column prop="proDocId" label="proDocId" width="100"></el-table-column> -->
                     <el-table-column prop="produceSource" label="产生来源" width="100"></el-table-column>
-                    <el-table-column prop="descriptionInfo" label="其他说明信息（调研填写）" width="180"></el-table-column>
+                    <!-- <el-table-column prop="descriptionInfo" label="其他说明信息（调研填写）" width="180" show-overflow-tooltip></el-table-column> -->
                 </el-table>
             </div>
 
@@ -119,6 +120,7 @@ import {
     getSingleTemplate,
     GetAddTable,
     batchSave,
+    listPreTemplatesByApprovalItemId
 } from "@/api/template/index";
 import { addSysTransferLog, getUptoDateSysTransferLog, } from "@/api/item/index";
 import { getSaveMaxTimeTemplateBatch } from "@/api/template/index";
@@ -196,7 +198,7 @@ export default {
 
         },
         async openAddDialog() {
-            const res = await GetAddTable({
+            const res = await listPreTemplatesByApprovalItemId({
                 approvalItemId: this.$store.state.home.item.approvalItemId,
             });
             if (!res.success) {
@@ -204,13 +206,13 @@ export default {
                 return;
             }
             this.tableData = res.data;
-            this.$nextTick(() => {
-                this.tableData.forEach((row) => {
-                    if (this.hasSelectList.indexOf(row.materialId) >= 0) {
-                        this.$refs.multipleTable.toggleRowSelection(row, true);
-                    }
-                });
-            });
+            // this.$nextTick(() => {
+            //     this.tableData.forEach((row) => {
+            //         if (this.hasSelectList.indexOf(row.materialId) >= 0) {
+            //             this.$refs.multipleTable.toggleRowSelection(row, true);
+            //         }
+            //     });
+            // });
             this.templateCreateVisible = true;
         },
         handleSelectionChange(val) {

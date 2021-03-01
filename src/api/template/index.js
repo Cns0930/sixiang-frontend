@@ -30,3 +30,6 @@ export const batchSave = params => axios.post('/superform/template/batchSave', p
 
 // 查询最新保存材料时间
 export const getSaveMaxTimeTemplateBatch = params => axios.get('/superform/template/getSaveMaxTime', {params}).then(res => res.data);
+
+// 获取指定事项下的所有预定义模板
+export const listPreTemplatesByApprovalItemId = params => axios.get('/ss/material/listPreTemplatesByApprovalItemId', {params}).then(res => res.data);
