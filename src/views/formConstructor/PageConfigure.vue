@@ -373,7 +373,12 @@ export default {
         },
         tag_label() {
             return (fieldNo) => {
-                return this.fields.find(field => field.fieldNo === fieldNo).label;
+                if(this.fields.find(field => field.fieldNo === fieldNo)) {
+                    return this.fields.find(field => field.fieldNo === fieldNo).label;
+                } else {
+                    return '未找到自渎，请删除标签';
+                }
+                
             }
         }
 
