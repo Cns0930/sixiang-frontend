@@ -69,6 +69,17 @@ const topMenuList=[
         order: 5
     },
     {
+        label: "全局文档",
+        authKey: ["admin","developer","researcher","test"],
+        children:[
+            {
+                path: "/document",
+                label: "全局二级文档管理",
+            },
+        ],
+        order: 6
+    },
+    {
         label: "文档管理",
         authKey: ["admin","developer","researcher","test"],
         children:[

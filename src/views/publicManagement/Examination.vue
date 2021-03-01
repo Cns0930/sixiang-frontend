@@ -49,7 +49,7 @@
 
                 <el-table-column prop="globalDocumentSubName" label="所属子文档" show-overflow-tooltip></el-table-column>
                 <!-- <el-table-column prop="checkpointName" label="字段名" show-overflow-tooltip></el-table-column> -->
-                <el-table-column prop="catalogPointId" label="全局信息点主键" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="catalogPointName" label="全局信息点" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="fieldMeaning" label="定义字段名称" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="aliasName" label="字段别名" show-overflow-tooltip></el-table-column>
                
@@ -119,7 +119,7 @@
                     <!-- <el-form-item label="字段名">
                         <el-input style="width:79%" v-model="addForm.checkpointName" type='textarea'></el-input>
                     </el-form-item> -->
-                    <el-form-item label="全局信息点主键">
+                    <el-form-item label="全局信息点">
                         <el-select v-model="addForm.catalogPointId" clearable filterable placeholder="请选择全局信息点名称">
                             <el-option v-for="(v,i) in catalogPointOption" :key="i" :label="v.catalogPointName"
                             :value="v.catalogPointId"> </el-option>
@@ -193,7 +193,7 @@
                     <!-- <el-form-item label="字段名">
                         <el-input style="width:79%" v-model="editForm.checkpointName" type='textarea'></el-input>
                     </el-form-item> -->
-                    <el-form-item label="全局信息点主键">
+                    <el-form-item label="全局信息点">
                         <el-select v-model="editForm.catalogPointId" clearable filterable placeholder="请选择全局信息点名称">
                             <el-option v-for="(v,i) in catalogPointOption" :key="i" :label="v.catalogPointName"
                             :value="v.catalogPointId"> </el-option>
