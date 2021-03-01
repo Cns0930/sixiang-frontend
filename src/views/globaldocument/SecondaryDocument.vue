@@ -21,7 +21,7 @@
                     tooltip-effect="dark">
                     <el-table-column label="二级文档名称" show-overflow-tooltip>
                         <template slot-scope="scope">
-                            <el-button @click="handleClickItemDefault(scope.row)" type="text" style="color: orange;">
+                            <el-button @click="handleShowPoint(scope.$index, scope.row)" type="text" style="color: orange;">
                                 {{scope.row.catalogDocumentSubName}}
                             </el-button>
                         </template>
