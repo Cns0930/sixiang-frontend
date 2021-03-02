@@ -715,6 +715,7 @@ export default {
             this.loadings = true
             let fd = new FormData();
             fd.append("file", file);
+            fd.append("approvalItemId", this.itemId);
             axios.post(
                 this.url,
                 fd

@@ -1,7 +1,7 @@
 <template>
     <div class="public-document">
         <header>
-            <span class="title">提取点管理</span>
+            <span class="title">信息点管理</span>
             <el-button icon="el-icon-plus" @click="handleAdd">新增</el-button>
         </header>
         <div class="filter-box">
