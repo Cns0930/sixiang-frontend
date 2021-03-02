@@ -414,14 +414,17 @@ export default {
             // },
             type: "material",
             materialT: {
+                materialName: '',
                 documentSeq: '',
                 docxTemplateName: '',
             },
             materialInit: {
+                materialName: '',
                 documentSeq: '',
                 docxTemplateName: '',
             },
             materialTEdit: {
+                materialName: '',
                 documentSeq: '',
                 docxTemplateName: '',
             },
