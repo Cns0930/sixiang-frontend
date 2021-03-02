@@ -9,8 +9,59 @@
                     <el-button type="primary" @click="materialVisible(materialInit)">新建材料</el-button>
                     <!-- <el-button type="primary">导出</el-button> -->
                     <el-button type="primary" @click="handleImport()">导入材料</el-button>
+                    <el-button @click="handleClickWordDialog" type="primary" style="margin-bottom:10px">上传模板压缩包</el-button>
+        
                 </div>
             </div>
+             <el-dialog title="上传word压缩包" :visible.sync="addWordDialogVisible" width="50%" :close-on-click-modal="false">
+                 历史上传记录
+            <el-table :data="tableDataWord" border>
+            <el-table-column prop="fileVersion" label="版本" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="filePath" label="模板文件Name" :formatter="fileNameFormatter" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="operateUser" label="创建者"></el-table-column>
+            <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter"></el-table-column>
+            <el-table-column prop="notes" label="备注"></el-table-column>
+            <el-table-column label="操作">
+                <template slot-scope="scope">
+                    <el-button-group>
+                        <el-button @click="handleDownload(scope.row)" type="primary" :disabled="scope.row.latest === false">下载</el-button>
+                    </el-button-group>
+                </template>
+            </el-table-column>
+        </el-table>
+            <el-form label-width="80px" :model="addFormWord">
+                
+                <el-form-item label="上传模板">
+                    <el-upload
+                        class="upload-demo" 
+                        ref="upload" 
+                        :action="url" 
+                        :limit="1"
+                        accept=".zip, .rar"
+                        :with-credentials="true"
+                        :on-success="upFile"
+                        :data="this.addFormWord"
+                        :on-remove="handleRemove" 
+                        :on-exceed="handleExceed"
+                        :auto-upload="false"
+                        :before-upload="customUpload"
+                    >
+                        <el-button type="primary">添加</el-button>
+                        <div slot="tip" class="el-upload__tip">只能上传压缩包文件</div>
+                    </el-upload>
+                </el-form-item>
+                <el-form-item label="备注">
+                    <el-input v-model="addFormWord.notes"></el-input>
+                </el-form-item>
+            </el-form>  
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="addWordDialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="upload()">确 定</el-button>
+            </span>   
+
+            
+        </el-dialog>
+
             <div class="tableWrap">
                 <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%;" border
                     :row-style="{height:'60px'}" :header-row-style="{height:'50px'}" tooltip-effect="dark"
@@ -40,8 +91,8 @@
                     ></el-table-column>
                     <el-table-column prop="materialId" label="事项(小项)办事材料编号" width="100" show-overflow-tooltip></el-table-column>-->
                     <!-- <el-table-column prop="materialCode" label="材料编码" width="100" show-overflow-tooltip></el-table-column> -->
-                    <el-table-column prop="materialName" label="材料名称" show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="templateName" label="模板名称(自取)" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="materialName" label="材料展示名称" width="200" show-overflow-tooltip></el-table-column>
+                    <!-- <el-table-column prop="templateName" label="模板名称(自取)" show-overflow-tooltip></el-table-column> -->
                     <!-- <el-table-column prop="materialStatus" label="材料状态" width="80"></el-table-column>
                     <el-table-column prop="documentSeq" label="文档编号" width="80"></el-table-column>
                     <el-table-column
@@ -50,8 +101,8 @@
                         width="100"
                         show-overflow-tooltip
                     ></el-table-column> -->
-                    <el-table-column prop="docxTemplateName" label="超级帮办word模板命名" show-overflow-tooltip>
-                    </el-table-column>
+                    <!-- <el-table-column prop="docxTemplateName" label="超级帮办word模板命名" show-overflow-tooltip>
+                    </el-table-column> -->
                     <el-table-column prop="documentSeq" label="文档序号" width="50px">
                     </el-table-column>
                     <el-table-column prop="isNavigation" label="是否显示在左侧导航" width="90px"
@@ -77,8 +128,9 @@
                         show-overflow-tooltip></el-table-column>
                     <el-table-column label="操作" fixed="right" width="110px">
                         <template slot-scope="scope">
-                            <el-button size="mini" type="primary" @click="goOnlineDocumentEditor(scope.row)">编辑word模板
-                            </el-button>
+                            <!-- <el-button size="mini" type="primary" @click="goOnlineDocumentEditor(scope.row)">编辑word模板
+                            </el-button> -->
+                            <el-button size="mini" @click="editTemplateVisible(scope.row)">查看模板</el-button>
                             <el-button size="mini" @click="EditmaterialVisible(scope.row)">编辑</el-button>
                             <el-button size="mini" type="danger" @click="handleDeleteMaterial(scope.row)">删除</el-button>
                         </template>
@@ -110,7 +162,7 @@
         <el-dialog title="新建材料信息" :visible.sync="materialWriteVisible" width="40%" :close-on-click-modal="false">
             <el-form :model="materialT" label-width="30%" class="demo-ruleForm">
                 <div>
-                    <el-form-item label="材料名称">
+                    <el-form-item label="关联一级材料">
                         <!-- <el-input v-model="materialT.materialName"></el-input> -->
                         <el-select  v-model="materialT.globalDocumentId" placeholder="请选择关联的公共一级材料"
                             clearable filterable remote reserve-keyword :remote-method="remoteMethodBang" :loading="loadingBang"
@@ -127,14 +179,17 @@
                             </div>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="模板名称(自取)">
-                        <el-input v-model="materialT.templateName"></el-input>
+                    <el-form-item label="材料展示名称">
+                        <el-input v-model="materialT.materialName"></el-input>
+                    </el-form-item>
+                    <el-form-item label="文档序号">
+                        <el-input v-model="materialT.documentSeq"></el-input>
                     </el-form-item>
                     <el-form-item label="超级帮办word模板名称">
                         <el-input v-model="materialT.docxTemplateName"></el-input>
                     </el-form-item>
-                    <el-form-item label="文档序号">
-                        <el-input v-model="materialT.documentSeq"></el-input>
+                    <el-form-item label="模板名称(自取)">
+                        <el-input v-model="materialT.templateName"></el-input>
                     </el-form-item>
                     <el-form-item label="是否显示在左侧导航">
                         <el-select v-model="materialT.isNavigation">
@@ -202,12 +257,12 @@
                     <el-form-item label="材料名称">
                         <el-input v-model="materialTEdit.materialName"></el-input>
                     </el-form-item>
-                    <el-form-item label="模板名称(自取)">
+                    <!-- <el-form-item label="模板名称(自取)">
                         <el-input v-model="materialTEdit.templateName"></el-input>
-                    </el-form-item>
-                    <el-form-item label="超级帮办word模板名称">
+                    </el-form-item> -->
+                    <!-- <el-form-item label="超级帮办word模板名称">
                         <el-input v-model="materialTEdit.docxTemplateName"></el-input>
-                    </el-form-item>
+                    </el-form-item> -->
                     <el-form-item label="文档序号">
                         <el-input v-model="materialTEdit.documentSeq"></el-input>
                     </el-form-item>
@@ -342,6 +397,8 @@ import { mapState, mapMutations } from 'vuex';
 import { listMaterial, addMaterial, delMaterial, getTemplateByMaterialId, updateMaterial, getByMaterialId, copySelectedMaterial, getAllByApprovalItemId } from "../../api/basicInfo/material";
 import { listApprovalItem, listProjectAll } from "@/api/basicInfo/approval";
 import { listGlobalDcument } from '@/api/basicInfo/publicDocument';
+import { listAccessory } from "@/api/basicInfo/accessory"
+import axios from "axios";
 export default {
     name: "Material",
     mixins: [basicMixin, mixin],
@@ -400,6 +457,16 @@ export default {
 
             // 产生来源编辑
             produceSource: [], 
+
+            addWordDialogVisible: false,
+            addFormWord: {
+                approvalItemId: null,
+                notes: "",
+                type: null,
+                operateUser: null,
+            },
+            url: process.env.VUE_APP_BASE_IP + "/superform/additional/uploadWord",
+            tableDataWord: [],
         };
     },
     computed: {
@@ -769,7 +836,85 @@ export default {
             console.log(row);
             let routeUrl = this.$router.resolve({ name: "OnlineDocumentEditor", query: { 'materialId': row.materialId, 'itemId': this.itemId } });
             window.open(routeUrl.href, '_blank');
-        }
+        },
+        // 上传文件
+        customUpload(file) {
+            let fd = new FormData();
+            fd.append("file", file);
+            fd.append("approvalItemId", this.itemId)
+            fd.append("notes", this.addFormWord.notes)
+            fd.append("type", 'word')
+            fd.append("operateUser", localStorage.getItem("username"))
+            console.log('fd');
+            console.log(fd);
+            axios.post(
+                this.url,
+                fd
+            )
+                .then(
+                    (res) => {
+                        console.log('res');
+                        console.log(res);
+                        if (res.data.data === 'SUCCESS') {
+                            this.$message.success('上传成功');
+                            this.$refs.upload.clearFiles();
+                            this.addWordDialogVisible = false;
+                        } else {
+                            this.$message.warning('上传失败,请重新上传');
+                        }
+                    },
+                );
+            return false;
+        },
+        upload() {
+            this.addFormWord.type = 'word';
+            this.addFormWord.operateUser = localStorage.getItem("username");
+            this.addFormWord.approvalItemId = this.itemId;
+            console.log('addFormWord');
+            console.log(this.addFormWord);
+            this.$refs.upload.submit();
+        },
+        // 成功上传文件
+        upFile(res, file) {
+            if (res.status == 200) {
+                this.$message.success(res);
+            }
+        },
+        // 上传文件超出个数
+        handleExceed(files, fileList) {
+            this.$message.warning(`只能选择上传 1 个文件`);
+        },
+        //  移除文件
+        handleRemove(file, fileList) {
+        },
+        async handleClickWordDialog(){
+            this.addWordDialogVisible = true;
+            let result = await listAccessory({ approvalItemId: this.itemId, type: 'word' });
+            if (!result.success) return;
+            this.tableDataWord = result.data;
+        },
+         fileNameFormatter(row, column, cellValue, index) {
+            let location = cellValue.lastIndexOf("\/");
+            return cellValue.substring(location + 1);
+        },
+        async handleDownload(row) {
+            await axios({ method: 'get', url: "/superform/additional/downloadWord", params: { approvalItemId: row.approvalItemId, type: row.type }, responseType: 'arraybuffer' }).then((_res) => {
+                let blob = new Blob([_res.data], { type: 'application/zip' });
+                const a = document.createElement('a')
+                // 生成文件路径
+                let href = window.URL.createObjectURL(blob)
+                a.href = href
+                // let _fileName = _res.headers['Content-disposition'].split(';')[1].split('=')[1].split('.')[0]
+                let _fileName = _res.headers['content-disposition'].split(';')[1].split('=')[1]
+                // 文件名中有中文 则对文件名进行转码
+                a.download = decodeURIComponent(_fileName)
+                // 利用a标签做下载
+                document.body.appendChild(a)
+                a.click()
+                document.body.removeChild(a)
+                window.URL.revokeObjectURL(href)
+            })
+        },
     },
 };
 </script>

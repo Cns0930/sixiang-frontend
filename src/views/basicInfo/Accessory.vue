@@ -1,9 +1,9 @@
 <template>
     <div class="workWrap">
-        <header>材料附件管理</header>
+        <header>附件管理</header>
         <template>
             <el-tabs v-model="activeName" @tab-click="handleClick" style="margin: 20px 0px;">
-            <el-tab-pane label="模板类型附件" name="word">模板类型附件</el-tab-pane>
+            <!-- <el-tab-pane label="模板类型附件" name="word">模板类型附件</el-tab-pane> -->
             <el-tab-pane label="其他类型附件" name="other">其他类型附件</el-tab-pane>
             </el-tabs>
         </template>
@@ -143,7 +143,7 @@ export default {
                 note: "",
                 subitemName: "",
             },
-            activeName: 'word',
+            activeName: 'other',
         };
     },
     computed: {

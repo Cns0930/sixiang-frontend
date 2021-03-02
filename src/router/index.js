@@ -41,6 +41,8 @@ import Examination from "@/views/publicManagement/Examination"
 import ReadMe from "@/views/readMe/ReadMe"
 import ProjectList from "@/views/projectManagement/ProjectList"
 
+import SecondaryDocument from "@/views/globaldocument/SecondaryDocument"
+
 
 // import CollapseCommon from '@/views/layoutComponents/CollapseCommon/CollapseCommon'
 
@@ -150,6 +152,11 @@ const routes = [
                 path: '/project',
                 name: 'ProjectList',
                 component: ProjectList,
+            },
+            {
+                path: '/document',
+                name: 'SecondaryDocument',
+                component: SecondaryDocument,
             },
             {
                 path: '/basic',
