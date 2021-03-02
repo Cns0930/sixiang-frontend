@@ -1,7 +1,7 @@
 <template>
     <div class="public-document">
         <header>
-            <span class="title">材料</span>
+            <span class="title">公共一级材料</span>
             <el-button icon="el-icon-plus" @click="handleAdd">新增</el-button>
         </header>
         <div class="filter-box">

@@ -1,16 +1,23 @@
 <template>
     <div class="public-document">
         <header>
-            <span class="title">材料子文档</span>
+            <span class="title">公共二级材料</span>
             <el-button icon="el-icon-plus" @click="handleAdd">新增</el-button>
         </header>
         <div class="filter-box">
             <el-input placeholder="按子文档名称查询" v-model="filterKeyword" clearable style="width: 200px;"
-                @keyup.native.enter="search"></el-input>
+                @keyup.native.enter="searchKey"></el-input>
             <el-input placeholder="归类查询" v-model="categoryFilterKeyword" clearable style="width: 200px;"
-                @keyup.native.enter="search"></el-input>
+                @keyup.native.enter="searchKey"></el-input>
 
-            <el-button @click="search" type="primary">搜索</el-button>
+            <el-button @click="searchKey" type="primary">搜索</el-button>
+            <div class="upload-box" style="float:right">
+                <el-upload class="upload-demo" ref="upload" :action="url" :limit="1" :with-credentials="true"
+                    :on-success="uploadSuccess" :on-remove="handleRemove" :on-exceed="handleExceed" :auto-upload='true'
+                    :before-upload="customUpload">
+                    <el-button type="primary" :loading="loadings" @click="upload()">Excel上传</el-button>
+                </el-upload>
+            </div> 
 
         </div>
         <div class="tableWrap">
@@ -203,6 +210,7 @@
 
 <script>
 import { mixin } from "@/mixin/mixin"
+import axios from "axios"
 import {
     addGlobalDcumentSub, delDcumentSub, getByGlobalDcumentSubId, listGlobalDcumentSub, updateGlobalDcumentSub, listGlobalDcument, listSubitemAndDocumentNewNoPage, batchEditDocumentSub
 } from '@/api/basicInfo/publicDocument'
@@ -264,7 +272,10 @@ export default {
                     pattern: /^\d+(,\d+)*$/,
                     message: "请填写正确的页码格式，如：1,2,3,4", trigger: "blur"
                 }]
-            }
+            },
+            // 上传
+            url: process.env.VUE_APP_BASE_IP + "/ss/globalDocumentSubList/DcumentImportData",
+            loadings: false,
         }
     },
     computed: {
@@ -300,6 +311,10 @@ export default {
 
             this.tableData = result.data.records;
             this.totalCount = result.data.total
+        },
+        searchKey() {
+            this.currentPage = 1;
+            this.search();
         },
         multipageFormatter(row, column, cellValue) {
 
@@ -425,7 +440,50 @@ export default {
                     return false;
                 }
             });
-        }
+        },
+        // 上传文件
+        customUpload(file) {
+            this.loadings = true;
+            let fd = new FormData();
+            fd.append("file", file);
+            fd.append("projectId", this.$route.query.projectId);
+            axios.post(
+                this.url,
+                fd
+            )
+                .then(
+                    (res) => {
+                        if (res.data.success) {
+                            this.$message.success('上传成功');
+                            this.$refs.upload.clearFiles();
+                            this.loadings = false;
+                            this.search();
+                        } else {
+                            this.$message.warning('上传失败,请重新上传');
+                            this.loadings = false;
+                        }
+                    },
+                );
+            return false;
+        },
+        upload() {
+            this.$refs.upload.submit();
+            
+        },
+        // 成功上传文件
+        uploadSuccess(res, file) {
+            console.log(res)
+            if (res.status == 200) {
+                this.$message.success(res);
+            }
+        },
+        // 上传文件超出个数
+        handleExceed(files, fileList) {
+            this.$message.warning(`只能选择上传 1 个文件`);
+        },
+        //  移除文件
+        handleRemove(file, fileList) {
+        },
     },
 
 }
