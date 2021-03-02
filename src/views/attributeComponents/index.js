@@ -22,6 +22,8 @@ import QingxingCommentDef from "./QingxingCommentDef"
 import ComputedTextDef from "./ComputedTextDef"
 import QRCodeUploadDef from './QRCodeUploadDef'
 import TipsCommonDef from './TipsCommonDef'
+import TitleCommonDef from './TitleCommonDef'
+import CollapseCommonDef from './CollapseCommonDef'
 let mapping = [
     {label:"文本",value:"text",componentDef:TextInputLikeDef,isList:false},
     {label:"文本计算值",value:"computedText",componentDef:ComputedTextDef,isList:false},
@@ -47,7 +49,9 @@ let mapping = [
     {label:"常量",value:"constant",componentDef:ConstantDef,isList:false},
     {label:"二维码上传文件",value:"QRCodeUpload",componentDef:QRCodeUploadDef,isList:false},
     {label:"提取点",value:"checkpoint",componentDef:ComputedDef,isList:false},
-    {label:"通知",value:"tipsCommon",componentDef:TipsCommonDef,isList:false}
+    {label:"通知",value:"tipsCommon",componentDef:TipsCommonDef,isList:false},
+    {label:"标题",value:"titleCommon",componentDef:TitleCommonDef,isList:false},
+    {label:"折叠面板",value:"collapseCommon",componentDef:CollapseCommonDef,isList:true}
 ]
 
 export function getMapping() {

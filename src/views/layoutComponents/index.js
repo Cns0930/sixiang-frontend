@@ -10,6 +10,8 @@ import Jingyingqixian from "./Jingyingqixian/Jingyingqixian"
 import QingxingComment from "./QingxingComment/QingxingComment"
 import QRCodeUpload from "./QRCodeUpload/QRCodeUpload"
 import TipsCommon from "./TipsCommon/TipsCommon"
+import TitleCommon from './TitleCommon/TitleCommon.vue'
+import CollapseCommon from './CollapseCommon/CollapseCommon.vue'
 // 选择器
 let ElSelectC = {
     name:"ElSelectC",
@@ -106,5 +108,7 @@ export default {
     Jingyingqixian,
     QingxingComment,
     QRCodeUpload,
-    TipsCommon
+    TipsCommon,
+    TitleCommon,
+    CollapseCommon
 }

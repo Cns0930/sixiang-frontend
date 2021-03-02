@@ -42,7 +42,7 @@ import ReadMe from "@/views/readMe/ReadMe"
 import ProjectList from "@/views/projectManagement/ProjectList"
 
 
-import TipsCommon from '@/views/layoutComponents/TipsCommon/TipsCommon'
+// import CollapseCommon from '@/views/layoutComponents/CollapseCommon/CollapseCommon'
 
 Vue.use(VueRouter)
 import store from "@/vuex/store"
@@ -269,9 +269,9 @@ const routes = [
         component: UiCompilerComponent
     },
     {
-        path: '/tipsCommon',
-        name: 'TipsCommon',
-        component: TipsCommon
+        path: '/collapseCommon',
+        name: 'CollapseCommon',
+        component: CollapseCommon
     },
 
 
