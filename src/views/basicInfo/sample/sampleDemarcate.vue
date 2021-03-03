@@ -36,9 +36,9 @@
                                             </el-table-column>
                                             <el-table-column prop="name" label="标定信息" min-width="40%">
                                                 <template slot-scope="scope">
-                                                    <span v-if="scope.row.globalDocumentSubCode" style="color: green">
+                                                    <span v-if="scope.row.documentsubSeq" style="color: green">
                                                         <i class="el-icon-check"></i>
-                                                        {{ ' ' + scope.row.globalDocumentSubCode + ' - ' + scope.row.globalDocumentSubName }}
+                                                        {{ ' ' + scope.row.documentsubSeq + ' - ' + scope.row.globalDocumentSubName }}
                                                     </span>
                                                 </template>
                                             </el-table-column>
@@ -101,9 +101,9 @@
                                                     <el-select v-model="imgClass" :disabled="!this.imgName" filterable
                                                         placeholder="请选择图片分类" style="width: 100%" @change="setImgClass">
                                                         <el-option v-for="item in imgClassList"
-                                                            :key="item.globalDocumentSubCode"
-                                                            :label="item.globalDocumentSubCode+ ' : ' + item.globalDocumentSubName"
-                                                            :value="item.globalDocumentSubId">
+                                                            :key="item.documentsubSeq"
+                                                            :label="item.documentsubSeq + ' : ' + item.globalDocumentSubName"
+                                                            :value="item.id">
                                                         </el-option>
                                                     </el-select>
                                                 </div>
@@ -337,7 +337,7 @@ export default {
             if (!row.isdir && row.fileId) {
                 this.valueUrl = process.env.VUE_APP_BASE_IP + `/docInfo/getPic?fileId=${row.fileId}`
                 this.imgName = row.fileName;
-                this.imgClass = row.globalDocumentSubId;
+                this.imgClass = row.approvalItemAndDocumentsubId;
                 // 获取规则列表
                 this.getRuleClassList();
                 return;
@@ -390,17 +390,17 @@ export default {
         async setImgClass() {
             console.log('this.imgClass');
             console.log(this.imgClass);
-            let result = await addSampleResultSort({ documentId: this.rowInfo.id, globalDocumentSubId: this.imgClass });
+            let result = await addSampleResultSort({ documentId: this.rowInfo.id, approvalItemAndDocumentsubId: this.imgClass });
             if (!result.success) {
                 this.$message({ type: "warning", message: "图片分类失败" });
                 return;
             }
             // this.getFileListTable();
             this.imgClassList.forEach(item => {
-                if (item.globalDocumentSubId === this.imgClass) {
-                    this.$set(this.rowInfo, 'globalDocumentSubId', this.imgClass);
+                if (item.id === this.imgClass) {
+                    this.$set(this.rowInfo, 'approvalItemAndDocumentsubId', this.imgClass);
                     this.$set(this.rowInfo, 'globalDocumentSubName', item.globalDocumentSubName);
-                    this.$set(this.rowInfo, 'globalDocumentSubCode', item.globalDocumentSubCode);
+                    this.$set(this.rowInfo, 'documentsubSeq', item.documentsubSeq);
                     return;
                 }
             })
