@@ -18,7 +18,7 @@
                     </div>
                     <el-table v-if="scope.row.materialShow" :data="scope.row.material" border
                         style="width: calc(100% - 47px)" class="sub-table">
-                        <el-table-column prop="materialName" label="材料名称" show-overflow-tooltip>
+                        <el-table-column prop="materialName" label="事项一级材料" show-overflow-tooltip>
                             <template slot-scope="scopeM">
                                 <el-select v-if="scopeM.row.flag" v-model="scopeM.row.materialId" placeholder="请选择材料名称">
                                     <el-option v-for="item in bangBanOptions" :key="item.materialId"
@@ -27,9 +27,9 @@
                                 <span v-else>{{scopeM.row.materialName}}</span>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="templateName" label="模板名称" show-overflow-tooltip></el-table-column>
+                        <!-- <el-table-column prop="templateName" label="模板名称" show-overflow-tooltip></el-table-column>
                         <el-table-column prop="docxTemplateName" label="超级帮办模板名称" show-overflow-tooltip>
-                        </el-table-column>
+                        </el-table-column> -->
                         <el-table-column prop="documentSeq" label="文档序号" show-overflow-tooltip></el-table-column>
                         <el-table-column prop="descriptionInfo" label="材料产生逻辑" show-overflow-tooltip></el-table-column>
                         <el-table-column prop="subAndMaterialDescriptionInfo" label="逻辑描述" show-overflow-tooltip>
@@ -84,14 +84,14 @@
                     </div>
                     <el-table v-if="scope.row.documentShow" :data="scope.row.documentSub" border
                         style="width: calc(100% - 47px)" class="sub-table">
-                        <el-table-column prop="globalDocumentSubName" label="AI材料名称" show-overflow-tooltip>
+                        <el-table-column prop="documentsubDisplayname" label="事项二级材料" show-overflow-tooltip>
                             <template slot-scope="scopeM">
                                 <el-select v-if="scopeM.row.flagAI" v-model="scopeM.row.globalDocumentSubId"
                                     placeholder="请选择材料名称">
                                     <el-option v-for="item in AIMOptions" :key="item.globalDocumentSubId"
-                                        :label="item.globalDocumentSubName" :value="item.globalDocumentSubId" />
+                                        :label="item.documentsubDisplayname" :value="item.globalDocumentSubId" />
                                 </el-select>
-                                <span v-else>{{scopeM.row.globalDocumentSubName}}</span>
+                                <span v-else>{{scopeM.row.documentsubDisplayname}}</span>
                             </template>
                         </el-table-column>
                         <el-table-column prop="isRequired" label="是否必须" show-overflow-tooltip>

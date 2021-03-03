@@ -121,10 +121,10 @@
                         show-overflow-tooltip></el-table-column>
                     <el-table-column label="操作" fixed="right" width="110px">
                         <template slot-scope="scope">
-                            <!-- <el-button size="mini" type="primary" @click="goOnlineDocumentEditor(scope.row)">编辑word模板
-                            </el-button> -->
                             <el-button size="mini" @click="showTemplate(scope.row)">查看模板</el-button>
                             <el-button size="mini" @click="EditmaterialVisible(scope.row)">编辑</el-button>
+                            <el-button size="mini" type="primary" @click="goOnlineDocumentEditor(scope.row)">word编辑
+                            </el-button>
                             <el-button size="mini" type="danger" @click="handleDeleteMaterial(scope.row)">删除</el-button>
                         </template>
                     </el-table-column>
@@ -213,12 +213,12 @@
                         </el-form-item>
                     </div>
                     <br>
-                    <el-form-item label="材料编码">
+                    <!-- <el-form-item label="材料编码">
                         <el-input v-model="materialT.materialCode"></el-input>
                     </el-form-item>
                     <el-form-item label="市证照编码">
                         <el-input v-model="materialT.catMainCode"></el-input>
-                    </el-form-item>
+                    </el-form-item> -->
                     <el-form-item label="清单补充说明信息">
                         <el-input v-model="materialT.materialNameNotes"></el-input>
                     </el-form-item>
@@ -288,12 +288,12 @@
                         </el-form-item>
                     </div>
                     <br>
-                    <el-form-item label="材料编码">
+                    <!-- <el-form-item label="材料编码">
                         <el-input v-model="materialTEdit.materialCode"></el-input>
                     </el-form-item>
                     <el-form-item label="市证照编码">
                         <el-input v-model="materialTEdit.catMainCode"></el-input>
-                    </el-form-item>
+                    </el-form-item> -->
                     <el-form-item label="清单补充说明信息">
                         <el-input v-model="materialTEdit.materialNameNotes"></el-input>
                     </el-form-item>
@@ -965,7 +965,7 @@ export default {
         goOnlineDocumentEditor(row) {
             console.log('row');
             console.log(row);
-            let routeUrl = this.$router.resolve({ name: "OnlineDocumentEditor", query: { 'materialId': row.materialId, 'itemId': this.itemId } });
+            let routeUrl = this.$router.resolve({ name: "OnlineDocumentEditor", query: { 'materialId': row.materialId, 'itemId': this.itemId, 'projectId': this.$route.query.projectId } });
             window.open(routeUrl.href, '_blank');
         },
         // 上传文件

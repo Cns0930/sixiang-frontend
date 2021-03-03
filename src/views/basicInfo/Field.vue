@@ -49,7 +49,7 @@
             :row-style="{height:'60px'}" :header-row-style="{height:'50px'}" :height="tableHeight" v-loading="loading"
             :row-key="getRowKey" @selection-change="handleSelectionChange">
             <el-table-column type="selection" :reserve-selection='true'></el-table-column>
-            <el-table-column prop="docxTemplateName" label="模板名称" show-overflow-tooltip width="180"></el-table-column>
+            <!-- <el-table-column prop="docxTemplateName" label="模板名称" show-overflow-tooltip width="180"></el-table-column> -->
             <el-table-column prop="materialName" label="材料名称" show-overflow-tooltip width="180"></el-table-column>
             <el-table-column prop="globalDocumentSubName" label="关联二级材料名称" show-overflow-tooltip width="180">
             </el-table-column>
