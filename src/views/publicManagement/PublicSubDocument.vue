@@ -353,12 +353,12 @@ export default {
                 await this.$confirm("是否确定删除",)
                 let result = await delDcumentSub({ globalDocumentSubId: row.globalDocumentSubId });
                 if (!result.success) {
-                    this.$message.error("删除失败")
+                    this.$message.warning("删除失败");
+                } else {
+                    this.$message.success("删除成功");
                 }
-                this.$message.success("删除成功");
                 this.search();
                 return;
-
             } catch (e) {
                 return;
             }
