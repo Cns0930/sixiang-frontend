@@ -32,5 +32,15 @@ export const getByMaterialId = params => { return axios.get(`/ss/material/getByM
 
 //导入材料
 export const copySelectedMaterial = params => { return axios.post(`/ss/material/copySelectedMaterial`, params).then(res=>res.data); };
+
 //获取指定事项下的所有材料 不分页
 export const getAllByApprovalItemId = params => { return axios.get(`/ss/material/getAllByApprovalItemId`, {params}).then(res=>res.data); };
+
+// 查询预定义模板列表
+export const listPreTemplatesByMaterialId = params => { return axios.get(`/ss/material/listPreTemplatesByMaterialId`, {params}).then(res=>res.data); };
+
+// 添加或修改预定义模板
+export const savePreTemplate = params => { return axios.post(`/ss/material/savePreTemplate`, params).then(res=>res.data); };
+
+// 删除预定义模板
+export const deletePreTemplate = params => { return axios.get(`/ss/material/deletePreTemplate`, {params}).then(res=>res.data); };
