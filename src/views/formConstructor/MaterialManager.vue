@@ -1,9 +1,9 @@
 <template>
     <div class="material-manager">
         <div class="op-bar">
-            <el-button @click="openAddDialog"> 新建材料</el-button>
-            <el-button @click="getTemplate">载入材料</el-button>
-            <el-button @click="downAllPages">下载所有材料文件</el-button>
+            <el-button @click="openAddDialog"> 新建模板</el-button>
+            <el-button @click="getTemplate">载入模板</el-button>
+            <el-button @click="downAllPages">下载所有开发后页面</el-button>
             <el-button @click="handleDownload" type="primary">下载最新word模板</el-button>
 
             <el-badge :is-dot="!isLast" >
@@ -16,7 +16,7 @@
             <!-- 模板列表 -->
             <div class="material-list">
                 <el-table :data="templates" border>
-                    <el-table-column label="word模板命令">
+                    <el-table-column label="word模板名称">
                         <template slot-scope="scope">
                             <el-button type="text" style="color: orange"
                                 @click="goTemplatemanager(scope.row.template.id)">
