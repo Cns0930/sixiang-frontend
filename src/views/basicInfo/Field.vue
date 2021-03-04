@@ -40,6 +40,7 @@
                     <div style="margin-left: 20px">
                         <el-button type="primary" @click="upToBangban" class="upload-input">导出成提取点</el-button>
                         <el-button type="primary" @click="updown" class="upload-input">导出到帮办字段</el-button>
+                        <el-button type="primary" @click="downLoad" icon="el-icon-download" class="upload-input">下载</el-button>
                     </div>
                 </div>
             </el-col>
@@ -950,7 +951,42 @@ export default {
             } else {
                 this.tableHeight = window.innerHeight - tableH
             }
-        }
+        }, 
+        // 下载
+        async downLoad() {
+            let res = await axios({
+                method: "get",
+                url: "/ss/field/exportField",
+                params: {
+                    approvalItemId: this.itemId,
+                    fieldKeyword: this.fieldKeyword,
+                    materialKeyword: this.materialKeyword
+                },
+                responseType: "arraybuffer",
+            });
+            if (res.data.byteLength === 0) {
+                this.$message.warning("没有需要下载的内容");
+                return;
+            }
+            let blob = new Blob([res.data], { type: "application/zip" });
+            const a = document.createElement("a");
+            // 生成文件路径
+            let href = window.URL.createObjectURL(blob);
+            a.href = href;
+            console.log('res');
+            console.log(res);
+            // let _fileName = _res.headers['Content-disposition'].split(';')[1].split('=')[1].split('.')[0]
+            let _fileName = res.headers["content-disposition"]
+                .split(";")[1]
+                .split("=")[1];
+            // 文件名中有中文 则对文件名进行转码
+            a.download = decodeURIComponent(_fileName);
+            // 利用a标签做下载
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(href);
+        },
     }
 };
 </script>
