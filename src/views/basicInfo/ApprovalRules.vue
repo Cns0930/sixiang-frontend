@@ -715,6 +715,7 @@ export default {
             this.loadings = true
             let fd = new FormData();
             fd.append("file", file);
+            fd.append("approvalItemId", this.itemId);
             axios.post(
                 this.url,
                 fd
@@ -724,9 +725,11 @@ export default {
                         if (res.data.success) {
                             this.$message.success('上传成功');
                             this.$refs.upload.clearFiles();
-                            this.loadings = false
+                            this.search();
+                            this.loadings = false;
                         } else {
                             this.$message.warning('上传失败,请重新上传');
+                            this.loadings = false;
                         }
                     },
                 );

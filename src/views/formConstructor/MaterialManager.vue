@@ -1,9 +1,9 @@
 <template>
     <div class="material-manager">
         <div class="op-bar">
-            <el-button @click="openAddDialog"> 新建材料</el-button>
-            <el-button @click="getTemplate">载入材料</el-button>
-            <el-button @click="downAllPages">下载所有材料文件</el-button>
+            <el-button @click="openAddDialog"> 新建模板</el-button>
+            <el-button @click="getTemplate">载入模板</el-button>
+            <el-button @click="downAllPages">下载所有开发后页面</el-button>
             <el-button @click="handleDownload" type="primary">下载最新word模板</el-button>
 
             <el-badge :is-dot="!isLast" >
@@ -16,7 +16,7 @@
             <!-- 模板列表 -->
             <div class="material-list">
                 <el-table :data="templates" border>
-                    <el-table-column label="word模板命令">
+                    <el-table-column label="word模板名称">
                         <template slot-scope="scope">
                             <el-button type="text" style="color: orange"
                                 @click="goTemplatemanager(scope.row.template.id)">
@@ -78,7 +78,7 @@
             </div>
         </div>
         <!-- 创建模板弹窗 -->
-        <el-dialog title="创建模板" :visible.sync="templateCreateVisible" width="50%" :close-on-click-modal="false">
+        <el-dialog title="创建模板" :visible.sync="templateCreateVisible" width="70%" :close-on-click-modal="false">
             <div class="tableWrap">
                 <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 95%" border
                     tooltip-effect="dark" @selection-change="handleSelectionChange">
@@ -90,21 +90,49 @@
                         width="100"
                         show-overflow-tooltip
                     ></el-table-column> -->
-                    <el-table-column prop="docxTemplateName" label="超级帮办word模板命名"></el-table-column>
-                    <el-table-column prop="templateName" label="模板名称(自取)" width="120"></el-table-column>
+                    <el-table-column prop="docxTemplateName" label="超级帮办word模板命名">
+                        <template slot-scope="scopeD">
+                            <el-input v-if="scopeD.row.flag" placeholder="word模板名称"
+                                v-model="scopeD.row.docxTemplateName">
+                            </el-input>
+                            <span v-else>{{scopeD.row.docxTemplateName}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="templateName" label="模板名称(自取)" width="120">
+                        <template slot-scope="scopeD">
+                            <el-input v-if="scopeD.row.flag" placeholder="word模板名称"
+                                v-model="scopeD.row.templateName">
+                            </el-input>
+                            <span v-else>{{scopeD.row.templateName}}</span>
+                        </template>
+                    </el-table-column>
                     <!-- <el-table-column prop="materialCode" label="材料编码" width="100" show-overflow-tooltip>
                     </el-table-column> -->
-                    <el-table-column prop="materialName" label="材料展示名称" width="160"></el-table-column>
+                    <el-table-column prop="materialName" label="材料展示名称"></el-table-column>
                     <!-- <el-table-column prop="materialStatus" label="材料状态" width="80"></el-table-column> -->
                     <el-table-column prop="documentSeq" label="文档编号" width="80"></el-table-column>
                     <el-table-column prop="note" label="备注" width="80" show-overflow-tooltip></el-table-column>
                     <!-- <el-table-column prop="proDocId" label="proDocId" width="100"></el-table-column> -->
-                    <el-table-column prop="produceSource" label="产生来源" width="100"></el-table-column>
+                    <el-table-column prop="produceSource" label="产生来源" width="100" :filters="produceSourceFilters"
+                        :filter-method="filterHandler"></el-table-column>
                     <!-- <el-table-column prop="descriptionInfo" label="其他说明信息（调研填写）" width="180" show-overflow-tooltip></el-table-column> -->
+                    <el-table-column label="操作" fixed="right" width="80">
+                        <template slot-scope="scope">
+                            <div v-if="scope.row.flag">
+                                <el-button size="mini" type="primary" icon="el-icon-check" @click="saveText(scope.row)">
+                                </el-button>
+                            </div>
+                            <div v-else>
+                                <el-button size="mini" type="primary" @click="Edit(scope.row)" icon="el-icon-edit">
+                                </el-button>
+                            </div>
+                        </template>
+                    </el-table-column>
                 </el-table>
             </div>
 
             <span slot="footer" class="dialog-footer">
+                <el-button @click="clearFilter">清除筛选</el-button>
                 <el-button @click="templateCreateVisible = false">取 消</el-button>
                 <el-button type="primary" @click="addTemplateBatch">确 定</el-button>
             </span>
@@ -150,11 +178,13 @@ export default {
             temp_pro_doc_id: "",
 
             temp_template: null,
-            tableData: [],
-            multipleSelection: [],
             hasSelectList: [],
             // 是否需要输出到超级帮办
             isLast:true,
+            // 新建材料的表格
+            tableData: [],
+            multipleSelection: [],
+            produceSourceFilters: [],
         };
     },
     computed: {
@@ -206,6 +236,18 @@ export default {
                 return;
             }
             this.tableData = res.data;
+            this.tableData.forEach((item) => {
+                let flag = true;
+                for(let i = 0; i < this.produceSourceFilters.length; i++) {
+                    if(this.produceSourceFilters[i].value === item.produceSource) {
+                        flag = false;
+                        break;
+                    }
+                }
+                if(flag) {
+                    this.produceSourceFilters.push({text: item.produceSource, value: item.produceSource});
+                }
+            })
             // this.$nextTick(() => {
             //     this.tableData.forEach((row) => {
             //         if (this.hasSelectList.indexOf(row.materialId) >= 0) {
@@ -215,10 +257,22 @@ export default {
             // });
             this.templateCreateVisible = true;
         },
+        filterHandler(value, row, column) {
+            const property = column['property'];
+            return row[property] === value;
+        },
+        clearFilter() {
+            this.$refs.multipleTable.clearFilter();
+        },
         handleSelectionChange(val) {
             this.multipleSelection = val;
         },
-
+        Edit(item) {
+            this.$set(item, 'flag', true);
+        },
+        saveText(item) {
+            this.$set(item, 'flag', null);
+        },
         async addTemplateBatch() {
             let requestBatch = [];
             this.multipleSelection.forEach((item) => {
@@ -227,11 +281,13 @@ export default {
                 requestBatchItem.materialId = item.materialId;
                 requestBatchItem.notes = "";
                 requestBatchItem.script = "";
-                if (
-                    this.hasSelectList.indexOf(requestBatchItem.materialId) < 0
-                ) {
-                    requestBatch.push(requestBatchItem);
-                }
+                requestBatchItem.materialTemplateId = item.materialTemplateId;
+                requestBatchItem.docxTemplateName = item.docxTemplateName;
+                requestBatchItem.templateName = item.templateName;
+                requestBatch.push(requestBatchItem);
+                // if ( this.hasSelectList.indexOf(requestBatchItem.materialId) < 0) {
+                //     requestBatch.push(requestBatchItem);
+                // }
             });
             console.log("requestBatch");
             console.log(requestBatch);
@@ -240,7 +296,7 @@ export default {
                 this.$message.warning("批量新增失败");
                 return;
             }
-            this.$message.success("新增模板成功");
+            this.$message.success(`新增模板成功,新增 ${requestBatch.length} 条`);
             this.templateCreateVisible = false;
             // this.temp_template_name = '';
 

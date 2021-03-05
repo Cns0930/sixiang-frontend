@@ -19,7 +19,7 @@
                         <template slot-scope="scope">
                         </template>
                     </el-table-column> -->
-                    <el-table-column label="序号" type="index" width="70" :index="indexMethod"></el-table-column>
+                    <el-table-column label="序号" type="index" width="50" :index="indexMethod"></el-table-column>
                     <!-- <el-table-column prop="subitemName"  label="情形名称" width="200" show-overflow-tooltip>
                         <template slot-scope="scope">
                             <el-select
@@ -39,7 +39,7 @@
                         </template>
                     </el-table-column> -->
                     
-                    <el-table-column prop="globalDocumentSubName" label="子文档名称" width="200">
+                    <el-table-column prop="globalDocumentSubName" label="子文档名称" width="180">
                         <template slot-scope="scope">
                             <el-cascader v-if="scope.row.flag" v-model="scope.row.globalDocumentSubId"
                                 placeholder="请选择子文档名称" clearable filterable remote reserve-keyword
@@ -62,7 +62,13 @@
                         </template>
                     </el-table-column>
                     <el-table-column prop="globalDocumentName" label="所属一级材料" width="150"></el-table-column>
-                    <el-table-column prop="globalDocumentSubCode" label="子文档编码" width="120"></el-table-column>
+                    <el-table-column prop="documentsubSeq" label="事项内子文档编码" width="80">
+                        <template slot-scope="scope">
+                            <el-input v-if="scope.row.flag" v-model="scope.row.documentsubSeq"></el-input>
+                            <span v-else>{{scope.row.documentsubSeq}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="globalDocumentSubCode" label="公共子文档编码" width="80"></el-table-column>
                     <el-table-column prop="isRequired" label="是否必须"  width="80">
 
                         <template slot-scope="scope">
@@ -95,12 +101,12 @@
                         </template>
                     </el-table-column>
                     <!-- <el-table-column prop="notes" label="备注"></el-table-column> -->
-                    <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable width="240">
+                    <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable width="160">
                     </el-table-column>
-                    <el-table-column prop="updateTime" label="更新时间" width="240" :formatter="timeFormatter" sortable
+                    <el-table-column prop="updateTime" label="更新时间" width="160" :formatter="timeFormatter" sortable
                         show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column label="操作" fixed="right" width="300">
+                    <el-table-column label="操作" fixed="right" width="120">
                         <template slot-scope="scope">
                             <div v-if="scope.row.flag">
                                 <el-button size="mini" icon="el-icon-close"
@@ -354,7 +360,8 @@ export default {
                     id: item.id,
                     requiredDescription: item.requiredDescription,
                     documentsubDisplayname: item.documentsubDisplayname,
-                    displayNotes: item.displayNotes
+                    displayNotes: item.displayNotes,
+                    documentsubSeq: item.documentsubSeq
                 }
                 const result = await updateItemAndDocumentSub(request)
                 console.log(result, 'result')
@@ -366,7 +373,8 @@ export default {
                     isRequired: item.isRequired,
                     requiredDescription: item.requiredDescription,
                     documentsubDisplayname: item.documentsubDisplayname,
-                    displayNotes: item.displayNotes
+                    displayNotes: item.displayNotes,
+                    documentsubSeq: item.documentsubSeq
                 }
                 const res = await addItemAndDocumentSub(request)
                 console.log(res, 'res')

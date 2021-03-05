@@ -3,64 +3,57 @@
         <header>一级材料</header>
         <section class="workBox">
             <div class="searchBox">
-                <el-input placeholder="筛选材料名称或者模板名称" v-model="valueM" clearable style="width: 200px;" @change="materialSearch"></el-input>
+                <el-input placeholder="筛选材料名称或者模板名称" v-model="valueM" clearable style="width: 200px;"
+                    @change="materialSearch"></el-input>
                 <el-button @click="materialSearch">搜索</el-button>
                 <div class="handle">
                     <el-button type="primary" @click="materialVisible(materialInit)">新建材料</el-button>
                     <!-- <el-button type="primary">导出</el-button> -->
                     <el-button type="primary" @click="handleImport()">导入材料</el-button>
-                    <el-button @click="handleClickWordDialog" type="primary" style="margin-bottom:10px">上传模板压缩包</el-button>
-        
+                    <el-button @click="handleClickWordDialog" type="primary" style="margin-bottom:10px">上传模板压缩包
+                    </el-button>
+
                 </div>
             </div>
-             <el-dialog title="上传word压缩包" :visible.sync="addWordDialogVisible" width="50%" :close-on-click-modal="false">
-                 历史上传记录
-            <el-table :data="tableDataWord" border>
-            <el-table-column prop="fileVersion" label="版本" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="filePath" label="模板文件Name" :formatter="fileNameFormatter" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="operateUser" label="创建者"></el-table-column>
-            <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter"></el-table-column>
-            <el-table-column prop="notes" label="备注"></el-table-column>
-            <el-table-column label="操作">
-                <template slot-scope="scope">
-                    <el-button-group>
-                        <el-button @click="handleDownload(scope.row)" type="primary" :disabled="scope.row.latest === false">下载</el-button>
-                    </el-button-group>
-                </template>
-            </el-table-column>
-        </el-table>
-            <el-form label-width="80px" :model="addFormWord">
-                
-                <el-form-item label="上传模板">
-                    <el-upload
-                        class="upload-demo" 
-                        ref="upload" 
-                        :action="url" 
-                        :limit="1"
-                        accept=".zip, .rar"
-                        :with-credentials="true"
-                        :on-success="upFile"
-                        :data="this.addFormWord"
-                        :on-remove="handleRemove" 
-                        :on-exceed="handleExceed"
-                        :auto-upload="false"
-                        :before-upload="customUpload"
-                    >
-                        <el-button type="primary">添加</el-button>
-                        <div slot="tip" class="el-upload__tip">只能上传压缩包文件</div>
-                    </el-upload>
-                </el-form-item>
-                <el-form-item label="备注">
-                    <el-input v-model="addFormWord.notes"></el-input>
-                </el-form-item>
-            </el-form>  
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="addWordDialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="upload()">确 定</el-button>
-            </span>   
+            <el-dialog title="上传word压缩包" :visible.sync="addWordDialogVisible" width="50%" :close-on-click-modal="false">
+                历史上传记录
+                <el-table :data="tableDataWord" border>
+                    <el-table-column prop="fileVersion" label="版本" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="filePath" label="模板文件Name" :formatter="fileNameFormatter"
+                        show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="operateUser" label="创建者"></el-table-column>
+                    <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter"></el-table-column>
+                    <el-table-column prop="notes" label="备注"></el-table-column>
+                    <el-table-column label="操作">
+                        <template slot-scope="scope">
+                            <el-button-group>
+                                <el-button @click="handleDownload(scope.row)" type="primary"
+                                    :disabled="scope.row.latest === false">下载</el-button>
+                            </el-button-group>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <el-form label-width="80px" :model="addFormWord">
 
-            
-        </el-dialog>
+                    <el-form-item label="上传模板">
+                        <el-upload class="upload-demo" ref="upload" :action="url" :limit="1" accept=".zip, .rar"
+                            :with-credentials="true" :on-success="upFile" :data="this.addFormWord"
+                            :on-remove="handleRemove" :on-exceed="handleExceed" :auto-upload="false"
+                            :before-upload="customUpload">
+                            <el-button type="primary">添加</el-button>
+                            <div slot="tip" class="el-upload__tip">只能上传压缩包文件</div>
+                        </el-upload>
+                    </el-form-item>
+                    <el-form-item label="备注">
+                        <el-input v-model="addFormWord.notes"></el-input>
+                    </el-form-item>
+                </el-form>
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="addWordDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="upload()">确 定</el-button>
+                </span>
+
+            </el-dialog>
 
             <div class="tableWrap">
                 <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%;" border
@@ -91,7 +84,8 @@
                     ></el-table-column>
                     <el-table-column prop="materialId" label="事项(小项)办事材料编号" width="100" show-overflow-tooltip></el-table-column>-->
                     <!-- <el-table-column prop="materialCode" label="材料编码" width="100" show-overflow-tooltip></el-table-column> -->
-                    <el-table-column prop="materialName" label="材料展示名称" width="200" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="materialName" label="材料展示名称" width="200" show-overflow-tooltip>
+                    </el-table-column>
                     <!-- <el-table-column prop="templateName" label="模板名称(自取)" show-overflow-tooltip></el-table-column> -->
                     <!-- <el-table-column prop="materialStatus" label="材料状态" width="80"></el-table-column>
                     <el-table-column prop="documentSeq" label="文档编号" width="80"></el-table-column>
@@ -108,8 +102,7 @@
                     <el-table-column prop="isNavigation" label="是否显示在左侧导航" width="90px"
                         :formatter="isRequiredFormatter">
                     </el-table-column>
-                    <el-table-column prop="uploadRequired" label="是否必须上传" width="60px"
-                        :formatter="isRequiredFormatter">
+                    <el-table-column prop="uploadRequired" label="是否必须上传" width="60px" :formatter="isRequiredFormatter">
                     </el-table-column>
                     <el-table-column prop="navigationOrder" label="导航顺序" width="50px"></el-table-column>
                     <el-table-column prop="descriptionInfo" label="材料逻辑" show-overflow-tooltip width="200">
@@ -128,10 +121,10 @@
                         show-overflow-tooltip></el-table-column>
                     <el-table-column label="操作" fixed="right" width="110px">
                         <template slot-scope="scope">
-                            <!-- <el-button size="mini" type="primary" @click="goOnlineDocumentEditor(scope.row)">编辑word模板
-                            </el-button> -->
-                            <el-button size="mini" @click="editTemplateVisible(scope.row)">查看模板</el-button>
+                            <el-button size="mini" @click="showTemplate(scope.row)">查看模板</el-button>
                             <el-button size="mini" @click="EditmaterialVisible(scope.row)">编辑</el-button>
+                            <el-button size="mini" type="primary" @click="goOnlineDocumentEditor(scope.row)">word编辑
+                            </el-button>
                             <el-button size="mini" type="danger" @click="handleDeleteMaterial(scope.row)">删除</el-button>
                         </template>
                     </el-table-column>
@@ -164,8 +157,8 @@
                 <div>
                     <el-form-item label="关联一级材料">
                         <!-- <el-input v-model="materialT.materialName"></el-input> -->
-                        <el-select  v-model="materialT.globalDocumentId" placeholder="请选择关联的公共一级材料"
-                            clearable filterable remote reserve-keyword :remote-method="remoteMethodBang" :loading="loadingBang"
+                        <el-select v-model="materialT.globalDocumentId" placeholder="请选择关联的公共一级材料" clearable filterable
+                            remote reserve-keyword :remote-method="remoteMethodBang" :loading="loadingBang"
                             @change="globalDocumentChange" ref="globalDocument">
                             <el-option v-for="item in approvalTextList" :key="item.globalDocumentId"
                                 :label="item.globalDocumentName" :value="item.globalDocumentId" />
@@ -173,8 +166,9 @@
                                 style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
                                 <a class="text-normal">
                                     <el-pagination @size-change="handleSizeChangeSelectBang"
-                                        @current-change="handleCurrentChangeSelectBang" :current-page="currentPageSelectBang"
-                                        :total="totalBang" :page-size="pageSizeBang" layout="prev, pager, next" />
+                                        @current-change="handleCurrentChangeSelectBang"
+                                        :current-page="currentPageSelectBang" :total="totalBang"
+                                        :page-size="pageSizeBang" layout="prev, pager, next" />
                                 </a>
                             </div>
                         </el-select>
@@ -197,14 +191,17 @@
                             <el-option label="否" :value="Number(0)"></el-option>
                         </el-select>
                     </el-form-item>
+                    <el-form-item label="导航顺序">
+                        <el-input v-model="materialT.navigationOrder" placeholder="请输入数字"></el-input>
+                    </el-form-item>
                     <el-form-item label="是否必须上传">
                         <el-select v-model="materialT.uploadRequired">
                             <el-option label="是" :value="Number(1)"></el-option>
                             <el-option label="否" :value="Number(0)"></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="导航顺序">
-                        <el-input v-model="materialT.navigationOrder" placeholder="请输入数字"></el-input>
+                    <el-form-item label="上传逻辑说明">
+                        <el-input v-model="materialT.uploadDescription"></el-input>
                     </el-form-item>
                     <el-form-item label="材料逻辑">
                         <el-input type="textarea" :rows="3" v-model="materialT.descriptionInfo"></el-input>
@@ -219,17 +216,14 @@
                         </el-form-item>
                     </div>
                     <br>
-                    <el-form-item label="材料编码">
+                    <!-- <el-form-item label="材料编码">
                         <el-input v-model="materialT.materialCode"></el-input>
                     </el-form-item>
                     <el-form-item label="市证照编码">
                         <el-input v-model="materialT.catMainCode"></el-input>
-                    </el-form-item>
+                    </el-form-item> -->
                     <el-form-item label="清单补充说明信息">
                         <el-input v-model="materialT.materialNameNotes"></el-input>
-                    </el-form-item>
-                    <el-form-item label="上传逻辑说明">
-                        <el-input v-model="materialT.uploadDescription"></el-input>
                     </el-form-item>
                     <el-form-item label="子材料逻辑">
                         <el-select v-model="materialT.logicType" placeholder="材料的产生来源">
@@ -294,12 +288,12 @@
                         </el-form-item>
                     </div>
                     <br>
-                    <el-form-item label="材料编码">
+                    <!-- <el-form-item label="材料编码">
                         <el-input v-model="materialTEdit.materialCode"></el-input>
                     </el-form-item>
                     <el-form-item label="市证照编码">
                         <el-input v-model="materialTEdit.catMainCode"></el-input>
-                    </el-form-item>
+                    </el-form-item> -->
                     <el-form-item label="清单补充说明信息">
                         <el-input v-model="materialTEdit.materialNameNotes"></el-input>
                     </el-form-item>
@@ -320,16 +314,17 @@
                     </el-form-item>
                     <el-form-item label="修改关联公共材料">
                         <!-- <el-input v-model="materialT.materialName"></el-input> -->
-                        <el-select  v-model="materialTEdit.globalDocumentId" placeholder="请选择关联的公共一级材料"
-                            clearable filterable remote reserve-keyword :remote-method="remoteMethodBang" :loading="loadingBang">
+                        <el-select v-model="materialTEdit.globalDocumentId" placeholder="请选择关联的公共一级材料" clearable
+                            filterable remote reserve-keyword :remote-method="remoteMethodBang" :loading="loadingBang">
                             <el-option v-for="item in approvalTextList" :key="item.globalDocumentId"
                                 :label="item.globalDocumentName" :value="item.globalDocumentId" />
                             <div class="text-center"
                                 style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
                                 <a class="text-normal">
                                     <el-pagination @size-change="handleSizeChangeSelectBang"
-                                        @current-change="handleCurrentChangeSelectBang" :current-page="currentPageSelectBang"
-                                        :total="totalBang" :page-size="pageSizeBang" layout="prev, pager, next" />
+                                        @current-change="handleCurrentChangeSelectBang"
+                                        :current-page="currentPageSelectBang" :total="totalBang"
+                                        :page-size="pageSizeBang" layout="prev, pager, next" />
                                 </a>
                             </div>
                         </el-select>
@@ -382,7 +377,57 @@
             <el-button type="primary" @click="importSubApproval">确认导入</el-button>
             <el-button type="text" @click="clearSelected">清除所有选择</el-button>
             <el-button @click="importDialogVisible = false">取 消</el-button>
-
+        </el-dialog>
+        <!-- 查看材料对应的模板 -->
+        <el-dialog title="模板信息" :visible.sync="templateVisible" width="80%" :close-on-click-modal="false">
+            <div class="tableWrap">
+                <el-button type="primary" @click="addText(tableDataTemplate.length, tableDataTemplate)"
+                    style="margin-bottom: 10px">新增模板</el-button>
+                <el-table class="workTable" :data="tableDataTemplate" style="width: 100%;" border tooltip-effect="dark">
+                    <el-table-column prop="docxTemplateName" label="word模板名称" show-overflow-tooltip>
+                        <template slot-scope="scopeD">
+                            <el-input v-if="scopeD.row.flag" placeholder="word模板名称"
+                                v-model="scopeD.row.docxTemplateName" clearable>
+                            </el-input>
+                            <span v-else>{{scopeD.row.docxTemplateName}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="templateName" label="模板名称—自取" show-overflow-tooltip>
+                        <template slot-scope="scopeD">
+                            <el-input v-if="scopeD.row.flag" placeholder="模板名称(自取)" v-model="scopeD.row.templateName"
+                                clearable>
+                            </el-input>
+                            <span v-else>{{scopeD.row.templateName}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable
+                        show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="updateTime" label="最后修改时间" :formatter="timeFormatter" sortable
+                        show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column label="操作" fixed="right" width="300">
+                        <template slot-scope="scope">
+                            <div v-if="scope.row.flag">
+                                <el-button size="mini" icon="el-icon-close" @click="closeText(scope.$index, scope.row)">
+                                </el-button>
+                                <el-button size="mini" type="primary" icon="el-icon-check" @click="saveText(scope.row)">
+                                </el-button>
+                            </div>
+                            <div v-else>
+                                <el-button size="mini" type="danger" @click="deleteMaterialTemplate(scope.row)"
+                                    icon="el-icon-minus">
+                                </el-button>
+                                <el-button size="mini" type="primary" @click="Edit(scope.row)" icon="el-icon-edit">
+                                </el-button>
+                            </div>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="templateVisible = false">关闭</el-button>
+            </span>
         </el-dialog>
     </div>
 </template>
@@ -391,10 +436,15 @@
 
 <script>
 import basicMixin from "./basicMixin";
-import {mixin} from "@/mixin/mixin"
+import { mixin } from "@/mixin/mixin"
 import Vue from "vue";
 import { mapState, mapMutations } from 'vuex';
-import { listMaterial, addMaterial, delMaterial, getTemplateByMaterialId, updateMaterial, getByMaterialId, copySelectedMaterial, getAllByApprovalItemId } from "../../api/basicInfo/material";
+import {
+    listMaterial, addMaterial, delMaterial,
+    getTemplateByMaterialId, updateMaterial, getByMaterialId,
+    copySelectedMaterial, getAllByApprovalItemId,
+    listPreTemplatesByMaterialId, savePreTemplate, deletePreTemplate
+} from "../../api/basicInfo/material";
 import { listApprovalItem, listProjectAll } from "@/api/basicInfo/approval";
 import { listGlobalDcument } from '@/api/basicInfo/publicDocument';
 import { listAccessory } from "@/api/basicInfo/accessory"
@@ -414,14 +464,17 @@ export default {
             // },
             type: "material",
             materialT: {
+                materialName: '',
                 documentSeq: '',
                 docxTemplateName: '',
             },
             materialInit: {
+                materialName: '',
                 documentSeq: '',
                 docxTemplateName: '',
             },
             materialTEdit: {
+                materialName: '',
                 documentSeq: '',
                 docxTemplateName: '',
             },
@@ -456,7 +509,7 @@ export default {
             loadingBang: false,
 
             // 产生来源编辑
-            produceSource: [], 
+            produceSource: [],
 
             addWordDialogVisible: false,
             addFormWord: {
@@ -467,6 +520,11 @@ export default {
             },
             url: process.env.VUE_APP_BASE_IP + "/superform/additional/uploadWord",
             tableDataWord: [],
+
+            // 查看材料对应的模板
+            templateVisible: false,
+            tableDataTemplate: [],
+            currentMaterialId: null,
         };
     },
     computed: {
@@ -501,9 +559,82 @@ export default {
         next()
     },
     methods: {
-        // inputs(val) {
-        //   console.log(this.model);
-        // },
+        // <—————————————— 查看材料对应的模板————————————
+        async listTemplate() {
+            let res = await listPreTemplatesByMaterialId({ material_id: this.currentMaterialId })
+            if (!res.success) return;
+            this.tableDataTemplate = res.data;
+        },
+        showTemplate(row) {
+            console.log('row', row);
+            this.templateVisible = true;
+            this.currentMaterialId = row.materialId;
+            this.listTemplate();
+        },
+        // 新增
+        async addText(index, rows) {
+            console.log(index, rows)
+            rows.splice(index + 1, 0, { flag: true });
+        },
+        // 取消
+        async closeText(index, item) {
+            console.log(index, item)
+            if (item.edits) {
+                this.$set(item, 'flag', null);
+            } else {
+                data.splice(index, 1)
+            }
+            this.listTemplate();
+        },
+        // 保存
+        async saveText(item) {
+            if (item.edits) {
+                console.log('editrow', item);
+                let request = {
+                    materialId: this.currentMaterialId,
+                    docxTemplateName: item.docxTemplateName,
+                    templateName: item.templateName,
+                    materialTemplateId: item.materialTemplateId
+                }
+                const res = await savePreTemplate(request)
+                if (!res.success) return;
+                delete item.edits;
+                delete item.flag;
+            } else {
+                console.log('addrow', item);
+                let request = {
+                    materialId: this.currentMaterialId,
+                    docxTemplateName: item.docxTemplateName,
+                    templateName: item.templateName
+                }
+                const res = await savePreTemplate(request)
+                if (!res.success) return;
+                delete item.flag;
+            }
+            this.listTemplate();
+        },
+        // 修改
+        Edit(item) {
+            this.$set(item, 'flag', true)
+            this.$set(item, 'edits', true)
+        },
+        // 删除
+        async deleteMaterialTemplate(item) {
+            try {
+                await this.$confirm('是否确定删除?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                })
+            } catch (e) {
+                return;
+            }
+            let result = await deletePreTemplate({ material_template_id: item.materialTemplateId });
+            if (!result.success) return;
+            this.listTemplate();
+        },
+        //  —————————————— 查看材料对应的模板————————————>
+
         getTableHeight() {
             let tableH = 290
             let tableHeightDetil = window.innerHeight - tableH
@@ -568,16 +699,16 @@ export default {
         },
         async remoteMethodBang(query) {
             // if (query !== '') {
-                this.currentPageSelectBang = 1;
-                let result = await listGlobalDcument({ globalDocumentName: query, pageNum: this.currentPageSelectBang, pageSize: this.pageSizeBang, projectId: this.$route.query.projectId });
-                this.loadingBang = true;
-                setTimeout(() => {
-                    this.loadingBang = false;
+            this.currentPageSelectBang = 1;
+            let result = await listGlobalDcument({ globalDocumentName: query, pageNum: this.currentPageSelectBang, pageSize: this.pageSizeBang, projectId: this.$route.query.projectId });
+            this.loadingBang = true;
+            setTimeout(() => {
+                this.loadingBang = false;
 
-                    this.totalBang = result.data.total;
-                    this.approvalTextList = result.data.records;
+                this.totalBang = result.data.total;
+                this.approvalTextList = result.data.records;
 
-                })
+            })
             // }
         },
         // Bangban下拉框带分页
@@ -595,7 +726,7 @@ export default {
         },
         globalDocumentChange(id) {
             this.approvalTextList.forEach(item => {
-                if(item.globalDocumentId === id) {
+                if (item.globalDocumentId === id) {
                     this.materialT.produceSource = item.produceSource;
                     this.materialT.materialName = item.globalDocumentName;
                     this.materialT.documentSeq = item.globalDocumentCode;
@@ -834,7 +965,7 @@ export default {
         goOnlineDocumentEditor(row) {
             console.log('row');
             console.log(row);
-            let routeUrl = this.$router.resolve({ name: "OnlineDocumentEditor", query: { 'materialId': row.materialId, 'itemId': this.itemId } });
+            let routeUrl = this.$router.resolve({ name: "OnlineDocumentEditor", query: { 'materialId': row.materialId, 'itemId': this.itemId, 'projectId': this.$route.query.projectId } });
             window.open(routeUrl.href, '_blank');
         },
         // 上传文件
@@ -887,13 +1018,13 @@ export default {
         //  移除文件
         handleRemove(file, fileList) {
         },
-        async handleClickWordDialog(){
+        async handleClickWordDialog() {
             this.addWordDialogVisible = true;
             let result = await listAccessory({ approvalItemId: this.itemId, type: 'word' });
             if (!result.success) return;
             this.tableDataWord = result.data;
         },
-         fileNameFormatter(row, column, cellValue, index) {
+        fileNameFormatter(row, column, cellValue, index) {
             let location = cellValue.lastIndexOf("\/");
             return cellValue.substring(location + 1);
         },

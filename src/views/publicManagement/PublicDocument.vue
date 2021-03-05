@@ -1,7 +1,7 @@
 <template>
     <div class="public-document">
         <header>
-            <span class="title">材料</span>
+            <span class="title">公共一级材料</span>
             <el-button icon="el-icon-plus" @click="handleAdd">新增</el-button>
         </header>
         <div class="filter-box">
@@ -214,9 +214,10 @@ export default {
                 await this.$confirm("是否确定删除",)
                 let result = await deleteDcument({GlobalDocumentId :row.globalDocumentId});
                 if(!result.success){
-                    this.$message.error("删除失败")
+                    this.$message.warning("删除失败");
+                } else {
+                    this.$message.success("删除成功");
                 }
-                this.$message.success("删除成功");
                 this.search();
                 return;
 

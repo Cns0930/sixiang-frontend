@@ -1,50 +1,72 @@
 <template>
     <div class="workWrap">
         <header>材料字段</header>
-        <div class="operation-box">
-            <el-button @click="addFiledOpen" type="primary">添加</el-button>
-            <el-button class="operation-item" @click="openImportDialog" type="primary">导入</el-button>
-            <el-input class="operation-item" placeholder="筛选材料名称或者模板名称" v-model="materialKeyword" clearable
-                style="width: 200px;" @change="reloadTable"></el-input>
-            <el-input class="operation-item" placeholder="筛选字段名称或者字段编号" v-model="fieldKeyword" clearable
-                style="width: 200px;" @change="reloadTable"></el-input>
-            <el-button class="operation-item" @click="reloadTable">搜索</el-button>
+        <el-row>
+            <el-col :span="9">
+                <div class="operation-box">
+                    <el-button @click="addFiledOpen" type="primary">添加</el-button>
+                    <el-button class="operation-item" @click="openImportDialog" type="primary">导入</el-button>
+                    <el-input class="operation-item" placeholder="筛选材料名称或者模板名称" v-model="materialKeyword" clearable
+                        style="width: 200px;" @change="reloadTable"></el-input>
+                    <el-input class="operation-item" placeholder="筛选字段名称或者字段编号" v-model="fieldKeyword" clearable
+                        style="width: 200px;" @change="reloadTable"></el-input>
+                    <el-select v-model="isFront" clearable placeholder="是否为前端字段" @change="reloadTable" style="margin-right: 15px">
+                        <el-option label="是" :value="Number(1)"></el-option>
+                        <el-option label="否" :value="Number(0)"></el-option>
+                    </el-select>
+                    <el-select v-model="isCheckpoint" clearable placeholder="是否为提取点" @change="reloadTable" style="margin-right: 15px">
+                        <el-option label="是" :value="Number(1)"></el-option>
+                        <el-option label="否" :value="Number(0)"></el-option>
+                    </el-select>
+                    <el-button class="operation-item" @click="reloadTable">搜索</el-button>
+                </div>
+            </el-col>
+            <el-col :span="15">
+                <div class="submitTip">
+                    <el-select v-model="exMode" clearable placeholder="上传前请先选择上传模式" style="width:200px;margin-right: 15px">
+                        <el-option label="全覆盖" :value="Number(1)"></el-option>
+                        <el-option label="追加/更新" :value="Number(0)"></el-option>
+                    </el-select>
+                    <div class="upload-box">
+                        <el-upload class="upload-demo" ref="upload" :action="url" :limit="1" accept=".xlsx"
+                            :with-credentials="true" :on-success="upFile" :on-remove="handleRemove"
+                            :on-exceed="handleExceed" :auto-upload="false" :before-upload="customUpload">
+                            <el-button type="primary">选择材料字段数据Excel</el-button>
+                            <div slot="tip" class="el-upload__tip">只能上传Excel文件</div>
+                        </el-upload>
+                        <el-button type="success" @click="upload()" class="upload-input">导入</el-button>
+                    </div>
+                    <div class="upload-box" style="margin-left: 20px">
+                        <el-upload class="upload-demo" ref="uploadNew" :action="url" :limit="1" accept=".xlsx"
+                            :with-credentials="true" :on-success="upFile" :on-remove="handleRemove"
+                            :on-exceed="handleExceed" :auto-upload="false" :before-upload="customUpload">
+                            <el-button type="primary">选择新模板材料Excel</el-button>
+                            <div slot="tip" class="el-upload__tip">只能上传Excel文件</div>
+                        </el-upload>
+                        <el-button type="success" @click="uploadNew()" class="upload-input">导入</el-button>
+                    </div>
+                    <div style="margin-left: 20px">
+                        <el-button type="primary" @click="upToBangban" class="upload-input">导出成提取点</el-button>
+                        <el-button type="primary" @click="updown" class="upload-input">导出到帮办字段</el-button>
+                        <el-button type="primary" @click="downLoad" icon="el-icon-download" class="upload-input">下载</el-button>
+                    </div>
+                </div>
+            </el-col>
+        </el-row>
 
-        </div>
-        <div class="submitTip">
-            <div class="upload-box">
-                <el-upload class="upload-demo" ref="upload" :action="url" :limit="1" accept=".xlsx"
-                    :with-credentials="true" :on-success="upFile" :on-remove="handleRemove" :on-exceed="handleExceed"
-                    :auto-upload="false" :before-upload="customUpload">
-                    <el-button type="primary">选择材料字段数据Excel</el-button>
-                    <div slot="tip" class="el-upload__tip">只能上传Excel文件</div>
-                </el-upload>
-                <el-button type="success" @click="upload()" class="upload-input">导入</el-button>
-            </div>
-            <div class="upload-box" style="margin-left: 20px">
-                <el-upload class="upload-demo" ref="uploadNew" :action="url" :limit="1" accept=".xlsx"
-                    :with-credentials="true" :on-success="upFile" :on-remove="handleRemove" :on-exceed="handleExceed"
-                    :auto-upload="false" :before-upload="customUpload">
-                    <el-button type="primary">选择新模板材料Excel</el-button>
-                    <div slot="tip" class="el-upload__tip">只能上传Excel文件</div>
-                </el-upload>
-                <el-button type="success" @click="uploadNew()" class="upload-input">导入</el-button>
-            </div>
-            <div style="margin-left: 55%">
-                <el-button type="primary" @click="upToBangban" class="upload-input">导出成提取点</el-button>
-                <el-button type="primary" @click="updown" class="upload-input">导出到帮办字段</el-button>
-            </div>
-        </div>
         <el-table ref="multipleTables" :data="tableData" border style="width: 100%;margin-top: 10px;"
             :row-style="{height:'60px'}" :header-row-style="{height:'50px'}" :height="tableHeight" v-loading="loading"
             :row-key="getRowKey" @selection-change="handleSelectionChange">
             <el-table-column type="selection" :reserve-selection='true'></el-table-column>
-            <el-table-column prop="docxTemplateName" label="模板名称" show-overflow-tooltip width="180"></el-table-column>
-            <el-table-column prop="materialName" label="材料名称" show-overflow-tooltip width="180"></el-table-column>
-            <el-table-column prop="globalDocumentSubName" label="关联二级材料名称" show-overflow-tooltip width="180">
-            </el-table-column>
             <el-table-column prop="fieldName" label="字段名称" show-overflow-tooltip width="180"></el-table-column>
+            <!-- <el-table-column prop="docxTemplateName" label="模板名称" show-overflow-tooltip width="180"></el-table-column> -->
+            <el-table-column prop="materialName" label="关联一级材料名称" show-overflow-tooltip width="180"></el-table-column>
+            <el-table-column prop="documentsubDisplayname" label="关联二级材料名称" show-overflow-tooltip width="180">
+            </el-table-column>
+            
             <el-table-column prop="isRequired" label="是否必填" :formatter="isRequiredFormatter"></el-table-column>
+            <el-table-column prop="isFront" label="是否前端字段" :formatter="isRequiredFormatter" show-overflow-tooltip>
+            </el-table-column>
             <el-table-column prop="label" label="前端字段名称" show-overflow-tooltip></el-table-column>
             <el-table-column prop="fieldNo" label="字段编号" show-overflow-tooltip></el-table-column>
             <el-table-column prop="valueSource" label="字段值来源" show-overflow-tooltip></el-table-column>
@@ -82,8 +104,9 @@
             </el-table-column>
         </el-table>
         <div class="tablePagination">
-            <el-pagination @current-change="handleCurrentChange" @size-change="handleSizeChange" :current-page.sync="currentPage" :page-size="pageSize"
-                layout="total, sizes, prev, pager, next, jumper" :total="total"></el-pagination>
+            <el-pagination @current-change="handleCurrentChange" @size-change="handleSizeChange"
+                :current-page.sync="currentPage" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
+                :total="total"></el-pagination>
         </div>
 
         <!--添加字段-->
@@ -107,6 +130,12 @@
                 </el-form-item>
                 <el-form-item label="字段编号" required>
                     <el-input v-model="addForm.fieldNo"></el-input>
+                </el-form-item>
+                <el-form-item label="是否前端字段">
+                    <el-select v-model="addForm.isFront" clearable placeholder="是否为提取点">
+                        <el-option label="是" :value="Number(1)"></el-option>
+                        <el-option label="否" :value="Number(0)"></el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="是否提取点">
                     <el-select v-model="addForm.isCheckpoint" clearable placeholder="是否为提取点">
@@ -220,6 +249,12 @@
                 </el-form-item>
                 <el-form-item label="字段编号" required>
                     <el-input v-model="editForm.fieldNo"></el-input>
+                </el-form-item>
+                 <el-form-item label="是否前端字段">
+                    <el-select v-model="editForm.isFront" clearable placeholder="是否为提取点">
+                        <el-option label="是" :value="Number(1)"></el-option>
+                        <el-option label="否" :value="Number(0)"></el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="是否提取点">
                     <el-select v-model="editForm.isCheckpoint" clearable placeholder="是否为提取点">
@@ -438,7 +473,7 @@ import {
     listFieldUnionMaterial, listAllMaterial, importfields, lookfields, listFieldNosByIds, updateFieldComponentName, saveBatch,
     saveBatchCheck
 } from "@/api/basicInfo/field";
-import { listGlobalCheckpoint} from '@/api/basicInfo/examination'
+import { listGlobalCheckpoint } from '@/api/basicInfo/examination'
 import { listItemAndDocumentSub } from "@/api/basicInfo/approvalSub";
 import dayjs from "dayjs";
 import { getRolelist } from '@/api/item';
@@ -457,6 +492,8 @@ export default {
             // 搜索
             materialKeyword: '',
             fieldKeyword: '',
+            isFront: '',
+            isCheckpoint: '',
             tableData: [],
             material_change: "",
             pageSize: 50,
@@ -474,6 +511,7 @@ export default {
                 note: "",
             },
             // 导入材料字段相关
+            exMode: null,
             importDialogVisible: false,
             tableDataImport: [],
             totalImport: null,
@@ -555,7 +593,8 @@ export default {
         // 查询表格
         async reloadTable() {
             console.log("this.itemId:", this.$route.query.itemId)
-            let result = await listFieldUnionMaterial({ approvalItemId: this.itemId, pageNum: this.currentPage, pageSize: this.pageSize, materialKeyword: this.materialKeyword, fieldKeyword: this.fieldKeyword });
+            let result = await listFieldUnionMaterial({ approvalItemId: this.itemId, pageNum: this.currentPage, pageSize: this.pageSize, 
+            materialKeyword: this.materialKeyword, fieldKeyword: this.fieldKeyword, isFront: this.isFront, isCheckpoint: this.isCheckpoint });
             if (!result.success) return;
             this.tableData = result.data.records;
             this.total = result.data.total;
@@ -598,7 +637,7 @@ export default {
                 // aliasName: this.aliasName,
             }
             let result = await listGlobalCheckpoint(params);
-            if(!result.success) return;
+            if (!result.success) return;
             this.globalCheckpointOptions = result.data.records;
         },
         // 添加
@@ -627,7 +666,7 @@ export default {
                 projectId: this.$route.query.projectId,
             }
             let result = await listGlobalCheckpoint(params);
-            if(!result.success) return;
+            if (!result.success) return;
             this.globalCheckpointOptions = result.data.records;
         },
         // 编辑
@@ -690,11 +729,11 @@ export default {
                 this.$message.warning('转到帮办字段失败')
             } else {
                 this.$message.success('转到帮办字段成功')
-                if(result.data.length === 0) return;
+                if (result.data.length === 0) return;
                 const h = this.$createElement;
                 this.$notify({
                     title: '以下字段缺少二级材料未导出提取点',
-                    message: h('i', { style: 'color: teal; white-space:pre-line' }, JSON.stringify(result.data).replace(/,/g,"\n")),
+                    message: h('i', { style: 'color: teal; white-space:pre-line' }, JSON.stringify(result.data).replace(/,/g, "\n")),
                     duration: 0
                 });
             }
@@ -854,6 +893,7 @@ export default {
             let fd = new FormData();
             fd.append("file", file);
             fd.append("approvalItemId", this.itemId);
+            fd.append("exMode", this.exMode);
             console.log('fd');
             console.log(fd);
             // console.log('this.uploadUrl', this.uploadUrl)
@@ -870,7 +910,7 @@ export default {
                             const h = this.$createElement;
                             this.$notify({
                                 title: 'Excel上传消息提示',
-                                message: h('i', { style: 'color: teal; white-space:pre-line' }, JSON.stringify(res.data.data).replace(/,/g,"\n")),
+                                message: h('i', { style: 'color: teal; white-space:pre-line' }, JSON.stringify(res.data.data).replace(/,/g, "\n")),
                                 duration: 0
                             });
                             this.reloadTable();
@@ -887,24 +927,34 @@ export default {
             return false;
         },
         upload() {
+            if(this.exMode === null || this.exMode === '') {
+                this.$message.warning("请先选择上传模式");
+                return;
+            }
             this.uploadUrl = this.url;
-            this.$confirm('会全部覆盖，是否继续导入？', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning',
-            }).then(() => {
-                this.$refs.upload.submit();
-            }).catch(_ => { });
+            this.$refs.upload.submit();
+            // this.$confirm('会全部覆盖，是否继续导入？', '提示', {
+            //     confirmButtonText: '确定',
+            //     cancelButtonText: '取消',
+            //     type: 'warning',
+            // }).then(() => {
+            //     this.$refs.upload.submit();
+            // }).catch(_ => { });
         },
         uploadNew() {
+            if(this.exMode === null || this.exMode === '') {
+                this.$message.warning("请先选择上传模式");
+                return;
+            }
             this.uploadUrl = this.urlNew;
-            this.$confirm('会全部覆盖，是否继续导入？', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning',
-            }).then(() => {
-                this.$refs.uploadNew.submit();
-            }).catch(_ => { });
+            this.$refs.uploadNew.submit();
+            // this.$confirm('会全部覆盖，是否继续导入？', '提示', {
+            //     confirmButtonText: '确定',
+            //     cancelButtonText: '取消',
+            //     type: 'warning',
+            // }).then(() => {
+            //     this.$refs.uploadNew.submit();
+            // }).catch(_ => { });
         },
         // 成功上传文件
         upFile(res, file) {
@@ -927,7 +977,44 @@ export default {
             } else {
                 this.tableHeight = window.innerHeight - tableH
             }
-        }
+        }, 
+        // 下载
+        async downLoad() {
+            let res = await axios({
+                method: "get",
+                url: "/ss/field/exportField",
+                params: {
+                    approvalItemId: this.itemId,
+                    fieldKeyword: this.fieldKeyword,
+                    materialKeyword: this.materialKeyword,
+                    isFront: this.isFront,
+                    isCheckpoint: this.isCheckpoint
+                },
+                responseType: "arraybuffer",
+            });
+            if (res.data.byteLength === 0) {
+                this.$message.warning("没有需要下载的内容");
+                return;
+            }
+            let blob = new Blob([res.data], { type: "application/zip" });
+            const a = document.createElement("a");
+            // 生成文件路径
+            let href = window.URL.createObjectURL(blob);
+            a.href = href;
+            console.log('res');
+            console.log(res);
+            // let _fileName = _res.headers['Content-disposition'].split(';')[1].split('=')[1].split('.')[0]
+            let _fileName = res.headers["content-disposition"]
+                .split(";")[1]
+                .split("=")[1];
+            // 文件名中有中文 则对文件名进行转码
+            a.download = decodeURIComponent(_fileName);
+            // 利用a标签做下载
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(href);
+        },
     }
 };
 </script>
@@ -939,13 +1026,14 @@ export default {
     height: calc(100% - 22px);
     .submitTip {
         display: flex;
-        justify-content: flex-start;
+        justify-content: flex-end;
         align-items: center;
     }
     .operation-box {
         display: flex;
         align-items: center;
         flex-wrap: wrap;
+        height: 72px;
         .operation-item {
             margin-right: 15px;
         }

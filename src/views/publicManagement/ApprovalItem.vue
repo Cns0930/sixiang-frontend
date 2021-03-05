@@ -131,10 +131,10 @@
                             <el-input v-model="tempItem.itemType">
                             </el-input>
                         </el-form-item>
-                        <el-form-item label="排序">
+                        <!-- <el-form-item label="排序">
                             <el-input v-model="tempItem.sort">
                             </el-input>
-                        </el-form-item>
+                        </el-form-item> -->
                     </el-form>
                 </div>
                 <span slot="footer" class="dialog-footer">
@@ -178,10 +178,10 @@
                             <el-input v-model="tempItem.itemType">
                             </el-input>
                         </el-form-item>
-                        <el-form-item label="排序">
+                        <!-- <el-form-item label="排序">
                             <el-input v-model="tempItem.sort">
                             </el-input>
-                        </el-form-item>
+                        </el-form-item> -->
                     </el-form>
                 </div>
                 <span slot="footer" class="dialog-footer">
