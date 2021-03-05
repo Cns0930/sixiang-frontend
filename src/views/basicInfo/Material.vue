@@ -191,14 +191,17 @@
                             <el-option label="否" :value="Number(0)"></el-option>
                         </el-select>
                     </el-form-item>
+                    <el-form-item label="导航顺序">
+                        <el-input v-model="materialT.navigationOrder" placeholder="请输入数字"></el-input>
+                    </el-form-item>
                     <el-form-item label="是否必须上传">
                         <el-select v-model="materialT.uploadRequired">
                             <el-option label="是" :value="Number(1)"></el-option>
                             <el-option label="否" :value="Number(0)"></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="导航顺序">
-                        <el-input v-model="materialT.navigationOrder" placeholder="请输入数字"></el-input>
+                    <el-form-item label="上传逻辑说明">
+                        <el-input v-model="materialT.uploadDescription"></el-input>
                     </el-form-item>
                     <el-form-item label="材料逻辑">
                         <el-input type="textarea" :rows="3" v-model="materialT.descriptionInfo"></el-input>
@@ -221,9 +224,6 @@
                     </el-form-item> -->
                     <el-form-item label="清单补充说明信息">
                         <el-input v-model="materialT.materialNameNotes"></el-input>
-                    </el-form-item>
-                    <el-form-item label="上传逻辑说明">
-                        <el-input v-model="materialT.uploadDescription"></el-input>
                     </el-form-item>
                     <el-form-item label="子材料逻辑">
                         <el-select v-model="materialT.logicType" placeholder="材料的产生来源">
