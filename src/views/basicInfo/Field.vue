@@ -50,12 +50,15 @@
             :row-style="{height:'60px'}" :header-row-style="{height:'50px'}" :height="tableHeight" v-loading="loading"
             :row-key="getRowKey" @selection-change="handleSelectionChange">
             <el-table-column type="selection" :reserve-selection='true'></el-table-column>
-            <!-- <el-table-column prop="docxTemplateName" label="模板名称" show-overflow-tooltip width="180"></el-table-column> -->
-            <el-table-column prop="materialName" label="材料名称" show-overflow-tooltip width="180"></el-table-column>
-            <el-table-column prop="globalDocumentSubName" label="关联二级材料名称" show-overflow-tooltip width="180">
-            </el-table-column>
             <el-table-column prop="fieldName" label="字段名称" show-overflow-tooltip width="180"></el-table-column>
+            <!-- <el-table-column prop="docxTemplateName" label="模板名称" show-overflow-tooltip width="180"></el-table-column> -->
+            <el-table-column prop="materialName" label="关联一级材料名称" show-overflow-tooltip width="180"></el-table-column>
+            <el-table-column prop="documentsubDisplayname" label="关联二级材料名称" show-overflow-tooltip width="180">
+            </el-table-column>
+            
             <el-table-column prop="isRequired" label="是否必填" :formatter="isRequiredFormatter"></el-table-column>
+            <el-table-column prop="isFront" label="是否前端字段" :formatter="isRequiredFormatter" show-overflow-tooltip>
+            </el-table-column>
             <el-table-column prop="label" label="前端字段名称" show-overflow-tooltip></el-table-column>
             <el-table-column prop="fieldNo" label="字段编号" show-overflow-tooltip></el-table-column>
             <el-table-column prop="valueSource" label="字段值来源" show-overflow-tooltip></el-table-column>
@@ -232,6 +235,12 @@
                 </el-form-item>
                 <el-form-item label="字段编号" required>
                     <el-input v-model="editForm.fieldNo"></el-input>
+                </el-form-item>
+                 <el-form-item label="是否前端字段">
+                    <el-select v-model="editForm.isFront" clearable placeholder="是否为提取点">
+                        <el-option label="是" :value="Number(1)"></el-option>
+                        <el-option label="否" :value="Number(0)"></el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="是否提取点">
                     <el-select v-model="editForm.isCheckpoint" clearable placeholder="是否为提取点">
