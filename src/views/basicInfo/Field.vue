@@ -10,6 +10,14 @@
                         style="width: 200px;" @change="reloadTable"></el-input>
                     <el-input class="operation-item" placeholder="筛选字段名称或者字段编号" v-model="fieldKeyword" clearable
                         style="width: 200px;" @change="reloadTable"></el-input>
+                    <el-select v-model="isFront" clearable placeholder="是否为前端字段" @change="reloadTable" style="margin-right: 15px">
+                        <el-option label="是" :value="Number(1)"></el-option>
+                        <el-option label="否" :value="Number(0)"></el-option>
+                    </el-select>
+                    <el-select v-model="isCheckpoint" clearable placeholder="是否为提取点" @change="reloadTable" style="margin-right: 15px">
+                        <el-option label="是" :value="Number(1)"></el-option>
+                        <el-option label="否" :value="Number(0)"></el-option>
+                    </el-select>
                     <el-button class="operation-item" @click="reloadTable">搜索</el-button>
                 </div>
             </el-col>
@@ -478,6 +486,8 @@ export default {
             // 搜索
             materialKeyword: '',
             fieldKeyword: '',
+            isFront: '',
+            isCheckpoint: '',
             tableData: [],
             material_change: "",
             pageSize: 50,
@@ -577,7 +587,8 @@ export default {
         // 查询表格
         async reloadTable() {
             console.log("this.itemId:", this.$route.query.itemId)
-            let result = await listFieldUnionMaterial({ approvalItemId: this.itemId, pageNum: this.currentPage, pageSize: this.pageSize, materialKeyword: this.materialKeyword, fieldKeyword: this.fieldKeyword });
+            let result = await listFieldUnionMaterial({ approvalItemId: this.itemId, pageNum: this.currentPage, pageSize: this.pageSize, 
+            materialKeyword: this.materialKeyword, fieldKeyword: this.fieldKeyword, isFront: this.isFront, isCheckpoint: this.isCheckpoint });
             if (!result.success) return;
             this.tableData = result.data.records;
             this.total = result.data.total;
@@ -969,7 +980,9 @@ export default {
                 params: {
                     approvalItemId: this.itemId,
                     fieldKeyword: this.fieldKeyword,
-                    materialKeyword: this.materialKeyword
+                    materialKeyword: this.materialKeyword,
+                    isFront: this.isFront,
+                    isCheckpoint: this.isCheckpoint
                 },
                 responseType: "arraybuffer",
             });
