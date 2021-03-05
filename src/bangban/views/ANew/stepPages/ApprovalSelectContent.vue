@@ -39,10 +39,10 @@ import TestFormItem from "@/components/TestFormItem"
 // import rules from "../config/ruleConfig"
 import { mapState } from "vuex"
 import CommonMixin from "@/bangban/views/ANew/CommonMixin"
-// import Tipscommon from "@/views/layoutComponents/TipsCommon/TipsCommon"
+
 export default {
     name: 'ApprovalSelectContent',
-    components: { ContentCard, ElFormItem: TestFormItem },
+    components: { ContentCard, ElFormItem: TestFormItem, },
     props: ["config","isLastStep"],
     mixins:[CommonMixin],
     data() {

@@ -15,7 +15,7 @@
                     @submit.native.prevent :class="{'marinTopGap':hasMarginTop}">
                     <el-row>
                         <template v-for="(group,groupIndex) in fieldsGroup">
-
+                            
                             <el-col class="sub-title-n" v-if="group.fact">
                                 <div class="tag"></div>
                                 <span class="text">{{group.fact}}</span>
@@ -87,6 +87,7 @@ import ContentCard from '../components/ContentCard';
 import TestFormItem from "@/components/TestFormItem"
 import { queryDefault } from "@/api/ANew/newA"
 import { mapGetters, mapState } from "vuex"
+// import TitleCommon from "@/views/layoutComponents/TitleCommon/TitleCommon"
 import _ from "lodash"
 export default {
     name: "BaseFormPage",

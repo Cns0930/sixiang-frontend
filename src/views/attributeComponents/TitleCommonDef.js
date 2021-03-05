@@ -6,16 +6,14 @@ class TitleCommonDef{
         this.component = rendererBuilder("text","TitleCommon")
         this.value = new Renderer("text",false)
         this.titles = new Renderer('ElInput', '')
-        this.isOneTitle = new Renderer('ElSingleCheckboxC', false,{options:[true]},"是否一级标题")
-        this.isTwoTitle = new Renderer('ElSingleCheckboxC', false,{options:[true]},"是否二级标题")
-
+        this.span = rendererBuilder("text",24)
+        this.independent=rendererBuilder("text",true);
+        this.isWhichTitle=new Renderer("ElSelectC","一级标题",{options:['一级标题','二级标题']},"选择标题级别")
     }
     getAttributes(){
         return {
             titles:this.titles.value,
-            isOneTitle:this.$isOneTitle.value,
-            isTwoTitle:this.$isTwoTitle.value
-            // ifRead:this.$ifRead.value,
+            isWhichTitle:this.isWhichTitle.value,
         }
     }
 }

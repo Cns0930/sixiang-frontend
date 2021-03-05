@@ -275,11 +275,11 @@ const routes = [
         name: 'test',
         component: UiCompilerComponent
     },
-    {
-        path: '/collapseCommon',
-        name: 'CollapseCommon',
-        component: CollapseCommon
-    },
+    // {
+    //     path: '/collapseCommon',
+    //     name: 'CollapseCommon',
+    //     component: CollapseCommon
+    // },
 
 
 ]
