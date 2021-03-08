@@ -21,7 +21,7 @@
         <div class="searchBox">
             <div class="left">
                 <el-input placeholder="筛选字段名称或者字段编号" v-model="valueF" clearable style="width:240px"></el-input>
-                <el-select v-model="temp_type_search" clearable placeholder="筛选组件类型" style="width:240px">
+                <el-select v-model="temp_type_search" clearable filterable placeholder="筛选组件类型" style="width:240px">
                     <el-option v-for="(v,i) in typeOptions" :key="i" :label="v.label" :value="v.value" ></el-option>
                 </el-select>
                 
@@ -532,7 +532,7 @@ export default {
             let param = {
                 fieldNo: v.fieldNo,
                 label: v.label,
-                fieldComponentName: v.componentDefs?.type?.value,
+                fieldComponentName: v.fieldComponentName,
                 fieldName: this.temp_fieldName, 
                 fieldType: 3,
                 object: v,

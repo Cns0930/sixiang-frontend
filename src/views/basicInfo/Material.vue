@@ -368,8 +368,9 @@
                 @selection-change="handleSelectionChange">
                 <el-table-column type="selection" reserve-selection label="选择">
                 </el-table-column>
-                <el-table-column prop="materialCode" label="材料编码" width="200"></el-table-column>
+                <!-- <el-table-column prop="materialCode" label="材料编码" width="200"></el-table-column> -->
                 <el-table-column prop="materialName" label="材料名称"></el-table-column>
+                <el-table-column prop="documentSeq" label="文档序号"></el-table-column>
 
             </el-table>
 

@@ -132,7 +132,7 @@
                     <el-input v-model="addForm.fieldNo"></el-input>
                 </el-form-item>
                 <el-form-item label="是否前端字段">
-                    <el-select v-model="addForm.isFront" clearable placeholder="是否为提取点">
+                    <el-select v-model="addForm.isFront" clearable placeholder="是否前端字段">
                         <el-option label="是" :value="Number(1)"></el-option>
                         <el-option label="否" :value="Number(0)"></el-option>
                     </el-select>
@@ -360,7 +360,7 @@
                 <el-table-column prop="label" label="前端字段名称"></el-table-column>
                 <el-table-column prop="fieldComponentName" label="组件类型" fixed="right">
                     <template slot-scope="scope">
-                        <el-select v-model="scope.row.fieldComponentName" clearable placeholder="请选择组件类型"
+                        <el-select v-model="scope.row.fieldComponentName" clearable filterable placeholder="请选择组件类型"
                             @change="(val)=>typeChange(val,scope.row)">
                             <el-option v-for="(v,i) in typeOptions" :key="i" :label="v.label" :value="v.value">
                             </el-option>
