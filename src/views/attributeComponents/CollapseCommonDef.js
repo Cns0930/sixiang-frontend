@@ -10,7 +10,7 @@ class CollapseCommon {
         this.span = rendererBuilder("text",24)
         this.meta=new Renderer("text",[])
         this.titles = new Renderer('ElInput', '')
-        this.isTwoTitle = new Renderer('ElSingleCheckboxC', false,{options:[true]},"是否二级标题")
+        // this.isTwoTitle = new Renderer('ElSingleCheckboxC', false,{options:[true]},"是否二级标题")
         
 
         this.addBtnStyle=new Renderer('ElInput', '')
@@ -48,7 +48,7 @@ class CollapseCommon {
             addBtnStyle:this.addBtnStyle.value,
             removeBtnStyle:this.removeBtnStyle.value,
             titles:this.titles.value,
-            isTwoTitle:this.isTwoTitle.value,
+            // isTwoTitle:this.isTwoTitle.value,
             isLengthFixed:this.isLengthFixed.value,
             addHook:this.addHook.value,
             ruleKey:this.ruleKey.value,

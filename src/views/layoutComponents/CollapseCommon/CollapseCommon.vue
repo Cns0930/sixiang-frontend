@@ -5,18 +5,10 @@
         <el-collapse >
             <el-collapse-item name="1" >
                 <template slot="title">
-                    <div class="two-name names" v-if="isTwoTitle"><img class="two-img" src="./two.png">{{titles || '板块标题' }}</div>
-                    <!-- <p class="icon-text" v-if="actives">展开</p>
-                    <p class="icon-text" v-else>收起</p> -->
+                    <div class="two-name names"><img class="two-img" src="./two.png">{{titles || '板块标题' }}</div>
                 </template>
-                <template v-for="(list,index) in children">
-                    <el-col :span="24"></el-col>
-
+                <template v-for="list in children">
                     <PureComponents :fields="list" :parent="children" ref="childrenFormItem"></PureComponents>
-                    <el-col>
-                        <!-- <el-divider></el-divider> -->
-                    </el-col>
-
                 </template>
                 <!-- <PureComponents :fields="fields"></PureComponents> -->
             </el-collapse-item>
@@ -36,13 +28,9 @@ export default {
     components:{
         PureComponents,ElFormItem: TestFormItem,
     },
-    props: ['value','isTwoTitle','titles','children', "ruleKey", "validateFn"],
+    props: ['value','titles','children', "ruleKey", "validateFn"],
     data() {
         return {
-            // value:{
-            //    isOneTitle:true,
-            //    isTwoTitle:true
-            // }
 
         }
     },
@@ -50,24 +38,10 @@ export default {
 
     },
     watch: {
-        // "children": {
-        //     handler: async function (v) {
-        //         await this.$nextTick();
-        //         await this.validate();
-        //     },
-        //     immediate: true
-        // }
+
     },
     computed: {
-        // listContext() {
-        //     return {
-        //         value: this.value,
-        //         ruleKey: this.ruleKey,
-        //         validateFn: (value, state, getters) => {
-        //             return this.validateFn(state, getters)
-        //         }
-        //     }
-        // },
+
     },
     methods: {
 
