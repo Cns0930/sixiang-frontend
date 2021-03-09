@@ -180,6 +180,7 @@ export default {
   },
   methods: {
     goSearch() {
+      this.currentPage = 1;
       this.search(this.value);
     },
     async rolelist() {
@@ -216,6 +217,7 @@ export default {
     },
     //编辑
     handleEdit(index,row) {
+      this.roleList = [];
       this.userId = row.userId;
       this.showMask = true;
       if(!row.roles) {
@@ -238,7 +240,7 @@ export default {
       });
       if(result.success) {
         this.$message({ type: "success", message: "修改成功" });
-        this.search();
+        this.search(this.value);
         this.showMask = false;
       } else {
         this.$message({ type: "fail", message: "修改失败" });
