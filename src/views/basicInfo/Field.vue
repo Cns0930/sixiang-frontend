@@ -31,8 +31,11 @@
                         <el-upload class="upload-demo" ref="upload" :action="url" :limit="1" accept=".xlsx"
                             :with-credentials="true" :on-success="upFile" :on-remove="handleRemove"
                             :on-exceed="handleExceed" :auto-upload="false" :before-upload="customUpload">
-                            <el-button type="primary">选择材料字段数据Excel</el-button>
-                            <div slot="tip" class="el-upload__tip">只能上传Excel文件</div>
+                            <el-button type="primary">选择旧模板材料(旧)</el-button>
+                            <div slot="tip" class="el-upload__tip inner-box">
+                                <span>只能上传Excel文件</span>
+                                <el-button type="text" @click="startDownload('oldExcel')">点击下载模板</el-button>
+                            </div>
                         </el-upload>
                         <el-button type="success" @click="upload()" class="upload-input">导入</el-button>
                     </div>
@@ -40,8 +43,11 @@
                         <el-upload class="upload-demo" ref="uploadNew" :action="url" :limit="1" accept=".xlsx"
                             :with-credentials="true" :on-success="upFile" :on-remove="handleRemove"
                             :on-exceed="handleExceed" :auto-upload="false" :before-upload="customUpload">
-                            <el-button type="primary">选择新模板材料Excel</el-button>
-                            <div slot="tip" class="el-upload__tip">只能上传Excel文件</div>
+                            <el-button type="primary">选择新模板材料(新)</el-button>
+                            <div slot="tip" class="el-upload__tip inner-box">
+                                <span>只能上传Excel文件</span>
+                                <el-button type="text" @click="startDownload('newExcel')">点击下载模板</el-button>
+                            </div>
                         </el-upload>
                         <el-button type="success" @click="uploadNew()" class="upload-input">导入</el-button>
                     </div>
@@ -1015,6 +1021,20 @@ export default {
             document.body.removeChild(a);
             window.URL.revokeObjectURL(href);
         },
+        // 下载初始模板
+        startDownload(type) {
+            console.log('type', type);
+            const a = document.createElement("a");
+            if(type === 'oldExcel') {
+                a.href = 'http://10.0.101.18/template/事项材料及具体字段信息-旧模板.xlsx'
+            } else {
+                a.href = 'http://10.0.101.18/template/事项材料及具体字段信息-新模板.xlsx'
+            }
+            a.target = "_blank";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
     }
 };
 </script>
@@ -1046,6 +1066,12 @@ export default {
         flex-direction: row;
         .upload-demo {
             width: 160px;
+            .inner-box {
+                width: 220px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
         }
         .upload-input {
             height: 26px;
