@@ -48,15 +48,21 @@
             <header>
                 <span class="title">操作</span>
             </header>
-            <div class="handleBox">
-                <p class="title">下载配置开发模板</p>
-                <el-button type="primary" icon="el-icon-download" @click="downLoad">点击下载</el-button>
+            <div class="workHandleBoxContent">
+                <div class="handleBox">
+                    <p class="title">下载配置开发模板</p>
+                    <el-button type="primary" icon="el-icon-download" @click="downLoad">点击下载</el-button>
+                </div>
+                <div class="handleBox">
+                    <p class="title">上传事项配置到git</p>
+                    <el-button type="primary" icon="el-icon-upload2" :loading="loadingUptoGit" @click="upToGit">点击上传</el-button>
+                </div>
             </div>
         </div>
         <!-- 事项编辑弹窗 -->
         <el-dialog title="事项属性填写" :visible.sync="dialogUpdateVisible" width="50%" :close-on-click-modal="false">
             <div class="attribute-content">
-                <el-form :model="tempItem" ref="tempItem" :rules="rules" :inline="false" label-position="left"
+                <el-form :model="tempItem" ref="tempItem" :inline="false" label-position="left"
                     class="demo-form-inline">
                     <el-form-item label="大项" prop="approvalId">
                         <el-select v-model="tempItem.approvalId" filterable>
@@ -120,7 +126,7 @@ import state from '@/vuex/home/state';
 import dayjs from "dayjs";
 import _ from "lodash"
 // 接口
-import { getByApprovalItemId, listApprovalAll, updateApprovalItem } from "@/api/basicInfo/approval"
+import { getByApprovalItemId, listApprovalAll, updateApprovalItem, submitItemInfo } from "@/api/basicInfo/approval"
 
 export default {
     name: "ApprovalDetail",
@@ -142,6 +148,8 @@ export default {
                 keyValue: '',
                 labelValue: '',
             }],
+            // 上传下载相关
+            loadingUptoGit: false,
         }
     },
     computed: {
@@ -250,8 +258,18 @@ export default {
             } else {
                 this.$message.success("事项修改失败!");
             }
-        }
-
+        },
+        // 上传事项配置到git
+        async upToGit() {
+            this.loadingUptoGit = true;
+            let res = await submitItemInfo({approvalItemId: this.itemId});
+            if(res.success) {
+                this.$message.success('上传配置到Git成功！');
+            } else {
+                this.$message.warning('上传配置到Git失败！');
+            }
+            this.loadingUptoGit = false;
+        },
     },
 
 }
@@ -299,17 +317,23 @@ export default {
         justify-content: flex-start;
         // flex-wrap: wrap;
         // background: rgb(219, 237, 238);
-        .handleBox {
-            width: 300px;
-            margin: 20px;
-            padding: 10px;
+        .workHandleBoxContent {
             display: flex;
-            // background: rgb(250, 218, 218);
-            align-items: center;
-            flex-direction: column;
-            justify-content: center;
-            .title {
+            // align-items: center;
+            flex-direction: row;
+            justify-content: flex-start;
+            .handleBox {
+                width: 300px;
                 margin: 20px;
+                padding: 10px;
+                display: flex;
+                // background: rgb(250, 218, 218);
+                align-items: center;
+                flex-direction: column;
+                justify-content: center;
+                .title {
+                    margin: 20px;
+                }
             }
         }
     }
