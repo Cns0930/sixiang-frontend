@@ -31,11 +31,12 @@
         <el-input placeholder="按字段别名查询" v-model="aliasName" clearable style="width: 200px;"
         @keyup.native.enter="search"></el-input>
             <el-button @click="search" type="primary">搜索</el-button>
-            <div class="upload-box" style="float:right">
+            <div class="upload-box" style="float:right;margin-right:30px">
                 <el-upload class="upload-demo" ref="upload" :action="url" :limit="1" :with-credentials="true"
                     :on-success="uploadSuccess" :on-remove="handleRemove" :on-exceed="handleExceed" :auto-upload='true'
                     :before-upload="customUpload">
                     <el-button type="primary" @click="upload()">Excel上传</el-button>
+                    <el-button type="text" @click="startDownload">点击下载模板</el-button>
                 </el-upload>
             </div> 
         </div>
@@ -446,6 +447,15 @@ export default {
         //  移除文件
         handleRemove(file, fileList) {
         },
+        // 下载初始模板
+        startDownload() {
+            const a = document.createElement("a");
+            a.href = 'http://10.0.101.18/template/公共信息点.xlsx'
+            a.target = "_blank";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
     },
 
 }
