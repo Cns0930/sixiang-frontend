@@ -904,7 +904,7 @@ export default {
         async handleImportPublic() {
             this.dialogPublicVisible = true;
             // 初始化公共事项列表
-            let result = await listPublicApprovalItem({pageSize: 100, projectId: this.$route.query.projectId});
+            let result = await listPublicApprovalItem({pageSize: 10});
             this.publicApprovalItemList = result.data.records;
         },
         handleSelect(){
