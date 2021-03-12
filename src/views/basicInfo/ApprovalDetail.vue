@@ -50,8 +50,12 @@
             </header>
             <div class="workHandleBoxContent">
                 <div class="handleBox">
-                    <p class="title">下载配置开发模板</p>
-                    <el-button type="primary" icon="el-icon-download" @click="downLoad">点击下载</el-button>
+                    <p class="title">下载预检开发配置模板</p>
+                    <el-button type="primary" icon="el-icon-download" @click="downLoad('/ss/Import/downloadAiZip')">点击下载</el-button>
+                </div>
+                <div class="handleBox">
+                    <p class="title">临时下载迁移前四象1.0需求文件</p>
+                    <el-button type="primary" icon="el-icon-download" @click="downLoad('/ss/Import/downloadDemandZip')">点击下载</el-button>
                 </div>
                 <div class="handleBox">
                     <p class="title">上传事项配置到git</p>
@@ -189,10 +193,10 @@ export default {
             // console.log('this.formInline');
             // console.log(this.formInline);
         },
-        async downLoad() {
+        async downLoad(url) {
             let res = await axios({
                 method: "get",
-                url: "/ss/Import/downloadAiZip",
+                url: url,
                 params: {
                     approvalItemId: this.itemId,
                     // type: "word",
@@ -200,7 +204,7 @@ export default {
                 responseType: "arraybuffer",
             });
             if (res.data.byteLength === 0) {
-                this.$message.warning("该事项下没有AI材料文件");
+                this.$message.warning("没有需要下载的文件");
                 return;
             }
             let blob = new Blob([res.data], { type: "application/zip" });
