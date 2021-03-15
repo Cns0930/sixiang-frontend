@@ -119,8 +119,9 @@
                     </el-table-column>
                     <el-table-column prop="updateTime" label="最后修改时间" :formatter="timeFormatter" sortable
                         show-overflow-tooltip></el-table-column>
-                    <el-table-column label="操作" fixed="right" width="110px">
+                    <el-table-column label="操作" fixed="right" width="250px">
                         <template slot-scope="scope">
+                            <el-button size="mini" @click="showPreview(scope.row)">查看预览图</el-button>
                             <el-button size="mini" @click="showTemplate(scope.row)">查看模板</el-button>
                             <el-button size="mini" @click="EditmaterialVisible(scope.row)">编辑</el-button>
                             <el-button size="mini" type="primary" @click="goOnlineDocumentEditor(scope.row)">word编辑
@@ -409,7 +410,7 @@
                     <el-table-column label="操作" fixed="right" width="300">
                         <template slot-scope="scope">
                             <div v-if="scope.row.flag">
-                                <el-button size="mini" icon="el-icon-close" @click="closeText(scope.$index, scope.row)">
+                                <el-button size="mini" icon="el-icon-close" @click="closeText(scope.$index, scope.row, tableDataTemplate)">
                                 </el-button>
                                 <el-button size="mini" type="primary" icon="el-icon-check" @click="saveText(scope.row)">
                                 </el-button>
@@ -429,12 +430,14 @@
                 <el-button @click="templateVisible = false">关闭</el-button>
             </span>
         </el-dialog>
+        <Preview ref="previewRef"></Preview>
     </div>
 </template>
 
 
 
 <script>
+import Preview from './materialComponents/Preview';
 import basicMixin from "./basicMixin";
 import { mixin } from "@/mixin/mixin"
 import Vue from "vue";
@@ -452,6 +455,7 @@ import axios from "axios";
 export default {
     name: "Material",
     mixins: [basicMixin, mixin],
+    components: {Preview},
     data() {
         return {
             // model: {
@@ -559,6 +563,13 @@ export default {
         next()
     },
     methods: {
+        // 查看预览图
+        showPreview(row) {
+            console.log('previewRef', this.$refs.previewRef)
+            // this.$refs.previewRef.previewVisble = true;
+            this.$refs.previewRef.fatherRow = row;
+            this.$refs.previewRef.init();
+        },
         // <—————————————— 查看材料对应的模板————————————
         async listTemplate() {
             let res = await listPreTemplatesByMaterialId({ material_id: this.currentMaterialId })
@@ -577,13 +588,13 @@ export default {
             rows.splice(index + 1, 0, { flag: true });
         },
         // 取消
-        async closeText(index, item) {
-            console.log(index, item)
+        async closeText(index, item, data) {
             if (item.edits) {
                 this.$set(item, 'flag', null);
             } else {
                 data.splice(index, 1)
             }
+            // 刷新了表单，可以清空已填的没用的值
             this.listTemplate();
         },
         // 保存

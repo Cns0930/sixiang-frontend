@@ -20,9 +20,9 @@
             <div class="main">
                 <div style="width:30cm">
                     <!-- <div ref="toolbar" style="position:fixed;top:32px;z-index:30"></div> -->
-                    <div ref="toolbar" style="width: 100%;"></div>
+                    <div ref="toolbar" style="width: 780px;position:fixed;top:180px;z-index: 10;"></div>
 
-                    <div>
+                    <div style="margin-top: 90px">
                         <!-- 纵向 -->
                         <div class="row-editor">
                             <div

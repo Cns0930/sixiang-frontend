@@ -15,7 +15,7 @@
                         :value="v.projectId"
                     ></el-option>
                 </el-select> -->
-                <el-select
+                <!-- <el-select
                     placeholder="筛选大项"
                     v-model="filterApprovalId"
                     filterable clearable
@@ -44,10 +44,10 @@
                     end-placeholder="创建时间截止日期"
                     format="yyyy-MM-dd"
                     value-format="yyyy-MM-dd HH:mm:ss"
-                ></el-date-picker>
-                <el-button @click="searchItem">搜索</el-button>
+                ></el-date-picker> -->
+                <!-- <el-button @click="searchItem">搜索</el-button> -->
                 <div class="handle">
-                    <el-button type="primary" @click="handleClickAdd">新增</el-button>
+                    <!-- <el-button type="primary" @click="handleClickAdd">新增</el-button> -->
                     <!-- <el-button type="primary">导出</el-button>
                     <el-button type="primary">导入</el-button> -->
                 </div>
@@ -109,7 +109,7 @@
                             <!-- <el-button size="mini" @click="handleClickItem(scope.row)">调研信息</el-button> -->
                             <el-button size="mini" @click="handleClickItemBangBan(scope.row)">帮办工具</el-button>
                             <el-button size="mini" @click="handleEdit(scope.$index, scope.row)" :disabled="!hasManagePermission()">编辑</el-button>
-                            <el-button size="mini" type="danger" @click="handleClose(scope.row)" :disabled="!hasManagePermission()">关闭</el-button>
+                            <!-- <el-button size="mini" type="danger" @click="handleClose(scope.row)" :disabled="!hasManagePermission()">关闭</el-button> -->
                         </template>
                     </el-table-column>
                 </el-table>
@@ -408,7 +408,7 @@ export default {
         async list(){
             let params = {
                 approvalId: this.filterApprovalId,
-                projectId: this.projectId,
+                // projectId: this.projectId,
                 keyword: this.filterKeyword,
                 pageSize: this.pagesize,
                 pageNum: this.currentPage,

@@ -41,3 +41,6 @@ export const shutApprovalItem = params => { return axios.get(`/ss/approvalItem/s
 
 // 查询所有公共事项
 export const listPublicApprovalItem = params => { return axios.get(`/ss/approvalItem/listPublicApprovalItem`, {params}).then(res=>res.data); };
+
+// 查询事项下所有帮办所需信息上传git
+export const submitItemInfo = params => { return axios.get(`/ss/approvalItem/submitItemInfo`, {params}).then(res=>res.data); };
