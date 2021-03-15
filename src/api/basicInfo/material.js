@@ -54,3 +54,6 @@ export const updateMaterialAndFigure = params => { return axios.post(`/ss/Materi
 
 // 删除一级材料预览图
 export const deleteMaterialAndFigure = params => { return axios.delete(`/ss/MaterialAndFigure/deleteMaterialAndFigure`, {params}).then(res=>res.data); };
+
+// 导入事项下对应材料
+export const copyMaterialByItemId = params => { return axios.get(`/ss/material/copyMaterialByItemId`, {params}).then(res=>res.data); };
