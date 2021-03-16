@@ -44,3 +44,16 @@ export const savePreTemplate = params => { return axios.post(`/ss/material/saveP
 
 // 删除预定义模板
 export const deletePreTemplate = params => { return axios.get(`/ss/material/deletePreTemplate`, {params}).then(res=>res.data); };
+
+// 一级材料预览图
+// 查询-分页一级材料预览图
+export const listMaterialAndFigure = params => { return axios.get(`/ss/MaterialAndFigure/listMaterialAndFigure`, {params}).then(res=>res.data); };
+
+// 修改一级材料预览图
+export const updateMaterialAndFigure = params => { return axios.post(`/ss/MaterialAndFigure/updateMaterialAndFigure`, params).then(res=>res.data); };
+
+// 删除一级材料预览图
+export const deleteMaterialAndFigure = params => { return axios.delete(`/ss/MaterialAndFigure/deleteMaterialAndFigure`, {params}).then(res=>res.data); };
+
+// 导入事项下对应材料
+export const copyMaterialByItemId = params => { return axios.get(`/ss/material/copyMaterialByItemId`, {params}).then(res=>res.data); };

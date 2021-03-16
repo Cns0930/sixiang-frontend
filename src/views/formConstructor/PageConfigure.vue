@@ -898,7 +898,7 @@ export default {
         },
         //远程搜索
         async remoteMethod(query){
-            if(query !== ''){
+            this.currentPageSelect = 1;
                 let result = await listApprovalItem({keyword:query, pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.temp_page_projectId});
                 this.loading = true;
                 setTimeout(() => {
@@ -907,7 +907,6 @@ export default {
                     this.typeSubItemOptions = result.data.records;
                     
                 })
-            }
         },
         async importStepPage() {
             let res= await batchSaveBytype({approvalItemId:this.itemId,stepslist:this.multipleSelection})

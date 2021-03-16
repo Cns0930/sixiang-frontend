@@ -3,10 +3,11 @@
         <div class="op-bar">
             <el-button @click="openAddDialog"> 新建模板</el-button>
             <el-button @click="getTemplate">载入模板</el-button>
+            <el-button @click="copeAllTemplates">复制其他事项全部模板</el-button>
             <el-button @click="downAllPages">下载所有开发后页面</el-button>
             <el-button @click="handleDownload" type="primary">下载最新word模板</el-button>
 
-            <el-badge :is-dot="!isLast" >
+            <el-badge :is-dot="!isLast">
                 <el-button @click="transferAllTemplates" :disabled="backend.includes('4141')">批量保存到超级帮办</el-button>
             </el-badge>
 
@@ -65,16 +66,16 @@
                 <!-- 模板名称(必填)<el-input v-model="temp_template.docxTemplateName"></el-input>
             材料中文名(必填)<el-input v-model="temp_template.documentName"></el-input>
             材料序号(必填)<el-input v-model="temp_template.documentSeq"></el-input> -->
-            <div>
-                备注<el-input type="textarea" :autosize="{ minRows: 1, maxRows: 15 }" v-model="temp_template.notes">
-                </el-input>
-            </div>
-            <div>
-                page配置<CodeEditor ref="scriptEditor" v-model="temp_template.script"></CodeEditor>
-            </div>
-            <div>
-                产生方式配置<CodeEditor ref="producescriptEditor" v-model="temp_template.produceScript"></CodeEditor>
-            </div>
+                <div>
+                    备注<el-input type="textarea" :autosize="{ minRows: 1, maxRows: 15 }" v-model="temp_template.notes">
+                    </el-input>
+                </div>
+                <div>
+                    page配置<CodeEditor ref="scriptEditor" v-model="temp_template.script"></CodeEditor>
+                </div>
+                <div>
+                    产生方式配置<CodeEditor ref="producescriptEditor" v-model="temp_template.produceScript"></CodeEditor>
+                </div>
             </div>
         </div>
         <!-- 创建模板弹窗 -->
@@ -100,8 +101,7 @@
                     </el-table-column>
                     <el-table-column prop="templateName" label="模板名称(自取)" width="120">
                         <template slot-scope="scopeD">
-                            <el-input v-if="scopeD.row.flag" placeholder="word模板名称"
-                                v-model="scopeD.row.templateName">
+                            <el-input v-if="scopeD.row.flag" placeholder="word模板名称" v-model="scopeD.row.templateName">
                             </el-input>
                             <span v-else>{{scopeD.row.templateName}}</span>
                         </template>
@@ -137,6 +137,50 @@
                 <el-button type="primary" @click="addTemplateBatch">确 定</el-button>
             </span>
         </el-dialog>
+
+        <!-- 复制其他事项全部模板 -->
+        <el-dialog title="复制其他事项全部模板" :visible.sync="copeTemplatesVisible" width="50%" :close-on-click-modal="false">
+            <div style="margin:10px 0px">
+                项目选择:
+                <el-select v-model="chosedProjectId" @change="selectProject">
+                    <el-option v-for="item in projectOptions" :key="item.projectId" :label="item.projectName"
+                        :value="item.projectId">
+                    </el-option>
+                </el-select>
+            </div>
+            <div>
+                事项名称:
+                <el-select clearable filterable placeholder="请选择事项名称" v-model="chosedItemId" @change="selectOne"
+                    style="position:relative" remote reserve-keyword :remote-method="remoteMethod" :loading="loading">
+                    <el-option v-for="(v,i) in typeSubItemOptions" :key="i" :label="v.itemName"
+                        :value="v.approvalItemId">
+
+                    </el-option>
+
+                    <div class="text-center" style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
+                        <a class="text-normal">
+                            <el-pagination @size-change="handleSizeChangeSelect"
+                                @current-change="handleCurrentChangeSelect" :current-page="currentPageSelect"
+                                :total="totalAim" :page-size="pageSize" layout="prev, pager, next" />
+                        </a>
+                    </div>
+                </el-select>
+            </div>
+            <div style="margin: 8px 0">模板预览: </div>
+            <div class="material-list">
+                <el-table :data="templatesCopyFrom" border>
+                    <el-table-column prop="template.docxTemplateName" label="word模板名称">
+                    </el-table-column>
+                    <el-table-column prop="template.materialName" label="材料名称"></el-table-column>
+                    <el-table-column prop="template.templateName" label="模板名称(自取)"></el-table-column>
+                    <el-table-column prop="template.produceSource" label="产生方式"></el-table-column>
+                </el-table>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="copeTemplatesVisible = false">取 消</el-button>
+                <el-button type="primary" @click="copyIn">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -152,13 +196,15 @@ import {
 } from "@/api/template/index";
 import { addSysTransferLog, getUptoDateSysTransferLog, } from "@/api/item/index";
 import { getSaveMaxTimeTemplateBatch } from "@/api/template/index";
+import { listApprovalItem, listProjectAll } from "@/api/basicInfo/approval";
+import { copyMaterialByItemId } from "@/api/basicInfo/material";
 import { mixin } from "@/mixin/mixin";
 import axios from "axios";
 import { mapState } from "vuex"
 import { CodeEditor } from "@/views/attributeComponents/defRendererComponents/defRendererComponents";
 
 import dayjs from "dayjs"
-import  isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
 dayjs.extend(isSameOrBefore)
 
 export default {
@@ -167,6 +213,7 @@ export default {
     components: { CodeEditor },
     data() {
         return {
+            // itemId: this.$route.query.itemId,
             backend: process.env.VUE_APP_BASE_IP,
             templates: [],
 
@@ -180,11 +227,22 @@ export default {
             temp_template: null,
             hasSelectList: [],
             // 是否需要输出到超级帮办
-            isLast:true,
+            isLast: true,
             // 新建材料的表格
             tableData: [],
             multipleSelection: [],
             produceSourceFilters: [],
+            // 复制其他事项全部模板
+            copeTemplatesVisible: false,
+            projectOptions: [],
+            typeSubItemOptions: [],
+            chosedProjectId: null,
+            chosedItemId: null,
+            currentPageSelect: 1,
+            loading: false,
+            templatesCopyFrom: [],
+            pageSize: 15,
+            totalAim: 0,
         };
     },
     computed: {
@@ -200,6 +258,77 @@ export default {
         this.getLastUpdateInfo();
     },
     methods: {
+        //复制其他事项全部模板
+        async copeAllTemplates() {
+            let resultProject = await listProjectAll();
+            this.projectOptions = resultProject.data;
+            this.copeTemplatesVisible = true;
+        },
+        async selectProject() {
+            this.chosedItemId = '';
+            this.templatesCopyFrom = [];
+            let result = await listApprovalItem({ pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.chosedProjectId });
+            this.typeSubItemOptions = result.data.records;
+            this.totalAim = result.data.total;
+        },
+        async selectOne() {
+            if (this.chosedItemId !== '') {
+                const res = await getTemplate({approvalItemId: this.chosedItemId});
+                if (!res.success) return;
+                this.templatesCopyFrom = res.data;
+            } else {
+                this.templatesCopyFrom = [];
+            }
+            
+        },
+        //下拉框带分页
+        async handleSizeChangeSelect(size) {
+            this.selectData = [];
+            this.pageSize = size;
+            let result = await listApprovalItem({ pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.chosedProjectId });
+            this.typeSubItemOptions = result.data.records;
+        },
+        async handleCurrentChangeSelect(current) {
+            this.selectData = [];
+            this.currentPageSelect = current;
+            let result = await listApprovalItem({ pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.chosedProjectId });
+            this.typeSubItemOptions = result.data.records;
+        },
+        //远程搜索
+        async remoteMethod(query) {
+            this.currentPageSelect = 1;
+            let result = await listApprovalItem({ keyword: query, pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.chosedProjectId });
+            this.loading = true;
+            setTimeout(() => {
+                this.loading = false;
+                this.totalAim = result.data.total;
+                this.typeSubItemOptions = result.data.records;
+            })
+
+        },
+        async copyIn() {
+            try {
+                await this.$confirm('是否导入该事项全部模板和分页（包括对应一级材料；不设去重逻辑，请自行处理重复）?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                })
+            } catch (e) {
+                return;
+            }
+            const request = {
+                aimsApprovalItemId: this.itemId,
+                approvalItemId: this.chosedItemId
+            }
+            const res = await copyMaterialByItemId(request);
+            if (!res.success) {
+                this.$message.warning('导入失败');
+                return;
+            }
+            this.$message.warning('导入成功');
+            this.copeTemplatesVisible = false;
+            this.getTemplate();
+        },
         async getTemplate() {
             this.hasSelectList = [];
             const res = await getTemplate({
@@ -222,7 +351,7 @@ export default {
             ])
             if (!res[0].success || !res[1].success) return;
             let maxUpdateTime = res[0].data.maxUpdateTime;
-            let maxOutputTime = res[1].data? res[1].data.createTime:"";
+            let maxOutputTime = res[1].data ? res[1].data.createTime : "";
             this.isLast = dayjs(maxUpdateTime).isSameOrBefore(dayjs(maxOutputTime));
 
 
@@ -238,14 +367,14 @@ export default {
             this.tableData = res.data;
             this.tableData.forEach((item) => {
                 let flag = true;
-                for(let i = 0; i < this.produceSourceFilters.length; i++) {
-                    if(this.produceSourceFilters[i].value === item.produceSource) {
+                for (let i = 0; i < this.produceSourceFilters.length; i++) {
+                    if (this.produceSourceFilters[i].value === item.produceSource) {
                         flag = false;
                         break;
                     }
                 }
-                if(flag) {
-                    this.produceSourceFilters.push({text: item.produceSource, value: item.produceSource});
+                if (flag) {
+                    this.produceSourceFilters.push({ text: item.produceSource, value: item.produceSource });
                 }
             })
             // this.$nextTick(() => {
@@ -335,7 +464,7 @@ export default {
             this.temp_template = v.template;
             this.temp_template.script ||
                 (this.temp_template.script = "");
-            this.temp_template.produceScript || 
+            this.temp_template.produceScript ||
                 (this.temp_template.produceScript = "");
         },
         async saveTemplate() {
