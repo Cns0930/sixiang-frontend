@@ -110,9 +110,8 @@ export default {
                     path: "/testManager",
                     query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
                 })
-            }
-
-            else if (this.activeTab === "setting") {
+                sessionStorage.setItem('activeTab', 'testManager');
+            } else if (this.activeTab === "setting") {
                 this.$router.push({
                     path: "/setting",
                     query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },

@@ -1,12 +1,12 @@
 <template>
     <div class="test-manager">
         <div class="table">
-            <div class="searchBox" align="center">
-                <el-button @click="addUnitTest;addDialogVisible = true" style="margin-right:20px">新增</el-button>
+            <div class="searchBox">
+                <el-button @click="addDialogVisible = true" style="margin-right:20px">新增</el-button>
                 <el-input placeholder="单元测试名称模糊查询" clearable style="width: 200px;" v-model="constant" ></el-input>
                 <el-button @click="searchTestCase()" style="margin-left:20px">搜索</el-button>
             </div>
-            <div class="tableWrap" align="center">
+            <div class="tableWrap">
                 <el-table
                         :data="tableData"
                         border
@@ -14,24 +14,24 @@
                     <el-table-column
                             prop="id"
                             label="序号"
-                            width="350" align="center">
+                            width="100" align="center">
                     </el-table-column>
                     <el-table-column
                             prop="unittestName"
                             label="单元测试名称"
-                            width="342" align="center">
+                            align="center">
                     </el-table-column>
                     <el-table-column
                             prop="createTime"
                             label="新增时间"
-                            width="342" align="center">
+                            align="center">
                     </el-table-column>
                     <el-table-column
                             prop="updateTime"
                             label="修改时间"
-                            width="342" align="center">
+                            align="center">
                     </el-table-column>
-                    <el-table-column label="操作" fixed="right" width="342">
+                    <el-table-column label="操作" fixed="right" width="200">
                         <template slot-scope="scope" >
                             <el-button size="mini" type="danger"
                                        @click="handleDelete(scope.row,scope.$index, tableData)"
@@ -52,6 +52,7 @@
                 title="单元测试修改"
                 :visible.sync="editDialogVisible"
                 width="50%"
+                :close-on-click-modal="false"
                 >
             <div class="attribute">
                 <div>
@@ -75,8 +76,9 @@
         </el-dialog>
 
         <el-dialog
-                title="提示"
+                title="单元测试添加"
                 :visible.sync="addDialogVisible"
+                :close-on-click-modal="false"
                 width="50%"
         >
             <div class="attribute">
@@ -97,7 +99,7 @@
 
 <script>
     import {mixin} from "@/mixin/mixin";
-    import {getUnitTest, deleteUnitTest, updateUnitTest,getUnitTestById,addUnitTest} from "../../api/basicInfo/testManager"
+    import {getUnitTest, deleteUnitTest, updateUnitTest, getUnitTestById, addUnitTest} from "../../api/basicInfo/testManager"
 
     import { CodeEditor } from "@/views/attributeComponents/defRendererComponents/defRendererComponents";
 
@@ -124,7 +126,6 @@
                 addDialogVisible: false,
 
                 // 分页相关
-                currentPageSelect: 1,
                 pageSize: 10,
                 totalAim: 0,
                 currentPageTable: 1,
@@ -141,8 +142,8 @@
         //页面被创建的时候执行
         async created() {
             // 获取项目信息
-            // await this.initProject();
-            // await this.init();
+            await this.initProject();
+            await this.init();
 
             // 获取情形选择框
             // await this.getApprovalSubOptions();
@@ -158,18 +159,20 @@
             //     this.approvalSubOptions = result.data;
             // },
 
-            async vagueSearch() {
-                let testName = this.constant
-                console.log(testName)
-                let result = await getUnitTest({unitTestName: testName});
-                if (!result.success) return;
-                this.tableData = result.data.records;
-            },
+            // async vagueSearch() {
+            //     let testName = this.constant
+            //     console.log(testName)
+            //     let result = await getUnitTest({unitTestName: testName});
+            //     if (!result.success) return;
+            //     this.tableData = result.data.records;
+            // },
 
             async unitTest() {
                 let request = {
                     pageNum: this.currentPageTable,
                     pageSize: this.pageSizeTable,
+                    approvalItemId: this.itemId,
+                    unitTestName: this.constant,
                 }
                 let result = await getUnitTest(request);
                 if (!result.success) return;
@@ -179,9 +182,8 @@
 
             // 搜索测试用例
             async searchTestCase() {
-                // this.currentPageTable = 1;
-                // this.getTestcaseList();
-                this.vagueSearch()
+                this.currentPageTable = 1;
+                this.unitTest()
             },
 
             // 分页
@@ -265,8 +267,7 @@
     }
 
     .searchBox{
-        margin-bottom: 30px;
-        margin-top: 30px;
+        margin: 20px 0;
     }
     .attribute-value-in{
         float: right;
