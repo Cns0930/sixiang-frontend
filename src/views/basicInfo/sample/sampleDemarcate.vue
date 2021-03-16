@@ -251,10 +251,19 @@ export default {
         }),
         tipInfo() {
             if (this.ruleResult === 'R') {
+                if(!this.ruleInfo.ruleTips) {
+                    return '';
+                }
                 return this.ruleInfo.ruleTips[0];
             } else if (this.ruleResult === 'W') {
+                if(!this.ruleInfo.ruleTips) {
+                    return '';
+                }
                 return this.ruleInfo.ruleTips[1];
             } else if (this.ruleResult === 'F') {
+                if(!this.ruleInfo.ruleTips) {
+                    return '';
+                }
                 return this.ruleInfo.ruleTips[2];
             } else {
                 return '';
@@ -420,7 +429,7 @@ export default {
                 if (item.ruleId === this.ruleClass) {
                     console.log('this.ruleInfo in', this.ruleInfo)
                     console.log('item', item)
-                    this.ruleInfo = item;
+                    this.ruleInfo = item; // 触发计算属性 报错;
                     this.tableDataResult = this.ruleInfo.ruleInputs;
                 }
             })
