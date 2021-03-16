@@ -28,6 +28,7 @@
                 <el-tab-pane label="步骤页面" name="pageconfigure"></el-tab-pane>
                 <el-tab-pane label="步骤页面-调研" name="pageconfigure2"></el-tab-pane>
                 <el-tab-pane label="测试用例" name="testcase"></el-tab-pane>
+                <el-tab-pane label="单元测试管理" name="testManager"></el-tab-pane>
                 <el-tab-pane label="设置" name="setting"></el-tab-pane>
             </el-tabs>
         </div>
@@ -104,7 +105,14 @@ export default {
                     query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
                 });
                 sessionStorage.setItem('activeTab', 'field');
-            } else if (this.activeTab === "setting") {
+            } else if(this.activeTab === "testManager") {
+                this.$router.push({
+                    path: "/testManager",
+                    query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
+                })
+            }
+
+            else if (this.activeTab === "setting") {
                 this.$router.push({
                     path: "/setting",
                     query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
