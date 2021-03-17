@@ -429,7 +429,7 @@ export default {
                 if (item.ruleId === this.ruleClass) {
                     console.log('this.ruleInfo in', this.ruleInfo)
                     console.log('item', item)
-                    this.ruleInfo = item; // 触发计算属性 报错;
+                    this.ruleInfo = item; // 触发计算属性,要保证能走通计算过程;
                     this.tableDataResult = this.ruleInfo.ruleInputs;
                 }
             })
