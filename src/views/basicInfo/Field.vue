@@ -356,8 +356,16 @@
         </el-dialog>
         <!-- 导出字段 -->
         <el-dialog title="导出到帮办字段" :visible.sync="updownDialogVisible" width="60%" :close-on-click-modal="false">
-            <div style="margin-bottom:10px" v-if="taglists.length">已自动为您去除重复项
+            <div style="margin-bottom:10px" v-if="taglists.length">已自动为您去除帮办字段重复项
                 <el-tag type="info" v-for="(item,index) in taglists" :key="index" style="margin-left:10px">{{item}}
+                </el-tag>
+            </div>
+            <div style="margin-bottom:10px" v-if="repetitionLists.length">已自动为您去除已选多余字段
+                <el-tag type="info" v-for="(item,index) in repetitionLists" :key="index" style="margin-left:10px">{{item}}
+                </el-tag>
+            </div>
+            <div style="margin-bottom:10px" v-if="publicFieldTags.length">已自动匹配并替换为公共字段
+                <el-tag type="info" v-for="(item,index) in publicFieldTags" :key="index" style="margin-left:10px">{{item.value + ' : ' + item.label}}
                 </el-tag>
             </div>
             <el-table class="workTable" :data="tableDataDown" style="width:95%;" border tooltip-effect="dark">
@@ -367,7 +375,7 @@
                 <el-table-column prop="fieldComponentName" label="组件类型" fixed="right">
                     <template slot-scope="scope">
                         <el-select v-model="scope.row.fieldComponentName" clearable placeholder="请选择组件类型"
-                            @change="(val)=>typeChange(val,scope.row)">
+                            :disabled="scope.row.isPublicField" @change="(val)=>typeChange(val,scope.row)">
                             <el-option v-for="(v,i) in typeOptions" :key="i" :label="v.label" :value="v.value">
                             </el-option>
                         </el-select>
@@ -474,10 +482,10 @@ import basicMixin from "./basicMixin";
 import { mixin } from "@/mixin/mixin"
 import { mapState } from "vuex";
 import {
-    getField, addField, updateField, deleteField,
-    getAllByApprovalItemId, listField,
+    addField, updateField, deleteField,
+    getAllByApprovalItemId,
     listFieldUnionMaterial, listAllMaterial, importfields, lookfields, listFieldNosByIds, updateFieldComponentName, saveBatch,
-    saveBatchCheck
+    saveBatchCheck, listAllPublicFields
 } from "@/api/basicInfo/field";
 import { listGlobalCheckpoint } from '@/api/basicInfo/examination'
 import { listItemAndDocumentSub } from "@/api/basicInfo/approvalSub";
@@ -490,6 +498,9 @@ export default {
     data() {
         return {
             taglists: [],
+            repetitionLists: [],
+            publicFieldTags: [],
+            allPublicFields: [],
             loading: false,
             // 页面信息
             type: "field",
@@ -587,7 +598,9 @@ export default {
                 _this.getTableHeight()
                 _this.resizeFlag = null
             }, 100)
-        }
+        },
+        // 获取公共字段列表
+        this.getAllPublicFields();
     },
     // 注销window.onresize事件
     beforeRouteLeave(to, from, next) {
@@ -618,6 +631,12 @@ export default {
             let result = await getAllByApprovalItemId({ approvalItemId: this.itemId });
             if (!result.success) return;
             this.typeMaterialOptions = result.data;
+        },
+        // 查询公共字段列表
+        async getAllPublicFields() {
+            let res = await listAllPublicFields();
+            if (!res.success) return;
+            this.allPublicFields = res.data;
         },
         // 查询二级材料作关联下拉选项
         async getSecondaryMaterialOptions() {
@@ -708,26 +727,90 @@ export default {
         },
         // 导出到前端字段
         async updown() {
+            if (this.multipleSelection.length === 0) {
+                this.$message.warning('请先选择要导出的字段');
+                return;
+            }
+            if (this.allPublicFields.length === 0) {
+                this.$message.warning('公共字段列表获取失败');
+                return;
+            }
             let vm = this
             let fieldIdList = this.multipleSelection.map(e => e.fieldId)
             let result = await listFieldNosByIds({ fieldIdList })
             this.taglists = result.data
             console.log(result)
+            let preTableData = [];
             if (result.data.length) {
                 let lists = []
                 result.data.forEach(e => {
-                    console.log(e)
+                    // console.log(e)
                     if (!lists.length) {
                         lists = vm.multipleSelection.filter(ele => ele.fieldNo != e)
                     } else {
                         lists = lists.filter(ele => ele.fieldNo != e)
                     }
                 })
-                this.tableDataDown = lists
+                // 选择去重
+                let filList = [];
+                let isHave = false;
+                for (let i = 0; i < lists.length; i++) {
+                    for (let y = 0; y < filList.length; y++) {
+                        if(filList[y].fieldNo === lists[i].fieldNo) {
+                            isHave = true;
+                        }
+                    }
+                    if(isHave === false) {
+                        filList.push(lists[i]);
+                    } else {
+                        this.repetitionLists.push(lists[i].fieldNo);
+                    }
+                    isHave = false;
+                }
+                preTableData = filList;
             } else {
-                this.tableDataDown = this.multipleSelection
+                // 选择去重
+                let filList = [];
+                let isHave = false;
+                for (let i = 0; i < this.multipleSelection.length; i++) {
+                    for (let y = 0; y < filList.length; y++) {
+                        if(filList[y].fieldNo === this.multipleSelection[i].fieldNo) {
+                            isHave = true;
+                        }
+                    }
+                    if(isHave === false) {
+                        filList.push(this.multipleSelection[i]);
+                    } else {
+                        this.repetitionLists.push(this.multipleSelection[i].fieldNo);
+                    }
+                    isHave = false;
+                }
+                preTableData = filList;
             }
+            // 替换为公共字段，并去掉id
+            this.changeTatbleData(preTableData);
             this.updownDialogVisible = true
+        },
+        changeTatbleData(data) {
+            data.forEach((item, index) => {
+                // console.log(111111, item);
+                this.allPublicFields.forEach(publicField => {
+                    // console.log(222222, publicField);
+                    if(item.fieldNo === publicField.fieldNo) {
+                        delete publicField.id;
+                        if (publicField.object.hasOwnProperty('id')) {
+                            delete publicField.object.id;
+                        }
+                        data[index] = publicField;
+                        data[index].isPublicField = true;
+                        console.log('覆盖成公共字段了么', data[index]);
+                        this.publicFieldTags.push({value: publicField.fieldNo, label: publicField.label});
+                    }
+                })
+            })
+            console.log('publicFieldTags', this.publicFieldTags);
+            console.log('data', data);
+            this.tableDataDown = data;
         },
         async upToBangban() {
             let result = await saveBatchCheck({ approvalItemId: this.itemId });

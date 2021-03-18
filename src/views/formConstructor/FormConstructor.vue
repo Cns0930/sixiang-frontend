@@ -168,28 +168,35 @@
 
         <!-- 创建基本字段 -->
         <el-dialog title="创建基本字段" :visible.sync="dialogVisible" width="600px" :close-on-click-modal="false">
-            <div>
-                字段前端标签(label):
-                <el-input v-model="temp_label" @change="changeLable"></el-input>
-            </div>
-            <div>
-                字段编号(fieldNo):
-                <el-input v-model="temp_fieldNo"></el-input>
-            </div>
-            <div>
-                字段名称(fieldName):
-                <el-input v-model="temp_fieldName"></el-input>
-            </div>
-            <div>
-                <el-select v-model="temp_type" filterable>
-                    <el-option v-for="(v,i) in typeOptions" :key="i" :label="v.label" :value="v.value"></el-option>
-                </el-select>
-            </div>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="addFieldConfirm">确 定</el-button>
-            </span>
-        </el-dialog>
+
+            <div class="addstyle">
+                <div>
+                    字段前端标签(label):
+                    <el-input v-model="temp_label" @change="changeLable"></el-input>
+                </div>
+                <div>
+                    字段编号(fieldNo):
+                    <el-input v-model.lazy="temp_fieldNo" @change="changeFieldNo"></el-input>
+                </div>
+                <div>
+                    <span v-if="showTip">{{ tempFieldNo }}为公共字段，建议从公共字段导入</span>
+                </div>
+                <div>
+                    字段名称(fieldName):
+                    <el-input v-model="temp_fieldName"></el-input>
+                </div>
+                <div>
+                    <el-select v-model="temp_type" filterable>
+                        <el-option v-for="(v,i) in typeOptions" :key="i" :label="v.label" :value="v.value"></el-option>
+                    </el-select>
+                </div>
+
+                </div>
+                    <span slot="footer" class="dialog-footer">
+                    <el-button @click="dialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="addFieldConfirm">确 定</el-button>
+                </span>
+            </el-dialog>
         <!-- 创建子项字段 -->
         <el-dialog title="创建子项字段" :visible.sync="dialogChildVisible" width="600px" :close-on-click-modal="false">
             <div>
@@ -324,6 +331,7 @@ import { getField, saveOne, deleteOne, getFieldById,searchFields,forkSelectedFie
  searchPublic, forkPublic, childToParent } from "@/api/superForm/index";
 import { listMaterialFieldLayer } from "@/api/basicInfo/field";
 import { listPublicApprovalItem } from "../../api/basicInfo/approval";
+import { listAllPublicFields } from "@/api/basicInfo/field";
 import { functionReviverEventRuntime, convertDefToConfigEventRuntime, functionReviverRuntime } from "./util"
 import { log } from 'handlebars';
 import { mixin } from "@/mixin/mixin"
@@ -391,7 +399,10 @@ export default {
             publicTotal: 0,
             publicApprovalItemId: null,
             publicKeyword: "",
-            publicApprovalItemList: []
+            publicApprovalItemList: [],
+            allPublicFields: [],
+            showTip: false,
+            tempFieldNo: ''
         };
     },
     computed: {
@@ -425,6 +436,8 @@ export default {
             }, 100)
         }
         this.rowDrop();
+        // 获取公共字段列表
+        this.getAllPublicFields();
     },
     // 注销window.onresize事件
     beforeRouteLeave(to, from, next) {
@@ -433,6 +446,12 @@ export default {
         next()
     },
     methods: {
+        // 查询公共字段列表
+        async getAllPublicFields() {
+            let res = await listAllPublicFields();
+            if (!res.success) return;
+            this.allPublicFields = res.data;
+        },
         // 行拖拽
             rowDrop () {
                // 此时找到的元素是要拖拽元素的父容器
@@ -457,6 +476,22 @@ export default {
                 style: pinyin.STYLE_NORMAL, // 设置拼音风格
                 heteronym: false
             }).join('');
+            this.showTip = false;
+            this.allPublicFields.forEach(item => {
+                if(item.fieldNo === this.temp_fieldNo) {
+                    this.showTip = true;
+                    this.tempFieldNo = this.temp_fieldNo;
+                }
+            })
+        },
+        changeFieldNo(){
+            this.showTip = false;
+            this.allPublicFields.forEach(item => {
+                if(item.fieldNo === this.temp_fieldNo) {
+                    this.showTip = true;
+                    this.tempFieldNo = this.temp_fieldNo;
+                }
+            })
         },
         // 创建计算字段
         handleAddComputedField() {
@@ -1086,6 +1121,18 @@ export default {
                 // flex-wrap: wrap;
                 text-align: center;
                 margin-bottom: 20px;
+            }
+        }
+    }
+    .addstyle {
+        display: flex;
+        flex-direction: column;
+        // align-items: center;
+        justify-content: flex-start;
+        div {
+            margin: 5px 0px;
+            span {
+                color: red;
             }
         }
     }

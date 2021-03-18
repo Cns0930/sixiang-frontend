@@ -46,3 +46,6 @@ export const saveBatchCheck = params => axios.get('/superform/fields/saveBatchCh
 
 // 查询事项下提取点-分页-可根据子文档编号筛选
 export const listCheckpoint = params => { return axios.get(`/ss/field/listCheckpoint`, {params}).then(res=>res.data); };
+
+// 所有公共字段-带子项
+export const listAllPublicFields = params => axios.get('/superform/fields/listAllPublicFields', {params}).then(res => res.data);
