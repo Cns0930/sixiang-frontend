@@ -119,7 +119,7 @@
 
 
 <script>
-import { mixin } from "@/mixin/mixin";
+import  { mixin } from "@/mixin/mixin";
 import Vue from "vue";
 
 import { listApprovalSubAll } from "../../api/basicInfo/approvalSub";
