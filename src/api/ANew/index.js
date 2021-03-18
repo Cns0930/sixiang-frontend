@@ -179,6 +179,6 @@ export const listHighlighterScopes = (params) => axios.get('/api/user/listHiligh
 export const listScopesRelation = (params) => axios.get('/api/user/listScopesRelation',{ params }).then(res => res.data)
 
 //获取经营范围数据
-export const listScopes = (params) => axios.get('/api/user/listScopes',{ params }).then(res => res.data)
+export const listScopes = (params) => axios.get('/api/user/listScopes',{headers:{projectCode: 330106}},{ params }).then(res => res.data)
 
 export const updateRecordIsBatchPrint = (params) => axios.get('/api/selfservice/record/isBatchPrint', { params }).then(res => res.data)

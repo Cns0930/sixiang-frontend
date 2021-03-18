@@ -10,11 +10,12 @@
         <!-- <el-input placeholder="按字段别名查询" v-model="aliasName" clearable style="width: 200px;"
         @keyup.native.enter="search"></el-input> -->
             <el-button @click="search(ruleIds)" type="primary">搜索</el-button>
-            <div class="upload-box" style="float:right">
+            <div class="upload-box" style="float:right;margin-right:30px">
                 <el-upload class="upload-demo" ref="upload" :action="url" :limit="1" :with-credentials="true"
                     :on-success="uploadSuccess" :on-remove="handleRemove" :on-exceed="handleExceed" :auto-upload='true'
                     :before-upload="customUpload">
                     <el-button type="primary" @click="upload()">Excel上传</el-button>
+                    <el-button type="text" @click="startDownload">点击下载模板</el-button>
                 </el-upload>
             </div> 
         </div>
@@ -26,7 +27,7 @@
                     element-loading-spinner="el-icon-loading"
                 tooltip-effect="dark" :default-sort="{prop: 'createTime', order: 'descending'}" :row-style="{height:'40px'}" :header-row-style="{height:'50px'}">
 
-                <el-table-column prop="ruleCode" label="规则编号" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="ruleCode" label="规则编号" show-overflow-tooltip sortable></el-table-column>
                 
                 <el-table-column prop="rulePoint" label="审批点" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="ruleDesc" label="描述" show-overflow-tooltip></el-table-column>
@@ -469,7 +470,7 @@ export default {
     },
     async created() {
         // 获取项目信息
-        await this.initProject();
+        await this.initItemAndProject();
         await this.search();
         await this.getApprovalSubText()
         await this.getApprovalList()
@@ -611,7 +612,10 @@ export default {
             this.editForm.ruleArgs = this.ruleArgsList.map(e=>e.ruleArgs)
 
             let result= await updateRule(this.editForm);
-            if(!result.success) return;
+            if(!result.success) {
+                this.editBtnLoading=false;
+                return;
+            }
             this.$message.success('编辑成功')
             let params = {
                 ruleId:this.editForm.ruleId,
@@ -708,6 +712,7 @@ export default {
             this.addDialogVisible = false
             this.$refs.addForm.resetFields()
             this.resetForms()
+            this.search();
             console.log(this.addForm,'9999')
         },
         // 上传文件
@@ -752,6 +757,15 @@ export default {
         //  移除文件
         handleRemove(file, fileList) {
         },
+        // 下载初始模板
+        startDownload() {
+            const a = document.createElement("a");
+            a.href = 'http://10.0.101.18/template/审批规则.xlsx'
+            a.target = "_blank";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
     },
 
 }
@@ -778,6 +792,12 @@ export default {
         padding: 6px 12px 12px 12px;
         box-sizing: border-box;
         background: #fff;
+        .upload-box {
+            .upload-demo {
+                display: flex;
+                flex-direction: column;
+            }
+        }
     }
     .searchBox {
         margin-top: 10px;

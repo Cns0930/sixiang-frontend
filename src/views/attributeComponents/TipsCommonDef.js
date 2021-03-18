@@ -2,16 +2,15 @@ import CommonComponents from "./CommonComponents"
 import Renderer,{rendererBuilder} from "./Renderer"
 class TipsCommonDef extends CommonComponents{
     constructor(){
-        super({type:"tipscommon"})
-        this.component = rendererBuilder("text","Tipscommon")
-        this.value = new Renderer("text",false)
-        this.msg = new Renderer("textarea","")
+        super({type:"tipsCommon"})
+        this.component = rendererBuilder("text","TipsCommon")
+        this.value=new Renderer("ElInput","否")
+        this.msg = new Renderer("ElInput","")
 
     }
     getAttributes(){
         return {
-            msg:this.$msg.value
-            // ifRead:this.$ifRead.value,
+            msg:this.msg.value
         }
     }
 }
