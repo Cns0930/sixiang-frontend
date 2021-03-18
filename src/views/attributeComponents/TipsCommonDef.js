@@ -4,7 +4,7 @@ class TipsCommonDef extends CommonComponents{
     constructor(){
         super({type:"tipsCommon"})
         this.component = rendererBuilder("text","TipsCommon")
-        this.value=new Renderer("ElSelectC","否",{options:['是','否']},"是否申报住所")
+        this.value=new Renderer("ElInput","否")
         this.msg = new Renderer("ElInput","")
 
     }
