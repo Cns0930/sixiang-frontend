@@ -13,7 +13,7 @@
                     <el-checkbox class="tip-content" v-model="attribute.value" @change="handleExtraChange">{{attribute.label}}</el-checkbox>
                 </div>
                 <div slot="footer" class="dialog-footer" style="display: flex;justify-content: space-around">
-                    <el-button type="primary" class="dialog-primary-btn" @click="ifShowDialog = false,radioValue = '否'">取消</el-button>
+                    <el-button type="primary" class="dialog-primary-btn" @click="closeDialog">取消</el-button>
                     <el-button type="warning" class="dialog-warn-btn" @click="commitConfirm" :disabled='!attribute.value'>确 定</el-button>
                 </div>
             </el-dialog>
@@ -109,23 +109,19 @@ export default {
         }
     },
     created(){
-        
-        // if(!this.value){
-        //     this.emitEvent("货币")
-        // }else if(this.options.includes(this.value)){
-        //     this.radioValue = this.value
-        // }else{
-        //     this.inputValue = this.value;
-        //     this.radioValue = "其他"
-        // }
+        if(!this.value){
+            this.emitEvent("否")
+        }else if(this.options.includes(this.value)){
+            this.radioValue = this.value
+        }
     },
     computed: {
-        // inputShow() {
-        //     if (this.radioValue == "其他") {
-        //         return true;
-        //     }
-        //     return false;
-        // }
+
+    },
+    watch:{
+        radioValue (newVal, oldVal) {
+            this.$emit('change', newVal)
+        },
     },
     methods: {
         handleRadioInput(v) {
@@ -136,6 +132,10 @@ export default {
             }
             
         },
+        closeDialog() {
+           this.ifShowDialog = false,
+           this.radioValue = '否'
+        },
         handleExtraChange(v) {
            console.log(v)
         },
@@ -144,7 +144,6 @@ export default {
                this.$message.warning('请先阅读')
             } else{
                this.ifShowDialog = false
-            //    this.$emit('change', false)
             }
             
         }

@@ -1,11 +1,12 @@
 import CommonComponents from "./CommonComponents"
 import Renderer,{rendererBuilder} from "./Renderer"
-class JingyingfanweiDef extends CommonComponents{
+class OriginJingyingfanwei extends CommonComponents{
     constructor(){
-        super({type:"jingyingfanwei"})
-        this.component = rendererBuilder("text","Jingyingfanwei")
+        super({type:"originjingyingfanwei"})
+        this.component = rendererBuilder("text","OriginJingyingfanwei")
         this.span = rendererBuilder("text",24)
-        this.value = rendererBuilder("text",{jingyingfanwei:{value:"",htmlValue:"",textArray:[]},addList:[{ fanwei: { value: "" }, shixiang: { value: "",options:[] } }]})
+        this.defalutText = new Renderer('ElInput', '请输入经营范围后缀值',null, '经营范围后缀值')
+        this.value = new Renderer("ElInput","",null,"默认值")
         this.labelWidth = new Renderer('ElInput', '0')
         this.independent=rendererBuilder("text",true);
         this.$title = new Renderer('ElInput', '',null,"title")
@@ -13,6 +14,7 @@ class JingyingfanweiDef extends CommonComponents{
     getAttributes(){
         return {
             title: this.$title.value,
+            defalutText: this.defalutText.value,
             validateFn:this.validateFn.value,
             ruleKey:this.ruleKey.value,
         }
@@ -20,4 +22,4 @@ class JingyingfanweiDef extends CommonComponents{
    
 }
 
-export default JingyingfanweiDef
+export default OriginJingyingfanwei

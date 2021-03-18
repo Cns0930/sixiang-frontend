@@ -2,9 +2,9 @@ import CommonComponents from "./CommonComponents"
 import Renderer,{rendererBuilder} from "./Renderer"
 class TipsCommonDef extends CommonComponents{
     constructor(){
-        super({type:"tipscommon"})
+        super({type:"tipsCommon"})
         this.component = rendererBuilder("text","TipsCommon")
-        this.value = new Renderer("text",false)
+        this.value=new Renderer("ElInput","否")
         this.msg = new Renderer("ElInput","")
 
     }
