@@ -4,7 +4,7 @@ class TitleCommonDef{
     constructor(){
         this.type = rendererBuilder("text","titleCommon") 
         this.component = rendererBuilder("text","TitleCommon")
-        this.value = new Renderer("text",false)
+        this.value = new Renderer("ElInput",false)
         this.titles = new Renderer('ElInput', '')
         this.span = rendererBuilder("text",24)
         this.independent=rendererBuilder("text",true);
