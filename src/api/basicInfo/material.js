@@ -44,3 +44,6 @@ export const savePreTemplate = params => { return axios.post(`/ss/material/saveP
 
 // 删除预定义模板
 export const deletePreTemplate = params => { return axios.get(`/ss/material/deletePreTemplate`, {params}).then(res=>res.data); };
+
+// 查询材料模板对应的二级材料
+export const listGlobalSubAllByMaterial = params => { return axios.get(`/ss/material/listGlobalSubAllByMaterial`, {params}).then(res=>res.data); };

@@ -2,6 +2,7 @@
     <div class="workWrap">
         <header>
             <span class="title">二级材料</span>
+
             <el-button type="primary" icon="el-icon-plus" @click="addText(0,tableData.length,tableData)">新增</el-button>
         </header>
         <section class="workBox">
@@ -40,43 +41,21 @@
                     </el-table-column> -->
                     <el-table-column prop="materialName" label="所属事项一级材料" width="150">
                         <template slot-scope="scope">
-                            <el-cascader v-if="scope.row.flag" v-model="scope.row.materialId"
-                                placeholder="请选择子文档名称" clearable filterable remote reserve-keyword
-                                :remote-method="remoteMethod" :loading="loading" @change="globalDocumentSubNameChange"
-                                :options="approvalSubTextList" :props="{emitPath:false}">
-                                <!-- <el-option v-for="item in approvalSubTextList" :key="item.globalDocumentSubId"
-                                    :label="item.globalDocumentSubName" :value="item.globalDocumentSubId" /> -->
-                                <!-- <div class="text-center"
-                                    style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
-                                    <a class="text-normal">
-                                        <el-pagination @size-change="handleSizeChangeSelect"
-                                            @current-change="handleCurrentChangeSelect"
-                                            :current-page="currentPageSelect" :total="totalAim" :page-size="pageSize"
-                                            layout="prev, pager, next" />
-                                    </a>
-                                </div> -->
-                            </el-cascader>
-                            <span v-else>{{scope.row.globalDocumentSubName}}</span>
+                            <el-select v-if="scope.row.flag" v-model="scope.row.materialId"
+                                placeholder="请选择子一级材料名称" clearable filterable @change="firstMaterialChange(scope.row.materialId)">
+                                <el-option v-for="item in firstMaterialOption" :key="item.materialId"
+                                    :label="item.materialName" :value="item.materialId" />
+                            </el-select>
+                            <span v-else>{{scope.row.materialName}}</span>
                         </template>
                     </el-table-column>
                     <el-table-column prop="globalDocumentSubName" label="公共二级材料名称" width="180">
                         <template slot-scope="scope">
-                            <el-cascader v-if="scope.row.flag" v-model="scope.row.globalDocumentSubId"
-                                placeholder="请选择子文档名称" clearable filterable remote reserve-keyword
-                                :remote-method="remoteMethod" :loading="loading" @change="globalDocumentSubNameChange"
-                                :options="approvalSubTextList" :props="{emitPath:false}">
-                                <!-- <el-option v-for="item in approvalSubTextList" :key="item.globalDocumentSubId"
-                                    :label="item.globalDocumentSubName" :value="item.globalDocumentSubId" /> -->
-                                <!-- <div class="text-center"
-                                    style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
-                                    <a class="text-normal">
-                                        <el-pagination @size-change="handleSizeChangeSelect"
-                                            @current-change="handleCurrentChangeSelect"
-                                            :current-page="currentPageSelect" :total="totalAim" :page-size="pageSize"
-                                            layout="prev, pager, next" />
-                                    </a>
-                                </div> -->
-                            </el-cascader>
+                            <el-select v-if="scope.row.flag" v-model="scope.row.globalDocumentSubId"
+                                placeholder="请选择子二级材料名称" clearable filterable>
+                                <el-option v-for="item in secondMaterialOption" :key="item.globalDocumentSubId"
+                                    :label="item.globalDocumentSubName" :value="item.globalDocumentSubId" />
+                            </el-select>
                             <span v-else>{{scope.row.globalDocumentSubName}}</span>
                         </template>
                     </el-table-column>
@@ -148,7 +127,8 @@
             </div>
             <div class="tablePagination">
                 <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                    :current-page.sync="currentPage" :page-size="pagesize" layout="total, sizes, prev, pager, next"
+                    :current-page.sync="currentPage" :page-size="pageSize" :page-sizes="[5, 10, 20, 50, 100]"
+                    layout="total, sizes, prev, pager, next"
                     :total="totalCount"></el-pagination>
             </div>
         </section>
@@ -161,7 +141,7 @@
 import basicMixin from "./basicMixin";
 import {mixin} from "@/mixin/mixin"
 import Vue from "vue";
-import { listMaterial, getTemplateByMaterialId, copySelectedMaterial, getAllByApprovalItemId } from "../../api/basicInfo/material";
+import { listMaterial, getTemplateByMaterialId, listGlobalSubAllByMaterial, getAllByApprovalItemId } from "../../api/basicInfo/material";
 import { listGlobalDcumentSub, listGlobalDcumentSubByCascade } from "../../api/basicInfo/publicDocument";
 import { getApprovalSub, addItemAndDocumentSub, deleItemAndDocumentSub, updateItemAndDocumentSub
 } from "../../api/basicInfo/approvalSub";
@@ -194,11 +174,16 @@ export default {
 
 
             currentPageSelect: 1,
-            pageSize: 10,
+            pageSize: 5,
             totalAim: 0,
             selectData: [],
             importDialogVisible: false,
             idd: "",
+
+            // 一二级材料的关联添加
+            firstMaterialOption: [],
+            secondMaterialOption: [],
+            materialId: '',
         };
     },
     computed: {},
@@ -213,10 +198,23 @@ export default {
         await this.init();
         await this.search();
         // await this.getApprovalList()
-        await this.getApprovalSubText()
+        // await this.getApprovalSubText()
+        this.getFirstMaterialOption();
     },
 
     methods: {
+        async getFirstMaterialOption() {
+            let res = await getAllByApprovalItemId({approvalItemId: this.itemId});
+            if (!res.success) return;
+            this.firstMaterialOption = res.data;
+        },
+        async firstMaterialChange(Mid) {
+            // this.materialId = Mid;
+            this.secondMaterialOption = [];
+            let res = await listGlobalSubAllByMaterial({materialId: Mid});
+            if (!res.success) return;
+            this.secondMaterialOption = res.data;
+        },
         subitemNameChange(v) {
             console.log(v)
         },
@@ -255,28 +253,28 @@ export default {
 
         },
         // 子文档列表
-        async getApprovalSubText() {
-            this.approvalSubTextList = []
-            let result = await listGlobalDcumentSubByCascade({ projectId: this.$route.query.projectId });
-            if (!result.success) return;
-            this.approvalSubTextList = result.data
-            // this.totalAim = result.data.total
-        },
+        // async getApprovalSubText() {
+        //     this.approvalSubTextList = []
+        //     let result = await listGlobalDcumentSubByCascade({ projectId: this.$route.query.projectId });
+        //     if (!result.success) return;
+        //     this.approvalSubTextList = result.data
+        //     // this.totalAim = result.data.total
+        // },
         //远程搜索
-        async remoteMethod(query) {
-            this.currentPageSelect = 1;
-            console.log(query)
-            if (query !== '') {
-                let result = await listGlobalDcumentSub({ globalDocumentSubNameAndCode: query, projectId: this.$route.query.projectId });
-                this.loading = true;
-                setTimeout(() => {
-                    this.loading = false;
-                    this.approvalSubTextList = result.data
-                    // this.totalAim = result.data.total
+        // async remoteMethod(query) {
+        //     this.currentPageSelect = 1;
+        //     console.log(query)
+        //     if (query !== '') {
+        //         let result = await listGlobalDcumentSub({ globalDocumentSubNameAndCode: query, projectId: this.$route.query.projectId });
+        //         this.loading = true;
+        //         setTimeout(() => {
+        //             this.loading = false;
+        //             this.approvalSubTextList = result.data
+        //             // this.totalAim = result.data.total
 
-                })
-            }
-        },
+        //         })
+        //     }
+        // },
         //下拉框带分页
         async handleSizeChangeSelect(size) {
             console.log(size)
@@ -293,7 +291,7 @@ export default {
         // },
         async handleSizeChange(val) {
             // console.log(`每页 ${val} 条`);
-            this.pagesize = val;
+            this.pageSize = val;
             await this.search();
         },
         async handleCurrentChange(val) {
@@ -318,6 +316,7 @@ export default {
         // 新增
         async addText(item, index, rows) {
             console.log(item, index, rows)
+            this.secondMaterialOption = [];
             if (item == 0) {
                 rows.splice(index + 1, 0, {
                     // approvalSubitemId: '',
@@ -354,6 +353,7 @@ export default {
         },
         // 修改
         Edit(item, index, rows) {
+            this.secondMaterialOption = [];
             this.$set(item, 'flag', true)
             this.$set(item, 'edits', true)
         },
@@ -380,7 +380,8 @@ export default {
                     requiredDescription: item.requiredDescription,
                     documentsubDisplayname: item.documentsubDisplayname,
                     displayNotes: item.displayNotes,
-                    documentsubSeq: item.documentsubSeq
+                    documentsubSeq: item.documentsubSeq,
+                    materialId: item.materialId
                 }
                 const result = await updateItemAndDocumentSub(request)
                 console.log(result, 'result')
@@ -393,7 +394,8 @@ export default {
                     requiredDescription: item.requiredDescription,
                     documentsubDisplayname: item.documentsubDisplayname,
                     displayNotes: item.displayNotes,
-                    documentsubSeq: item.documentsubSeq
+                    documentsubSeq: item.documentsubSeq,
+                    materialId: item.materialId
                 }
                 const res = await addItemAndDocumentSub(request)
                 console.log(res, 'res')
