@@ -5,6 +5,7 @@ import Collection from "./Collection/Collection"
 import GudongCommon from "./GudongCommon/GudongCommon"
 import Chuzifangshi from "./Chuzifangshi/Chuzifangshi"
 import LayoutComponentMixin from "./LayoutComponentMixin"
+import OriginJingyingfanwei from "./OriginJingyingfanwei/OriginJingyingfanwei"
 import Jingyingfanwei from "./Jingyingfanwei/Jingyingfanwei"
 import Jingyingqixian from "./Jingyingqixian/Jingyingqixian"
 import QingxingComment from "./QingxingComment/QingxingComment"
@@ -104,6 +105,7 @@ export default {
     ElSingleCheckboxC,
     TextInputLike,
     Chuzifangshi,
+    OriginJingyingfanwei,
     Jingyingfanwei,
     Jingyingqixian,
     QingxingComment,
