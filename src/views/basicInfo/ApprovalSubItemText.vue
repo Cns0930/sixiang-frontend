@@ -38,14 +38,12 @@
                             <span v-else>{{scope.row.subitemName}}</span>
                         </template>
                     </el-table-column> -->
-                    
-                    <el-table-column prop="globalDocumentSubName" label="子文档名称" width="180">
+                    <el-table-column prop="materialName" label="所属事项一级材料" width="150">
                         <template slot-scope="scope">
-                            <el-cascader v-if="scope.row.flag" v-model="scope.row.globalDocumentSubId"
+                            <el-cascader v-if="scope.row.flag" v-model="scope.row.materialId"
                                 placeholder="请选择子文档名称" clearable filterable remote reserve-keyword
                                 :remote-method="remoteMethod" :loading="loading" @change="globalDocumentSubNameChange"
-                                :options="approvalSubTextList" :props="{emitPath:false}"
-                                >
+                                :options="approvalSubTextList" :props="{emitPath:false}">
                                 <!-- <el-option v-for="item in approvalSubTextList" :key="item.globalDocumentSubId"
                                     :label="item.globalDocumentSubName" :value="item.globalDocumentSubId" /> -->
                                 <!-- <div class="text-center"
@@ -61,7 +59,33 @@
                             <span v-else>{{scope.row.globalDocumentSubName}}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="globalDocumentName" label="所属一级材料" width="150"></el-table-column>
+                    <el-table-column prop="globalDocumentSubName" label="公共二级材料名称" width="180">
+                        <template slot-scope="scope">
+                            <el-cascader v-if="scope.row.flag" v-model="scope.row.globalDocumentSubId"
+                                placeholder="请选择子文档名称" clearable filterable remote reserve-keyword
+                                :remote-method="remoteMethod" :loading="loading" @change="globalDocumentSubNameChange"
+                                :options="approvalSubTextList" :props="{emitPath:false}">
+                                <!-- <el-option v-for="item in approvalSubTextList" :key="item.globalDocumentSubId"
+                                    :label="item.globalDocumentSubName" :value="item.globalDocumentSubId" /> -->
+                                <!-- <div class="text-center"
+                                    style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
+                                    <a class="text-normal">
+                                        <el-pagination @size-change="handleSizeChangeSelect"
+                                            @current-change="handleCurrentChangeSelect"
+                                            :current-page="currentPageSelect" :total="totalAim" :page-size="pageSize"
+                                            layout="prev, pager, next" />
+                                    </a>
+                                </div> -->
+                            </el-cascader>
+                            <span v-else>{{scope.row.globalDocumentSubName}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="documentsubDisplayname" label="展示材料名称">
+                        <template slot-scope="scope">
+                            <el-input v-if="scope.row.flag" v-model="scope.row.documentsubDisplayname"></el-input>
+                            <span v-else>{{scope.row.documentsubDisplayname}}</span>
+                        </template>
+                    </el-table-column>
                     <el-table-column prop="documentsubSeq" label="事项内子文档编码" width="80">
                         <template slot-scope="scope">
                             <el-input v-if="scope.row.flag" v-model="scope.row.documentsubSeq"></el-input>
@@ -88,12 +112,7 @@
                             <span v-else>{{scope.row.requiredDescription}}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="documentsubDisplayname" label="展示材料名称">
-                        <template slot-scope="scope">
-                            <el-input v-if="scope.row.flag" v-model="scope.row.documentsubDisplayname"></el-input>
-                            <span v-else>{{scope.row.documentsubDisplayname}}</span>
-                        </template>
-                    </el-table-column>
+                    
                     <el-table-column prop="displayNotes" label="补充说明信息">
                         <template slot-scope="scope">
                             <el-input v-if="scope.row.flag" v-model="scope.row.displayNotes"></el-input>
