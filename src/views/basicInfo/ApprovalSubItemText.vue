@@ -174,7 +174,7 @@ export default {
 
 
             currentPageSelect: 1,
-            pageSize: 5,
+            pageSize: 10,
             totalAim: 0,
             selectData: [],
             importDialogVisible: false,
@@ -353,7 +353,11 @@ export default {
         },
         // 修改
         Edit(item, index, rows) {
-            this.secondMaterialOption = [];
+            if(item.materialId){
+                this.firstMaterialChange(item.materialId)
+            }else{
+                this.secondMaterialOption = [];
+            }
             this.$set(item, 'flag', true)
             this.$set(item, 'edits', true)
         },
