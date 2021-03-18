@@ -274,7 +274,7 @@ export default {
 
 <style scoped lang="scss">
 @import "../../../assets/css/global.scss";
-.tableWrap {
-    // height: 1000px;
-}
+// .tableWrap {
+//     // height: 1000px;
+// }
 </style>
