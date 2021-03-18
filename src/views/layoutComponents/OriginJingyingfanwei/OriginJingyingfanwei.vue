@@ -1,25 +1,17 @@
 <template>
     <div class="originjingying">
-        <el-form-item label="一般项目" class="origin">
-            <el-select v-model="normalVal" filterable multiple placeholder="请选择">
-                <el-option
-                v-for="item in normalOptions"
-                :key="item.scopeCode"
-                :label="item.businessScope"
-                :value="item.businessScope">
-                </el-option>
-            </el-select>
-        </el-form-item>
-        <el-form-item label="许可项目" class="origin xuke" :prop="originjingyingfanweiContext.ruleKey || ''" :obj="originjingyingfanweiContext">
-            <el-select v-model="xukeVal" filterable multiple placeholder="请选择">
-                <el-option
-                v-for="item in xukeOptions"
-                :key="item.scopeCode"
-                :label="item.businessScope"
-                :value="item.businessScope">
-                </el-option>
-            </el-select>
-        </el-form-item>
+        <template v-for="(v,i) of mapOptions">
+            <el-form-item :label="v.label" class="origin xuke" :prop="chooseValidate(i)" :obj="originjingyingfanweiContext" :key="i">
+                <el-select v-model="valueArr[v.labelEn]" filterable multiple placeholder="请选择">
+                    <el-option
+                    v-for="item in v.list"
+                    :key="item.scopeCode"
+                    :label="item.businessScope"
+                    :value="item.businessScope">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+        </template>
     </div>
 </template>
 
@@ -33,13 +25,15 @@ export default {
     name: "OriginJingyingfanwei",
     mixins: [CommonMixin],
     components: { ElFormItem: TestFormItem, },
-    props: ["value", "title","validateFn", "ruleKey",'defalutText'],
+    /**
+     * defalutText 经营范围后缀文字
+     * options 经营范围分类的信息[{label,labelEn,list,value},...]
+     */
+    props: ["value", "title","validateFn", "ruleKey",'defalutText',"options"],
     data() {
         return {
-            normalOptions: [],
-            xukeOptions: [],
-            normalVal:[],
-            xukeVal: []
+            mapOptions: {},//映射四象optios字段
+            valueArr: {}//计算最终值
         }
     },
     computed: {
@@ -55,33 +49,42 @@ export default {
         },
     },
     watch: {
-        normalVal(newVal){
-            if(newVal) {
-                this.calcValue('xuke',newVal);
-            }
+        valueArr: {
+            handler(newVal) {
+                console.log(newVal,'originjingyingfanwei');
+                this.calcValue(newVal);
+            },
+            deep: true
         },
-        xukeVal(newVal) {
-            if(newVal) {
-                this.calcValue('normal',newVal);
-            }
-        }
     },
     async created() {
-        let ops = await getClassifyScopes();
-        console.log(ops,'ops',this.defalutText);
-        ops.forEach(item => {
-            if(item.isPermission === "一般事项") {
-                this.normalOptions.push(item);
-            } else if(item.isPermission === "许可事项") {
-                this.xukeOptions.push(item);
-            }
-        })
+        this.mapOptions = this.options();
+        this.valueArr = this.mapOptions.reduce((res,cur) => {
+            res[cur.labelEn] = [];
+            return res
+        },{});
 
+        let ops = await getClassifyScopes();
+        for(var i = 0;i < this.mapOptions.length;i++) {
+            ops.forEach( v => {
+                if(this.mapOptions[i].labelEn == v.isPermissionCode) {
+                    this.mapOptions[i].list.push(v)
+                }
+            })
+        }
     },
     methods: {
-        calcValue(name,val) {
-            let arr = this[name + 'Val'].concat(val);
-            let res = arr.toString().replace(/\,/g,'；') + this.defalutText
+        chooseValidate(i) {
+            if(this.mapOptions.length - 1 == i) {
+                return this.originjingyingfanweiContext.ruleKey;
+            } else {
+                return ''
+            }
+        },
+        calcValue(val) {
+            let arr = Object.values(val).flat();
+            if(!arr.length) return;
+            let res = arr.toString().replace(/\,/g,'；') + this.defalutText;
             this.$emit('input',res);
         }
     }

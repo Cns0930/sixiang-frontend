@@ -57,7 +57,7 @@ let ElSingleCheckboxC = {
 
     render() {
         return <span>
-            <el-checkbox  onInput={(e) => this.$emit("input", e)}  label={this.value}></el-checkbox>
+            <el-checkbox  onInput={(e) => this.$emit("input", e)} onChange={(e)=>{this.$emit("change",e)}} label={this.value}></el-checkbox>
         </span>
 
     }

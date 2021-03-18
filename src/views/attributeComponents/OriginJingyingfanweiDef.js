@@ -6,6 +6,7 @@ class OriginJingyingfanwei extends CommonComponents{
         this.component = rendererBuilder("text","OriginJingyingfanwei")
         this.span = rendererBuilder("text",24)
         this.defalutText = new Renderer('ElInput', '请输入经营范围后缀值',null, '经营范围后缀值')
+        this.options = new Renderer("InputArrayAndCodeEditor",[""],{},'经营范围分类')
         this.value = new Renderer("ElInput","",null,"默认值")
         this.labelWidth = new Renderer('ElInput', '0')
         this.independent=rendererBuilder("text",true);
@@ -17,6 +18,7 @@ class OriginJingyingfanwei extends CommonComponents{
             defalutText: this.defalutText.value,
             validateFn:this.validateFn.value,
             ruleKey:this.ruleKey.value,
+            options: this.options.value
         }
     }
    
