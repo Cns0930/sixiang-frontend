@@ -138,7 +138,7 @@
                     <el-input v-model="addForm.fieldNo"></el-input>
                 </el-form-item>
                 <el-form-item label="是否前端字段">
-                    <el-select v-model="addForm.isFront" clearable placeholder="是否为提取点">
+                    <el-select v-model="addForm.isFront" clearable placeholder="是否前端字段">
                         <el-option label="是" :value="Number(1)"></el-option>
                         <el-option label="否" :value="Number(0)"></el-option>
                     </el-select>

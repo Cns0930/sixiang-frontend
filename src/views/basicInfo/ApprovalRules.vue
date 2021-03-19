@@ -27,7 +27,7 @@
                     element-loading-spinner="el-icon-loading"
                 tooltip-effect="dark" :default-sort="{prop: 'createTime', order: 'descending'}" :row-style="{height:'40px'}" :header-row-style="{height:'50px'}">
 
-                <el-table-column prop="ruleCode" label="规则编号" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="ruleCode" label="规则编号" show-overflow-tooltip sortable></el-table-column>
                 
                 <el-table-column prop="rulePoint" label="审批点" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="ruleDesc" label="描述" show-overflow-tooltip></el-table-column>
@@ -470,7 +470,7 @@ export default {
     },
     async created() {
         // 获取项目信息
-        await this.initProject();
+        await this.initItemAndProject();
         await this.search();
         await this.getApprovalSubText()
         await this.getApprovalList()
@@ -612,7 +612,10 @@ export default {
             this.editForm.ruleArgs = this.ruleArgsList.map(e=>e.ruleArgs)
 
             let result= await updateRule(this.editForm);
-            if(!result.success) return;
+            if(!result.success) {
+                this.editBtnLoading=false;
+                return;
+            }
             this.$message.success('编辑成功')
             let params = {
                 ruleId:this.editForm.ruleId,
@@ -709,6 +712,7 @@ export default {
             this.addDialogVisible = false
             this.$refs.addForm.resetFields()
             this.resetForms()
+            this.search();
             console.log(this.addForm,'9999')
         },
         // 上传文件

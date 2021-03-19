@@ -21,7 +21,7 @@
         <div class="searchBox">
             <div class="left">
                 <el-input placeholder="筛选字段名称或者字段编号" v-model="valueF" clearable style="width:240px"></el-input>
-                <el-select v-model="temp_type_search" clearable placeholder="筛选组件类型" style="width:240px">
+                <el-select v-model="temp_type_search" clearable filterable placeholder="筛选组件类型" style="width:240px">
                     <el-option v-for="(v,i) in typeOptions" :key="i" :label="v.label" :value="v.value" ></el-option>
                 </el-select>
                 
@@ -118,7 +118,7 @@
             </div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editDialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="handleSaveField(temp_fieldObj);editDialogVisible = false">确 定
+                <el-button type="primary" @click="handleSaveField(temp_fieldObj)">确 定
                 </el-button>
             </span>
         </el-dialog>
@@ -567,7 +567,7 @@ export default {
             let param = {
                 fieldNo: v.fieldNo,
                 label: v.label,
-                fieldComponentName: v.componentDefs?.type?.value,
+                fieldComponentName: v.fieldComponentName,
                 fieldName: this.temp_fieldName, 
                 fieldType: 3,
                 object: v,
@@ -859,7 +859,8 @@ export default {
                 fieldComponentName: (v.fieldType == 2)?v.fieldComponentName : v.componentDefs?.type?.value,
                 fieldType: v.fieldType,
                 object: vsimple,
-                remark: v.remark
+                remark: v.remark,
+                approvalItemId: this.itemId
             };
             console.log(param)
             let result = await saveOne(param);
@@ -868,6 +869,7 @@ export default {
             v.id = result.data.id;
             this.$message({ type: "success", message: "保存成功" });
             this.load();
+            this.editDialogVisible = false;
         },
         // 调研编辑的保存 有些字段不用改
         async handleSaveFieldReseacher(v){
@@ -884,6 +886,7 @@ export default {
                 // fieldComponentName: v.componentDefs?.type?.value,
                 // fieldType: v.fieldType,
                 object: vsimple,
+                approvalItemId: this.itemId
             };
             // if(this.temp_relate_fieldId != null && this.temp_relate_fieldId.length > 0){
             //     param.ssFieldId = this.temp_relate_fieldId[this.temp_relate_fieldId.length -1];

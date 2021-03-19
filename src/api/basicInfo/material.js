@@ -57,3 +57,5 @@ export const deleteMaterialAndFigure = params => { return axios.delete(`/ss/Mate
 
 // 导入事项下对应材料
 export const copyMaterialByItemId = params => { return axios.get(`/ss/material/copyMaterialByItemId`, {params}).then(res=>res.data); };
+// 查询材料模板对应的二级材料
+export const listGlobalSubAllByMaterial = params => { return axios.get(`/ss/material/listGlobalSubAllByMaterial`, {params}).then(res=>res.data); };

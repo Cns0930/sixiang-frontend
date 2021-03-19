@@ -313,7 +313,7 @@
                     <el-form-item label="排序">
                         <el-input v-model="materialTEdit.sort"></el-input>
                     </el-form-item>
-                    <el-form-item label="修改关联公共材料">
+                    <el-form-item label="关联公共一级材料">
                         <!-- <el-input v-model="materialT.materialName"></el-input> -->
                         <el-select v-model="materialTEdit.globalDocumentId" placeholder="请选择关联的公共一级材料" clearable
                             filterable remote reserve-keyword :remote-method="remoteMethodBang" :loading="loadingBang">
@@ -369,8 +369,9 @@
                 @selection-change="handleSelectionChange">
                 <el-table-column type="selection" reserve-selection label="选择">
                 </el-table-column>
-                <el-table-column prop="materialCode" label="材料编码" width="200"></el-table-column>
+                <!-- <el-table-column prop="materialCode" label="材料编码" width="200"></el-table-column> -->
                 <el-table-column prop="materialName" label="材料名称"></el-table-column>
+                <el-table-column prop="documentSeq" label="文档序号"></el-table-column>
 
             </el-table>
 
