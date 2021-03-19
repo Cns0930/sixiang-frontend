@@ -42,7 +42,7 @@
                     <el-table-column prop="materialName" label="所属事项一级材料" width="150">
                         <template slot-scope="scope">
                             <el-select v-if="scope.row.flag" v-model="scope.row.materialId"
-                                placeholder="请选择子一级材料名称" clearable filterable @change="firstMaterialChange(scope.row.materialId)">
+                                placeholder="请选择子一级材料名称" clearable filterable @change="firstMaterialChange(scope.row)">
                                 <el-option v-for="item in firstMaterialOption" :key="item.materialId"
                                     :label="item.materialName" :value="item.materialId" />
                             </el-select>
@@ -208,12 +208,12 @@ export default {
             if (!res.success) return;
             this.firstMaterialOption = res.data;
         },
-        async firstMaterialChange(Mid) {
-            // this.materialId = Mid;
+        async firstMaterialChange(row) {
             this.secondMaterialOption = [];
-            let res = await listGlobalSubAllByMaterial({materialId: Mid});
+            let res = await listGlobalSubAllByMaterial({materialId: row.materialId});
             if (!res.success) return;
             this.secondMaterialOption = res.data;
+            row.globalDocumentSubId = '';
         },
         subitemNameChange(v) {
             console.log(v)
@@ -354,9 +354,10 @@ export default {
         // 修改
         Edit(item, index, rows) {
             if(item.materialId){
-                this.firstMaterialChange(item.materialId)
+                this.firstMaterialChange(item)
             }else{
                 this.secondMaterialOption = [];
+                item.globalDocumentSubId = '';
             }
             this.$set(item, 'flag', true)
             this.$set(item, 'edits', true)
