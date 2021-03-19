@@ -82,11 +82,11 @@
                     </template>
                     </el-table-column>
                     <!-- <el-table-column prop="itemType" label="事项类型" width="80"></el-table-column> -->
-                    <el-table-column
+                    <!-- <el-table-column
                         prop="itemCode"
                         label="事项实施编码"
                         show-overflow-tooltip
-                    ></el-table-column>
+                    ></el-table-column> -->
                     <el-table-column prop="createBy" label="创建人" width="80"></el-table-column>
                     <!-- <el-table-column prop="itemStatus" label="状态" sortable width="80"></el-table-column> -->
                     <el-table-column
@@ -162,9 +162,9 @@
                         <el-form-item label="事项内部编号">
                             <el-input v-model="tempItem.itemInternalNo"></el-input>
                         </el-form-item>
-                        <el-form-item label="事项实施编码">
+                        <!-- <el-form-item label="事项实施编码">
                             <el-input v-model="tempItem.itemCode"></el-input>
-                        </el-form-item>
+                        </el-form-item> -->
                         <el-form-item label="事项名称">
                             <el-input v-model="tempItem.itemName"></el-input>
                         </el-form-item>
@@ -204,9 +204,9 @@
                         <el-form-item label="事项编号">
                             <el-input v-model="tempItem.itemNo"></el-input>
                         </el-form-item>
-                        <el-form-item label="事项实施编码">
+                        <!-- <el-form-item label="事项实施编码">
                             <el-input v-model="tempItem.itemCode"></el-input>
-                        </el-form-item>
+                        </el-form-item> -->
                         <el-form-item label="事项名称">
                             <el-input v-model="tempItem.itemName"></el-input>
                         </el-form-item>
@@ -369,7 +369,7 @@ export default {
             // } else {
                 this.$router.push({
                 path: "/formconstructor",
-                query: { itemId: item.approvalItemId },
+                query: { itemId: item.approvalItemId, projectId: this.$route.query.projectId },
                 });
             // }
         },
@@ -379,7 +379,7 @@ export default {
             sessionStorage.setItem('activeName', 'subitem');
             this.$router.push({
                 path: "/basic/subitem",
-                query: { itemId: item.approvalItemId },
+                query: { itemId: item.approvalItemId, projectId: this.$route.query.projectId },
             });
         },
         handleClickItemBangBan(item){
@@ -388,7 +388,7 @@ export default {
             sessionStorage.setItem('activeTab', 'formconstructor');
             this.$router.push({
                 path: "/formconstructor",
-                query: { itemId: item.approvalItemId },
+                query: { itemId: item.approvalItemId, projectId: this.$route.query.projectId },
             });
         },
         async handleClose(item){
