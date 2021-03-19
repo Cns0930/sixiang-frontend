@@ -2,7 +2,6 @@
     <div class="workWrap">
         <header>
             <span class="title">二级材料</span>
-
             <el-button type="primary" icon="el-icon-plus" @click="addText(0,tableData.length,tableData)">新增</el-button>
         </header>
         <section class="workBox">
