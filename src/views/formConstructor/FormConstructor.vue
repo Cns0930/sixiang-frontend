@@ -724,8 +724,10 @@ export default {
             this.temp_field_info = {descriptionInfo: result.data.descriptionInfo, validationInfo: result.data.validationInfo};
 
             let newFieldObj = deserializeTableData({ id: result.data.id, fieldType: result.data.fieldType, remark: result.data.remark,
+            parentId: result.data.parentId, 
             children:  result.data.children, ... result.data.object }); 
             this.temp_fieldObj = newFieldObj;
+            console.log(this.temp_fieldObj)
             delete this.temp_fieldObj.list;
             this.editDialogVisible = true;
         },
@@ -851,6 +853,7 @@ export default {
             let vsimple = _.cloneDeep(v)
             delete vsimple.descriptionInfo
             delete vsimple.validationInfo
+            delete vsimple.parentId
             let param = {
                 id: v.id,
                 fieldNo: v.fieldNo,
@@ -860,7 +863,8 @@ export default {
                 fieldType: v.fieldType,
                 object: vsimple,
                 remark: v.remark,
-                approvalItemId: this.itemId
+                approvalItemId: this.itemId,
+                parentId: v.parentId
             };
             console.log(param)
             let result = await saveOne(param);
