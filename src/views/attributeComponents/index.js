@@ -86,6 +86,7 @@ export function deserializeBaseField(fieldJSON) {
         isList:fieldJSON.isList,
         label: fieldJSON.label,
         fieldName: fieldJSON.fieldName,
+        parentId: fieldJSON.parentId,
         descriptionInfo: fieldJSON.descriptionInfo,
         validationInfo: fieldJSON.validationInfo, 
         remark: fieldJSON.remark,
