@@ -66,6 +66,12 @@
                     <el-form-item label="触发条件" prop="ruleTrigger">
                         <el-input v-model="addForm.ruleTrigger" ></el-input>
                     </el-form-item>
+                    <el-form-item label="流程" prop="ruleProcedure">
+                        <el-select v-model="addForm.ruleProcedure" clearable placeholder="流程">
+                            <el-option label="2" :value="Number(2)"></el-option>
+                            <el-option label="1" :value="Number(1)"></el-option>
+                        </el-select>
+                    </el-form-item>
                     <el-form-item label="审批点" prop="rulePoint">
                         <el-input v-model="addForm.rulePoint" ></el-input>
                     </el-form-item>
@@ -92,11 +98,6 @@
                                 </a>
                             </div> -->
                             </el-select>
-                    </el-form-item>
-                    <el-form-item label="判断方式" prop="ruleType">
-                        <el-select  v-model="addForm.ruleType" filterable clearable allow-create style="width:100%">
-                            <el-option v-for="item in sortList" :key="item" :label="item" :value="item"></el-option>
-                        </el-select>
                     </el-form-item>
                     <el-form-item label="依据" class="ruleItem">
                         <div v-for="(item,i) in ruleLawList" :key="i" class="ruleItems">
@@ -160,6 +161,11 @@
                         </div>
                         <i class="el-icon-plus" style="margin-left:10px;color:#409EFF;cursor: pointer;" @click="addRuleLawList('inputs')"></i>
                     </el-form-item>
+                    <el-form-item label="判断方式" prop="ruleType">
+                        <el-select  v-model="addForm.ruleType" filterable clearable allow-create style="width:100%">
+                            <el-option v-for="item in sortList" :key="item" :label="item" :value="item"></el-option>
+                        </el-select>
+                    </el-form-item>
                     <el-form-item label="附加参数" class="ruleItem">
                         <div v-for="(item,i) in ruleArgsList" :key="i" class="ruleItems">
                            <el-input type='textarea' v-model="item.ruleArgs"></el-input>
@@ -181,7 +187,59 @@
                                 </el-form-item>
                             </el-collapse-item>
                         </el-collapse>
-                        
+                    </el-form-item>
+                    <el-form-item label="提示语输入" class="ruleItem">
+                        <div v-for="(item,i) in ruleTipsInputList" :key="i" class="ruleItems">
+                            <el-select
+                                v-model="item.value1"
+                                placeholder="请选择子文档名称"
+                                clearable filterable
+                                style="width:45%"
+                                remote reserve-keyword :remote-method="remoteMethod" :loading="loading" @change="(val)=>getCheckpoint(val,i)"
+                            >
+                            <el-option
+                                v-for="(item1,i) in approvalSubTextList"
+                                :key="i"
+                                :label="item1.globalDocumentSubName"
+                                :value="item1.globalDocumentSubCode"
+                            />
+                                <!-- <div class="text-center" style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
+                                    <a class="text-normal">
+                                        <el-pagination @size-change="handleSizeChangeSelect" @current-change="handleCurrentChangeSelect"
+                                            :current-page="currentPageSelect" :total="totalAim"
+                                            :page-size="pageSize"
+                                            layout="prev, pager, next"/>
+                                    </a>
+                                </div> -->
+                            </el-select>
+
+                            <el-select
+                                v-model="item.value2"
+                                placeholder="请选择字段名"
+                                @change="subitemNameChanges"
+                                style="width:45%"
+                                clearable filterable
+                                :disabled='approvalSubTextChange'
+                                remote reserve-keyword :remote-method="remoteMethods"
+                            >
+                            <el-option
+                                v-for="item2 in checkpointList"
+                                :key="item2.fieldId"
+                                :label="item2.fieldName"
+                                :value="item2.fieldName"
+                            />
+                            <div class="text-center" style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
+                                    <a class="text-normal">
+                                        <el-pagination @size-change="handleSizeChangeSelects" @current-change="handleCurrentChangeSelects"
+                                            :current-page="currentPageSelects" :total="totals"
+                                            :page-size="pageSizes"
+                                            layout="prev, pager, next"/>
+                                    </a>
+                                </div>
+                            </el-select>
+                           <i v-if="ruleTipsInputList.length>1" style="margin-left:10px;color:red;cursor: pointer;" class="el-icon-delete" @click="deletTipsInputs(i)"></i>
+                        </div>
+                        <i class="el-icon-plus" style="margin-left:10px;color:#409EFF;cursor: pointer;" @click="addRuleLawList('tips')"></i>
                     </el-form-item>
                     <el-form-item label="提示信息(办事人)" prop="ruleTipsForUser">
                         <el-collapse >
@@ -215,6 +273,12 @@
                     <el-form-item label="触发条件">
                         <el-input v-model="editForm.ruleTrigger" ></el-input>
                     </el-form-item>
+                    <el-form-item label="流程" prop="ruleProcedure">
+                        <el-select v-model="editForm.ruleProcedure" clearable placeholder="流程">
+                            <el-option label="2" :value="Number(2)"></el-option>
+                            <el-option label="1" :value="Number(1)"></el-option>
+                        </el-select>
+                    </el-form-item>
                     <el-form-item label="审批点">
                         <el-input v-model="editForm.rulePoint" ></el-input>
                     </el-form-item>
@@ -241,11 +305,6 @@
                                 </a>
                             </div> -->
                             </el-select>
-                    </el-form-item>
-                    <el-form-item label="判断方式">
-                        <el-select  v-model="editForm.ruleType" filterable clearable allow-create style="width:100%">
-                            <el-option v-for="item in sortList" :key="item" :label="item" :value="item"></el-option>
-                        </el-select>
                     </el-form-item>
                     <el-form-item label="依据" class="ruleItem">
                         <div v-for="(item,i) in ruleLawList" :key="i" class="ruleItems">
@@ -309,6 +368,11 @@
                         </div>
                         <i class="el-icon-plus" style="margin-left:10px;color:#409EFF;cursor: pointer;" @click="addRuleLawList('inputs')"></i>
                     </el-form-item>
+                    <el-form-item label="判断方式">
+                        <el-select  v-model="editForm.ruleType" filterable clearable allow-create style="width:100%">
+                            <el-option v-for="item in sortList" :key="item" :label="item" :value="item"></el-option>
+                        </el-select>
+                    </el-form-item>
                     <el-form-item label="附加参数" class="ruleItem">
                         <div v-for="(item,i) in ruleArgsList" :key="i" class="ruleItems">
                            <el-input type='textarea' v-model="item.ruleArgs"></el-input>
@@ -330,7 +394,59 @@
                                 </el-form-item>
                             </el-collapse-item>
                         </el-collapse>
-                        
+                    </el-form-item>
+                    <el-form-item label="提示语输入" class="ruleItem">
+                        <div v-for="(item,i) in ruleTipsInputList" :key="i" class="ruleItems">
+                            <el-select
+                                v-model="item.value1"
+                                placeholder="请选择子文档名称"
+                                clearable filterable
+                                style="width:45%"
+                                remote reserve-keyword :remote-method="remoteMethod" :loading="loading" @change="(val)=>getCheckpoint(val,i)"
+                            >
+                            <el-option
+                                v-for="(item1,i) in approvalSubTextList"
+                                :key="i"
+                                :label="item1.globalDocumentSubName"
+                                :value="item1.globalDocumentSubCode"
+                            />
+                                <!-- <div class="text-center" style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
+                                    <a class="text-normal">
+                                        <el-pagination @size-change="handleSizeChangeSelect" @current-change="handleCurrentChangeSelect"
+                                            :current-page="currentPageSelect" :total="totalAim"
+                                            :page-size="pageSize"
+                                            layout="prev, pager, next"/>
+                                    </a>
+                                </div> -->
+                            </el-select>
+
+                            <el-select
+                                v-model="item.value2"
+                                placeholder="请选择字段名"
+                                @change="subitemNameChanges"
+                                style="width:45%"
+                                clearable filterable
+                                :disabled='approvalSubTextChange'
+                                remote reserve-keyword :remote-method="remoteMethods"
+                            >
+                            <el-option
+                                v-for="item2 in checkpointList"
+                                :key="item2.fieldId"
+                                :label="item2.fieldName"
+                                :value="item2.fieldName"
+                            />
+                            <div class="text-center" style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
+                                    <a class="text-normal">
+                                        <el-pagination @size-change="handleSizeChangeSelects" @current-change="handleCurrentChangeSelects"
+                                            :current-page="currentPageSelects" :total="totals"
+                                            :page-size="pageSizes"
+                                            layout="prev, pager, next"/>
+                                    </a>
+                                </div>
+                            </el-select>
+                           <i v-if="ruleTipsInputList.length>1" style="margin-left:10px;color:red;cursor: pointer;" class="el-icon-delete" @click="deletTipsInputs(i)"></i>
+                        </div>
+                        <i class="el-icon-plus" style="margin-left:10px;color:#409EFF;cursor: pointer;" @click="addRuleLawList('tips')"></i>
                     </el-form-item>
                     <el-form-item label="提示信息(办事人)">
                         <el-collapse >
@@ -444,6 +560,10 @@ export default {
                 value1:'',
                 value2:'',
             }],
+            ruleTipsInputList:[{
+                value1:'',
+                value2:'',
+            }],
             approvalSubTextChange:true,
             //依据
             ruleLawList:[{
@@ -506,7 +626,12 @@ export default {
                 value2:'',
             })
             }
-           
+            if(val === 'tips') {
+                this.ruleTipsInputList.push({
+                value1:'',
+                value2:'',
+            })
+            }
         },
         // 删除
         deletAdd(i) {
@@ -517,6 +642,9 @@ export default {
         },
         deletInputs(i) {
         this.ruleInputsList.splice(i, 1);
+        },
+        deletTipsInputs(i) {
+        this.ruleTipsInputList.splice(i, 1);
         },
         // 字段名
         async getCheckpoint(val,i) {
@@ -605,7 +733,9 @@ export default {
         async edit(){
             this.editBtnLoading=true;
             let ruleInputs = this.ruleInputsList.map(v=>({'材料编号':v.value1,'字段名':v.value2}))
+            let ruleTipsInput = this.ruleTipsInputList.map(v=>({'材料编号':v.value1,'字段名':v.value2}))
             this.editForm.ruleInputs = ruleInputs
+            this.editForm.ruleTipsInput = ruleTipsInput
             this.editForm.ruleTips = this.ruleTipsList.map(e=>e.ruleTips)
             this.editForm.ruleTipsForUser =this.ruleTipsForUserList.map(e=>e.ruleTipsForUser)
             this.editForm.ruleLaw = this.ruleLawList.map(e=>e.ruleLaw)
@@ -651,7 +781,8 @@ export default {
                 });
             }
 
-            if(Array.isArray(this.editForm.ruleInputs)) {this.ruleInputsList = this.editForm.ruleInputs.map(e=>({value1:e.材料编号,value2:e.字段名}))} 
+            if(Array.isArray(this.editForm.ruleInputs)) {this.ruleInputsList = this.editForm.ruleInputs.map(e=>({value1:e.材料编号,value2:e.字段名}))}
+            if(Array.isArray(this.editForm.ruleTipsInput)) {this.ruleTipsInputList = this.editForm.ruleTipsInput.map(e=>({value1:e.材料编号,value2:e.字段名}))}
             if(Array.isArray(this.editForm.ruleLaw)) {this.ruleLawList = this.editForm.ruleLaw.map(e=>({ruleLaw:e}))}
             if(Array.isArray(this.editForm.ruleArgs)) {this.ruleArgsList = this.editForm.ruleArgs.map(e=>({ruleArgs:e}))}
             this.editDialogVisible=true;
@@ -681,6 +812,7 @@ export default {
             this.ruleTipsList=[{lables:'正确信息',ruleTips:''},{lables:'错误信息',ruleTips:''},{lables:'人工判断', ruleTips:''},],
             this.ruleTipsForUserList=[{lables:'正确信息', ruleTipsForUser:''},{ lables:'错误信息',ruleTipsForUser:''},{lables:'人工判断', ruleTipsForUser:''},],
             this.ruleInputsList=[{ value1:'', value2:'',}],
+            this.ruleTipsInputList=[{ value1:'', value2:'',}],
             //依据
             this.ruleLawList=[{ruleLaw:''}],
             //附加
@@ -693,7 +825,9 @@ export default {
         },
         async add(){
             let ruleInputs = this.ruleInputsList.map(v=>({'材料编号':v.value1,'字段名':v.value2}))
+            let ruleTipsInput = this.ruleTipsInputList.map(v=>({'材料编号':v.value1,'字段名':v.value2}))
             this.addForm.ruleInputs = ruleInputs
+            this.addForm.ruleTipsInput = ruleTipsInput
             this.addForm.ruleTips = this.ruleTipsList.map(e=>e.ruleTips)
             this.addForm.ruleTipsForUser =this.ruleTipsForUserList.map(e=>e.ruleTipsForUser)
             this.addForm.ruleLaw = this.ruleLawList.map(e=>e.ruleLaw)
