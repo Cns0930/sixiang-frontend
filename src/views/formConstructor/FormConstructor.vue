@@ -282,9 +282,9 @@
 
         <!-- 导入公共字段 -->
         <el-dialog title="导入公共字段" :visible.sync="dialogPublicVisible" width="80%" :close-on-click-modal="false">
-            <el-select v-model="publicApprovalItemId" clearable style="width: 200px;">
+            <el-select v-model="publicApprovalItemId" clearable style="width: 200px;" @change="searchPublicField">
                     <el-option v-for="(v,i) in publicApprovalItemList" :key="i" :label="v.itemName" :value="v.approvalItemId" placeholder="选择需要的公共事项"></el-option>
-                </el-select>
+            </el-select>
 
            <el-input style="width: 240px;margin: 10px; 10px" placeholder="输入关键词（fieldNo/label）" clearable v-model="fieldKeyword" @change="searchPublicField"></el-input>
             <el-button icon="el-icon-search" circle @click="searchPublicField"></el-button>
@@ -1019,8 +1019,9 @@ export default {
             this.selected_public_fields = sel;
         },
         publicPageChange(n){
-            if (this.searchCurrentPage != n) {
-                this.searchCurrentPage = n;
+            console.log('n', n);
+            if (this.publicCurrentpage != n) {
+                this.publicCurrentpage = n;
             }
             this.loadPublicSearch();
         },
@@ -1045,7 +1046,7 @@ export default {
             }
         },
         async loadPublicSearch(){
-            let params = {approvalItemId: this.publicApprovalItemId, keyword: this.publicKeyword, pageNum: this.publicCurrentpage, pageSize: this.publicPagesize};
+            let params = {approvalItemId: this.publicApprovalItemId, keyword: this.fieldKeyword, pageNum: this.publicCurrentpage, pageSize: this.publicPagesize};
             let result = await searchPublic(params);
             if(result.success){
                 // 页码
