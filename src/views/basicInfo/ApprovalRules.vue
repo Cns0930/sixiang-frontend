@@ -56,7 +56,7 @@
             </el-pagination>
         </div>
         <!-- 新建窗口 -->
-        <el-dialog title="新增审批规则" :visible.sync="addDialogVisible" width="50%" :close-on-click-modal="false">
+        <el-dialog title="新增审批规则" :visible.sync="addDialogVisible" width="50%" :close-on-click-modal="false" @close="resetForms">
             <div class="form-content">
                 <el-form :model="addForm" ref="addForm" label-width="120px">
                     <el-form-item label="规则编号" prop="ruleCode">
@@ -263,7 +263,7 @@
         </el-dialog>
 
         <!-- 编辑窗口 -->
-        <el-dialog title="编辑审批规则" :visible.sync="editDialogVisible" width="50%" :close-on-click-modal="false">
+        <el-dialog title="编辑审批规则" :visible.sync="editDialogVisible" width="50%" :close-on-click-modal="false" @close="resetForms">
             <div class="form-content">
                 <el-form :model="editForm" ref="editForm" label-width="120px" >
                     <el-form-item label="规则编号">
