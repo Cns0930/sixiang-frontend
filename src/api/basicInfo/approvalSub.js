@@ -71,3 +71,6 @@ export const updateItemAndDocumentSub = params => { return axios.post(`/ss/appro
 
 // 查询材料模板对应的二级材料
 export const listSubitemAndDocumentNewByTemplateId = params => { return axios.get(`/ss/approvalItemAndDocumentSub/listSubitemAndDocumentNewByTemplateId`, {params}).then(res=>res.data); };
+
+// 查询事项一级材料对应的事项内二级材料
+export const listItemDocumentSubAllByMaterial = params => { return axios.get(`/ss/approvalItemAndDocumentSub/listItemDocumentSubAllByMaterial`, {params}).then(res=>res.data); };
