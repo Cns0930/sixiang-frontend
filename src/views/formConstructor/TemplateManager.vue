@@ -42,7 +42,7 @@
                             </div>
                             <div class="list">
                                 <el-select v-model="page.approvalItemAndDocumentsubId" :disabled="!(temp_page && page.id == temp_page.id)" placeholder="请选择二级材料名称">
-                                    <el-option v-for="(v,i) in secondaryMaterialOptions" :key="i" :label="v.globalDocumentSubName"
+                                    <el-option v-for="(v,i) in secondaryMaterialOptions" :key="i" :label="v.documentsubDisplayname"
                                         :value="v.id"> </el-option>
                                 </el-select>
                             </div>

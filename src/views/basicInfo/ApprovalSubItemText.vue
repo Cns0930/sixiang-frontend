@@ -215,6 +215,12 @@ export default {
             this.secondMaterialOption = res.data;
             row.globalDocumentSubId = '';
         },
+        async initSecond(row) {
+            this.secondMaterialOption = [];
+            let res = await listGlobalSubAllByMaterial({materialId: row.materialId});
+            if (!res.success) return;
+            this.secondMaterialOption = res.data;
+        },
         secondMaterialChange(row) {
             this.secondMaterialOption.forEach(item => {
                 if (item.globalDocumentSubId === row.globalDocumentSubId) {
@@ -364,7 +370,7 @@ export default {
         // 修改
         Edit(item, index, rows) {
             if(item.materialId){
-                this.firstMaterialChange(item)
+                this.initSecond(item)
             }else{
                 this.secondMaterialOption = [];
                 item.globalDocumentSubId = '';
