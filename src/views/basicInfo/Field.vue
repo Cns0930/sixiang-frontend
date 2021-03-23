@@ -120,14 +120,14 @@
             <el-form label-width="120px" :model="addForm">
                 <span class="dialogTitle">事项材料的字段信息:</span>
                 <el-form-item label="展示清单材料名称（一级）" required>
-                    <el-select v-model="addForm.materialW" clearable placeholder="请选择材料名称" @focus="changeMaterialValue">
+                    <el-select v-model="addForm.materialId" clearable placeholder="请选择材料名称" @focus="changeMaterialValue" @change="getSecondaryMaterialOptions(addForm)">
                         <el-option v-for="(v,i) in typeMaterialOptions" :key="i" :label="v.materialName"
                             :value="v.materialId"> </el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="展示材料名称（二级）" required>
                     <el-select v-model="addForm.approvalItemAndDocumentsubId" clearable placeholder="请选择二级材料名称">
-                        <el-option v-for="(v,i) in secondaryMaterialOptions" :key="i" :label="v.globalDocumentSubName"
+                        <el-option v-for="(v,i) in secondaryMaterialOptions" :key="i" :label="v.documentsubDisplayname"
                             :value="v.id"> </el-option>
                     </el-select>
                 </el-form-item>
@@ -245,14 +245,14 @@
             <el-form label-width="120px" :model="editForm">
                 <span class="dialogTitle">事项材料的字段信息:</span>
                 <el-form-item label="展示清单材料名称（一级）" prop="materialName">
-                    <el-select v-model="editForm.materialId" placeholder="请选择材料名称">
+                    <el-select v-model="editForm.materialId" placeholder="请选择材料名称" @change="getSecondaryMaterialOptions(editForm)">
                         <el-option v-for="(v,i) in typeMaterialOptions" :key="i" :label="v.materialName"
                             :value="v.materialId"> </el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="展示材料名称（二级）">
                     <el-select v-model="editForm.approvalItemAndDocumentsubId" placeholder="请选择二级材料名称">
-                        <el-option v-for="(v,i) in secondaryMaterialOptions" :key="i" :label="v.globalDocumentSubName"
+                        <el-option v-for="(v,i) in secondaryMaterialOptions" :key="i" :label="v.documentsubDisplayname"
                             :value="v.id"> </el-option>
                     </el-select>
                 </el-form-item>
@@ -499,7 +499,7 @@ import {
     saveBatchCheck, listAllPublicFields
 } from "@/api/basicInfo/field";
 import { listGlobalCheckpoint } from '@/api/basicInfo/examination'
-import { listItemAndDocumentSub } from "@/api/basicInfo/approvalSub";
+import { listItemDocumentSubAllByMaterial } from "@/api/basicInfo/approvalSub";
 import dayjs from "dayjs";
 import { getRolelist } from '@/api/item';
 import axios from "axios";
@@ -537,11 +537,13 @@ export default {
             total: 0,
             addForm: {
                 note: "",
+                approvalItemAndDocumentsubId: '',
             },
             editDialogVisible: false,
             editForm: {
                 fielditemId: 0,
                 note: "",
+                approvalItemAndDocumentsubId: '',
             },
             // 导入材料字段相关
             exMode: null,
@@ -599,7 +601,6 @@ export default {
         await this.init();
         this.materialList();
         this.reloadTable();
-        this.getSecondaryMaterialOptions();
         this.getTableHeight();
 
     },
@@ -655,10 +656,12 @@ export default {
             this.allPublicFields = res.data;
         },
         // 查询二级材料作关联下拉选项
-        async getSecondaryMaterialOptions() {
-            let result = await listItemAndDocumentSub({ approvalItemId: this.itemId, pageNum: 1, pageSize: 1000 });
+        async getSecondaryMaterialOptions(form) {
+            this.secondaryMaterialOptions = [];
+            form.approvalItemAndDocumentsubId = '';
+            let result = await listItemDocumentSubAllByMaterial({ materialId: form.materialId });
             if (!result.success) return;
-            this.secondaryMaterialOptions = result.data.records;
+            this.secondaryMaterialOptions = result.data;
         },
         // 添加字段的导入材料字段
         changeMaterialValue() {
@@ -684,7 +687,7 @@ export default {
         // 添加
         async addField() {
             this.addForm.approvalItemId = this.itemId
-            this.addForm.materialId = this.addForm.materialW
+            this.addForm.materialId = this.addForm.materialId
             let result = await addField(
                 this.addForm
             )
@@ -700,6 +703,9 @@ export default {
 
         // 处理编辑
         async handleEdit(scope) {
+            let res = await listItemDocumentSubAllByMaterial({ materialId: scope.row.materialId });
+            if (!res.success) return;
+            this.secondaryMaterialOptions = res.data;
             this.editForm = _.clone(scope.row);
             this.material_change = scope.row.materialName;
             this.editDialogVisible = true;

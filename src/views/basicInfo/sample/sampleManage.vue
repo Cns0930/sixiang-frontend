@@ -11,8 +11,8 @@
                 </el-button>
             </el-upload>
             <el-upload class="upload-demo" ref="uploadZip" :action="urlZip" :limit="1" :with-credentials="true"
-                :on-success="uploadSuccess" :on-remove="handleRemove" :on-exceed="handleExceed" :auto-upload='true'
-                :before-upload="customUploadZip">
+                :on-success="uploadSuccess" :on-error="uploadError" :on-remove="handleRemove" :on-exceed="handleExceed"
+                :auto-upload='true' :before-upload="customUploadZip">
                 <el-button type="plain" icon="el-icon-upload2" class="button" :loading="loadingZip" @click="upLoadZip">
                     压缩包上传</el-button>
             </el-upload>
@@ -56,7 +56,8 @@
                     </el-table-column>
                     <el-table-column label="标定">
                         <template slot-scope="scope">
-                            <el-button v-show="scope.row.isdir" type="text" style="font-size: 16px" @click="goCaseDem(scope.row)">标定</el-button>
+                            <el-button v-show="scope.row.isdir" type="text" style="font-size: 16px"
+                                @click="goCaseDem(scope.row)">标定</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -208,6 +209,10 @@ export default {
                 this.$message.success(res);
             }
         },
+        uploadError(err) {
+            console.log(err);
+            this.$message.error(err);
+        },
         // 上传文件超出个数
         handleExceed(files, fileList) {
             this.$message.warning(`只能选择上传 1 个文件`);
@@ -251,12 +256,13 @@ export default {
             fd.append("docZipFile", file);
             fd.append("basePath", this.filePath);
             fd.append("approvalItemId", this.itemId);
-            axios.post(
-                this.urlZip,
-                fd
-            )
-                .then(
+            try {
+                axios.post(
+                    this.urlZip,
+                    fd, { timeout: 1000 * 180 }
+                ).then(
                     (res) => {
+                        console.log('rescode', res.code);
                         if (res.data.success) {
                             this.$message.success('上传成功');
                             this.$refs.upload.clearFiles();
@@ -268,7 +274,30 @@ export default {
                             this.getFileListTable();
                         }
                     },
-                );
+                ).catch(error => {
+                    this.loadingZip = false;
+                    if (error.response) {
+                        // The request was made and the server responded with a status code
+                        // that falls out of the range of 2xx
+                        //   console.log(error.response.data);
+                        //   console.log(error.response.status);
+                        //   console.log(error.response.headers);
+                        this.$message.warning('哦no，不知道后端的开发又搞了什么乱子！');
+                    } else if (error.request) {
+                        // The request was made but no response was received
+                        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                        // http.ClientRequest in node.js
+                        //   console.log(error.request);
+                        this.$message.warning('你用的2g网络么，现在都5g时代了！');
+                    } else {
+                        // Something happened in setting up the request that triggered an Error
+                        //   console.log('Error', error.message);
+                        this.$message.warning('哦no，不知道后端的开发又搞了什么乱子！');
+                    }
+                    // console.log(error.config);
+                });
+            } catch (error) {
+            }
             return false;
         },
         // 图片上传，支持批量
@@ -367,7 +396,7 @@ export default {
             this.filePathQueue.push({ path: row.filePath, name: row.fileName, index: this.filePathQueue.length });
             this.$router.push({
                 path: "/basic/sampleDemarcate",
-                query: { 
+                query: {
                     itemId: this.itemId,
                     projectId: this.projectId,
                     filePath: row.filePath,
