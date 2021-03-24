@@ -15,8 +15,8 @@
                     :on-success="uploadSuccess" :on-remove="handleRemove" :on-exceed="handleExceed" :auto-upload='true'
                     :before-upload="customUpload">
                     <el-button type="primary" @click="upload()">Excel上传</el-button>
-                    <el-button type="text" @click="startDownload">点击下载模板</el-button>
                 </el-upload>
+                <el-button type="text" @click="startDownload">点击下载模板</el-button>
             </div> 
         </div>
 
