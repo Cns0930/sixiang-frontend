@@ -17,8 +17,8 @@
                     压缩包上传</el-button>
             </el-upload>
             <el-button type="plain" icon="el-icon-upload2" class="button" disabled @click="upLoadAI">AI2.0导入</el-button>
-            <el-button type="plain" icon="el-icon-download" class="button" :disabled="multipleSelection.length === 0"
-                @click="downLoad">下载</el-button>
+            <el-button type="plain" icon="el-icon-download" class="button" :loading="loadingDownFile"
+                :disabled="multipleSelection.length === 0" @click="downLoad">下载</el-button>
             <el-button type="plain" icon="el-icon-edit" class="button" :disabled="multipleSelection.length !== 1"
                 @click="reName">重命名</el-button>
             <el-button type="danger" icon="el-icon-delete" class="button" :disabled="multipleSelection.length === 0"
@@ -112,6 +112,7 @@ export default {
             // 上传下载相关
             loadings: false,
             loadingZip: false,
+            loadingDownFile: false,
             urlImg: process.env.VUE_APP_BASE_IP + '/docInfo/uploadImg',
             urlZip: process.env.VUE_APP_BASE_IP + '/docInfo/upload',
             // 编辑名字
@@ -357,15 +358,40 @@ export default {
             console.log('idsArray', idsArray);
             const idsString = idsArray.toString();
             console.log('idsString', idsString);
-            let res = await axios({
-                method: "get",
-                url: "/docInfo/downloadDocFile",
-                params: {
-                    approvalItemId: this.itemId,
-                    ids: idsString
-                },
-                responseType: "arraybuffer",
-            });
+            this.loadingDownFile = true;
+            let res;
+            try {
+                res = await axios({
+                    method: "get",
+                    url: "/docInfo/downloadDocFile",
+                    params: {
+                        approvalItemId: this.itemId,
+                        ids: idsString
+                    },
+                    responseType: "arraybuffer",
+                    timeout: 1000 * 180
+                });
+            } catch (error) {
+                this.loadingDownFile = false;
+                if (error.response) {
+                    // The request was made and the server responded with a status code
+                    // that falls out of the range of 2xx
+                    //   console.log(error.response.data);
+                    //   console.log(error.response.status);
+                    //   console.log(error.response.headers);
+                    this.$message.warning('哦no，不知道后端的开发又搞了什么乱子！');
+                } else if (error.request) {
+                    // The request was made but no response was received
+                    // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                    // http.ClientRequest in node.js
+                    //   console.log(error.request);
+                    this.$message.warning('你用的2g网络么，现在都5g时代了！');
+                } else {
+                    // Something happened in setting up the request that triggered an Error
+                    //   console.log('Error', error.message);
+                    this.$message.warning('哦no，不知道后端的开发又搞了什么乱子！');
+                }
+            }
             if (res.data.byteLength === 0) {
                 this.$message.warning("该事项下没有样本文件");
                 return;
@@ -388,6 +414,7 @@ export default {
             a.click();
             document.body.removeChild(a);
             window.URL.revokeObjectURL(href);
+            this.loadingDownFile = false;
         },
         // 跳转到样本标定
         goCaseDem(row) {
