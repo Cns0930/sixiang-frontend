@@ -764,14 +764,9 @@ export default {
             console.log(result)
             let preTableData = [];
             if (result.data.length) {
-                let lists = []
+                let lists = _.cloneDeep(vm.multipleSelection)
                 result.data.forEach(e => {
-                    // console.log(e)
-                    if (!lists.length) {
-                        lists = vm.multipleSelection.filter(ele => ele.fieldNo != e)
-                    } else {
-                        lists = lists.filter(ele => ele.fieldNo != e)
-                    }
+                    lists = lists.filter(ele => ele.fieldNo != e);
                 })
                 // 选择去重
                 let filList = [];
