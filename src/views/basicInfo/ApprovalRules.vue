@@ -11,6 +11,10 @@
         @keyup.native.enter="search"></el-input> -->
             <el-button @click="search(ruleIds)" type="primary">搜索</el-button>
             <div class="upload-box" style="float:right;margin-right:30px">
+                <el-select v-model="importPattern" clearable placeholder="上传选择模式: 去重 or 更新">
+                    <el-option label="忽略重复项模式" :value="true"></el-option>
+                    <el-option label="更新重复项模式（默认）" :value="false"></el-option>
+                </el-select>
                 <el-upload class="upload-demo" ref="upload" :action="url" :limit="1" :with-credentials="true"
                     :on-success="uploadSuccess" :on-remove="handleRemove" :on-exceed="handleExceed" :auto-upload='true'
                     :before-upload="customUpload">
@@ -491,6 +495,7 @@ export default {
             tableData: [],
             type:'ApprovalRules',
             itemId: this.$route.query.itemId,
+            importPattern: null,
             url: process.env.VUE_APP_BASE_IP + "/ss/Import/globalRuleImportData",
             /* 筛选条件 */
             // 名称模糊查询
@@ -855,6 +860,9 @@ export default {
             let fd = new FormData();
             fd.append("file", file);
             fd.append("approvalItemId", this.itemId);
+            if (this.importPattern) {
+                fd.append("ignoreDup", this.importPattern);
+            }
             axios.post(
                 this.url,
                 fd
@@ -927,9 +935,13 @@ export default {
         box-sizing: border-box;
         background: #fff;
         .upload-box {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
             .upload-demo {
                 display: flex;
-                flex-direction: column;
+                flex-direction: row;
             }
         }
     }
