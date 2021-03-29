@@ -1,48 +1,51 @@
 <template>
     <div class="workWrap">
-        <header>
-            <span class="title">事项详情</span>
-        </header>
-        <div class="handleBox">
-            <el-button type="primary" icon="el-icon-edit" style="margin-left: 20px" @click="edit">编辑事项</el-button>
-        </div>
-        <div class="workBox">
-            <el-form :inline="true" :model="formInline" class="formStyle demo-form" label-width="100px"
-                label-position="left">
-                <el-form-item label="大项名称：">
-                    <div class="formItem"><span>{{ formInline.approvalName }}</span></div>
-                </el-form-item>
-                <el-form-item label="事项名称：">
-                    <div class="formItem"><span>{{ formInline.itemName }}</span></div>
-                </el-form-item>
-                <el-form-item label="事项编号：">
-                    <div class="formItem"><span>{{ formInline.itemNo }}</span></div>
-                </el-form-item>
-                <el-form-item label="创建者：">
-                    <div class="formItem"><span>{{ formInline.createBy }}</span></div>
-                </el-form-item>
-                <el-form-item label="内部编号：">
-                    <div class="formItem"><span>{{ formInline.itemInternalNo }}</span></div>
-                </el-form-item>
-                <el-form-item label="事项类型：">
-                    <div class="formItem"><span>{{ formInline.itemType }}</span></div>
-                </el-form-item>
-                <el-form-item label="补充业务信息描述(键-值)：">
-                    <div v-for="(item,i) in formInline.extraInfoList" :key="i">
-                        <div>
-                            <span>{{item.keyValue + ' - ' + item.labelValue}}</span>
+        <div>
+            <header>
+                <span class="title">事项详情</span>
+            </header>
+            <div class="handleBox">
+                <el-button type="primary" icon="el-icon-edit" style="margin-left: 20px" @click="edit">编辑事项</el-button>
+            </div>
+            <div class="workBox">
+                <el-form :inline="true" :model="formInline" class="formStyle demo-form" label-width="100px"
+                    label-position="left">
+                    <el-form-item label="大项名称：">
+                        <div class="formItem"><span>{{ formInline.approvalName }}</span></div>
+                    </el-form-item>
+                    <el-form-item label="事项名称：">
+                        <div class="formItem"><span>{{ formInline.itemName }}</span></div>
+                    </el-form-item>
+                    <el-form-item label="事项编号：">
+                        <div class="formItem"><span>{{ formInline.itemNo }}</span></div>
+                    </el-form-item>
+                    <el-form-item label="创建者：">
+                        <div class="formItem"><span>{{ formInline.createBy }}</span></div>
+                    </el-form-item>
+                    <el-form-item label="内部编号：">
+                        <div class="formItem"><span>{{ formInline.itemInternalNo }}</span></div>
+                    </el-form-item>
+                    <el-form-item label="事项类型：">
+                        <div class="formItem"><span>{{ formInline.itemType }}</span></div>
+                    </el-form-item>
+                    <el-form-item label="补充业务信息描述(键-值)：">
+                        <div v-for="(item,i) in formInline.extraInfoList" :key="i">
+                            <div>
+                                <span>{{item.keyValue + ' - ' + item.labelValue}}</span>
+                            </div>
                         </div>
-                    </div>
-                </el-form-item>
-                <el-form-item label="创建时间：">
-                    <div class="formItem"><span>{{ formInline.createTime }}</span></div>
-                </el-form-item>
-                <el-form-item label="更新时间：">
-                    <div class="formItem"><span>{{ formInline.updateTime }}</span></div>
-                </el-form-item>
-                <el-form-item>
-                </el-form-item>
-            </el-form>
+                    </el-form-item>
+                    <el-form-item label="创建时间：">
+                        <div class="formItem"><span>{{ formInline.createTime }}</span></div>
+                    </el-form-item>
+                    <el-form-item label="更新时间：">
+                        <div class="formItem"><span>{{ formInline.updateTime }}</span></div>
+                    </el-form-item>
+                    <el-form-item>
+                    </el-form-item>
+                </el-form>
+            </div>
+
         </div>
         <div class="workHandleBox">
             <header>
@@ -51,15 +54,29 @@
             <div class="workHandleBoxContent">
                 <div class="handleBox">
                     <p class="title">下载预检开发配置模板</p>
-                    <el-button type="primary" icon="el-icon-download" @click="downLoad('/ss/Import/downloadAiZip')">点击下载</el-button>
+                    <el-button type="primary" icon="el-icon-download" @click="downLoad('/ss/Import/downloadAiZip')">点击下载
+                    </el-button>
                 </div>
                 <div class="handleBox">
                     <p class="title">临时下载迁移前四象1.0需求文件</p>
-                    <el-button type="primary" icon="el-icon-download" @click="downLoad('/ss/Import/downloadDemandZip')">点击下载</el-button>
+                    <el-button type="primary" icon="el-icon-download" @click="downLoad('/ss/Import/downloadDemandZip')">
+                        点击下载</el-button>
+                </div>
+                <div v-if="!itemInfo.isPublic" class="handleBox">
+                    <p class="title">保存当前事项版本</p>
+                    <el-button type="primary" icon="el-icon-upload2" :loading="loadingSaveApprovalItem"
+                        @click="saveApprovalItem">保存事项
+                    </el-button>
+                </div>
+                <div v-if="!itemInfo.isPublic" class="handleBox">
+                    <p class="title">载入其他事项版本</p>
+                    <el-button type="primary" icon="el-icon-upload2" @click="downApprovalItem">载入事项
+                    </el-button>
                 </div>
                 <div class="handleBox">
                     <p class="title">上传事项配置到git</p>
-                    <el-button type="primary" icon="el-icon-upload2" :loading="loadingUptoGit" @click="upToGit">点击上传</el-button>
+                    <el-button type="primary" icon="el-icon-upload2" :loading="loadingUptoGit" @click="upToGit">点击上传
+                    </el-button>
                 </div>
             </div>
         </div>
@@ -118,6 +135,40 @@
                 </el-button>
             </span>
         </el-dialog>
+        <!-- 事项多版本查看导入 -->
+        <el-dialog title="版本列表" :visible.sync="dialogVisibleVersion" width="80%" :close-on-click-modal="false">
+
+            <el-table ref="versionTable" :data="versionList" border style="width: 100%" row-key="id">
+                <el-table-column label="序号" type="index" width="50" :index="indexMethod"></el-table-column>
+                <el-table-column prop="version" label="版本号"></el-table-column>
+                <el-table-column prop="username" label="提交人"></el-table-column>
+                <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter"></el-table-column>
+                <el-table-column prop="latest" label="是否最新" :formatter="formatBoolean"></el-table-column>
+                <el-table-column label="操作" fixed="right" width="200px">
+                    <template slot-scope="scope">
+                        <el-button-group>
+                            <el-button type="primary" :loading="scope.row.loadingImport" @click="confirmImport(scope.row)">确认导入</el-button>
+                        </el-button-group>
+                    </template>
+                </el-table-column>
+            </el-table>
+
+            <!-- <el-pagination style="margin: 40px auto 30px 500px;" background layout="total, sizes, prev, pager, next"
+                    :page-size="searchPageSize" :current-page="searchCurrentPage" :total="searchTotal"
+                    @current-change="tablePageChange" @size-change="handleSearchSizeChange"
+                    :page-sizes="[10, 15, 30, 50, 100, 200, 300]">
+                </el-pagination> -->
+
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisibleVersion = false">
+                    关闭
+                </el-button>
+                <!-- <el-button type="primary" @click="updateItem(tempItem)">
+                    确定
+                </el-button> -->
+            </span>
+
+        </el-dialog>
     </div>
 </template>
 
@@ -130,7 +181,10 @@ import state from '@/vuex/home/state';
 import dayjs from "dayjs";
 import _ from "lodash"
 // 接口
-import { getByApprovalItemId, listApprovalAll, updateApprovalItem, submitItemInfo } from "@/api/basicInfo/approval"
+import {
+    getByApprovalItemId, listApprovalAll, updateApprovalItem, submitItemInfo,
+    listVersionItem, obtainVersionItem, addSysVersionItem
+} from "@/api/basicInfo/approval"
 
 export default {
     name: "ApprovalDetail",
@@ -154,6 +208,11 @@ export default {
             }],
             // 上传下载相关
             loadingUptoGit: false,
+            // 多版本相关
+            loadingSaveApprovalItem: false,
+            loadingDownApprovalItem: false,
+            dialogVisibleVersion: false,
+            versionList: [],
         }
     },
     computed: {
@@ -174,6 +233,7 @@ export default {
         await this.init();
         await this.getApprovalDetailInfo();
         // await this.search();
+        console.log('this.itemInfo', this.itemInfo)
     },
     methods: {
         getApprovalDetailInfo() {
@@ -243,6 +303,7 @@ export default {
                 this.approvalOptions = approvalRes.data;
             }
             this.tempItem = _.cloneDeep(this.formInline);
+            this.tempItem.approvalItemId = this.tempItem.approvalItemLordId;
             this.extraInfoList = this.tempItem.extraInfoList;
             this.dialogUpdateVisible = true;
         },
@@ -266,14 +327,68 @@ export default {
         // 上传事项配置到git
         async upToGit() {
             this.loadingUptoGit = true;
-            let res = await submitItemInfo({approvalItemId: this.itemId});
-            if(res.success) {
+            let res = await submitItemInfo({ approvalItemId: this.itemId });
+            if (res.success) {
                 this.$message.success('上传配置到Git成功！');
             } else {
                 this.$message.warning('上传配置到Git失败！');
             }
             this.loadingUptoGit = false;
         },
+
+        // 多版本相关
+        async saveApprovalItem() {
+            this.loadingSaveApprovalItem = true;
+            let res = await addSysVersionItem({ approvalItemId: this.itemId });
+            if (res.success) {
+                this.$message.success('保存当前事项成功！');
+            } else {
+                this.$message.warning('保存当前事项失败！');
+            }
+            this.loadingSaveApprovalItem = false;
+        },
+        async downApprovalItem() {
+            let res = await listVersionItem({ approvalItemLordId: this.itemInfo.approvalItemLordId });
+            if (!res.success) return;
+            this.versionList = res.data;
+            this.versionList.forEach((item) => {
+                this.$set(item, 'loadingImport', false)
+            })
+            console.log('versionList', this.versionList);
+            this.dialogVisibleVersion = true;
+        },
+        indexMethod(index) {
+            return index + 1;
+        },
+        timeFormatter(row, column, cellValue, index) {
+            return dayjs(cellValue).format("YYYY-MM-DD HH:mm:ss")
+        },
+        formatBoolean(row, column, cellValue) {
+            let ret = ''  //你想在页面展示的值
+            if (cellValue) {
+                ret = "最新"  //根据自己的需求设定
+            } else {
+                ret = "-"
+            }
+            return ret;
+        },
+        // 确认导入
+        async confirmImport(row) {
+            row.loadingImport = true;
+            let request = {
+                approvalItemLordId: row.approvalItemLordId,
+                exImport: true,
+                id: row.id
+            }
+            let res = await obtainVersionItem(request)
+            if (res.success) {
+                this.$message.success('导入事项数据成功！');
+                this.dialogVisibleVersion = false;
+            } else {
+                this.$message.warning('导入事项数据失败！');
+            }
+            row.loadingImport = false;
+        }
     },
 
 }
@@ -284,6 +399,10 @@ export default {
 .workWrap {
     width: 99.9%;
     height: calc(100% - 22px);
+    display: flex;
+    // align-items: center;
+    flex-direction: row;
+    justify-content: flex-start;
     header {
         font-size: 20px;
         font-weight: 700;
@@ -324,6 +443,7 @@ export default {
         .workHandleBoxContent {
             display: flex;
             // align-items: center;
+            flex-wrap: wrap;
             flex-direction: row;
             justify-content: flex-start;
             .handleBox {

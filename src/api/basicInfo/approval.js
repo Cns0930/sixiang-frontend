@@ -44,3 +44,15 @@ export const listPublicApprovalItem = params => { return axios.get(`/ss/approval
 
 // 查询事项下所有帮办所需信息上传git
 export const submitItemInfo = params => { return axios.get(`/ss/approvalItem/submitItemInfo`, {params}).then(res=>res.data); };
+
+// 查询对应事项从表数据
+export const exApprovalItem = params => { return axios.get(`/ss/approvalItem/exApprovalItem`, {params}).then(res=>res.data); };
+
+// 获取事项版本信息列表
+export const listVersionItem = params => { return axios.get(`/account/SysVersionItem/listVersionItem`, {params}).then(res=>res.data); };
+
+// 获取事项版本信息并保存
+export const obtainVersionItem = params => { return axios.get(`/account/SysVersionItem/obtainVersionItem`, {params}).then(res=>res.data); };
+
+// 保存事项内版本信息
+export const addSysVersionItem = params => { return axios.post(`/account/SysVersionItem/addSysVersionItem`, params).then(res=>res.data); };

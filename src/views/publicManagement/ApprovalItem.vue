@@ -1,7 +1,6 @@
 <template>
     <div class="workWrap">
-        <header>事项管理
-        </header>
+        <header>事项管理</header>
         <section class="workBox">
             <div class="searchBox">
                 <!-- <el-select placeholder="筛选项目" v-model="filterProjectId" filterable clearable style="width: 200px;">
@@ -32,8 +31,7 @@
             <div class="tableWrap">
                 <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%;" border
                     tooltip-effect="dark" :default-sort="{prop: 'createTime', order: 'descending'}">
-                   
-               
+
                     <!-- <el-table-column prop="projectName" label="项目" sortable >
                     </el-table-column> -->
                     <el-table-column prop="approvalName" label="大项" show-overflow-tooltip sortable>
@@ -42,7 +40,7 @@
                     </el-table-column>
                     <el-table-column prop="itemNo" label="事项编号" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column label="事项名称"  show-overflow-tooltip>
+                    <el-table-column label="事项名称" show-overflow-tooltip>
                         <template slot-scope="scope">
                             <el-button @click="handleClickItemDefault(scope.row)" type="text" style="color: orange;">
                                 {{scope.row.itemName}}
@@ -53,11 +51,11 @@
                     </el-table-column> -->
                     <!-- <el-table-column prop="itemCode" label="事项实施编码"  show-overflow-tooltip> -->
                     <!-- </el-table-column> -->
-                    <el-table-column prop="createBy" label="创建人" >
+                    <el-table-column prop="createBy" label="创建人">
                     </el-table-column>
                     <!-- <el-table-column prop="itemStatus" label="状态" sortable  width="50">
                     </el-table-column> -->
-                    <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable >
+                    <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable>
                     </el-table-column>
                     <el-table-column prop="updateTime" label="最后修改时间" :formatter="timeFormatter" sortable
                         show-overflow-tooltip>
@@ -85,18 +83,19 @@
                 </el-table>
             </div>
             <div class="tablePagination">
-                <el-pagination @current-change="handleCurrentChange"
-                    :current-page.sync="currentPage" :page-size="pagesize" layout="total, prev, pager, next"
-                    :total="totalCount">
+                <el-pagination @current-change="handleCurrentChange" :current-page.sync="currentPage"
+                    :page-size="pagesize" layout="total, prev, pager, next" :total="totalCount">
                 </el-pagination>
             </div>
         </section>
 
         <section class="dialogBox">
             <!-- 新建窗口 -->
-            <el-dialog title="事项属性填写" :visible.sync="dialogAddVisible" width="80%" :close-on-click-modal="false" :show-close='false'>
+            <el-dialog title="事项属性填写" :visible.sync="dialogAddVisible" width="80%" :close-on-click-modal="false"
+                :show-close='false'>
                 <div class="attribute-content">
-                    <el-form :model='tempItem' ref="tempItem" :inline="false" label-position="left" class="demo-form-inline" :rules="rules">
+                    <el-form :model='tempItem' ref="tempItem" :inline="false" label-position="left"
+                        class="demo-form-inline" :rules="rules">
                         <!-- <el-form-item label="项目" prop="projectId">
                             <el-select v-model="tempItem.projectId" filterable>
                                 <el-option v-for="(v,i) in projectOptions" :key="i" :label="v.projectName"
@@ -150,7 +149,8 @@
             <!-- 编辑窗口 -->
             <el-dialog title="事项属性填写" :visible.sync="dialogUpdateVisible" width="80%" :close-on-click-modal="false">
                 <div class="attribute-content">
-                    <el-form :model='tempItem' ref="tempItem" :rules="rules" :inline="false" label-position="left" class="demo-form-inline">
+                    <el-form :model='tempItem' ref="tempItem" :rules="rules" :inline="false" label-position="left"
+                        class="demo-form-inline">
                         <el-form-item label="大项" prop="approvalId">
                             <el-select v-model="tempItem.approvalId" filterable>
                                 <el-option v-for="(v,i) in approvalOptions" :key="i" :label="v.approvalName"
@@ -188,8 +188,39 @@
                     <el-button @click="dialogUpdateVisible = false">
                         取消
                     </el-button>
-                    <el-button type="primary" @click="updateItem(tempItem)">
+                    <el-button type="primary" @click="updateItem">
                         确定
+                    </el-button>
+                </span>
+            </el-dialog>
+
+            <!-- 事项多版本查看导入 -->
+            <el-dialog title="版本列表" :visible.sync="dialogVisibleVersion" width="80%" :close-on-click-modal="false">
+
+                <el-table ref="versionTable" :data="versionList" border style="width: 100%" row-key="id">
+                    <el-table-column label="序号" type="index" width="50" :index="indexMethod"></el-table-column>
+                    <el-table-column prop="version" label="版本号"></el-table-column>
+                    <el-table-column prop="username" label="提交人"></el-table-column>
+                    <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter"></el-table-column>
+                    <el-table-column prop="latest" label="是否最新" :formatter="formatBoolean"></el-table-column>
+                    <el-table-column label="操作" fixed="right" width="200px">
+                        <template slot-scope="scope">
+                            <el-button-group>
+                                <el-button type="primary" @click="confirmImport(scope.row)">确认导入</el-button>
+                            </el-button-group>
+                        </template>
+                    </el-table-column>
+                </el-table>
+
+                <!-- <el-pagination style="margin: 40px auto 30px 500px;" background layout="total, sizes, prev, pager, next"
+                    :page-size="searchPageSize" :current-page="searchCurrentPage" :total="searchTotal"
+                    @current-change="tablePageChange" @size-change="handleSearchSizeChange"
+                    :page-sizes="[10, 15, 30, 50, 100, 200, 300]">
+                </el-pagination> -->
+
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="dialogVisibleVersion = false">
+                        关闭
                     </el-button>
                 </span>
             </el-dialog>
@@ -201,10 +232,10 @@
 
 <script>
 
-import {mixin} from "@/mixin/mixin"
+import { mixin } from "@/mixin/mixin"
 import Vue from "vue";
 
-import {mapGetters} from "vuex"
+import { mapGetters } from "vuex"
 import {
     listApprovalAll,
     getByProjectId,
@@ -213,6 +244,9 @@ import {
     getByApprovalItemId,
     shutApprovalItem,
     listApprovalItem,
+    exApprovalItem,
+    listVersionItem,
+    obtainVersionItem,
 } from "../../api/basicInfo/approval";
 
 export default {
@@ -257,11 +291,16 @@ export default {
                 itemType: [
                     { required: true, message: '请输入事项类型', trigger: 'blur' }
                 ],
-                }
+            },
+            // 事项多版本相关
+            dialogVisibleVersion: false,
+            versionList: [],
+            currentItemInfo: {},
+            currentClickButton: '',
         };
     },
     computed: {
-         ...mapGetters({hasManagePermission:'config/hasManagePermission'})
+        ...mapGetters({ hasManagePermission: 'config/hasManagePermission' })
     },
     async created() {
         // 获取项目信息
@@ -275,7 +314,7 @@ export default {
         itemInfo.itemNo = null;
         this.$store.commit("changeItem", itemInfo);
         sessionStorage.removeItem('itemInfo');
-        
+
     },
     methods: {
         getTime(val) {
@@ -285,14 +324,16 @@ export default {
         //     this.multipleSelection = val;
         // },
         async handleEdit(index, row) {
-         
+
             let res = await getByApprovalItemId({
-                approvalItemId: row.approvalItemId,
+                approvalItemId: row.approvalItemLordId,
+                exLord: true,
             });
             if (!res.success) {
                 return;
             }
             this.tempItem = res.data;
+            this.tempItem.approvalItemId = row.approvalItemLordId;
             this.dialogUpdateVisible = true;
             // 获取选项
             let approvalRes = await listApprovalAll();
@@ -328,9 +369,9 @@ export default {
                     return false;
                 }
             });
-            
+
         },
-        async updateItem(tempItem) {
+        async updateItem() {
             this.$refs.tempItem.validate(async (valid) => {
                 if (valid) {
                     let res = await updateApprovalItem(this.tempItem);
@@ -341,10 +382,10 @@ export default {
                         await this.list();
                     }
                 } else {
-                console.log('error submit!!');
-                return false;
-            }
-        });
+                    console.log('error submit!!');
+                    return false;
+                }
+            });
         },
         async loadOptions() {
             // 获取选项
@@ -361,21 +402,21 @@ export default {
             this.currentPage = 1;
             await this.list();
         },
-        handleClickItemDefault(item) {
-          
-            this.$store.commit("changeItem", item);
-            sessionStorage.setItem("itemInfo", item);
-            sessionStorage.setItem('activeName', 'subitem');
-            // this.$router.push({
-            //     path: "/basic/subitem",
-            //     query: { itemId: item.approvalItemId },
-            // });
+        async handleClickItemDefault(item) {
+            this.currentItemInfo = item;
+            this.currentClickButton = '事项名';
+            let newItem = await this.getRoleApprovalId(item);
+            if (!newItem) return;
+            console.log('newItem', newItem);
+            this.$store.commit("changeItem", newItem);
+            sessionStorage.setItem("itemInfo", newItem);
+            sessionStorage.setItem('activeName', 'approvalDetail');
             let hasAdmin = this.$store.state['config'].roles.includes('admin');
             let hasResearcher = this.$store.state['config'].roles.includes('researcher');
             if (hasAdmin || hasResearcher) {
                 this.$router.push({
-                    path: "/basic/subitem",
-                    query: { itemId: item.approvalItemId, projectId: this.$route.query.projectId },
+                    path: "/basic/approvalDetail",
+                    query: { itemId: newItem.approvalItemId, projectId: this.$route.query.projectId },
                 });
             } else {
                 this.$router.push({
@@ -384,28 +425,38 @@ export default {
                 });
             }
         },
-        handleClickItem(item) {
-            this.$store.commit("changeItem", item);
-            sessionStorage.setItem("itemInfo", item);
-            sessionStorage.setItem('activeName', 'subitem');
+        async handleClickItem(item) {
+            this.currentItemInfo = item;
+            this.currentClickButton = '调研信息';
+            let newItem = await this.getRoleApprovalId(item);
+            if (!newItem) return;
+            console.log('newItem', newItem);
+            this.$store.commit("changeItem", newItem);
+            sessionStorage.setItem("itemInfo", newItem);
+            sessionStorage.setItem('activeName', 'approvalDetail');
             this.$router.push({
-                path: "/basic/subitem",
-                query: { itemId: item.approvalItemId, projectId: this.$route.query.projectId },
+                path: "/basic/approvalDetail",
+                query: { itemId: newItem.approvalItemId, projectId: this.$route.query.projectId },
             });
         },
-        handleClickItemBangBan(item) {
-            this.$store.commit("changeItem", item);
-            sessionStorage.setItem("itemInfo", item);
+        async handleClickItemBangBan(item) {
+            this.currentItemInfo = item;
+            this.currentClickButton = '帮办工具';
+            let newItem = await this.getRoleApprovalId(item);
+            if (!newItem) return;
+            console.log('newItem', newItem);
+            this.$store.commit("changeItem", newItem);
+            sessionStorage.setItem("itemInfo", newItem);
             sessionStorage.setItem('activeTab', 'formconstructor');
             this.$router.push({
                 path: "/formconstructor",
-                query: { itemId: item.approvalItemId, projectId: this.$route.query.projectId },
+                query: { itemId: newItem.approvalItemId, projectId: this.$route.query.projectId },
             });
         },
         async handleClose(item) {
             try {
                 await this.$confirm("是否关闭项目", "确认关闭",);
-                let result = await shutApprovalItem({ approvalItemId: item.approvalItemId });
+                let result = await shutApprovalItem({ approvalItemId: item.approvalItemLordId });
                 if (!result.success) return;
                 await this.list();
                 this.$message({ type: "success", message: "关闭成功" })
@@ -429,11 +480,71 @@ export default {
                 params.endTime = this.timeRange[1];
             }
             let result = await listApprovalItem(params);
-             if(!result.success) return;
+            if (!result.success) return;
             this.tableData = result.data.records;
             this.totalCount = result.data.total;
         },
-        
+        // git多版本相关方法
+        async getRoleApprovalId(row) {
+            let result = await exApprovalItem({ approvalItemId: row.approvalItemLordId });
+            if (!result.success) return;
+            // 无当前用户的事项数据
+            if (result.data === null) {
+                try {
+                    await this.$confirm("您当前无最新个人数据，是否从历史版本导入", "提示",);
+                    let res = await listVersionItem({ approvalItemLordId: row.approvalItemLordId });
+                    this.versionList = res.data;
+                    this.dialogVisibleVersion = true;
+                    return false;
+                } catch (e) {
+                    this.$message({ type: "success", message: "新建版本" });
+                    let request = {
+                        approvalItemLordId: row.approvalItemLordId,
+                        exImport: false
+                    }
+                    let res = await obtainVersionItem(request);
+                    console.log('新建', res);
+                    return res.data;
+                }
+            } else {
+                return result.data;
+            }
+        },
+        formatBoolean(row, column, cellValue) {
+            let ret = ''  //你想在页面展示的值
+            if (cellValue) {
+                ret = "最新"  //根据自己的需求设定
+            } else {
+                ret = "-"
+            }
+            return ret;
+        },
+        indexMethod(index) {
+            return index + 1;
+        },
+        // 确认导入
+        async confirmImport(row) {
+            let request = {
+                approvalItemLordId: row.approvalItemLordId,
+                exImport: true,
+                id: row.id
+            }
+            let res = await obtainVersionItem(request)
+            if (res.success) {
+                this.$message.success('导入事项数据成功！');
+                this.dialogVisibleVersion = false;
+                console.log('导入的id', res.data);
+                if(this.currentClickButton === '事项名') {
+                    this.handleClickItemDefault(this.currentItemInfo);
+                } else if (this.currentClickButton === '调研信息') {
+                    this.handleClickItem(this.currentItemInfo);
+                } else {
+                    this.handleClickItemBangBan(this.currentItemInfo);
+                }
+            } else {
+                this.$message.warning('导入事项数据失败！');
+            }
+        }
     },
 };
 </script>
