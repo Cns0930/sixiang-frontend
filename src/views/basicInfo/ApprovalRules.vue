@@ -737,14 +737,14 @@ export default {
         // },
         async edit(){
             this.editBtnLoading=true;
-            let ruleInputs = this.ruleInputsList.map(v=>({'材料编号':v.value1,'字段名':v.value2}))
-            let ruleTipsInput = this.ruleTipsInputList.map(v=>({'材料编号':v.value1,'字段名':v.value2}))
+            let ruleInputs = this.ruleInputsList[0].value1 === '' ? [] : this.ruleInputsList.map(v=>({'材料编号':v.value1,'字段名':v.value2}))
+            let ruleTipsInput = this.ruleTipsInputList[0].value1 === '' ? [] : this.ruleTipsInputList.map(v=>({'材料编号':v.value1,'字段名':v.value2}))
             this.editForm.ruleInputs = ruleInputs
             this.editForm.ruleTipsInput = ruleTipsInput
             this.editForm.ruleTips = this.ruleTipsList.map(e=>e.ruleTips)
             this.editForm.ruleTipsForUser =this.ruleTipsForUserList.map(e=>e.ruleTipsForUser)
-            this.editForm.ruleLaw = this.ruleLawList.map(e=>e.ruleLaw)
-            this.editForm.ruleArgs = this.ruleArgsList.map(e=>e.ruleArgs)
+            this.editForm.ruleLaw = this.ruleLawList[0].ruleLaw === '' ? [] : this.ruleLawList.map(e=>e.ruleLaw)
+            this.editForm.ruleArgs = this.ruleArgsList[0].ruleArgs === '' ? [] : this.ruleArgsList.map(e=>e.ruleArgs)
 
             let result= await updateRule(this.editForm);
             if(!result.success) {
@@ -829,14 +829,14 @@ export default {
             this.checkpointList = []
         },
         async add(){
-            let ruleInputs = this.ruleInputsList.map(v=>({'材料编号':v.value1,'字段名':v.value2}))
-            let ruleTipsInput = this.ruleTipsInputList.map(v=>({'材料编号':v.value1,'字段名':v.value2}))
+            let ruleInputs = this.ruleInputsList[0].value1 === '' ? [] : this.ruleInputsList.map(v=>({'材料编号':v.value1,'字段名':v.value2}))
+            let ruleTipsInput = this.ruleTipsInputList[0].value1 === '' ? [] : this.ruleTipsInputList.map(v=>({'材料编号':v.value1,'字段名':v.value2}))
             this.addForm.ruleInputs = ruleInputs
             this.addForm.ruleTipsInput = ruleTipsInput
             this.addForm.ruleTips = this.ruleTipsList.map(e=>e.ruleTips)
             this.addForm.ruleTipsForUser =this.ruleTipsForUserList.map(e=>e.ruleTipsForUser)
-            this.addForm.ruleLaw = this.ruleLawList.map(e=>e.ruleLaw)
-            this.addForm.ruleArgs = this.ruleArgsList.map(e=>e.ruleArgs)
+            this.addForm.ruleLaw = this.ruleLawList[0].ruleLaw === '' ? [] : this.ruleLawList.map(e=>e.ruleLaw)
+            this.addForm.ruleArgs = this.ruleArgsList[0].ruleArgs === '' ? [] : this.ruleArgsList.map(e=>e.ruleArgs)
             this.addForm.approvalItemId = this.itemId
             let result = await addRule(this.addForm);
             if(!result.success) return
