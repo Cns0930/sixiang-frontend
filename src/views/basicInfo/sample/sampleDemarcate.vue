@@ -38,7 +38,7 @@
                                                 <template slot-scope="scope">
                                                     <span v-if="scope.row.documentsubSeq" style="color: green">
                                                         <i class="el-icon-check"></i>
-                                                        {{ ' ' + scope.row.documentsubSeq + ' - ' + scope.row.globalDocumentSubName }}
+                                                        {{ ' ' + scope.row.documentsubSeq + ' - ' + scope.row.documentsubDisplayname }}
                                                     </span>
                                                 </template>
                                             </el-table-column>
@@ -102,7 +102,7 @@
                                                         placeholder="请选择图片分类" style="width: 100%" @change="setImgClass">
                                                         <el-option v-for="item in imgClassList"
                                                             :key="item.documentsubSeq"
-                                                            :label="item.documentsubSeq + ' : ' + item.globalDocumentSubName"
+                                                            :label="item.documentsubSeq + ' : ' + item.documentsubDisplayname"
                                                             :value="item.id">
                                                         </el-option>
                                                     </el-select>
