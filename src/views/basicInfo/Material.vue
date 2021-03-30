@@ -59,44 +59,9 @@
                 <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%;" border
                     :row-style="{height:'60px'}" :header-row-style="{height:'50px'}" tooltip-effect="dark"
                     :default-sort="{prop: 'createTime', order: 'descending'}" :height="tableHeight">
-                    <!-- <el-table-column
-              type="selection"
-              width="50">
-                    </el-table-column>-->
                     <el-table-column label="序号" type="index" width="50px" :index="indexMethod"></el-table-column>
-                    <!-- <el-table-column
-              label="部门"
-              sortable
-              width="120">
-              <template slot-scope="scope">{{ scope.row.date }}</template>
-            </el-table-column>
-            <el-table-column
-              prop="name"
-              label="大项"
-              sortable
-              width="120">
-                    </el-table-column>
-                    <el-table-column
-                        prop="approvalItemId"
-                        label="审批事项编号"
-                        width="100"
-                        show-overflow-tooltip
-                    ></el-table-column>
-                    <el-table-column prop="materialId" label="事项(小项)办事材料编号" width="100" show-overflow-tooltip></el-table-column>-->
-                    <!-- <el-table-column prop="materialCode" label="材料编码" width="100" show-overflow-tooltip></el-table-column> -->
                     <el-table-column prop="materialName" label="材料展示名称" width="200" show-overflow-tooltip>
                     </el-table-column>
-                    <!-- <el-table-column prop="templateName" label="模板名称(自取)" show-overflow-tooltip></el-table-column> -->
-                    <!-- <el-table-column prop="materialStatus" label="材料状态" width="80"></el-table-column>
-                    <el-table-column prop="documentSeq" label="文档编号" width="80"></el-table-column>
-                    <el-table-column
-                        prop="catMainCode"
-                        label="市证照编码"
-                        width="100"
-                        show-overflow-tooltip
-                    ></el-table-column> -->
-                    <!-- <el-table-column prop="docxTemplateName" label="超级帮办word模板命名" show-overflow-tooltip>
-                    </el-table-column> -->
                     <el-table-column prop="documentSeq" label="文档序号" width="50px">
                     </el-table-column>
                     <el-table-column prop="isNavigation" label="是否显示在左侧导航" width="90px"
@@ -129,17 +94,6 @@
                             <el-button size="mini" type="danger" @click="handleDeleteMaterial(scope.row)">删除</el-button>
                         </template>
                     </el-table-column>
-                    <!-- <el-table-column
-              label="启/停用"
-              fixed="right">
-              <template slot-scope="scope">
-                <el-switch
-                  v-model="value"
-                >
-                <span style="display: none;">{{scope.$index}}</span>
-                </el-switch>
-              </template>
-                    </el-table-column>-->
                 </el-table>
             </div>
             <div class="tablePagination">
@@ -147,10 +101,6 @@
                     :current-page.sync="currentPage" :page-size="pagesize" layout="total, prev, pager, next"
                     :total="totalCount"></el-pagination>
             </div>
-            <!-- <component :is="model.type" v-model="model.val" v-bind="{
-          type: 'textarea',
-          placeholder:'输入数字信息',
-            }" @input="inputs"></component>-->
         </section>
         <!-- 创建模板弹窗 -->
         <el-dialog title="新建材料信息" :visible.sync="materialWriteVisible" width="40%" :close-on-click-modal="false">
@@ -217,12 +167,6 @@
                         </el-form-item>
                     </div>
                     <br>
-                    <!-- <el-form-item label="材料编码">
-                        <el-input v-model="materialT.materialCode"></el-input>
-                    </el-form-item>
-                    <el-form-item label="市证照编码">
-                        <el-input v-model="materialT.catMainCode"></el-input>
-                    </el-form-item> -->
                     <el-form-item label="清单补充说明信息">
                         <el-input v-model="materialT.materialNameNotes"></el-input>
                     </el-form-item>
@@ -235,9 +179,9 @@
                     <el-form-item label="备注">
                         <el-input v-model="materialT.note"></el-input>
                     </el-form-item>
-                    <el-form-item label="排序">
+                    <!-- <el-form-item label="排序">
                         <el-input v-model="materialT.sort"></el-input>
-                    </el-form-item>
+                    </el-form-item> -->
                 </div>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -252,12 +196,6 @@
                     <el-form-item label="材料名称">
                         <el-input v-model="materialTEdit.materialName"></el-input>
                     </el-form-item>
-                    <!-- <el-form-item label="模板名称(自取)">
-                        <el-input v-model="materialTEdit.templateName"></el-input>
-                    </el-form-item> -->
-                    <!-- <el-form-item label="超级帮办word模板名称">
-                        <el-input v-model="materialTEdit.docxTemplateName"></el-input>
-                    </el-form-item> -->
                     <el-form-item label="文档序号">
                         <el-input v-model="materialTEdit.documentSeq"></el-input>
                     </el-form-item>
@@ -289,12 +227,6 @@
                         </el-form-item>
                     </div>
                     <br>
-                    <!-- <el-form-item label="材料编码">
-                        <el-input v-model="materialTEdit.materialCode"></el-input>
-                    </el-form-item>
-                    <el-form-item label="市证照编码">
-                        <el-input v-model="materialTEdit.catMainCode"></el-input>
-                    </el-form-item> -->
                     <el-form-item label="清单补充说明信息">
                         <el-input v-model="materialTEdit.materialNameNotes"></el-input>
                     </el-form-item>
@@ -310,11 +242,10 @@
                     <el-form-item label="备注">
                         <el-input v-model="materialTEdit.note"></el-input>
                     </el-form-item>
-                    <el-form-item label="排序">
+                    <!-- <el-form-item label="排序">
                         <el-input v-model="materialTEdit.sort"></el-input>
-                    </el-form-item>
+                    </el-form-item> -->
                     <el-form-item label="关联公共一级材料">
-                        <!-- <el-input v-model="materialT.materialName"></el-input> -->
                         <el-select v-model="materialTEdit.globalDocumentId" placeholder="请选择关联的公共一级材料" clearable
                             filterable remote reserve-keyword :remote-method="remoteMethodBang" :loading="loadingBang">
                             <el-option v-for="item in approvalTextList" :key="item.globalDocumentId"

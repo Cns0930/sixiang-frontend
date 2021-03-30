@@ -282,9 +282,9 @@
 
         <!-- 导入公共字段 -->
         <el-dialog title="导入公共字段" :visible.sync="dialogPublicVisible" width="80%" :close-on-click-modal="false">
-            <el-select v-model="publicApprovalItemId" clearable style="width: 200px;">
+            <el-select v-model="publicApprovalItemId" clearable style="width: 200px;" @change="searchPublicField">
                     <el-option v-for="(v,i) in publicApprovalItemList" :key="i" :label="v.itemName" :value="v.approvalItemId" placeholder="选择需要的公共事项"></el-option>
-                </el-select>
+            </el-select>
 
            <el-input style="width: 240px;margin: 10px; 10px" placeholder="输入关键词（fieldNo/label）" clearable v-model="fieldKeyword" @change="searchPublicField"></el-input>
             <el-button icon="el-icon-search" circle @click="searchPublicField"></el-button>
@@ -724,8 +724,10 @@ export default {
             this.temp_field_info = {descriptionInfo: result.data.descriptionInfo, validationInfo: result.data.validationInfo};
 
             let newFieldObj = deserializeTableData({ id: result.data.id, fieldType: result.data.fieldType, remark: result.data.remark,
+            parentId: result.data.parentId, 
             children:  result.data.children, ... result.data.object }); 
             this.temp_fieldObj = newFieldObj;
+            console.log(this.temp_fieldObj)
             delete this.temp_fieldObj.list;
             this.editDialogVisible = true;
         },
@@ -851,6 +853,7 @@ export default {
             let vsimple = _.cloneDeep(v)
             delete vsimple.descriptionInfo
             delete vsimple.validationInfo
+            delete vsimple.parentId
             let param = {
                 id: v.id,
                 fieldNo: v.fieldNo,
@@ -860,7 +863,8 @@ export default {
                 fieldType: v.fieldType,
                 object: vsimple,
                 remark: v.remark,
-                approvalItemId: this.itemId
+                approvalItemId: this.itemId,
+                parentId: v.parentId
             };
             console.log(param)
             let result = await saveOne(param);
@@ -1015,8 +1019,9 @@ export default {
             this.selected_public_fields = sel;
         },
         publicPageChange(n){
-            if (this.searchCurrentPage != n) {
-                this.searchCurrentPage = n;
+            console.log('n', n);
+            if (this.publicCurrentpage != n) {
+                this.publicCurrentpage = n;
             }
             this.loadPublicSearch();
         },
@@ -1041,7 +1046,7 @@ export default {
             }
         },
         async loadPublicSearch(){
-            let params = {approvalItemId: this.publicApprovalItemId, keyword: this.publicKeyword, pageNum: this.publicCurrentpage, pageSize: this.publicPagesize};
+            let params = {approvalItemId: this.publicApprovalItemId, keyword: this.fieldKeyword, pageNum: this.publicCurrentpage, pageSize: this.publicPagesize};
             let result = await searchPublic(params);
             if(result.success){
                 // 页码

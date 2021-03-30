@@ -66,22 +66,22 @@
             <el-table-column type="selection" :reserve-selection='true'></el-table-column>
             <el-table-column prop="fieldName" label="字段名称" show-overflow-tooltip width="180"></el-table-column>
             <!-- <el-table-column prop="docxTemplateName" label="模板名称" show-overflow-tooltip width="180"></el-table-column> -->
-            <el-table-column prop="materialName" label="关联一级材料名称" show-overflow-tooltip width="180"></el-table-column>
-            <el-table-column prop="documentsubDisplayname" label="关联二级材料名称" show-overflow-tooltip width="180">
+            <el-table-column prop="materialName" label="展示清单材料名称（一级）" show-overflow-tooltip width="180"></el-table-column>
+            <el-table-column prop="documentsubDisplayname" label="展示材料名称（二级）" show-overflow-tooltip width="180">
             </el-table-column>
             
             <el-table-column prop="isRequired" label="是否必填" :formatter="isRequiredFormatter"></el-table-column>
             <el-table-column prop="isFront" label="是否前端字段" :formatter="isRequiredFormatter" show-overflow-tooltip>
             </el-table-column>
-            <el-table-column prop="label" label="前端字段名称" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="label" label="设计稿字段名称" show-overflow-tooltip></el-table-column>
             <el-table-column prop="fieldNo" label="字段编号" show-overflow-tooltip></el-table-column>
             <el-table-column prop="valueSource" label="字段值来源" show-overflow-tooltip></el-table-column>
             <el-table-column prop="defaultValue" label="默认值" show-overflow-tooltip></el-table-column>
             <el-table-column prop="descriptionInfo" label="字段逻辑描述" show-overflow-tooltip width="200"></el-table-column>
             <!-- <el-table-column prop="note" label="备注"></el-table-column> -->
             <el-table-column prop="fieldMeaning" label="定义字段名称" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="module" label="前端字段模块" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="isCheckpoint" label="是否提取点" :formatter="isRequiredFormatter" show-overflow-tooltip>
+            <el-table-column prop="module" label="前端模块" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="isCheckpoint" label="是否涉及审批规则" :formatter="isRequiredFormatter" show-overflow-tooltip>
             </el-table-column>
             <el-table-column prop="isScreenshot" label="是否为截图" :formatter="isRequiredFormatter" show-overflow-tooltip>
             </el-table-column>
@@ -117,44 +117,27 @@
 
         <!--添加字段-->
         <el-dialog title="添加材料字段" :visible.sync="addDialogVisible" width="50%" :close-on-click-modal="false">
-
-            <el-form label-width="90px" :model="addForm">
-                <el-form-item label="材料名称" required>
-                    <el-select v-model="addForm.materialW" clearable placeholder="请选择材料名称" @focus="changeMaterialValue">
+            <el-form label-width="120px" :model="addForm">
+                <span class="dialogTitle">事项材料的字段信息:</span>
+                <el-form-item label="展示清单材料名称（一级）" required>
+                    <el-select v-model="addForm.materialId" clearable placeholder="请选择材料名称" @focus="changeMaterialValue" @change="getSecondaryMaterialOptions(addForm)">
                         <el-option v-for="(v,i) in typeMaterialOptions" :key="i" :label="v.materialName"
                             :value="v.materialId"> </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="关联二级材料名称" required>
+                <el-form-item label="展示材料名称（二级）" required>
                     <el-select v-model="addForm.approvalItemAndDocumentsubId" clearable placeholder="请选择二级材料名称">
-                        <el-option v-for="(v,i) in secondaryMaterialOptions" :key="i" :label="v.globalDocumentSubName"
+                        <el-option v-for="(v,i) in secondaryMaterialOptions" :key="i" :label="v.documentsubDisplayname"
                             :value="v.id"> </el-option>
                     </el-select>
-                </el-form-item>
-                <el-form-item label="字段名称" required>
-                    <el-input v-model="addForm.fieldName"></el-input>
                 </el-form-item>
                 <el-form-item label="字段编号" required>
                     <el-input v-model="addForm.fieldNo"></el-input>
                 </el-form-item>
-                <el-form-item label="是否前端字段">
-                    <el-select v-model="addForm.isFront" clearable placeholder="是否前端字段">
-                        <el-option label="是" :value="Number(1)"></el-option>
-                        <el-option label="否" :value="Number(0)"></el-option>
-                    </el-select>
+                <el-form-item label="定义字段名称">
+                    <el-input v-model="addForm.fieldMeaning"></el-input>
                 </el-form-item>
-                <el-form-item label="是否提取点">
-                    <el-select v-model="addForm.isCheckpoint" clearable placeholder="是否为提取点">
-                        <el-option label="是" :value="Number(1)"></el-option>
-                        <el-option label="否" :value="Number(0)"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="前端字段名称">
-                    <el-input v-model="addForm.label"></el-input>
-                </el-form-item>
-                <el-form-item label="字段逻辑描述">
-                    <el-input v-model="addForm.descriptionInfo"></el-input>
-                </el-form-item>
+                <span class="dialogTitle">帮办生成材料需填写:</span>
                 <el-form-item label="是否必填">
                     <el-select v-model="addForm.isRequired" clearable placeholder="是否必填">
                         <el-option label="是" :value="Number(1)"></el-option>
@@ -173,12 +156,40 @@
                 <el-form-item label="默认值">
                     <el-input v-model="addForm.defaultValue"></el-input>
                 </el-form-item>
-                <!-- 2021/2/5新增 -->
-                <el-form-item label="定义字段名称">
-                    <el-input v-model="addForm.fieldMeaning"></el-input>
+                <el-form-item label="字段逻辑描述">
+                    <el-input v-model="addForm.descriptionInfo"></el-input>
                 </el-form-item>
-                <el-form-item label="前端字段模块">
+                <span class="dialogTitle">帮办前端字段逻辑填写:</span>
+                <el-form-item label="是否前端字段">
+                    <el-select v-model="addForm.isFront" clearable placeholder="是否前端字段">
+                        <el-option label="是" :value="Number(1)"></el-option>
+                        <el-option label="否" :value="Number(0)"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="设计稿字段名称">
+                    <el-input v-model="addForm.label"></el-input>
+                </el-form-item>
+                <el-form-item label="前端模块">
                     <el-input v-model="addForm.module" placeholder="只允许填入纯数字"></el-input>
+                </el-form-item>
+                <el-form-item label="字段格式">
+                    <el-input v-model="addForm.fieldComponentType"></el-input>
+                </el-form-item>
+                <el-form-item label="枚举值">
+                    <el-input v-model="addForm.optionsValue"></el-input>
+                </el-form-item>
+                <el-form-item label="前端字段填写逻辑">
+                    <el-input type="textarea" :rows="2" v-model="addForm.frontDescriptionInfo"></el-input>
+                </el-form-item>
+                <span class="dialogTitle">涉及审批规则时需填写:</span>
+                <el-form-item label="是否涉及审批规则">
+                    <el-select v-model="addForm.isCheckpoint" clearable placeholder="是否为提取点">
+                        <el-option label="是" :value="Number(1)"></el-option>
+                        <el-option label="否" :value="Number(0)"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="字段名称">
+                    <el-input v-model="addForm.fieldName"></el-input>
                 </el-form-item>
                 <el-form-item label="是否为截图">
                     <el-select v-model="addForm.isScreenshot" clearable placeholder="是否为截图">
@@ -187,7 +198,10 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="截图信息">
-                    <el-input v-model="addForm.screenshotInfo"></el-input>
+                    <el-select v-model="addForm.screenshotInfo" filterable allow-create clearable placeholder="截图信息">
+                        <el-option v-for="(v,i) in screenshotInfoOptions" :key="i" :label="v.label"
+                            :value="v.value"> </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="4W分类">
                     <el-input v-model="addForm.sort"></el-input>
@@ -210,16 +224,7 @@
                         <el-option label="否" :value="Number(0)"></el-option>
                     </el-select>
                 </el-form-item>
-                <!-- 2021/2/25新增 -->
-                <el-form-item label="字段格式">
-                    <el-input v-model="addForm.fieldComponentType"></el-input>
-                </el-form-item>
-                <el-form-item label="枚举值">
-                    <el-input v-model="addForm.optionsValue"></el-input>
-                </el-form-item>
-                <el-form-item label="前端字段填写逻辑">
-                    <el-input type="textarea" :rows="2" v-model="addForm.frontDescriptionInfo"></el-input>
-                </el-form-item>
+                <span class="dialogTitle">其他:</span>
                 <el-form-item label="关联公共信息点">
                     <el-select v-model="addForm.globalCheckpointId" clearable filterable placeholder="公共信息点名称">
                         <el-option v-for="(v,i) in globalCheckpointOptions" :key="i" :label="v.aliasName"
@@ -237,43 +242,27 @@
         </el-dialog>
         <!--编辑字段-->
         <el-dialog title="编辑材料字段" :visible.sync="editDialogVisible" width="50%" :close-on-click-modal="false">
-            <el-form label-width="80px" :model="editForm">
-                <el-form-item label="材料名称" prop="materialName">
-                    <el-select v-model="editForm.materialId" placeholder="请选择材料名称">
+            <el-form label-width="120px" :model="editForm">
+                <span class="dialogTitle">事项材料的字段信息:</span>
+                <el-form-item label="展示清单材料名称（一级）" prop="materialName">
+                    <el-select v-model="editForm.materialId" placeholder="请选择材料名称" @change="getSecondaryMaterialOptions(editForm)">
                         <el-option v-for="(v,i) in typeMaterialOptions" :key="i" :label="v.materialName"
                             :value="v.materialId"> </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="关联二级材料名称">
+                <el-form-item label="展示材料名称（二级）">
                     <el-select v-model="editForm.approvalItemAndDocumentsubId" placeholder="请选择二级材料名称">
-                        <el-option v-for="(v,i) in secondaryMaterialOptions" :key="i" :label="v.globalDocumentSubName"
+                        <el-option v-for="(v,i) in secondaryMaterialOptions" :key="i" :label="v.documentsubDisplayname"
                             :value="v.id"> </el-option>
                     </el-select>
-                </el-form-item>
-                <el-form-item label="字段名称" required prop="fieldName">
-                    <el-input v-model="editForm.fieldName"></el-input>
                 </el-form-item>
                 <el-form-item label="字段编号" required>
                     <el-input v-model="editForm.fieldNo"></el-input>
                 </el-form-item>
-                 <el-form-item label="是否前端字段">
-                    <el-select v-model="editForm.isFront" clearable placeholder="是否为提取点">
-                        <el-option label="是" :value="Number(1)"></el-option>
-                        <el-option label="否" :value="Number(0)"></el-option>
-                    </el-select>
+                <el-form-item label="定义字段名称">
+                    <el-input v-model="editForm.fieldMeaning"></el-input>
                 </el-form-item>
-                <el-form-item label="是否提取点">
-                    <el-select v-model="editForm.isCheckpoint" clearable placeholder="是否为提取点">
-                        <el-option label="是" :value="Number(1)"></el-option>
-                        <el-option label="否" :value="Number(0)"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="前端字段名称">
-                    <el-input v-model="editForm.label"></el-input>
-                </el-form-item>
-                <el-form-item label="字段逻辑描述">
-                    <el-input type="textarea" v-model="editForm.descriptionInfo"></el-input>
-                </el-form-item>
+                <span class="dialogTitle">帮办生成材料需填写:</span>
                 <el-form-item label="是否必填">
                     <el-select v-model="editForm.isRequired" clearable placeholder="是否必填">
                         <el-option label="是" :value="Number(1)"></el-option>
@@ -292,12 +281,40 @@
                 <el-form-item label="默认值">
                     <el-input v-model="editForm.defaultValue"></el-input>
                 </el-form-item>
-                <!-- 2021/2/5新增 -->
-                <el-form-item label="定义字段名称">
-                    <el-input v-model="editForm.fieldMeaning"></el-input>
+                <el-form-item label="字段逻辑描述">
+                    <el-input type="textarea" v-model="editForm.descriptionInfo"></el-input>
                 </el-form-item>
-                <el-form-item label="前端字段模块">
+                <span class="dialogTitle">帮办前端字段逻辑填写:</span>
+                <el-form-item label="是否前端字段">
+                    <el-select v-model="editForm.isFront" clearable placeholder="是否为提取点">
+                        <el-option label="是" :value="Number(1)"></el-option>
+                        <el-option label="否" :value="Number(0)"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="设计稿字段名称">
+                    <el-input v-model="editForm.label"></el-input>
+                </el-form-item>
+                <el-form-item label="前端模块">
                     <el-input v-model="editForm.module" placeholder="只允许填入纯数字"></el-input>
+                </el-form-item>
+                <el-form-item label="字段格式">
+                    <el-input v-model="editForm.fieldComponentType"></el-input>
+                </el-form-item>
+                <el-form-item label="枚举值">
+                    <el-input v-model="editForm.optionsValue"></el-input>
+                </el-form-item>
+                <el-form-item label="前端字段填写逻辑">
+                    <el-input type="textarea" :rows="2" v-model="editForm.frontDescriptionInfo"></el-input>
+                </el-form-item>
+                <span class="dialogTitle">涉及审批规则时需填写:</span>
+                <el-form-item label="是否涉及审批规则">
+                    <el-select v-model="editForm.isCheckpoint" clearable placeholder="是否为提取点">
+                        <el-option label="是" :value="Number(1)"></el-option>
+                        <el-option label="否" :value="Number(0)"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="字段名称" prop="fieldName">
+                    <el-input v-model="editForm.fieldName"></el-input>
                 </el-form-item>
                 <el-form-item label="是否为截图">
                     <el-select v-model="editForm.isScreenshot" clearable placeholder="是否为截图">
@@ -306,7 +323,10 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="截图信息">
-                    <el-input v-model="editForm.screenshotInfo"></el-input>
+                    <el-select v-model="editForm.screenshotInfo" filterable allow-create clearable placeholder="截图信息">
+                        <el-option v-for="(v,i) in screenshotInfoOptions" :key="i" :label="v.label"
+                            :value="v.value"> </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="4W分类">
                     <el-input v-model="editForm.sort"></el-input>
@@ -329,16 +349,7 @@
                         <el-option label="否" :value="Number(0)"></el-option>
                     </el-select>
                 </el-form-item>
-                <!-- 2021/2/25新增 -->
-                <el-form-item label="字段格式">
-                    <el-input v-model="editForm.fieldComponentType"></el-input>
-                </el-form-item>
-                <el-form-item label="枚举值">
-                    <el-input v-model="editForm.optionsValue"></el-input>
-                </el-form-item>
-                <el-form-item label="前端字段填写逻辑">
-                    <el-input type="textarea" :rows="2" v-model="editForm.frontDescriptionInfo"></el-input>
-                </el-form-item>
+                <span class="dialogTitle">其他:</span>
                 <el-form-item label="关联公共信息点">
                     <el-select v-model="editForm.globalCheckpointId" clearable filterable placeholder="公共信息点名称">
                         <el-option v-for="(v,i) in globalCheckpointOptions" :key="i" :label="v.aliasName"
@@ -371,7 +382,7 @@
             <el-table class="workTable" :data="tableDataDown" style="width:95%;" border tooltip-effect="dark">
                 <el-table-column label="序号" type="index" width="60" :index="indexMethod"></el-table-column>
                 <el-table-column prop="fieldNo" label="字段编号" width="200"></el-table-column>
-                <el-table-column prop="label" label="前端字段名称"></el-table-column>
+                <el-table-column prop="label" label="设计稿字段名称"></el-table-column>
                 <el-table-column prop="fieldComponentName" label="组件类型" fixed="right">
                     <template slot-scope="scope">
                         <el-select v-model="scope.row.fieldComponentName" clearable placeholder="请选择组件类型"
@@ -488,7 +499,7 @@ import {
     saveBatchCheck, listAllPublicFields
 } from "@/api/basicInfo/field";
 import { listGlobalCheckpoint } from '@/api/basicInfo/examination'
-import { listItemAndDocumentSub } from "@/api/basicInfo/approvalSub";
+import { listItemDocumentSubAllByMaterial } from "@/api/basicInfo/approvalSub";
 import dayjs from "dayjs";
 import { getRolelist } from '@/api/item';
 import axios from "axios";
@@ -518,14 +529,21 @@ export default {
             typeMaterialOptions: [],
             globalCheckpointOptions: [],
             secondaryMaterialOptions: [],
+            screenshotInfoOptions: [
+                {value: '是否签字', label: '是否签字'}, {value: '是否盖章', label: '是否盖章'}, {value: '是否填写日期', label: '是否填写日期'}, {value: '是否粘贴身份证', label: '是否粘贴身份证'}, {value: '提取身份证姓名', label: '提取身份证姓名'}, {value: '提取身份证有效期限', label: '提取身份证有效期限'},
+                {value: '是否已填写', label: '是否已填写'}, {value: '提取身份证住址', label: '提取身份证住址'}, {value: '提取身份证公民身份号码', label: '提取身份证公民身份号码'}, {value: '提取身份证性别', label: '提取身份证性别'}, {value: '提取身份证民族', label: '提取身份证民族'},
+                {value: '提取身份证出生', label: '提取身份证出生'}, {value: '是否勾选', label: '是否勾选'}, {value: '勾选内容', label: '勾选内容'}, {value: '是否粘贴证件照片', label: '是否粘贴证件照片'}, {value: '是否盖红章', label: '是否盖红章'}
+            ],
             total: 0,
             addForm: {
                 note: "",
+                approvalItemAndDocumentsubId: '',
             },
             editDialogVisible: false,
             editForm: {
                 fielditemId: 0,
                 note: "",
+                approvalItemAndDocumentsubId: '',
             },
             // 导入材料字段相关
             exMode: null,
@@ -583,7 +601,6 @@ export default {
         await this.init();
         this.materialList();
         this.reloadTable();
-        this.getSecondaryMaterialOptions();
         this.getTableHeight();
 
     },
@@ -639,10 +656,12 @@ export default {
             this.allPublicFields = res.data;
         },
         // 查询二级材料作关联下拉选项
-        async getSecondaryMaterialOptions() {
-            let result = await listItemAndDocumentSub({ approvalItemId: this.itemId, pageNum: 1, pageSize: 1000 });
+        async getSecondaryMaterialOptions(form) {
+            this.secondaryMaterialOptions = [];
+            form.approvalItemAndDocumentsubId = '';
+            let result = await listItemDocumentSubAllByMaterial({ materialId: form.materialId });
             if (!result.success) return;
-            this.secondaryMaterialOptions = result.data.records;
+            this.secondaryMaterialOptions = result.data;
         },
         // 添加字段的导入材料字段
         changeMaterialValue() {
@@ -668,7 +687,7 @@ export default {
         // 添加
         async addField() {
             this.addForm.approvalItemId = this.itemId
-            this.addForm.materialId = this.addForm.materialW
+            this.addForm.materialId = this.addForm.materialId
             let result = await addField(
                 this.addForm
             )
@@ -684,6 +703,9 @@ export default {
 
         // 处理编辑
         async handleEdit(scope) {
+            let res = await listItemDocumentSubAllByMaterial({ materialId: scope.row.materialId });
+            if (!res.success) return;
+            this.secondaryMaterialOptions = res.data;
             this.editForm = _.clone(scope.row);
             this.material_change = scope.row.materialName;
             this.editDialogVisible = true;
@@ -742,14 +764,9 @@ export default {
             console.log(result)
             let preTableData = [];
             if (result.data.length) {
-                let lists = []
+                let lists = _.cloneDeep(vm.multipleSelection)
                 result.data.forEach(e => {
-                    // console.log(e)
-                    if (!lists.length) {
-                        lists = vm.multipleSelection.filter(ele => ele.fieldNo != e)
-                    } else {
-                        lists = lists.filter(ele => ele.fieldNo != e)
-                    }
+                    lists = lists.filter(ele => ele.fieldNo != e);
                 })
                 // 选择去重
                 let filList = [];
@@ -1127,6 +1144,11 @@ export default {
 .workWrap {
     width: 99%;
     height: calc(100% - 22px);
+    .dialogTitle {
+        font-size: 18px;
+        font-weight: 700;
+        color: #2B3B65;
+    }
     .submitTip {
         display: flex;
         justify-content: flex-end;

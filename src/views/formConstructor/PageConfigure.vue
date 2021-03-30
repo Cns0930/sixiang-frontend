@@ -336,7 +336,7 @@ export default {
             }`,
             // beforeEnter 的ace 编辑器
             aceForBeforeEnter:null,
-            defaultBeforeEnter:`function beforeEnter(state,getters){
+            defaultBeforeEnter:`function beforeEnter(state,getters,userinfo){
 
             }`,
             //  afterEnter 的ace 编辑器

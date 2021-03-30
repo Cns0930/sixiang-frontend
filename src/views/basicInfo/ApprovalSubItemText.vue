@@ -51,7 +51,7 @@
                     <el-table-column prop="globalDocumentSubName" label="公共二级材料名称" width="180">
                         <template slot-scope="scope">
                             <el-select v-if="scope.row.flag" v-model="scope.row.globalDocumentSubId"
-                                placeholder="请选择子二级材料名称" clearable filterable>
+                                placeholder="请选择子二级材料名称" clearable filterable @change="secondMaterialChange(scope.row)">
                                 <el-option v-for="item in secondMaterialOption" :key="item.globalDocumentSubId"
                                     :label="item.globalDocumentSubName" :value="item.globalDocumentSubId" />
                             </el-select>
@@ -214,6 +214,20 @@ export default {
             this.secondMaterialOption = res.data;
             row.globalDocumentSubId = '';
         },
+        async initSecond(row) {
+            this.secondMaterialOption = [];
+            let res = await listGlobalSubAllByMaterial({materialId: row.materialId});
+            if (!res.success) return;
+            this.secondMaterialOption = res.data;
+        },
+        secondMaterialChange(row) {
+            this.secondMaterialOption.forEach(item => {
+                if (item.globalDocumentSubId === row.globalDocumentSubId) {
+                    row.documentsubDisplayname = item.globalDocumentSubName;
+                    row.documentsubSeq = item.globalDocumentSubCode;
+                }
+            })
+        },
         subitemNameChange(v) {
             console.log(v)
         },
@@ -322,6 +336,8 @@ export default {
                     // subitemName:'',
                     // globalDocumentSubId: '',
                     // isRequired:'',
+                    documentsubDisplayname: '',
+                    documentsubSeq: '',
                     flag: true
                 })
             } else {
@@ -353,7 +369,7 @@ export default {
         // 修改
         Edit(item, index, rows) {
             if(item.materialId){
-                this.firstMaterialChange(item)
+                this.initSecond(item)
             }else{
                 this.secondMaterialOption = [];
                 item.globalDocumentSubId = '';
