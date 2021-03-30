@@ -790,6 +790,18 @@ export default {
             if(Array.isArray(this.editForm.ruleTipsInput)) {this.ruleTipsInputList = this.editForm.ruleTipsInput.map(e=>({value1:e.材料编号,value2:e.字段名}))}
             if(Array.isArray(this.editForm.ruleLaw)) {this.ruleLawList = this.editForm.ruleLaw.map(e=>({ruleLaw:e}))}
             if(Array.isArray(this.editForm.ruleArgs)) {this.ruleArgsList = this.editForm.ruleArgs.map(e=>({ruleArgs:e}))}
+            if(this.ruleInputsList.length === 0) {
+                this.ruleInputsList = [{ value1:'', value2:''}];
+            }
+            if(this.ruleTipsInputList.length === 0) {
+                this.ruleTipsInputList = [{ value1:'', value2:''}];
+            }
+            if(this.ruleLawList.length === 0) {
+                this.ruleLawList = [{ruleLaw:''}];
+            }
+            if(this.ruleArgsList.length === 0) {
+                this.ruleArgsList = [{ruleArgs:''}];
+            }
             this.editDialogVisible=true;
             this.checkpointList = []
             this.approvalSubTextChange = true
