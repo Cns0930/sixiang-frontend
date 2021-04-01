@@ -206,7 +206,7 @@
                     <el-table-column label="操作" fixed="right" width="200px">
                         <template slot-scope="scope">
                             <el-button-group>
-                                <el-button type="primary" @click="confirmImport(scope.row)">确认导入</el-button>
+                                <el-button type="primary" :loading="scope.row.loadingImport" @click="confirmImport(scope.row)">确认导入</el-button>
                             </el-button-group>
                         </template>
                     </el-table-column>
@@ -494,6 +494,9 @@ export default {
                     await this.$confirm("您当前无最新个人数据，是否从历史版本导入", "提示",);
                     let res = await listVersionItem({ approvalItemLordId: row.approvalItemLordId });
                     this.versionList = res.data;
+                    this.versionList.forEach((item) => {
+                        this.$set(item, 'loadingImport', false)
+                    })
                     this.dialogVisibleVersion = true;
                     return false;
                 } catch (e) {
@@ -524,6 +527,7 @@ export default {
         },
         // 确认导入
         async confirmImport(row) {
+            row.loadingImport = true;
             let request = {
                 approvalItemLordId: row.approvalItemLordId,
                 exImport: true,
@@ -532,6 +536,7 @@ export default {
             let res = await obtainVersionItem(request)
             if (res.success) {
                 this.$message.success('导入事项数据成功！');
+                row.loadingImport = false;
                 this.dialogVisibleVersion = false;
                 console.log('导入的id', res.data);
                 if(this.currentClickButton === '事项名') {
@@ -543,6 +548,7 @@ export default {
                 }
             } else {
                 this.$message.warning('导入事项数据失败！');
+                row.loadingImport = false;
             }
         }
     },
