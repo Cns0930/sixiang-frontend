@@ -31,14 +31,47 @@
                     element-loading-spinner="el-icon-loading"
                 tooltip-effect="dark" :default-sort="{prop: 'createTime', order: 'descending'}" :row-style="{height:'40px'}" :header-row-style="{height:'50px'}">
 
-                <el-table-column prop="ruleCode" label="规则编号" show-overflow-tooltip sortable></el-table-column>
+                <el-table-column prop="ruleCode" label="规则编号" width="90" show-overflow-tooltip sortable></el-table-column>
                 
                 <el-table-column prop="rulePoint" label="审批点" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="ruleDesc" label="描述" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="ruleType" label="判断方式" show-overflow-tooltip>
                 </el-table-column>
-                <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip :formatter="timeFormatter" sortable></el-table-column>
-                <el-table-column prop="updateTime" label="更新时间" show-overflow-tooltip :formatter="timeFormatter" sortable></el-table-column>  
+                <el-table-column prop="ruleTips" label="提示语" width="260" show-overflow-tooltip>
+                    <template slot-scope="scope">
+                        <div>
+                            <ul>
+                                <li v-for="(item, i) in scope.row.ruleTips" :key="i">
+                                    {{ '- ' + item }}
+                                </li>
+                            </ul>
+                        </div>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="ruleTipsInput" label="提示语输入" width="180" show-overflow-tooltip>
+                    <template slot-scope="scope">
+                        <div>
+                            <ul>
+                                <li v-for="(item, i) in scope.row.ruleTipsInput" :key="i">
+                                    {{ '- ' + item }}
+                                </li>
+                            </ul>
+                        </div>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="ruleInputs" label="输入" width="300" show-overflow-tooltip>
+                    <template slot-scope="scope">
+                        <div>
+                            <ul>
+                                <li v-for="(item, i) in scope.row.ruleInputs" :key="i">
+                                    {{ '材料编号：' + item.材料编号 + ' ; ' + '字段名：' + item.字段名 }}
+                                </li>
+                            </ul>
+                        </div>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip :formatter="timeFormatter" width="100" sortable></el-table-column>
+                <el-table-column prop="updateTime" label="更新时间" show-overflow-tooltip :formatter="timeFormatter" width="100" sortable></el-table-column>  
                 <el-table-column label="操作" fixed="right" width="180">
                     <template slot-scope="scope">
                         <el-button-group>
