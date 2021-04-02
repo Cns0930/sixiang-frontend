@@ -703,9 +703,11 @@ export default {
 
         // 处理编辑
         async handleEdit(scope) {
-            let res = await listItemDocumentSubAllByMaterial({ materialId: scope.row.materialId });
-            if (!res.success) return;
-            this.secondaryMaterialOptions = res.data;
+            if(scope.row.materialId) {
+                let res = await listItemDocumentSubAllByMaterial({ materialId: scope.row.materialId });
+                if (!res.success) return;
+                this.secondaryMaterialOptions = res.data;
+            }
             this.editForm = _.clone(scope.row);
             this.material_change = scope.row.materialName;
             this.editDialogVisible = true;

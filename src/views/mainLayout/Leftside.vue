@@ -57,12 +57,11 @@ export default {
         changeCrumbListSecond(t) {
             sessionStorage.setItem('activeName', 'subitem');
             sessionStorage.setItem('activeTab', 'formconstructor');
-            this.$store.commit("config/setCrumbListSecond", [{ path: "", label: '' }]);
-            
-                this.$router.push({
-                    query: { itemId: store.state.home.item.approvalItemId,
-                    projectId: this.$route.query.projectId || store.state.home.project.projectId },
-                });
+            this.$router.push({
+                path: t.path,
+                query: { itemId: store.state.home.item.approvalItemId,
+                projectId: store.state.home.project.projectId },
+            });
         },
     },
 };

@@ -22,6 +22,15 @@ const originList = [
         
         order: 3
     },
+    {
+        path: "/aipreview/checkpoint",
+        label: "AI预检开发管理",
+        authKey: ["admin","developer","researcher","test"],
+
+        iconClass:"el-icon-data-line",
+        
+        order: 4
+    },
    
  
 ]

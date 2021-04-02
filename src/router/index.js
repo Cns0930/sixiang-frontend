@@ -51,7 +51,6 @@ Vue.use(VueRouter)
 import store from "@/vuex/store"
 import bangbanAxios from "@/api/ANew/config"
 
-
 const routes = [
     {
         path: '/',
@@ -234,12 +233,12 @@ const routes = [
                     },
                     {
                         path: '/basic/pageconfigureresearcher',
-                        name: 'PageConfigureResearcher',
+                        name: 'PageConfigureResearcher2',
                         component: PageConfigureResearcher
                     },
                     {
                         path: '/basic/formconstructor',
-                        name: 'FormConstructor',
+                        name: 'FormConstructor2',
                         component: FormConstructor
                     }
                 ]
@@ -268,7 +267,26 @@ const routes = [
                 path:"/readme",
                 name:"ReadMe",
                 component:ReadMe,
-            }
+            },
+            {
+                path: '/aipreview',
+                component: resolve => require(['@/views/aipreview/AiHome.vue'],resolve),
+                meta:{
+                    showLeftMenu:true,
+                },
+                children: [
+                    {
+                        path: '/aipreview/checkpoint',
+                        name: 'CheckPoint',
+                        component: resolve => require(['@/views/aipreview/CheckPoint.vue'],resolve),
+                    },
+                    {
+                        path: '/aipreview/sortconfig',
+                        name: 'SortCongfig',
+                        component: resolve => require(['@/views/aipreview/SortConfig.vue'],resolve),
+                    },
+                ]
+            }, 
         ]
     },
     {
