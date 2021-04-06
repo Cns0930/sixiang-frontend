@@ -348,7 +348,7 @@ export default {
                 this.imgName = row.fileName;
                 this.imgClass = row.approvalItemAndDocumentsubId;
                 // 获取规则列表
-                this.getRuleClassList();
+                // this.getRuleClassList();
                 return;
             }
             this.valueUrl = null;
