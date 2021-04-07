@@ -101,7 +101,7 @@
                                                     <el-select v-model="imgClass" :disabled="!this.imgName" filterable
                                                         placeholder="请选择图片分类" style="width: 100%" @change="setImgClass">
                                                         <el-option v-for="item in imgClassList"
-                                                            :key="item.documentsubSeq"
+                                                            :key="item.globalDocumentSubId"
                                                             :label="item.documentsubSeq + ' : ' + item.documentsubDisplayname"
                                                             :value="item.id">
                                                         </el-option>
@@ -352,6 +352,7 @@ export default {
                 return;
             }
             this.valueUrl = null;
+            this.activeName = 'first';
             this.imgName = '';
             this.imgClass = '';
             this.filePath = row.filePath;
