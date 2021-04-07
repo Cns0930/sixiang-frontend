@@ -347,7 +347,7 @@ export default {
             console.log(val)
             this.filterKey = val
             let params = {
-                globalDocumentSubCode:val,
+                documentsubSeq:val,
                 approvalItemId: this.$route.query.itemId,
                 pageNum: this.currentPageSelects,
                 pageSize: this.pageSizes,

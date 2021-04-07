@@ -53,7 +53,7 @@
                         <div>
                             <ul>
                                 <li v-for="(item, i) in scope.row.ruleTipsInput" :key="i">
-                                    {{ '- ' + item }}
+                                    {{ '材料编号：' + item.材料编号 + ' ; ' + '字段名：' + item.字段名 }}
                                 </li>
                             </ul>
                         </div>
@@ -690,7 +690,7 @@ export default {
             console.log(val)
             this.filterKey = val
             let params = {
-                globalDocumentSubCode:val,
+                documentsubSeq:val,
                 approvalItemId: this.$route.query.itemId,
                 pageNum: this.currentPageSelects,
                 pageSize: this.pageSizes,
