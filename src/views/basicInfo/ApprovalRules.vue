@@ -31,14 +31,47 @@
                     element-loading-spinner="el-icon-loading"
                 tooltip-effect="dark" :default-sort="{prop: 'createTime', order: 'descending'}" :row-style="{height:'40px'}" :header-row-style="{height:'50px'}">
 
-                <el-table-column prop="ruleCode" label="规则编号" show-overflow-tooltip sortable></el-table-column>
+                <el-table-column prop="ruleCode" label="规则编号" width="90" show-overflow-tooltip sortable></el-table-column>
                 
                 <el-table-column prop="rulePoint" label="审批点" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="ruleDesc" label="描述" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="ruleType" label="判断方式" show-overflow-tooltip>
                 </el-table-column>
-                <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip :formatter="timeFormatter" sortable></el-table-column>
-                <el-table-column prop="updateTime" label="更新时间" show-overflow-tooltip :formatter="timeFormatter" sortable></el-table-column>  
+                <el-table-column prop="ruleTips" label="提示语" width="260" show-overflow-tooltip>
+                    <template slot-scope="scope">
+                        <div>
+                            <ul>
+                                <li v-for="(item, i) in scope.row.ruleTips" :key="i">
+                                    {{ '- ' + item }}
+                                </li>
+                            </ul>
+                        </div>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="ruleTipsInput" label="提示语输入" width="180" show-overflow-tooltip>
+                    <template slot-scope="scope">
+                        <div>
+                            <ul>
+                                <li v-for="(item, i) in scope.row.ruleTipsInput" :key="i">
+                                    {{ '材料编号：' + item.材料编号 + ' ; ' + '字段名：' + item.字段名 }}
+                                </li>
+                            </ul>
+                        </div>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="ruleInputs" label="输入" width="300" show-overflow-tooltip>
+                    <template slot-scope="scope">
+                        <div>
+                            <ul>
+                                <li v-for="(item, i) in scope.row.ruleInputs" :key="i">
+                                    {{ '材料编号：' + item.材料编号 + ' ; ' + '字段名：' + item.字段名 }}
+                                </li>
+                            </ul>
+                        </div>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip :formatter="timeFormatter" width="100" sortable></el-table-column>
+                <el-table-column prop="updateTime" label="更新时间" show-overflow-tooltip :formatter="timeFormatter" width="100" sortable></el-table-column>  
                 <el-table-column label="操作" fixed="right" width="180">
                     <template slot-scope="scope">
                         <el-button-group>
@@ -124,8 +157,8 @@
                             <el-option
                                 v-for="(item1,i) in approvalSubTextList"
                                 :key="i"
-                                :label="item1.globalDocumentSubName"
-                                :value="item1.globalDocumentSubCode"
+                                :label="item1.documentsubDisplayname"
+                                :value="item1.documentsubSeq"
                             />
                                 <!-- <div class="text-center" style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
                                     <a class="text-normal">
@@ -204,8 +237,8 @@
                             <el-option
                                 v-for="(item1,i) in approvalSubTextList"
                                 :key="i"
-                                :label="item1.globalDocumentSubName"
-                                :value="item1.globalDocumentSubCode"
+                                :label="item1.documentsubDisplayname"
+                                :value="item1.documentsubSeq"
                             />
                                 <!-- <div class="text-center" style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
                                     <a class="text-normal">
@@ -331,8 +364,8 @@
                             <el-option
                                 v-for="(item1,i) in approvalSubTextList"
                                 :key="i"
-                                :label="item1.globalDocumentSubName"
-                                :value="item1.globalDocumentSubCode"
+                                :label="item1.documentsubDisplayname"
+                                :value="item1.documentsubSeq"
                             />
                                 <!-- <div class="text-center" style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
                                     <a class="text-normal">
@@ -411,8 +444,8 @@
                             <el-option
                                 v-for="(item1,i) in approvalSubTextList"
                                 :key="i"
-                                :label="item1.globalDocumentSubName"
-                                :value="item1.globalDocumentSubCode"
+                                :label="item1.documentsubDisplayname"
+                                :value="item1.documentsubSeq"
                             />
                                 <!-- <div class="text-center" style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
                                     <a class="text-normal">
@@ -657,7 +690,7 @@ export default {
             console.log(val)
             this.filterKey = val
             let params = {
-                globalDocumentSubCode:val,
+                documentsubSeq:val,
                 approvalItemId: this.$route.query.itemId,
                 pageNum: this.currentPageSelects,
                 pageSize: this.pageSizes,
@@ -737,14 +770,14 @@ export default {
         // },
         async edit(){
             this.editBtnLoading=true;
-            let ruleInputs = this.ruleInputsList.map(v=>({'材料编号':v.value1,'字段名':v.value2}))
-            let ruleTipsInput = this.ruleTipsInputList.map(v=>({'材料编号':v.value1,'字段名':v.value2}))
+            let ruleInputs = this.ruleInputsList[0].value1 === '' ? [] : this.ruleInputsList.map(v=>({'材料编号':v.value1,'字段名':v.value2}))
+            let ruleTipsInput = this.ruleTipsInputList[0].value1 === '' ? [] : this.ruleTipsInputList.map(v=>({'材料编号':v.value1,'字段名':v.value2}))
             this.editForm.ruleInputs = ruleInputs
             this.editForm.ruleTipsInput = ruleTipsInput
             this.editForm.ruleTips = this.ruleTipsList.map(e=>e.ruleTips)
             this.editForm.ruleTipsForUser =this.ruleTipsForUserList.map(e=>e.ruleTipsForUser)
-            this.editForm.ruleLaw = this.ruleLawList.map(e=>e.ruleLaw)
-            this.editForm.ruleArgs = this.ruleArgsList.map(e=>e.ruleArgs)
+            this.editForm.ruleLaw = this.ruleLawList[0].ruleLaw === '' ? [] : this.ruleLawList.map(e=>e.ruleLaw)
+            this.editForm.ruleArgs = this.ruleArgsList[0].ruleArgs === '' ? [] : this.ruleArgsList.map(e=>e.ruleArgs)
 
             let result= await updateRule(this.editForm);
             if(!result.success) {
@@ -790,6 +823,18 @@ export default {
             if(Array.isArray(this.editForm.ruleTipsInput)) {this.ruleTipsInputList = this.editForm.ruleTipsInput.map(e=>({value1:e.材料编号,value2:e.字段名}))}
             if(Array.isArray(this.editForm.ruleLaw)) {this.ruleLawList = this.editForm.ruleLaw.map(e=>({ruleLaw:e}))}
             if(Array.isArray(this.editForm.ruleArgs)) {this.ruleArgsList = this.editForm.ruleArgs.map(e=>({ruleArgs:e}))}
+            if(this.ruleInputsList.length === 0) {
+                this.ruleInputsList = [{ value1:'', value2:''}];
+            }
+            if(this.ruleTipsInputList.length === 0) {
+                this.ruleTipsInputList = [{ value1:'', value2:''}];
+            }
+            if(this.ruleLawList.length === 0) {
+                this.ruleLawList = [{ruleLaw:''}];
+            }
+            if(this.ruleArgsList.length === 0) {
+                this.ruleArgsList = [{ruleArgs:''}];
+            }
             this.editDialogVisible=true;
             this.checkpointList = []
             this.approvalSubTextChange = true
@@ -829,14 +874,14 @@ export default {
             this.checkpointList = []
         },
         async add(){
-            let ruleInputs = this.ruleInputsList.map(v=>({'材料编号':v.value1,'字段名':v.value2}))
-            let ruleTipsInput = this.ruleTipsInputList.map(v=>({'材料编号':v.value1,'字段名':v.value2}))
+            let ruleInputs = this.ruleInputsList[0].value1 === '' ? [] : this.ruleInputsList.map(v=>({'材料编号':v.value1,'字段名':v.value2}))
+            let ruleTipsInput = this.ruleTipsInputList[0].value1 === '' ? [] : this.ruleTipsInputList.map(v=>({'材料编号':v.value1,'字段名':v.value2}))
             this.addForm.ruleInputs = ruleInputs
             this.addForm.ruleTipsInput = ruleTipsInput
             this.addForm.ruleTips = this.ruleTipsList.map(e=>e.ruleTips)
             this.addForm.ruleTipsForUser =this.ruleTipsForUserList.map(e=>e.ruleTipsForUser)
-            this.addForm.ruleLaw = this.ruleLawList.map(e=>e.ruleLaw)
-            this.addForm.ruleArgs = this.ruleArgsList.map(e=>e.ruleArgs)
+            this.addForm.ruleLaw = this.ruleLawList[0].ruleLaw === '' ? [] : this.ruleLawList.map(e=>e.ruleLaw)
+            this.addForm.ruleArgs = this.ruleArgsList[0].ruleArgs === '' ? [] : this.ruleArgsList.map(e=>e.ruleArgs)
             this.addForm.approvalItemId = this.itemId
             let result = await addRule(this.addForm);
             if(!result.success) return

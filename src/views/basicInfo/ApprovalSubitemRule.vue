@@ -89,8 +89,8 @@
                             <el-option
                                 v-for="(item1,i) in approvalSubTextList"
                                 :key="i"
-                                :label="item1.globalDocumentSubName"
-                                :value="item1.globalDocumentSubCode"
+                                :label="item1.documentsubDisplayname"
+                                :value="item1.documentsubSeq"
                             />
                             </el-select>
 
@@ -158,8 +158,8 @@
                             <el-option
                                 v-for="(item1,i) in approvalSubTextList"
                                 :key="i"
-                                :label="item1.globalDocumentSubName"
-                                :value="item1.globalDocumentSubCode"
+                                :label="item1.documentsubDisplayname"
+                                :value="item1.documentsubSeq"
                             />
                                 <!-- <div class="text-center" style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
                                     <a class="text-normal">
@@ -347,7 +347,7 @@ export default {
             console.log(val)
             this.filterKey = val
             let params = {
-                globalDocumentSubCode:val,
+                documentsubSeq:val,
                 approvalItemId: this.$route.query.itemId,
                 pageNum: this.currentPageSelects,
                 pageSize: this.pageSizes,

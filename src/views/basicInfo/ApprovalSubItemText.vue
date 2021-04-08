@@ -64,14 +64,14 @@
                             <span v-else>{{scope.row.documentsubDisplayname}}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="documentsubSeq" label="事项内子文档编码" width="80">
+                    <el-table-column prop="documentsubSeq" label="事项内子文档编码" width="100">
                         <template slot-scope="scope">
                             <el-input v-if="scope.row.flag" v-model="scope.row.documentsubSeq"></el-input>
                             <span v-else>{{scope.row.documentsubSeq}}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="globalDocumentSubCode" label="公共子文档编码" width="80"></el-table-column>
-                    <el-table-column prop="isRequired" label="是否必须"  width="80">
+                    <el-table-column prop="globalDocumentSubCode" label="公共子文档编码" width="100"></el-table-column>
+                    <el-table-column prop="isRequired" label="是否必须"  width="100">
 
                         <template slot-scope="scope">
                             <el-select v-if="scope.row.flag" v-model="scope.row.isRequired" placeholder="请选择是否必须"
@@ -221,12 +221,14 @@ export default {
             this.secondMaterialOption = res.data;
         },
         secondMaterialChange(row) {
-            this.secondMaterialOption.forEach(item => {
-                if (item.globalDocumentSubId === row.globalDocumentSubId) {
-                    row.documentsubDisplayname = item.globalDocumentSubName;
-                    row.documentsubSeq = item.globalDocumentSubCode;
-                }
-            })
+            if(row.flagAdd) {
+                this.secondMaterialOption.forEach(item => {
+                    if (item.globalDocumentSubId === row.globalDocumentSubId) {
+                        row.documentsubDisplayname = item.globalDocumentSubName;
+                        row.documentsubSeq = item.globalDocumentSubCode;
+                    }
+                })
+            }
         },
         subitemNameChange(v) {
             console.log(v)
@@ -336,9 +338,11 @@ export default {
                     // subitemName:'',
                     // globalDocumentSubId: '',
                     // isRequired:'',
+                    globalDocumentSubId: null,
                     documentsubDisplayname: '',
                     documentsubSeq: '',
-                    flag: true
+                    flag: true,
+                    flagAdd: true,
                 })
             } else {
                 rows.splice(index + 1, 0, {
@@ -398,9 +402,9 @@ export default {
                     isRequired: item.isRequired,
                     id: item.id,
                     requiredDescription: item.requiredDescription,
-                    documentsubDisplayname: item.documentsubDisplayname,
+                    documentsubDisplayname: item.documentsubDisplayname.trim(),
                     displayNotes: item.displayNotes,
-                    documentsubSeq: item.documentsubSeq,
+                    documentsubSeq: item.documentsubSeq.trim(),
                     materialId: item.materialId
                 }
                 const result = await updateItemAndDocumentSub(request)
@@ -412,9 +416,9 @@ export default {
                     globalDocumentSubId: item.globalDocumentSubId,
                     isRequired: item.isRequired,
                     requiredDescription: item.requiredDescription,
-                    documentsubDisplayname: item.documentsubDisplayname,
+                    documentsubDisplayname: item.documentsubDisplayname.trim(),
                     displayNotes: item.displayNotes,
-                    documentsubSeq: item.documentsubSeq,
+                    documentsubSeq: item.documentsubSeq.trim(),
                     materialId: item.materialId
                 }
                 const res = await addItemAndDocumentSub(request)
@@ -424,10 +428,10 @@ export default {
             await this.search();
         },
         // 取消
-        closeText(item, index, rows) {
-            console.log(item, index, rows, '0000')
+        async closeText(item, index, rows) {
             if (item.edits) {
-                this.$set(item, 'flag', null)
+                this.$set(item, 'flag', null);
+                await this.search();
             } else {
                 rows.splice(index, 1)
             }

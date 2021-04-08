@@ -14,7 +14,7 @@
                         <el-option label="是" :value="Number(1)"></el-option>
                         <el-option label="否" :value="Number(0)"></el-option>
                     </el-select>
-                    <el-select v-model="isCheckpoint" clearable placeholder="是否为提取点" @change="reloadTable" style="margin-right: 15px">
+                    <el-select v-model="isCheckpoint" clearable placeholder="是否涉及审批规则" @change="reloadTable" style="margin-right: 15px">
                         <el-option label="是" :value="Number(1)"></el-option>
                         <el-option label="否" :value="Number(0)"></el-option>
                     </el-select>

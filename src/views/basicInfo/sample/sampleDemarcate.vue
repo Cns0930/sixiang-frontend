@@ -38,7 +38,7 @@
                                                 <template slot-scope="scope">
                                                     <span v-if="scope.row.documentsubSeq" style="color: green">
                                                         <i class="el-icon-check"></i>
-                                                        {{ ' ' + scope.row.documentsubSeq + ' - ' + scope.row.globalDocumentSubName }}
+                                                        {{ ' ' + scope.row.documentsubSeq + ' - ' + scope.row.documentsubDisplayname }}
                                                     </span>
                                                 </template>
                                             </el-table-column>
@@ -101,8 +101,8 @@
                                                     <el-select v-model="imgClass" :disabled="!this.imgName" filterable
                                                         placeholder="请选择图片分类" style="width: 100%" @change="setImgClass">
                                                         <el-option v-for="item in imgClassList"
-                                                            :key="item.documentsubSeq"
-                                                            :label="item.documentsubSeq + ' : ' + item.globalDocumentSubName"
+                                                            :key="item.globalDocumentSubId"
+                                                            :label="item.documentsubSeq + ' : ' + item.documentsubDisplayname"
                                                             :value="item.id">
                                                         </el-option>
                                                     </el-select>
@@ -348,10 +348,11 @@ export default {
                 this.imgName = row.fileName;
                 this.imgClass = row.approvalItemAndDocumentsubId;
                 // 获取规则列表
-                this.getRuleClassList();
+                // this.getRuleClassList();
                 return;
             }
             this.valueUrl = null;
+            this.activeName = 'first';
             this.imgName = '';
             this.imgClass = '';
             this.filePath = row.filePath;
