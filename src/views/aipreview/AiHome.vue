@@ -4,6 +4,7 @@
             <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
                 <el-tab-pane label="checkpoint" name="checkpoint"></el-tab-pane>
                 <el-tab-pane label="sortconfig" name="sortconfig"></el-tab-pane>
+                <el-tab-pane label="样例开发" name="aidevelopment"></el-tab-pane>
             </el-tabs>
         </div>
 
@@ -50,6 +51,11 @@ export default {
                     path: "/aipreview/sortconfig",
                     query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
                 });
+            } else if (this.activeName === "aidevelopment") {
+                this.$router.push({
+                    path: "/aipreview/aidevelopment",
+                    query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
+                });
             }
         },
     },
@@ -61,7 +67,6 @@ export default {
     width: 100%;
     height: calc(100% - 20px);
     .menu {
-      
         font-size: 8px;
     }
 }

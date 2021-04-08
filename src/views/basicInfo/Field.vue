@@ -195,6 +195,7 @@
                     <el-select v-model="addForm.isScreenshot" clearable placeholder="是否为截图">
                         <el-option label="是" :value="Number(1)"></el-option>
                         <el-option label="否" :value="Number(0)"></el-option>
+                        <el-option label="是否" :value="Number(2)"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="截图信息">
@@ -320,6 +321,7 @@
                     <el-select v-model="editForm.isScreenshot" clearable placeholder="是否为截图">
                         <el-option label="是" :value="Number(1)"></el-option>
                         <el-option label="否" :value="Number(0)"></el-option>
+                        <el-option label="是否" :value="Number(2)"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="截图信息">

@@ -54,5 +54,16 @@ export const mixin={
         indexMethod(index) {
             return (this.currentPage - 1) * this.pageSize + (index + 1);
         },
+        isRequiredFormatter(row, column, cellValue, index) {
+            if (cellValue === 1) {
+                return '是';
+            } else if (cellValue === 0) {
+                return '否';
+            } else if (cellValue === 2) {
+                return '是否';
+            } else {
+                return '-';
+            }
+        },
     }
 }

@@ -71,6 +71,8 @@ export default {
                 return '是';
             } else if (cellValue === 0) {
                 return '否';
+            } else if (cellValue === 2) {
+                return '是否';
             } else {
                 return '-';
             }

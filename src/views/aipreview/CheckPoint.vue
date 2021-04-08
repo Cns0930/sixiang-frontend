@@ -20,7 +20,7 @@
                 <el-table ref="multipleTable" border :data="tableData" tooltip-effect="dark" highlight-current-row
                     style="width: 100%"
                     :header-cell-style="{background: '#f9faff',color:'#333',fontFamily:'MicrosoftYaHeiUI',fontSize:'15px',fontWeight:900}"
-                    :row-style="{fontSize:'15px',color:'#666',fontFamily:'MicrosoftYaHeiUI'}"
+                    :row-style="{fontSize:'14px',color:'#666',fontFamily:'MicrosoftYaHeiUI'}"
                     @selection-change="handleSelectionChange">
                     <el-table-column type="selection" width="55">
                     </el-table-column>
@@ -30,13 +30,13 @@
                     </el-table-column>
                     <el-table-column prop="documentsubDisplayname" label="材料名称" width="180" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="multiPageInfo" label="是否为多页" width="100" show-overflow-tooltip>
+                    <el-table-column prop="multiPageInfo" label="是否为多页" width="130" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="fieldName" label="字段名" width="180" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="alias" label="字段别名" width="180" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="isScreenshot" label="是否为截图" width="100" show-overflow-tooltip>
+                    <el-table-column prop="isScreenshot" label="是否为截图" width="100" :formatter="isRequiredFormatter" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="screenshotInfo" label="截图信息" width="180" show-overflow-tooltip>
                     </el-table-column>
@@ -103,9 +103,9 @@
                     </el-table-column>
                     <el-table-column label="操作" fixed="right" width="180">
                         <template slot-scope="scope">
-                            <el-button type="primary" style="font-size: 16px" @click="editCheckPoint(scope.row)">编辑
+                            <el-button type="primary" style="font-size: 14px" @click="editCheckPoint(scope.row)">编辑
                             </el-button>
-                            <el-button type="danger" style="font-size: 16px" @click="deleteCheckPointButton(scope.row)">
+                            <el-button type="danger" style="font-size: 14px" @click="deleteCheckPointButton(scope.row)">
                                 删除
                             </el-button>
                         </template>
@@ -137,7 +137,10 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="字段值所处环境">
-                    <el-input v-model="addForm.valueEnvironment"></el-input>
+                    <el-select v-model="addForm.valueEnvironment" clearable>
+                        <el-option label="table - 表格" value="table"></el-option>
+                        <el-option label="text - 文本" value="text"></el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="key和value位置关系">
                     <el-select v-model="addForm.keyValueRelativePosition" filterable allow-create clearable
@@ -160,7 +163,10 @@
                         @click="addRuleLawList('valuePattern')"></i>
                 </el-form-item>
                 <el-form-item label="文本正则表达式作用域">
-                    <el-input v-model="addForm.textStringPatternRange"></el-input>
+                    <el-select v-model="addForm.textStringPatternRange" clearable>
+                        <el-option label="line - 提取信息和提取锚点位于一行" value="line"></el-option>
+                        <el-option label="context - 提取信息和提取锚点处于多行" value="context"></el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="截图表达式" class="ruleItem">
                     <div v-for="(item,i) in cutImgTagList" :key="i" class="ruleItems">
@@ -196,7 +202,10 @@
                         @click="addRuleLawList('valueField')"></i>
                 </el-form-item>
                 <el-form-item label="字段属性">
-                    <el-input v-model="addForm.valueProperty"></el-input>
+                    <el-select v-model="addForm.valueProperty" filterable clearable>
+                        <el-option v-for="(v,i) in valuePropertyOptions" :key="i" :label="v.label"
+                            :value="v.value"> </el-option>
+                    </el-select>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -207,7 +216,7 @@
         <!--编辑CheckPoint-->
         <el-dialog title="编辑ai-CheckPoint" :visible.sync="dialogVisbleEdit" width="50%" :close-on-click-modal="false">
             <el-form label-width="120px" :model="editForm">
-                <el-form-item label="材料" required>
+                <!-- <el-form-item label="材料" required>
                     <el-select v-model="editForm.approvalItemAndDocumentsubId" clearable placeholder="请选择材料展示名称">
                         <el-option v-for="(v,i) in materialOptions" :key="i" :label="v.documentsubDisplayname"
                             :value="v.id"> </el-option>
@@ -218,9 +227,12 @@
                         <el-option v-for="(v,i) in fieldOptions" :key="i" :label="v.fieldName" :value="v.fieldId">
                         </el-option>
                     </el-select>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="字段值所处环境">
-                    <el-input v-model="editForm.valueEnvironment"></el-input>
+                    <el-select v-model="editForm.valueEnvironment" clearable>
+                        <el-option label="table - 表格" value="table"></el-option>
+                        <el-option label="text - 文本" value="text"></el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="key和value位置关系">
                     <el-select v-model="editForm.keyValueRelativePosition" filterable allow-create clearable
@@ -243,7 +255,10 @@
                         @click="addRuleLawList('valuePattern')"></i>
                 </el-form-item>
                 <el-form-item label="文本正则表达式作用域">
-                    <el-input v-model="editForm.textStringPatternRange"></el-input>
+                    <el-select v-model="editForm.textStringPatternRange" clearable>
+                        <el-option label="line - 提取信息和提取锚点位于一行" value="line"></el-option>
+                        <el-option label="context - 提取信息和提取锚点处于多行" value="context"></el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="截图表达式" class="ruleItem">
                     <div v-for="(item,i) in cutImgTagList" :key="i" class="ruleItems">
@@ -279,31 +294,41 @@
                         @click="addRuleLawList('valueField')"></i>
                 </el-form-item>
                 <el-form-item label="字段属性">
-                    <el-input v-model="editForm.valueProperty"></el-input>
+                    <el-select v-model="editForm.valueProperty" filterable clearable>
+                        <el-option v-for="(v,i) in valuePropertyOptions" :key="i" :label="v.label"
+                            :value="v.value"> </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="字段别名">
                     <el-input v-model="editForm.alias"></el-input>
                 </el-form-item>
                 <el-form-item label="是否为多页">
-                    <el-select v-model="editForm.multiPageInfo" clearable placeholder="是否为截图">
+                    <el-select v-model="editForm.multiPageInfo" clearable placeholder="是否为多页">
                         <el-option label="是" value="是"></el-option>
                         <el-option label="否" value="否"></el-option>
+                        <el-option label="董事监事经理" value="董事监事经理"></el-option>
+                        <el-option label="公司章程" value="公司章程"></el-option>
+                        <el-option label="营业执照" value="营业执照"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="是否为截图">
                     <el-select v-model="editForm.isScreenshot" clearable placeholder="是否为截图">
                         <el-option label="是" :value="Number(1)"></el-option>
                         <el-option label="否" :value="Number(0)"></el-option>
+                        <el-option label="是否" :value="Number(2)"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="截图信息">
-                    <el-select v-model="editForm.screenshotInfo" filterable allow-create clearable placeholder="截图信息">
+                    <el-select v-model="editForm.screenshotInfo" filterable clearable placeholder="截图信息">
                         <el-option v-for="(v,i) in screenshotInfoOptions" :key="i" :label="v.label"
                             :value="v.value"> </el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="4W分类">
-                    <el-input v-model="editForm.sort"></el-input>
+                    <el-select v-model="editForm.sort" filterable clearable>
+                        <el-option v-for="(v,i) in sortOptions" :key="i" :label="v.label"
+                            :value="v.value"> </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="4W归类">
                     <el-input v-model="editForm.classify"></el-input>
@@ -361,6 +386,15 @@ export default {
                 {value: '是否签字', label: '是否签字'}, {value: '是否盖章', label: '是否盖章'}, {value: '是否填写日期', label: '是否填写日期'}, {value: '是否粘贴身份证', label: '是否粘贴身份证'}, {value: '提取身份证姓名', label: '提取身份证姓名'}, {value: '提取身份证有效期限', label: '提取身份证有效期限'},
                 {value: '是否已填写', label: '是否已填写'}, {value: '提取身份证住址', label: '提取身份证住址'}, {value: '提取身份证公民身份号码', label: '提取身份证公民身份号码'}, {value: '提取身份证性别', label: '提取身份证性别'}, {value: '提取身份证民族', label: '提取身份证民族'},
                 {value: '提取身份证出生', label: '提取身份证出生'}, {value: '是否勾选', label: '是否勾选'}, {value: '勾选内容', label: '勾选内容'}, {value: '是否粘贴证件照片', label: '是否粘贴证件照片'}, {value: '是否盖红章', label: '是否盖红章'}
+            ],
+            sortOptions: [
+                {value: 'WHO', label: 'WHO'}, {value: 'WHERE', label: 'WHERE'}, {value: 'WHAT', label: 'WHAT'}, 
+                {value: 'WHEN', label: 'WHEN'}, {value: 'SIGN', label: 'SIGN'} 
+            ],
+            valuePropertyOptions: [
+                {value: 'ch', label: 'ch 汉字'}, {value: 'char', label: 'char 字母'}, {value: 'num', label: 'num 数字'}, {value: 'num_char', label: '数字+字母'}, 
+                {value: 'ch_char', label: 'ch_char 汉字+字母'}, {value: 'ch_num', label: 'ch_num 汉字+数字'}, {value: 'ch_char_num', label: 'ch_char_num 汉字字母数字'}, {value: 'date', label: 'date 单一日期'}, 
+                {value: 'id_number', label: 'id_number 身份证号'}, {value: 'last4id', label: 'last4id 后4位'}, {value: 'addr', label: 'addr 地址'}, {value: 'credit_number', label: 'credit_number 机构统一信用代码'}
             ],
             editForm: {
                 cutImgTag: [],

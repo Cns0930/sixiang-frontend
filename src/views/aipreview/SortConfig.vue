@@ -16,7 +16,7 @@
                 <el-table ref="multipleTable" border :data="tableData" tooltip-effect="dark" highlight-current-row
                     style="width: 100%"
                     :header-cell-style="{background: '#f9faff',color:'#333',fontFamily:'MicrosoftYaHeiUI',fontSize:'15px',fontWeight:900}"
-                    :row-style="{fontSize:'15px',color:'#666',fontFamily:'MicrosoftYaHeiUI'}"
+                    :row-style="{fontSize:'14px',color:'#666',fontFamily:'MicrosoftYaHeiUI'}"
                     @selection-change="handleSelectionChange">
                     <el-table-column type="selection" width="55">
                     </el-table-column>
@@ -36,9 +36,9 @@
                     </el-table-column>
                     <el-table-column label="操作" fixed="right" width="180">
                         <template slot-scope="scope">
-                            <el-button type="primary" style="font-size: 16px" @click="editSortConfig(scope.row)">编辑
+                            <el-button type="primary" style="font-size: 14px" @click="editSortConfig(scope.row)">编辑
                             </el-button>
-                            <el-button type="danger" style="font-size: 16px" @click="deleteSortConfigButton(scope.row)">
+                            <el-button type="danger" style="font-size: 14px" @click="deleteSortConfigButton(scope.row)">
                                 删除
                             </el-button>
                         </template>

@@ -285,6 +285,11 @@ const routes = [
                         name: 'SortCongfig',
                         component: resolve => require(['@/views/aipreview/SortConfig.vue'],resolve),
                     },
+                    {
+                        path: '/aipreview/aidevelopment',
+                        name: 'AiDevelopment',
+                        component: resolve => require(['@/views/aipreview/AiDevelopment.vue'],resolve),
+                    },
                 ]
             }, 
         ]
