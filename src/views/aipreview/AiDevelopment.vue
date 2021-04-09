@@ -224,7 +224,7 @@
                                         placeholder="请选择要修改的SortConfig(多选)" style="width: 600px"
                                         @change="showSortConfigs()">
                                         <el-option v-for="item in sortConfigOptions" :key="item.sortconfigId"
-                                            :label="item.documentsubSeq + ' : ' + item.documentsubDisplayname"
+                                            :label="item.documentsubSeq + ' : ' + item.documentsubDisplayname + ' sortconfigId : ' + item.sortconfigId"
                                             :value="item.sortconfigId">
                                         </el-option>
                                     </el-select>
@@ -239,6 +239,8 @@
                                         <el-table-column type="index" label="索引" width="55">
                                         </el-table-column>
                                         <el-table-column prop="documentsubSeq" label="材料编号" width="90">
+                                        </el-table-column>
+                                        <el-table-column prop="sortconfigId" label="sortconfig编号" width="100">
                                         </el-table-column>
                                         <el-table-column prop="documentsubDisplayname" label="材料名称" width="180"
                                             show-overflow-tooltip>

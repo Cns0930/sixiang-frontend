@@ -24,6 +24,8 @@
                     </el-table-column>
                     <el-table-column prop="documentsubSeq" label="材料编号" width="90">
                     </el-table-column>
+                    <el-table-column prop="sortconfigId" label="sortconfig编号" width="100">
+                    </el-table-column>
                     <el-table-column prop="documentsubDisplayname" label="材料名称" width="180" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="lordKeyword" label="主关键字"  show-overflow-tooltip>
