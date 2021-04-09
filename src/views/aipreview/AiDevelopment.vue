@@ -99,7 +99,7 @@
                                         placeholder="请选择要修改的CheckPoint(多选)" style="width: 600px"
                                         @change="showCheckPoints()">
                                         <el-option v-for="item in CheckPointOptions" :key="item.checkpointId"
-                                            :label="item.documentsubSeq + ' : ' + item.documentsubDisplayname"
+                                            :label="item.documentsubSeq + ' : ' + item.fieldName"
                                             :value="item.checkpointId">
                                         </el-option>
                                     </el-select>
