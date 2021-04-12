@@ -76,6 +76,23 @@
                 <div>
                     产生方式配置<CodeEditor ref="producescriptEditor" v-model="temp_template.produceScript"></CodeEditor>
                 </div>
+                <div>
+                    关联一级材料
+                    <el-select v-model="temp_template.materialId" filterable
+                        placeholder="请选择一级材料" style="width: 100%">
+                        <el-option v-for="item in materialList" :key="item.materialId"
+                            :label="item.materialName" :value="item.materialId">
+                        </el-option>
+                    </el-select>
+                </div>
+                <div>
+                    word模板名称
+                    <el-input v-model="temp_template.docxTemplateName"></el-input>
+                </div>
+                <div>
+                    模板名称(自取)
+                    <el-input v-model="temp_template.templateName"></el-input>
+                </div>
             </div>
         </div>
         <!-- 创建模板弹窗 -->
@@ -197,7 +214,7 @@ import {
 import { addSysTransferLog, getUptoDateSysTransferLog, } from "@/api/item/index";
 import { getSaveMaxTimeTemplateBatch } from "@/api/template/index";
 import { listApprovalItem, listProjectAll } from "@/api/basicInfo/approval";
-import { copyMaterialByItemId } from "@/api/basicInfo/material";
+import { copyMaterialByItemId, getAllByApprovalItemId } from "@/api/basicInfo/material";
 import { mixin } from "@/mixin/mixin";
 import axios from "axios";
 import { mapState } from "vuex"
@@ -243,6 +260,8 @@ export default {
             templatesCopyFrom: [],
             pageSize: 15,
             totalAim: 0,
+            // 编辑模板
+            materialList: [],
         };
     },
     computed: {
@@ -256,8 +275,14 @@ export default {
         await this.init();
         await this.getTemplate();
         this.getLastUpdateInfo();
+        await this.getMaterialList();
     },
     methods: {
+        async getMaterialList() {
+            let result = await getAllByApprovalItemId({approvalItemId: this.itemId});
+            if(!result.success) return;
+            this.materialList = result.data;
+        },
         //复制其他事项全部模板
         async copeAllTemplates() {
             let resultProject = await listProjectAll();
@@ -473,6 +498,7 @@ export default {
             if (!result1.success) return;
 
             this.$message.success("保存模板成功");
+            this.getTemplate();
         },
         // async transferTemplate(v) {
         //     // 材料保存到超级帮办
