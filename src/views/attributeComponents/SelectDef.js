@@ -16,7 +16,7 @@ class SelectDef extends CommonComponents{
         return {
             disabled: this.disabled.value,
             options:this.options.value,
-            placeholder:"请输入内容"
+            placeholder:this.placeholder.value
         }
     }
 }
