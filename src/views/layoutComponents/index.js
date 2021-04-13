@@ -16,14 +16,14 @@ import CollapseCommon from './CollapseCommon/CollapseCommon.vue'
 // 选择器
 let ElSelectC = {
     name:"ElSelectC",
-    props: ['options',"value","siblings","parent","disabled"],
+    props: ['options',"value","siblings","parent","disabled","placeholder"],
     mixins:[LayoutComponentMixin],
     render() {
        
         let options =  Object.prototype.toString.call(this.options)  =="[object Function]"? this.options(this.itemState,this.itemGetters,this.siblings,this.parent):this.options || [];
         console.log("重新渲染 elselectC")
         options || (options=[]);
-        return <ElSelect value={this.value} clearable disabled={this.disabled} onInput={(e)=>this.$emit("input",e)} onChange={(e)=>{this.$emit("change",e)}}>
+        return <ElSelect value={this.value} clearable disabled={this.disabled} placeholder={this.placeholder} onInput={(e)=>this.$emit("input",e)} onChange={(e)=>{this.$emit("change",e)}}>
             {
                 options.map(option=> <ElOption lable={option} value={option} ></ElOption>)
             }
