@@ -411,7 +411,7 @@ export default {
             this.imgClassList.forEach(item => {
                 if (item.id === this.imgClass) {
                     this.$set(this.rowInfo, 'approvalItemAndDocumentsubId', this.imgClass);
-                    this.$set(this.rowInfo, 'globalDocumentSubName', item.globalDocumentSubName);
+                    this.$set(this.rowInfo, 'documentsubDisplayname', item.documentsubDisplayname);
                     this.$set(this.rowInfo, 'documentsubSeq', item.documentsubSeq);
                     return;
                 }
