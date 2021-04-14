@@ -14,7 +14,8 @@
             </div>
             <div class="tableWrap">
                 <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%" border
-                    :row-style="{height:'60px'}" :header-row-style="{height:'50px'}" tooltip-effect="dark">
+                    :row-style="{height:'60px'}" :header-row-style="{height:'50px'}" tooltip-effect="dark"
+                    :row-class-name="tableRowClassName">
                     <!-- <el-table-column type="expand">
                         <template slot-scope="scope">
                         </template>
@@ -40,8 +41,8 @@
                     </el-table-column> -->
                     <el-table-column prop="materialName" label="所属事项一级材料" width="150">
                         <template slot-scope="scope">
-                            <el-select v-if="scope.row.flag" v-model="scope.row.materialId"
-                                placeholder="请选择子一级材料名称" clearable filterable @change="firstMaterialChange(scope.row)">
+                            <el-select v-if="scope.row.flag" v-model="scope.row.materialId" placeholder="请选择子一级材料名称"
+                                clearable filterable @change="firstMaterialChange(scope.row)">
                                 <el-option v-for="item in firstMaterialOption" :key="item.materialId"
                                     :label="item.materialName" :value="item.materialId" />
                             </el-select>
@@ -71,7 +72,7 @@
                         </template>
                     </el-table-column>
                     <el-table-column prop="globalDocumentSubCode" label="公共子文档编码" width="100"></el-table-column>
-                    <el-table-column prop="isRequired" label="是否必须"  width="100">
+                    <el-table-column prop="isRequired" label="是否必须" width="100">
 
                         <template slot-scope="scope">
                             <el-select v-if="scope.row.flag" v-model="scope.row.isRequired" placeholder="请选择是否必须"
@@ -90,7 +91,7 @@
                             <span v-else>{{scope.row.requiredDescription}}</span>
                         </template>
                     </el-table-column>
-                    
+
                     <el-table-column prop="displayNotes" label="补充说明信息">
                         <template slot-scope="scope">
                             <el-input v-if="scope.row.flag" v-model="scope.row.displayNotes"></el-input>
@@ -127,8 +128,7 @@
             <div class="tablePagination">
                 <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
                     :current-page.sync="currentPage" :page-size="pageSize" :page-sizes="[5, 10, 20, 50, 100]"
-                    layout="total, sizes, prev, pager, next"
-                    :total="totalCount"></el-pagination>
+                    layout="total, sizes, prev, pager, next" :total="totalCount"></el-pagination>
             </div>
         </section>
     </div>
@@ -138,11 +138,12 @@
 
 <script>
 import basicMixin from "./basicMixin";
-import {mixin} from "@/mixin/mixin"
+import { mixin } from "@/mixin/mixin"
 import Vue from "vue";
 import { listMaterial, getTemplateByMaterialId, listGlobalSubAllByMaterial, getAllByApprovalItemId } from "../../api/basicInfo/material";
 import { listGlobalDcumentSub, listGlobalDcumentSubByCascade } from "../../api/basicInfo/publicDocument";
-import { getApprovalSub, addItemAndDocumentSub, deleItemAndDocumentSub, updateItemAndDocumentSub
+import {
+    getApprovalSub, addItemAndDocumentSub, deleItemAndDocumentSub, updateItemAndDocumentSub
 } from "../../api/basicInfo/approvalSub";
 // import { delete } from 'node_modules/vue/types/umd';
 export default {
@@ -203,25 +204,25 @@ export default {
 
     methods: {
         async getFirstMaterialOption() {
-            let res = await getAllByApprovalItemId({approvalItemId: this.itemId});
+            let res = await getAllByApprovalItemId({ approvalItemId: this.itemId });
             if (!res.success) return;
             this.firstMaterialOption = res.data;
         },
         async firstMaterialChange(row) {
             this.secondMaterialOption = [];
-            let res = await listGlobalSubAllByMaterial({materialId: row.materialId});
+            let res = await listGlobalSubAllByMaterial({ materialId: row.materialId });
             if (!res.success) return;
             this.secondMaterialOption = res.data;
             row.globalDocumentSubId = '';
         },
         async initSecond(row) {
             this.secondMaterialOption = [];
-            let res = await listGlobalSubAllByMaterial({materialId: row.materialId});
+            let res = await listGlobalSubAllByMaterial({ materialId: row.materialId });
             if (!res.success) return;
             this.secondMaterialOption = res.data;
         },
         secondMaterialChange(row) {
-            if(row.flagAdd) {
+            if (row.flagAdd) {
                 this.secondMaterialOption.forEach(item => {
                     if (item.globalDocumentSubId === row.globalDocumentSubId) {
                         row.documentsubDisplayname = item.globalDocumentSubName;
@@ -372,9 +373,9 @@ export default {
         },
         // 修改
         Edit(item, index, rows) {
-            if(item.materialId){
+            if (item.materialId) {
                 this.initSecond(item)
-            }else{
+            } else {
                 this.secondMaterialOption = [];
                 item.globalDocumentSubId = '';
             }
@@ -385,11 +386,11 @@ export default {
         // 保存
         async saveText(item, index, rows) {
             // console.log('item', item);
-            if(!item.globalDocumentSubId || item.globalDocumentSubId === '') {
+            if (!item.globalDocumentSubId || item.globalDocumentSubId === '') {
                 this.$message.warning('二级材料名称不能为空');
                 return;
-            } 
-            if(item.isRequired === undefined) {
+            }
+            if (item.isRequired === undefined) {
                 this.$message.warning('是否必须不能为空');
                 return;
             }
@@ -477,9 +478,27 @@ export default {
             if (!result.success) return;
             await this.search();
         },
+
+        // 改变有冲突的数据的行样式
+        tableRowClassName({ row, rowIndex }) {
+            if (row) {
+                if (row.isConflict === 1) {
+                    return 'red-row'
+                } else {
+                    return ''
+                }
+            }
+        }
     },
 };
 </script>
+
+<style>
+.el-table .red-row {
+  color:#ff5160;
+  background:#ffeaea;
+}
+</style>
 
 <style scoped lang="scss">
 @import "../../assets/css/global.scss";

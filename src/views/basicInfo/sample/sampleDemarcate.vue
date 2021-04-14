@@ -122,7 +122,7 @@
                                                     <el-select v-model="ruleClass" :disabled="!this.imgName" filterable
                                                         placeholder="请选择规则" style="width: 100%" @change="setRuleClass">
                                                         <el-option v-for="item in ruleClassList" :key="item.ruleId"
-                                                            :label="item.ruleCode + ' : ' + item.rulePoint"
+                                                            :label="item.ruleCode + ' : ' + item.rulePoint + ' - ' + item.resultlabeled"
                                                             :value="item.ruleId">
                                                         </el-option>
                                                     </el-select>
@@ -239,7 +239,8 @@ export default {
             ruleInfo: {},
             lastUpdateTime: '',
             goBeforeDisable: false,
-            goNextDisable: false
+            goNextDisable: false,
+            sampleId: null,
         }
     },
     computed: {
@@ -320,7 +321,7 @@ export default {
         },
         // 获取规则列表
         async getRuleClassList() {
-            let result = await listRuleAll({ approvalItemId: Number(this.itemId), subitemIds: this.approvalSubIds });
+            let result = await listRuleAll({ approvalItemId: Number(this.itemId), subitemIds: this.approvalSubIds, sampleId: this.sampleId });
             if (!result.success) {
                 this.$message({ type: "warning", message: "获取规则列表信息失败" });
                 return;
@@ -347,6 +348,7 @@ export default {
                 this.valueUrl = process.env.VUE_APP_BASE_IP + `/docInfo/getPic?fileId=${row.fileId}`
                 this.imgName = row.fileName;
                 this.imgClass = row.approvalItemAndDocumentsubId;
+                this.sampleId = row.sampleId;
                 // 获取规则列表
                 // this.getRuleClassList();
                 return;
@@ -409,7 +411,7 @@ export default {
             this.imgClassList.forEach(item => {
                 if (item.id === this.imgClass) {
                     this.$set(this.rowInfo, 'approvalItemAndDocumentsubId', this.imgClass);
-                    this.$set(this.rowInfo, 'globalDocumentSubName', item.globalDocumentSubName);
+                    this.$set(this.rowInfo, 'documentsubDisplayname', item.documentsubDisplayname);
                     this.$set(this.rowInfo, 'documentsubSeq', item.documentsubSeq);
                     return;
                 }
@@ -467,8 +469,24 @@ export default {
                 this.$message({ type: "warning", message: "该样本标定规则结果失败" });
                 return;
             }
-            console.log('result change');
-            console.log(result);
+            this.ruleInfo.resultlabeled = this.ruleResult;
+            // 更新规则下拉框数据
+            let res = await listRuleAll({ approvalItemId: Number(this.itemId), subitemIds: this.approvalSubIds, sampleId: this.sampleId });
+            if (!res.success) {
+                return;
+            }
+            if(res.data.length === 0) {
+                return;
+            }
+            this.ruleClassList = res.data;
+            this.ruleClassList.forEach(item => {
+                if (item.ruleId === this.ruleClass) {
+                    console.log('this.ruleInfo in', this.ruleInfo)
+                    console.log('item', item)
+                    this.ruleInfo = item; // 触发计算属性,要保证能走通计算过程;
+                    this.tableDataResult = this.ruleInfo.ruleInputs;
+                }
+            })
         },
         // 按钮上一个、下一个
         goBeforeOne() {
