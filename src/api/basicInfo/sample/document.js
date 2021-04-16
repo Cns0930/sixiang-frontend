@@ -14,3 +14,6 @@ export const modifyFileName = params => { return axios.post(`/docInfo/modify_fil
 
 // 重命名图片文件
 export const renamePic = params => { return axios.post(`/docInfo/rename_pic`, params).then(res=>res.data); };
+
+// 更新样例图片ocr
+export const uploadOcrById = params => { return axios.get(`/docInfo/uploadOcrById`, {params}).then(res=>res.data); };

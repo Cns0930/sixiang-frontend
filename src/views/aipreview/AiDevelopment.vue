@@ -57,6 +57,7 @@
                                                     <el-button icon="el-icon-plus" @click="sizeUp(item)" circle>
                                                     </el-button>
                                                     <el-button round @click="imgOpen(item.valueUrl)">打开图片</el-button>
+                                                    <el-button @click="updateOcr(item)" >更新ocr</el-button>
                                                 </div>
                                             </div>
                                             <div class="case-rows">
@@ -424,7 +425,7 @@ import { mapGetters, mapState } from "vuex"
 import state from '@/vuex/home/state';
 import dayjs from "dayjs";
 // 接口
-import { getFileList } from "@/api/basicInfo/sample/document"
+import { getFileList, uploadOcrById } from "@/api/basicInfo/sample/document"
 import {
     listCheckpoint, updateCheckpoint
 } from "@/api/aipreview/checkPoint.js"
@@ -579,6 +580,13 @@ export default {
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
+        },
+        // 更新OCR结果
+        async updateOcr(item) {
+            let result = await uploadOcrById({ documentId: item.id });
+            if (!result.success) return;
+            result.data.unshift('- - - - - OCR结果已更新 - - - - - - ');
+            item.ocrResultShow = result.data;
         },
         // 加载checkPointOptions
         async getListCheckpoint() {
@@ -831,7 +839,7 @@ export default {
                                 margin-left: 20px;
                                 margin-bottom: 10px;
                                 font-weight: bold;
-                                width: 200px;
+                                width: 400px;
                                 padding-left: 10px;
                             }
                         }
