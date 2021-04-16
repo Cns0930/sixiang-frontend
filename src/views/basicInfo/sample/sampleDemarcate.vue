@@ -61,7 +61,10 @@
                                 </div>
                                 <div class="case-rows">
                                     <span>{{ this.imgName ? this.imgName : '请在左侧选择图片文件' }}</span>
-                                    <img :src="valueUrl" :alt="imgName" :width="imgWidth" />
+                                    <vueCropper v-if="activeName === 'fourth'" ref="cropper" :img="valueUrl"
+                                        :autoCrop="true" dragMode="crop" :outputSize="Number(1)" :canMove="false"
+                                        :full="true" :fixedBox="false" :canScale="false"></vueCropper>
+                                    <img v-else :src="valueUrl" :alt="imgName" :width="imgWidth" />
                                 </div>
                             </div>
                         </div>
@@ -166,17 +169,52 @@
                                                 </div>
                                                 <div>
                                                     <el-button-group style="margin-left: 30%">
-                                                        <el-button type="primary" icon="el-icon-arrow-left" :disabled="goBeforeDisable" @click="goBeforeOne">上一个
+                                                        <el-button type="primary" icon="el-icon-arrow-left"
+                                                            :disabled="goBeforeDisable" @click="goBeforeOne">上一个
                                                         </el-button>
-                                                        <el-button type="primary" :disabled="goNextDisable" @click="goNext">下一个<i
+                                                        <el-button type="primary" :disabled="goNextDisable"
+                                                            @click="goNext">下一个<i
                                                                 class="el-icon-arrow-right el-icon--right"></i>
                                                         </el-button>
                                                     </el-button-group>
                                                 </div>
                                             </div>
                                         </el-tab-pane>
-                                        <el-tab-pane label="真值标定" name="fourth" disabled>定时任务补偿
-
+                                        <el-tab-pane label="真值标定" name="fourth" class="truth">
+                                            <span>
+                                                <el-button type="plain" @click="importTruthData(sampleTruthTable)"
+                                                    style="margin-left: 10px;" round>一键导入最新提取结果</el-button>
+                                                <el-button type="plain" @click="showRectangles()"
+                                                    style="margin-left: 10px;" round>显示坐标框</el-button>
+                                            </span>
+                                            <span v-show="imgUrl" class="truth-table">截取展示:</span>
+                                            <img :src="imgUrl" alt="" width="100%">
+                                            <div class="truth-table">
+                                                <span>图片分类：</span>
+                                                <span
+                                                    style="color: green">{{ ' ' + rowInfo.documentsubSeq + ' - ' + rowInfo.documentsubDisplayname }}</span>
+                                                <div v-for="item in sampleTruthTable" :key="item.fieldId">
+                                                    <span
+                                                        style="font-size: 18px;line-height: 50px;">{{item.fieldName + ' : '}}</span>
+                                                    <div class="truth-table-item">
+                                                        <div style="display: flex; flex-direction: row;">
+                                                            <span style="width: 40px;">值:</span>
+                                                            <el-input v-model="item.fieldContent" clearable
+                                                                style="width: 200px;" />
+                                                            <el-button type="plain" @click="getCropData(item)"
+                                                                style="margin-left: 10px;">智能填入</el-button>
+                                                        </div>
+                                                        <div
+                                                            style="display: flex; flex-direction: row;  margin-top: 10px;">
+                                                            <span style="width: 40px;">坐标:</span>
+                                                            <el-input v-model="item.fieldLocation" clearable disabled
+                                                                style="width: 200px;" />
+                                                            <el-button type="primary" @click="updateTruthData(item)"
+                                                                style="margin-left: 10px;">保存真值</el-button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </el-tab-pane>
                                     </el-tabs>
                                 </div>
@@ -186,6 +224,13 @@
                 </div>
             </el-row>
         </div>
+        <el-dialog title="坐标展示图" :visible.sync="showPosition" width="80%" :destroy-on-close="true">
+            <canvas id="canvas" :width="rowInfo.width" :height="rowInfo.height"
+                style="width: 100%;">你的浏览器不支持canvas，建议使用Chrome浏览器。</canvas>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="showPosition = false">关 闭</el-button>
+            </span>
+        </el-dialog>
         <div class="workHandleBox">
         </div>
 
@@ -199,11 +244,13 @@ import { mixin } from "@/mixin/mixin"
 import { mapGetters, mapState } from "vuex"
 import state from '@/vuex/home/state';
 import dayjs from "dayjs";
+import { VueCropper } from "vue-cropper";
 // 接口
 import { getFileList } from "@/api/basicInfo/sample/document"
 import {
     addSampleResultSort, listSubitemNameByItemId, addSampleResultSubitem, listRuleAll,
-    getResultRule, updateSampleResultRule
+    getResultRule, updateSampleResultRule, getSampleResultFieldByDocumentId, importSampleResultFieldByDocumentId,
+    addSampleResultField
 } from "@/api/basicInfo/sample/demarcate"
 import { listDocumentSubByItemId } from "@/api/basicInfo/ApprovalRules"
 import { listApprovalSubAll } from "@/api/basicInfo/approvalSub"
@@ -211,6 +258,7 @@ import { listApprovalSubAll } from "@/api/basicInfo/approvalSub"
 export default {
     name: "SampleDemarcate",
     mixins: [mixin],
+    components: { VueCropper },
     data() {
         return {
             // 初始数据
@@ -241,6 +289,19 @@ export default {
             goBeforeDisable: false,
             goNextDisable: false,
             sampleId: null,
+            // 真值标定
+            previews: {
+                url: '',
+                img: ''
+            },
+            imgUrl: null,
+            imgTrueSize: {
+                width: 0,
+                height: 0
+            },
+            coordinate: [],
+            sampleTruthTable: [],
+            showPosition: false,
         }
     },
     computed: {
@@ -252,17 +313,17 @@ export default {
         }),
         tipInfo() {
             if (this.ruleResult === 'R') {
-                if(!this.ruleInfo.ruleTips) {
+                if (!this.ruleInfo.ruleTips) {
                     return '';
                 }
                 return this.ruleInfo.ruleTips[0];
             } else if (this.ruleResult === 'W') {
-                if(!this.ruleInfo.ruleTips) {
+                if (!this.ruleInfo.ruleTips) {
                     return '';
                 }
                 return this.ruleInfo.ruleTips[1];
             } else if (this.ruleResult === 'F') {
-                if(!this.ruleInfo.ruleTips) {
+                if (!this.ruleInfo.ruleTips) {
                     return '';
                 }
                 return this.ruleInfo.ruleTips[2];
@@ -326,7 +387,7 @@ export default {
                 this.$message({ type: "warning", message: "获取规则列表信息失败" });
                 return;
             }
-            if(result.data.length === 0) {
+            if (result.data.length === 0) {
                 return;
             }
             this.ruleClassList = result.data;
@@ -343,7 +404,7 @@ export default {
         // 改变文件目录列表
         async changeFileTable(row) {
             console.log('row', row);
-            this.rowInfo = row;
+            this.rowInfo = row; // 文件夹或图片的所有数据
             if (!row.isdir && row.fileId) {
                 this.valueUrl = process.env.VUE_APP_BASE_IP + `/docInfo/getPic?fileId=${row.fileId}`
                 this.imgName = row.fileName;
@@ -351,6 +412,15 @@ export default {
                 this.sampleId = row.sampleId;
                 // 获取规则列表
                 // this.getRuleClassList();
+                // 获取图片真实尺寸
+                this.imgTrueSize.width = row.width;
+                this.imgTrueSize.height = row.height;
+                // 真值标定结果重置
+                this.imgUrl = '';
+                this.sampleTruthTable = [];
+                if (this.activeName === 'fourth') {
+                    this.getSampleResultField();
+                }
                 return;
             }
             this.valueUrl = null;
@@ -396,6 +466,8 @@ export default {
                 return;
             } else if (this.activeName === 'third') {
                 this.getRuleClassList();
+            } else if (this.activeName === 'fourth') {
+                this.getSampleResultField();
             }
         },
         // 图片分类标定，不刷新table
@@ -411,7 +483,7 @@ export default {
             this.imgClassList.forEach(item => {
                 if (item.id === this.imgClass) {
                     this.$set(this.rowInfo, 'approvalItemAndDocumentsubId', this.imgClass);
-                    this.$set(this.rowInfo, 'globalDocumentSubName', item.globalDocumentSubName);
+                    this.$set(this.rowInfo, 'documentsubDisplayname', item.documentsubDisplayname);
                     this.$set(this.rowInfo, 'documentsubSeq', item.documentsubSeq);
                     return;
                 }
@@ -475,7 +547,7 @@ export default {
             if (!res.success) {
                 return;
             }
-            if(res.data.length === 0) {
+            if (res.data.length === 0) {
                 return;
             }
             this.ruleClassList = res.data;
@@ -495,7 +567,7 @@ export default {
             console.log(index);
             this.goNextDisable = false;
             if (index - 1 >= 0) {
-                this.ruleClass = this.ruleClassList[index-1].ruleId;
+                this.ruleClass = this.ruleClassList[index - 1].ruleId;
                 this.setRuleClass();
             } else {
                 this.goBeforeDisable = true;
@@ -509,15 +581,139 @@ export default {
             console.log('index Ne');
             console.log(index);
             this.goBeforeDisable = false;
-            if (index + 1 < this.ruleClassList.length ) {
-                this.ruleClass = this.ruleClassList[index+1].ruleId;
+            if (index + 1 < this.ruleClassList.length) {
+                this.ruleClass = this.ruleClassList[index + 1].ruleId;
                 this.setRuleClass();
             } else {
                 this.goNextDisable = true;
             }
-            if (index + 1 === this.ruleClassList.length -1) {
+            if (index + 1 === this.ruleClassList.length - 1) {
                 this.goNextDisable = true;
             }
+        },
+        // 真值标定
+        getCropData(item) {
+            this.$refs.cropper.getCropData((data) => {
+                this.imgUrl = data;
+                // console.log('this.imgUrl');
+                // console.log(this.imgUrl);
+            });
+            // console.log(this.$refs.cropper);
+            // console.log('获取图片基于容器的坐标点');
+            // console.log(this.$refs.cropper.getImgAxis());
+            // console.log('获取截图框基于容器的坐标点');
+            // console.log(this.$refs.cropper.getCropAxis());
+
+            let imgAxis = this.$refs.cropper.getImgAxis(); // 获取图片基于容器的坐标点
+            let cropAxis = this.$refs.cropper.getCropAxis(); // 获取截图框基于容器的坐标点
+            let zoom = this.imgTrueSize.width / (imgAxis.x2 - imgAxis.x1); // 真实图片放大系数
+            // coordinate = [[cropAxis.x1-imgAxis.x1, cropAxis.y1-imgAxis.y1], [cropAxis.x2-imgAxis.x1, cropAxis.y2-imgAxis.y1]]  // 正常座标系 [[x1, y1], [x2, y2]] 左上座标和右下座标
+            // 反人类座标系 [[y1, x1], [y2, x2]] 左上座标和右下座标
+            this.coordinate = [[Math.round((cropAxis.y1 - imgAxis.y1) * zoom), Math.round((cropAxis.x1 - imgAxis.x1) * zoom)], [Math.round((cropAxis.y2 - imgAxis.y1) * zoom), Math.round((cropAxis.x2 - imgAxis.x1) * zoom)]];
+            console.log('this.coordinate');
+            console.log(this.coordinate);
+            item.fieldLocation = JSON.stringify(this.coordinate);
+            this.$refs.cropper.getCropBlob((data) => {
+                this.uploadToOcr(data, item);
+            });
+        },
+        // OCR接口识别文本
+        uploadToOcr(file, item) {
+            // console.log('文件数据');
+            // console.log(file);
+            let fd = new FormData();
+            fd.append("file", file);
+            axios.post(
+                process.env.VUE_APP_BASE_IP + '/docInfo/getOcr',
+                fd
+            )
+                .then(
+                    (res) => {
+                        if (res.data.success) {
+                            console.log(res.data.data);
+                            let fileName = res.data.data[0].image_name
+                            item.fieldContent = res.data.data[res.data.data.length - 1][fileName][0];
+                        } else {
+                        }
+                    },
+                ).catch(error => {
+                    this.$message.warning('OCR识别失败,请重新截图或手动填写');
+                });
+            return false;
+        },
+        // 预览
+        // realTime(data) {
+        //     this.previews = {
+        //         ...data
+        //     };
+        // },
+        // 获取真值标定结果
+        async getSampleResultField() {
+            let result = await getSampleResultFieldByDocumentId({ documentId: this.rowInfo.id });
+            if (!result.success) return;
+            this.sampleTruthTable = result.data;
+        },
+        // 表存标定的真值
+        async updateTruthData(item) {
+            console.log('真值item');
+            console.log(item);
+            item.documentId = this.rowInfo.id;
+            let result = await addSampleResultField(item);
+            if (!result.success) {
+                this.$message.warning('真值保存失败');
+                return;
+            };
+            this.$message.success('真值保存成功');
+        },
+        // 一键导入最新提取结果
+        async importTruthData(truthTable) {
+            let result = await importSampleResultFieldByDocumentId({ documentId: this.rowInfo.id })
+            if (!result.success) return;
+            let importNew = result.data;
+        },
+        // 显示or关闭坐标框
+        showRectangles() {
+            this.showPosition = true;
+            this.$nextTick(() => {
+                let canvas = document.querySelector("#canvas");
+                let ctx = canvas.getContext('2d');
+
+                // 绘制图片对象 ctx.drawImage(图片对象， x位置， y位置)
+                let img = new Image();
+                img.src = this.valueUrl;
+
+                img.onload = () => {
+                    // ctx.clearRect(10,10,this.rowInfo.width -10,this.rowInfo.height - 10); // 清空画布, 但没用，应该是dialog关闭没有销毁元素
+                    ctx.drawImage(img, 0, 0);
+                    console.log('this.sampleTruthTable');
+                    console.log(this.sampleTruthTable);
+                    let number = 1;
+                    this.sampleTruthTable.forEach(item => {
+                        if (item.fieldLocation !== null) {
+                            let coordinate = JSON.parse(item.fieldLocation);
+                            let x = coordinate[0][1];
+                            let y = coordinate[0][0];
+                            let width = coordinate[1][1] - x;
+                            let height = coordinate[1][0] - y;
+                            let xText = coordinate[1][1] + 40;
+                            let yText = coordinate[1][0] - 10;
+                            console.log(x, y, width, height);
+                            ctx.rect(x, y, width, height);
+                            ctx.strokeStyle = 'salmon';
+                            ctx.lineWidth = 5;
+                            ctx.stroke();
+                            ctx.font = "70px 微软雅黑";
+                            ctx.shadowBlur = 20;
+                            ctx.shadowColor = "rgba(0, 0, 0, 1)";
+                            ctx.shadowOffsetX = 5;
+                            ctx.shadowOffsetY = 5;
+                            ctx.strokeText(String(number), xText, yText);
+                            number += 1;
+                        }
+                    })
+                }
+
+            })
         }
     },
 
@@ -736,6 +932,22 @@ export default {
                             .resultCase {
                                 div {
                                     margin: 10px 0px;
+                                }
+                            }
+                            .truth {
+                                display: flex;
+                                flex-direction: column;
+                                align-items: center;
+                                justify-content: flex-start;
+                                .truth-table {
+                                    width: 100%;
+                                    .truth-table-item {
+                                        margin-left: 20px;
+                                        display: flex;
+                                        flex-direction: column;
+                                        align-items: flex-start;
+                                        justify-content: flex-start;
+                                    }
                                 }
                             }
                         }

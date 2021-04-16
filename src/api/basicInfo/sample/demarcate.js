@@ -30,3 +30,13 @@ export const updateSampleResultRule = params => { return axios.post(`/caseTag/Sa
 
 // // 重命名图片文件
 // export const renamePic = params => { return axios.post(`/docInfo/rename_pic`, params).then(res=>res.data); };
+
+// 真值标定接口
+// 查询提取点列表(包含样本真值标定结果)
+export const getSampleResultFieldByDocumentId = params => { return axios.get(`/caseTag/SampleResultField/getSampleResultFieldByDocumentId`, {params}).then(res=>res.data); };
+
+// 导入最新测试结果
+export const importSampleResultFieldByDocumentId = params => { return axios.get(`/caseTag/SampleResultField/importSampleResultFieldByDocumentId`, {params}).then(res=>res.data); };
+
+// 保存或更新样本真值标定结果 更新时id不为空
+export const addSampleResultField = params => { return axios.post(`/caseTag/SampleResultField/addSampleResultField`, params).then(res=>res.data); };
