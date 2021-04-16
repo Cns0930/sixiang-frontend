@@ -63,6 +63,10 @@ const topMenuList=[
                 path: "/allEdit",
                 label: "批量编辑",
             },
+            {
+                path: "/approval",
+                label: "大项管理",
+            },
         ],
         order: 2
     },
@@ -118,6 +122,17 @@ const topMenuList=[
             },
         ],
         order: 4
+    },
+    {
+        label: "委办局",
+        authKey: ["admin","developer","researcher","test"],
+        children:[
+            {
+                path: "/weibanju",
+                label: "委办局管理",
+            },
+        ],
+        order: 7
     },
     // {
     //     label: "批量编辑",

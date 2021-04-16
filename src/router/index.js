@@ -142,9 +142,9 @@ const routes = [
                         component: TestCase
                     },
                     {
-                      path: "/testManager",
-                      name: "testManager",
-                      component: TestManager
+                        path: "/testManager",
+                        name: "testManager",
+                        component: TestManager
                     },
                     {
                         path:"/setting",
@@ -157,6 +157,16 @@ const routes = [
                 path: '/project',
                 name: 'ProjectList',
                 component: ProjectList,
+            },
+            {
+                path: '/weibanju',
+                name: 'WeiBanJu',
+                component: resolve => require(['@/views/WeiBanJu/index.vue'],resolve),
+            },
+            {
+                path: '/approval',
+                name: 'ApprovalManagement',
+                component: resolve => require(['@/views/publicManagement/ApprovalManagement.vue'],resolve),
             },
             {
                 path: '/document',
