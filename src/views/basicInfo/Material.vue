@@ -380,7 +380,7 @@ import {
     copySelectedMaterial, getAllByApprovalItemId,
     listPreTemplatesByMaterialId, savePreTemplate, deletePreTemplate
 } from "../../api/basicInfo/material";
-import { listApprovalItem, listProjectAll } from "@/api/basicInfo/approval";
+import { listApprovalItemByUser, listProjectAll } from "@/api/basicInfo/approval";
 import { listGlobalDcument } from '@/api/basicInfo/publicDocument';
 import { listAccessory } from "@/api/basicInfo/accessory"
 import axios from "axios";
@@ -617,19 +617,19 @@ export default {
         async handleSizeChangeSelect(size) {
             this.selectData = [];
             this.pageSize = size;
-            let result = await listApprovalItem({ pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.$route.query.projectId });
+            let result = await listApprovalItemByUser({ pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.$route.query.projectId });
             this.typeSubItemOptions = result.data.records;
         },
         async handleCurrentChangeSelect(current) {
             this.selectData = [];
             this.currentPageSelect = current;
-            let result = await listApprovalItem({ pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.$route.query.projectId });
+            let result = await listApprovalItemByUser({ pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.$route.query.projectId });
             this.typeSubItemOptions = result.data.records;
         },
         //远程搜索
         async remoteMethod(query) {
             if (query !== '') {
-                let result = await listApprovalItem({ keyword: query, pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.$route.query.projectId });
+                let result = await listApprovalItemByUser({ keyword: query, pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.$route.query.projectId });
                 this.loading = true;
                 setTimeout(() => {
                     this.loading = false;
@@ -742,7 +742,7 @@ export default {
         async selectProject() {
             this.idd = '';
             this.tableDataSS = [];
-            let result = await listApprovalItem({ pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.temp_page_projectId });
+            let result = await listApprovalItemByUser({ pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.temp_page_projectId });
             this.typeSubItemOptions = result.data.records;
             this.totalAim = result.data.total;
         },
