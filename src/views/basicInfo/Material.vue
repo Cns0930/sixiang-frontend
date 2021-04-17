@@ -250,7 +250,7 @@
                             filterable remote reserve-keyword :remote-method="remoteMethodBang" :loading="loadingBang">
                             <el-option v-for="item in approvalTextList" :key="item.globalDocumentId"
                                 :label="item.globalDocumentName" :value="item.globalDocumentId" />
-                            <div class="text-center"
+                            <!-- <div class="text-center"
                                 style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
                                 <a class="text-normal">
                                     <el-pagination @size-change="handleSizeChangeSelectBang"
@@ -258,7 +258,7 @@
                                         :current-page="currentPageSelectBang" :total="totalBang"
                                         :page-size="pageSizeBang" layout="prev, pager, next" />
                                 </a>
-                            </div>
+                            </div> -->
                         </el-select>
                     </el-form-item>
                 </div>
@@ -643,7 +643,7 @@ export default {
         async remoteMethodBang(query) {
             // if (query !== '') {
             this.currentPageSelectBang = 1;
-            let result = await listGlobalDcument({ globalDocumentName: query, pageNum: this.currentPageSelectBang, pageSize: this.pageSizeBang, projectId: this.$route.query.projectId });
+            let result = await listGlobalDcument({ globalDocumentName: query, pageNum: 1, pageSize: 99999, projectId: this.$route.query.projectId });
             this.loadingBang = true;
             setTimeout(() => {
                 this.loadingBang = false;
@@ -658,13 +658,13 @@ export default {
         async handleSizeChangeSelectBang(size) {
             this.selectData = [];
             this.pageSizeBang = size;
-            let result = await listGlobalDcument({ pageNum: this.currentPageSelectBang, pageSize: this.pageSizeBang, projectId: this.$route.query.projectId });
+            let result = await listGlobalDcument({ pageNum: 1, pageSize: 99999, projectId: this.$route.query.projectId });
             this.approvalTextList = result.data.records;
         },
         async handleCurrentChangeSelectBang(current) {
             this.selectData = [];
             this.currentPageSelectBang = current;
-            let result = await listGlobalDcument({ pageNum: this.currentPageSelectBang, pageSize: this.pageSizeBang, projectId: this.$route.query.projectId });
+            let result = await listGlobalDcument({ pageNum: 1, pageSize: 99999, projectId: this.$route.query.projectId });
             this.approvalTextList = result.data.records;
         },
         globalDocumentChange(id) {
@@ -681,7 +681,7 @@ export default {
         async getApprovalTextList() {
             this.pageSizeBang = 10;
             this.currentPageSelectBang = 1;
-            let result = await listGlobalDcument({ pageNum: this.currentPageSelectBang, pageSize: this.pageSizeBang, projectId: this.$route.query.projectId });
+            let result = await listGlobalDcument({ pageNum: 1, pageSize: 99999, projectId: this.$route.query.projectId });
             this.approvalTextList = result.data.records;
             this.totalBang = result.data.total;
         },

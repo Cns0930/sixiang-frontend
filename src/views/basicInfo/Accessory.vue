@@ -66,7 +66,7 @@
             <el-table-column label="操作">
                 <template slot-scope="scope">
                     <el-button-group>
-                        <el-button @click="handleDownload(scope.row)" type="primary" :disabled="scope.row.latest === false">下载</el-button>
+                        <el-button @click="handleDownload(scope.row)" type="primary">下载</el-button>
                     </el-button-group>
                 </template>
             </el-table-column>
@@ -240,7 +240,7 @@ export default {
 
         // 进行下载
         async handleDownload(row) {
-            await axios({ method: 'get', url: "/superform/additional/downloadWord", params: { approvalItemId: row.approvalItemId, type: row.type }, responseType: 'arraybuffer' }).then((_res) => {
+            await axios({ method: 'get', url: "/superform/additional/downloadById", params: { id: row.id }, responseType: 'arraybuffer' }).then((_res) => {
                 let blob = new Blob([_res.data], { type: 'application/zip' });
                 const a = document.createElement('a')
                 // 生成文件路径
