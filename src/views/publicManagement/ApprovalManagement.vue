@@ -5,50 +5,41 @@
         </header>
         <div class="workBox">
             <div class="searchBox">
-                <el-input placeholder="按材料编号或名称查询" v-model="keyWord" clearable style="width: 200px;" @change="search">
+                <el-input placeholder="按大项名称查询" v-model="keyWord" clearable style="width: 200px;" @change="search">
                 </el-input>
                 <el-button @click="search">搜索</el-button>
-                <el-button @click="addSortConfig">新增</el-button>
-                <el-button @click="loadSortConfig">载入数据</el-button>
-                <el-button type="primary" @click="downLoadJson('/ai/aiSortconfig/getSortconfigJson')">生成Json</el-button>
+                <el-button @click="addApproval">新增</el-button>
             </div>
             <div class="sampleTable">
                 <el-table ref="multipleTable" border :data="tableData" tooltip-effect="dark" highlight-current-row
                     style="width: 100%"
                     :header-cell-style="{background: '#f9faff',color:'#333',fontFamily:'MicrosoftYaHeiUI',fontSize:'15px',fontWeight:900}"
                     :row-style="{fontSize:'14px',color:'#666',fontFamily:'MicrosoftYaHeiUI'}"
-                    @selection-change="handleSelectionChange">
-                    <el-table-column type="selection" width="55">
+                    >
+                    <el-table-column prop="approvalId" label="序号" width="55">
                     </el-table-column>
-                    <el-table-column type="index" label="序号" :index="indexMethod" width="55">
+                    <el-table-column prop="approvalNo" label="审批项目序号" width="120">
                     </el-table-column>
-                    <el-table-column prop="documentsubSeq" label="材料编号" width="90">
+                    <el-table-column prop="approvalName" label="审批项目名称" width="180">
                     </el-table-column>
-                    <el-table-column prop="sortconfigId" label="sortconfig编号" width="100">
+                    <el-table-column prop="approvalType" label="审批项目类型" width="180" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="documentsubDisplayname" label="材料名称" width="180" show-overflow-tooltip>
+                   <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable >
                     </el-table-column>
-                    <el-table-column prop="lordKeyword" label="主关键字"  show-overflow-tooltip>
+                    <el-table-column prop="updateTime" label="修改时间" :formatter="timeFormatter" sortable
+                        show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="assistKeyword" label="辅助关键字"  show-overflow-tooltip>
-                    </el-table-column>
-                    <el-table-column prop="excludeKeyword" label="排除关键字"  show-overflow-tooltip>
-                    </el-table-column>
-                    <el-table-column prop="pageCode" label="多页编号" width="100" show-overflow-tooltip>
-                    </el-table-column>
+                    
                     <el-table-column label="操作" fixed="right" width="180">
                         <template slot-scope="scope">
-                            <el-button type="primary" style="font-size: 14px" @click="editSortConfig(scope.row)">编辑
+                            <el-button type="primary" style="font-size: 14px" @click="updateApproval(scope.row)">编辑
                             </el-button>
-                            <el-button type="danger" style="font-size: 14px" @click="deleteSortConfigButton(scope.row)">
+                            <el-button type="danger" style="font-size: 14px" @click="deleteApprovalButton(scope.row)">
                                 删除
                             </el-button>
                         </template>
                     </el-table-column>
                 </el-table>
-                <div style="margin-top: 20px">
-                    <el-button @click="toggleSelection()">取消选择</el-button>
-                </div>
                 <div class="tablePagination">
                     <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
                         :current-page.sync="currentPage" :page-size="pageSize" :page-sizes="[5, 10, 20, 50, 100]"
@@ -57,25 +48,16 @@
             </div>
         </div>
         <!--添加SortConfig-->
-        <el-dialog title="填写ai-SortConfig" :visible.sync="dialogVisbleAdd" width="50%" :close-on-click-modal="false">
+        <el-dialog title="新增大项信息" :visible.sync="dialogVisbleAdd" width="50%" :close-on-click-modal="false">
             <el-form label-width="120px" :model="addForm">
-                <el-form-item label="材料" required>
-                    <el-select v-model="addForm.approvalItemAndDocumentsubId" clearable placeholder="请选择材料展示名称">
-                        <el-option v-for="(v,i) in materialOptions" :key="i" :label="v.documentsubDisplayname"
-                            :value="v.id"> </el-option>
-                    </el-select>
+                <el-form-item label="审批项目序号">
+                    <el-input v-model="addForm.approvalNo"></el-input>
                 </el-form-item>
-                <el-form-item label="主关键字">
-                    <el-input v-model="addForm.lordKeyword"></el-input>
+                <el-form-item label="审批项目名称">
+                    <el-input v-model="addForm.approvalName"></el-input>
                 </el-form-item>
-                <el-form-item label="辅助关键字">
-                    <el-input v-model="addForm.assistKeyword"></el-input>
-                </el-form-item>
-                <el-form-item label="排除关键字">
-                    <el-input v-model="addForm.excludeKeyword"></el-input>
-                </el-form-item>
-                <el-form-item label="多页编号">
-                    <el-input v-model="addForm.pageCode" placeholder="只允许数字"></el-input>
+                <el-form-item label="审批项目类型">
+                    <el-input v-model="addForm.approvalType"></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -83,26 +65,17 @@
                 <el-button type="primary" @click="addConfirm">确 定</el-button>
             </span>
         </el-dialog>
-        <!--编辑SortConfig-->
-        <el-dialog title="编辑ai-SortConfig" :visible.sync="dialogVisbleEdit" width="50%" :close-on-click-modal="false">
+        <!--编辑大项-->
+        <el-dialog title="修改大项信息" :visible.sync="dialogVisbleEdit" width="50%" :close-on-click-modal="false">
             <el-form label-width="120px" :model="editForm">
-                <el-form-item label="材料" required>
-                    <el-select v-model="editForm.approvalItemAndDocumentsubId" clearable placeholder="请选择材料展示名称">
-                        <el-option v-for="(v,i) in materialOptions" :key="i" :label="v.documentsubDisplayname"
-                            :value="v.id"> </el-option>
-                    </el-select>
+                <el-form-item label="审批项目序号">
+                    <el-input v-model="editForm.approvalNo"></el-input>
                 </el-form-item>
-                <el-form-item label="主关键字">
-                    <el-input v-model="editForm.lordKeyword"></el-input>
+                <el-form-item label="审批项目名称">
+                    <el-input v-model="editForm.approvalName"></el-input>
                 </el-form-item>
-                <el-form-item label="辅助关键字">
-                    <el-input v-model="editForm.assistKeyword"></el-input>
-                </el-form-item>
-                <el-form-item label="排除关键字">
-                    <el-input v-model="editForm.excludeKeyword"></el-input>
-                </el-form-item>
-                <el-form-item label="多页编号">
-                    <el-input v-model="editForm.pageCode" placeholder="只允许数字"></el-input>
+                <el-form-item label="审批项目类型">
+                    <el-input v-model="editForm.approvalType"></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -115,14 +88,13 @@
 
 <script>
 import axios from 'axios'
+import dayjs from "dayjs";
 import { mixin } from "@/mixin/mixin"
 
 // 接口
 import {
-    listSortconfig, getBySortconfigId, getSortconfig, getSortconfigJson,
-    addSortconfig, updateSortconfig, deleteSortconfig
-} from "@/api/aipreview/sortConfig"
-import { listItemAndDocumentSub } from '@/api/basicInfo/approvalSub'
+    pageApprovalAll, addApproval, updateApproval, deleteApproval, getByApprovalId
+} from "@/api/basicInfo/approval"
 
 
 export default {
@@ -161,78 +133,48 @@ export default {
     },
     async created() {
         // 获取项目信息
-        await this.initProject();
+        // await this.initProject();
         // await this.init();
-        // await this.getSortConfigList();
+        await this.pageApprovalAll();
         // await this.getOptions();
     },
     methods: {
-        // 多选表格相关
-        toggleSelection(rows) {
-            if (rows) {
-                rows.forEach(row => {
-                    this.$refs.multipleTable.toggleRowSelection(row);
-                    // this.$refs.multipleTable.setCurrentRow(row);
-                });
-            } else {
-                this.$refs.multipleTable.clearSelection();
-                this.$refs.multipleTable.setCurrentRow();
-            }
+        //  切页
+        handleCurrentChange() {
+            this.pageApprovalAll();
         },
-        handleSelectionChange(val) {
-            this.multipleSelection = val;
-            console.log('multipleSelection', val);
-            if (this.multipleSelection.length === 1) {
-                this.$refs.multipleTable.setCurrentRow(this.multipleSelection[0]);
-            } else {
-                this.$refs.multipleTable.setCurrentRow();
-            }
-        },
-
-        // 分页
-        async handleSizeChange(val) {
-            // console.log(`每页 ${val} 条`);
+        handleSizeChange(val) {
             this.pageSize = val;
-            this.currentPage = 1;
-            await this.getSortConfigList();
-        },
-        async handleCurrentChange(val) {
-            // console.log(`当前页: ${val}`);
-            this.currentPage = val;
-            await this.getSortConfigList();
+            this.pageApprovalAll();
         },
 
         // 加载表单
-        async getSortConfigList() {
+        async pageApprovalAll() {
             let request = {
-                approvalItemId: this.itemId,
-                globalDocumentSubNameAndCode: this.keyWord,
+                projectId: this.projectId,
+                keyword: this.keyWord,
                 pageNum: this.currentPage,
                 pageSize: this.pageSize
             };
-            let res = await listSortconfig(request);
+            let res = await pageApprovalAll(request);
             if (!res.success) return;
             this.tableData = res.data.records;
             this.totalCount = res.data.total;
         },
 
-        // 载入ba填写的数据
-        async loadSortConfig() {
-            try {
-                await this.$confirm("是否导入BA已填数据", "确认载入",);
-                let res = await getSortconfig({ approvalItemId: this.itemId });
-                if (!res.success) return;
-                this.getSortConfigList();
-                this.$message({ type: "success", message: "载入成功" })
-            } catch (e) {
-                this.$message({ type: "warning", message: "取消载入" })
-            }
-        },
 
         // 搜索
-        search() {
+        async search() {
             this.currentPage = 1;
-            this.getSortConfigList();
+             let result = await pageApprovalAll({
+                projectId: this.projectId,
+                keyword: this.keyWord,
+                pageNum: this.currentPage,
+                pageSize: this.pagesize,
+            });
+            if (!result.success) return;
+            this.tableData = result.data.records;
+            this.totalCount = result.data.total;
         },
 
         // 加载下拉框选项
@@ -243,22 +185,21 @@ export default {
         },
 
         // 新增打开弹框
-        async addSortConfig() {
+        async addApproval() {
             this.dialogVisbleAdd = true;
         },
 
         // 确认新增
         async addConfirm() {
-            this.addForm.approvalItemId = this.itemId;
-            console.log('this.addForm', this.addForm);
-            let res = await addSortconfig(this.addForm);
+            this.addForm.projectId = this.projectId;
+            let res = await addApproval(this.addForm);
             if (!res.success) return;
             this.dialogVisbleAdd = false;
-            this.getSortConfigList();
+            this.pageApprovalAll();
         },
 
         // 编辑
-        async editSortConfig(row) {
+        async updateApproval(row) {
             this.editForm = _.cloneDeep(row);
             console.log('this.editForm');
             console.log(this.editForm);
@@ -266,58 +207,20 @@ export default {
         },
         // 确认编辑
         async editConfirm() {
-            let res = await updateSortconfig(this.editForm);
+            // this.editForm.approvalId = this.row.approvalId;
+            let res = await updateApproval(this.editForm);
             if (!res.success) return;
             this.dialogVisbleEdit = false;
-            this.getSortConfigList();
+            this.pageApprovalAll();
         },
         // 删除checkPoint
-        async deleteSortConfigButton(row) {
-            let res = await deleteSortconfig({ sortconfigId: row.sortconfigId  });
+        async deleteApprovalButton(row) {
+            let res = await deleteApproval({ approvalId: row.approvalId  });
             if (!res.success) return;
-            this.getSortConfigList();
+            this.pageApprovalAll();
         },
-        // 生成Json
-        async downLoadJson(url) {
-            if (this.multipleSelection.length === 0) {
-                this.$message({ type: "warning", message: "请在表格中勾选要生成Json的数据" })
-                return;
-            }
-            let sortconfigIds = [];
-            this.multipleSelection.forEach(item => {
-                sortconfigIds.push(item.sortconfigId );
-            })
-            let res = await axios({
-                method: "get",
-                url: url,
-                params: {
-                    approvalItemId: this.itemId,
-                    sortconfigIds: sortconfigIds.toString(),
-                },
-                responseType: "arraybuffer",
-            });
-            if (res.data.byteLength === 0) {
-                this.$message.warning("没有需要下载的文件");
-                return;
-            }
-            let blob = new Blob([res.data], { type: "application/zip" });
-            const a = document.createElement("a");
-            // 生成文件路径
-            let href = window.URL.createObjectURL(blob);
-            a.href = href;
-            console.log('res');
-            console.log(res);
-            // let _fileName = _res.headers['Content-disposition'].split(';')[1].split('=')[1].split('.')[0]
-            let _fileName = res.headers["content-disposition"]
-                .split(";")[1]
-                .split("=")[1];
-            // 文件名中有中文 则对文件名进行转码
-            a.download = decodeURIComponent(_fileName);
-            // 利用a标签做下载
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(href);
+        timeFormatter(row, column, cellValue, index) {
+            return dayjs(cellValue).format("YYYY-MM-DD HH:mm:ss")
         },
     }
 }

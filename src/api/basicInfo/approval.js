@@ -9,6 +9,18 @@ export const listMaterial = params => { return axios.get(`/ss/material/listMater
 // 获取大项列表
 export const listApprovalAll = params => { return axios.get(`/ss/approval/listApprovalAll`, params).then(res=>res.data); };
 
+// 获取大项列表 - 根据项目id 、 分页
+export const pageApprovalAll = params => { return axios.get(`/ss/approval/pageApprovalAll`, {params}).then(res=>res.data); };
+
+// 新增大项
+export const addApproval = params => { return axios.post(`/ss/approval/addApproval`, params).then(res=>res.data); };
+
+// 编辑大项
+export const updateApproval = params => { return axios.post(`/ss/approval/updateApproval`, params).then(res=>res.data); };
+
+// 删除大项
+export const deleteApproval = params => { return axios.get(`/ss/approval/deleteApproval`, {params}).then(res=>res.data); };
+
 // 获取项目列表
 export const listProjectAll = params => { return axios.get(`/ss/project/listProjectAll`, {params}).then(res=>res.data); };
 
