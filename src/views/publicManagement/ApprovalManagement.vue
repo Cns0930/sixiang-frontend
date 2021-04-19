@@ -16,18 +16,20 @@
                     :header-cell-style="{background: '#f9faff',color:'#333',fontFamily:'MicrosoftYaHeiUI',fontSize:'15px',fontWeight:900}"
                     :row-style="{fontSize:'14px',color:'#666',fontFamily:'MicrosoftYaHeiUI'}"
                     >
-                    <el-table-column prop="approvalId" label="序号" width="55">
+                    <el-table-column prop="approvalId" label="编号"  width="100" v-if="show" >
                     </el-table-column>
-                    <el-table-column prop="approvalNo" label="审批项目序号" width="120">
+                    <el-table-column type="index" label="序号" :index="indexMethod" width="100">
                     </el-table-column>
-                    <el-table-column prop="approvalName" label="审批项目名称" width="180">
+                    <el-table-column prop="approvalNo" label="审批项目序号" width="200">
                     </el-table-column>
-                    <el-table-column prop="approvalType" label="审批项目类型" width="180" show-overflow-tooltip>
+                    <el-table-column prop="approvalName" label="审批项目名称" width="400">
                     </el-table-column>
-                   <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable >
+                    <el-table-column prop="approvalType" label="审批项目类型" width="210" show-overflow-tooltip>
+                    </el-table-column>
+                   <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable width="250">
                     </el-table-column>
                     <el-table-column prop="updateTime" label="修改时间" :formatter="timeFormatter" sortable
-                        show-overflow-tooltip>
+                        show-overflow-tooltip width="250">
                     </el-table-column>
                     
                     <el-table-column label="操作" fixed="right" width="180">
@@ -113,6 +115,7 @@ export default {
             pageSize: 10,
             currentPage: 1,
             totalCount: 0,
+            show: false,
             // 新增弹窗
             dialogVisbleAdd: false,
             addForm: {},

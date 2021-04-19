@@ -15,21 +15,21 @@
                     style="width: 100%"
                     :header-cell-style="{background: '#f9faff',color:'#333',fontFamily:'MicrosoftYaHeiUI',fontSize:'15px',fontWeight:900}"
                     :row-style="{fontSize:'14px',color:'#666',fontFamily:'MicrosoftYaHeiUI'}">
-                    <el-table-column prop="departmentId" label="编号" width="100" v-if="show" >
+                    <el-table-column prop="departmentId" label="编号"  width="100" v-if="show" >
                     </el-table-column>
-                    <el-table-column type="index" label="序号" :index="indexMethod" width="55">
+                    <el-table-column type="index" label="序号" :index="indexMethod" width="100">
                     </el-table-column>
-                    <el-table-column prop="departmentName" label="委办局名称" width="100">
+                    <el-table-column prop="departmentName" label="委办局名称" width="280">
                     </el-table-column>
-                    <el-table-column prop="departmentCode" label="委办局编码" width="100">
+                    <el-table-column prop="departmentCode" label="委办局编码" width="200">
                     </el-table-column>
                     <el-table-column prop="weight" label="事项权重" width="180" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="authority" label="区权"  show-overflow-tooltip>
+                    <el-table-column prop="authority" label="区权"  show-overflow-tooltip width="180">
                     </el-table-column>
-                   <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable >
+                   <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable width="210">
                     </el-table-column>
-                    <el-table-column prop="updateTime" label="修改时间" :formatter="timeFormatter" sortable
+                    <el-table-column prop="updateTime" label="修改时间" :formatter="timeFormatter" sortable width="210"
                         show-overflow-tooltip></el-table-column>
                     
                     <el-table-column label="操作" fixed="right" width="180">
