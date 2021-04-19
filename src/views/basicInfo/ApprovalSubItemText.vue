@@ -91,7 +91,7 @@
                             <span v-else>{{scope.row.requiredDescription}}</span>
                         </template>
                     </el-table-column>
-
+                    <el-table-column prop="isMultiplePage" label="是否多页" :formatter="isRequiredFormatter" width="100"></el-table-column>
                     <el-table-column prop="displayNotes" label="补充说明信息">
                         <template slot-scope="scope">
                             <el-input v-if="scope.row.flag" v-model="scope.row.displayNotes"></el-input>
