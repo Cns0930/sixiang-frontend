@@ -40,7 +40,7 @@
                 <el-table-column prop="updateTime" label="更新时间" :formatter="timeFormatter" show-overflow-tooltip>
                 </el-table-column>
 
-                <el-table-column label="操作" fixed="right" width="260">
+                <el-table-column label="操作" fixed="right" width="120">
                     <template slot-scope="scope">
                         <el-button-group>
                             <el-button @click="handleEdit(scope.row)" :disabled="!hasManagePermission">
@@ -49,9 +49,9 @@
                             <el-button @click="handleDelete(scope.row)" type="danger" :disabled="!hasManagePermission">
                                 删除
                             </el-button>
-                            <el-button @click="handleLook(scope.row)" type="primary" :disabled="!hasManagePermission">
+                            <!-- <el-button @click="handleLook(scope.row)" type="primary">
                                 查看相关事项
-                            </el-button>
+                            </el-button> -->
                         </el-button-group>
                     </template>
                 </el-table-column>
