@@ -133,7 +133,7 @@ export default {
     },
     async created() {
         // 获取项目信息
-        // await this.initProject();
+        await this.initProject();
         // await this.init();
         await this.pageApprovalAll();
         // await this.getOptions();
@@ -170,7 +170,7 @@ export default {
                 projectId: this.projectId,
                 keyword: this.keyWord,
                 pageNum: this.currentPage,
-                pageSize: this.pagesize,
+                pageSize: this.pageSize,
             });
             if (!result.success) return;
             this.tableData = result.data.records;
