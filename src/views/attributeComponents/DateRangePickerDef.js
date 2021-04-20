@@ -19,7 +19,8 @@ class DatePickerDef extends CommonComponents{
             format:this.$format.value,
             rangeSeparator:this.$rangeSeparator.value,
             valueFormat:this.$valueFormat.value || undefined,
-            placeholder:"请输入内容",
+            placeholder:this.placeholder.value,
+            // placeholder:"请输入内容",
             disabled: this.disabled.value
         }
     }
