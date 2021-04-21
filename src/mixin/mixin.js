@@ -49,6 +49,21 @@ export const mixin={
         // 格式化json数据
         jsonFormatter(row, column, cellValue, index){
             return JSON.stringify(cellValue);
-        }
+        },
+        // 自增序号
+        indexMethod(index) {
+            return (this.currentPage - 1) * this.pageSize + (index + 1);
+        },
+        isRequiredFormatter(row, column, cellValue, index) {
+            if (cellValue === 1) {
+                return '是';
+            } else if (cellValue === 0) {
+                return '否';
+            } else if (cellValue === 2) {
+                return '是否';
+            } else {
+                return '-';
+            }
+        },
     }
 }

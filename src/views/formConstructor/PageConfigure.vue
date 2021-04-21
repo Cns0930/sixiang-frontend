@@ -271,7 +271,7 @@ import { mapState } from "vuex";
 import { getStep, saveStep, deleteStep, saveStepBatch, transferJs,listStepsBytype,batchSaveBytype } from "@/api/step/index";
 import { getFieldAll,getSaveMaxTimeStep } from "@/api/superForm/index";
 import { getTemplate } from '@/api/template/index'
-import { listApprovalItem, listProjectAll } from "@/api/basicInfo/approval";
+import { listApprovalItemByUser, listProjectAll } from "@/api/basicInfo/approval";
 import { getById, addSysTransferLog,getUptoDateSysTransferLog } from "@/api/item/index";
 import ace from "ace-builds";
 import beautify from "ace-builds/src-noconflict/ext-beautify";
@@ -859,7 +859,7 @@ export default {
         async selectProject() {
             this.temp_page_itemId = '';
             this.stepList = '';
-            let result = await listApprovalItem({pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.temp_page_projectId});
+            let result = await listApprovalItemByUser({pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.temp_page_projectId});
             this.typeSubItemOptions = result.data.records;
             this.totalAim = result.data.total;
         },
@@ -887,19 +887,19 @@ export default {
         async handleSizeChangeSelect(size){
             this.selectData = [];
             this.pageSize = size;
-            let result = await listApprovalItem({pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.temp_page_projectId});
+            let result = await listApprovalItemByUser({pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.temp_page_projectId});
             this.typeSubItemOptions = result.data.records;
         },
         async handleCurrentChangeSelect(current){
             this.selectData = [];
             this.currentPageSelect = current;
-            let result = await listApprovalItem({pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.temp_page_projectId});
+            let result = await listApprovalItemByUser({pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.temp_page_projectId});
             this.typeSubItemOptions = result.data.records;
         },
         //远程搜索
         async remoteMethod(query){
             this.currentPageSelect = 1;
-                let result = await listApprovalItem({keyword:query, pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.temp_page_projectId});
+                let result = await listApprovalItemByUser({keyword:query, pageNum: this.currentPageSelect, pageSize: this.pageSize, projectId: this.temp_page_projectId});
                 this.loading = true;
                 setTimeout(() => {
                     this.loading = false;

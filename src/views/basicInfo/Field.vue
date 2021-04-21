@@ -195,6 +195,7 @@
                     <el-select v-model="addForm.isScreenshot" clearable placeholder="是否为截图">
                         <el-option label="是" :value="Number(1)"></el-option>
                         <el-option label="否" :value="Number(0)"></el-option>
+                        <el-option label="是否" :value="Number(2)"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="截图信息">
@@ -320,6 +321,7 @@
                     <el-select v-model="editForm.isScreenshot" clearable placeholder="是否为截图">
                         <el-option label="是" :value="Number(1)"></el-option>
                         <el-option label="否" :value="Number(0)"></el-option>
+                        <el-option label="是否" :value="Number(2)"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="截图信息">
@@ -703,9 +705,11 @@ export default {
 
         // 处理编辑
         async handleEdit(scope) {
-            let res = await listItemDocumentSubAllByMaterial({ materialId: scope.row.materialId });
-            if (!res.success) return;
-            this.secondaryMaterialOptions = res.data;
+            if(scope.row.materialId) {
+                let res = await listItemDocumentSubAllByMaterial({ materialId: scope.row.materialId });
+                if (!res.success) return;
+                this.secondaryMaterialOptions = res.data;
+            }
             this.editForm = _.clone(scope.row);
             this.material_change = scope.row.materialName;
             this.editDialogVisible = true;

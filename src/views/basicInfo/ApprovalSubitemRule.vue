@@ -395,7 +395,8 @@ export default {
             // this.approvalSubTextList = []
             let result = await listApprovalSubitemSubkey({approvalItemId:this.itemId});
             if (!result.success) return;
-            this.tableData = result.data.records
+            this.tableData = result.data.records;
+            this.totalCount = result.data.total;
         },
         // 子文档列表
         async getApprovalSubText() {

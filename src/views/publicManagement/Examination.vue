@@ -59,10 +59,7 @@
                        {{scope.row.isMultiplePage == 1? '是':'否'}}
                     </template>
                 </el-table-column> -->
-                <el-table-column prop="isScreenshot" label="是否为截图" width="100">
-                    <template slot-scope="scope">
-                       {{scope.row.isScreenshot == 1? '是':'否'}}
-                    </template>
+                <el-table-column prop="isScreenshot" label="是否为截图" :formatter="isRequiredFormatter" width="100">
                 </el-table-column>
                 <el-table-column prop="screenshotInfo" label="截图信息" show-overflow-tooltip>
                 </el-table-column>
@@ -140,8 +137,9 @@
                     </el-form-item> -->
                     <el-form-item label="是否为截图">
                         <el-select  v-model="addForm.isScreenshot" filterable clearable >
-                            <el-option label="是" :value="1"></el-option>
-                            <el-option label="否" :value="0"></el-option>
+                            <el-option label="是" :value="Number(1)"></el-option>
+                            <el-option label="否" :value="Number(0)"></el-option>
+                            <el-option label="是否" :value="Number(2)"></el-option>
                         </el-select>
                     </el-form-item>
                    <el-form-item label="截图信息">
@@ -214,8 +212,9 @@
                     </el-form-item> -->
                     <el-form-item label="是否为截图">
                         <el-select  v-model="editForm.isScreenshot" filterable clearable >
-                            <el-option label="是" :value="1"></el-option>
-                            <el-option label="否" :value="0"></el-option>
+                            <el-option label="是" :value="Number(1)"></el-option>
+                            <el-option label="否" :value="Number(0)"></el-option>
+                            <el-option label="是否" :value="Number(2)"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="截图信息">
