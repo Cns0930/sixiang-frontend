@@ -686,10 +686,12 @@ export default {
                 newitem.fieldLocation = JSON.stringify(newitem.fieldLocation);
             })
             truthTable.forEach((item, i) => {
-                console.log('item, i');
-                console.log(item, i);
-                item.fieldContent = importNew[i].fieldContent;
-                item.fieldLocation = importNew[i].fieldLocation;
+                if(item.fieldContent === null) {
+                    item.fieldContent = importNew[i].fieldContent;
+                }
+                if(item.fieldLocation === null) {
+                    item.fieldLocation = importNew[i].fieldLocation;
+                }
             })
         },
         // 一键清空已填信息
