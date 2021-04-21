@@ -111,7 +111,6 @@
                                                     </el-select>
                                                 </div>
                                             </div>
-
                                         </el-tab-pane>
                                         <el-tab-pane label="结果标定" name="third" class="resultCase">
                                             <div>
@@ -182,10 +181,10 @@
                                         </el-tab-pane>
                                         <el-tab-pane label="真值标定" name="fourth" class="truth">
                                             <span>
+                                                <el-button type="plain" @click="showRectangles()"
+                                                    style="margin-left: 10px;" round>显示坐标框图</el-button>
                                                 <el-button type="plain" @click="importTruthData(sampleTruthTable)"
                                                     style="margin-left: 10px;" round>一键导入最新提取结果</el-button>
-                                                <el-button type="plain" @click="showRectangles()"
-                                                    style="margin-left: 10px;" round>显示坐标框</el-button>
                                             </span>
                                             <span v-show="imgUrl" class="truth-table">截取展示:</span>
                                             <img :src="imgUrl" alt="" width="100%">
@@ -215,6 +214,19 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <span>
+                                                <el-button type="plain" @click="clearData(sampleTruthTable)"
+                                                    style="margin-left: 10px;" round>一键清空</el-button>
+                                                <span>
+                                                    <el-popover placement="bottom" title="注释" width="200"
+                                                        trigger="click"
+                                                        content="一键导入和一键清空只更改当前页面数据，均未保存到云端，请点击“保存真值”来保存修改。">
+                                                        <el-button slot="reference" type="text" size="medium" round><i
+                                                                class="el-icon-info" style="font-size: 18px;" />
+                                                        </el-button>
+                                                    </el-popover>
+                                                </span>
+                                            </span>
                                         </el-tab-pane>
                                     </el-tabs>
                                 </div>
@@ -670,6 +682,22 @@ export default {
             let result = await importSampleResultFieldByDocumentId({ documentId: this.rowInfo.id })
             if (!result.success) return;
             let importNew = result.data;
+            importNew.forEach(newitem => {
+                newitem.fieldLocation = JSON.stringify(newitem.fieldLocation);
+            })
+            truthTable.forEach((item, i) => {
+                console.log('item, i');
+                console.log(item, i);
+                item.fieldContent = importNew[i].fieldContent;
+                item.fieldLocation = importNew[i].fieldLocation;
+            })
+        },
+        // 一键清空已填信息
+        clearData(truthTable) {
+            truthTable.forEach(item => {
+                item.fieldContent = null;
+                item.fieldLocation = null;
+            })
         },
         // 显示or关闭坐标框
         showRectangles() {
@@ -703,8 +731,8 @@ export default {
                             ctx.lineWidth = 5;
                             ctx.stroke();
                             ctx.font = "70px 微软雅黑";
-                            ctx.shadowBlur = 20;
-                            ctx.shadowColor = "rgba(0, 0, 0, 1)";
+                            ctx.shadowBlur = 10;
+                            ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
                             ctx.shadowOffsetX = 5;
                             ctx.shadowOffsetY = 5;
                             ctx.strokeText(String(number), xText, yText);
@@ -941,6 +969,7 @@ export default {
                                 justify-content: flex-start;
                                 .truth-table {
                                     width: 100%;
+                                    padding: 20px;
                                     .truth-table-item {
                                         margin-left: 20px;
                                         display: flex;
