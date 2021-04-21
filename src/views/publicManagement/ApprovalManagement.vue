@@ -26,6 +26,8 @@
                     </el-table-column>
                     <el-table-column prop="approvalType" label="审批项目类型" width="210" show-overflow-tooltip>
                     </el-table-column>
+                    <el-table-column prop="departmentName" label="所属委办局" width="210" show-overflow-tooltip>
+                    </el-table-column>
                    <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable width="250">
                     </el-table-column>
                     <el-table-column prop="updateTime" label="修改时间" :formatter="timeFormatter" sortable
@@ -61,6 +63,12 @@
                 <el-form-item label="审批项目类型">
                     <el-input v-model="addForm.approvalType"></el-input>
                 </el-form-item>
+                <el-form-item label="所属委办局" required>
+                    <el-select v-model="addForm.departmentId" clearable placeholder="请选择所属委办局">
+                        <el-option v-for="(v,i) in departmentOptions" :key="i" :label="v.departmentName"
+                            :value="v.departmentId"> </el-option>
+                    </el-select>
+                </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogVisbleAdd = false">取 消</el-button>
@@ -78,6 +86,12 @@
                 </el-form-item>
                 <el-form-item label="审批项目类型">
                     <el-input v-model="editForm.approvalType"></el-input>
+                </el-form-item>
+                <el-form-item label="所属委办局" required>
+                    <el-select v-model="editForm.departmentName" clearable placeholder="请选择所属委办局">
+                        <el-option v-for="(v,i) in departmentOptions" :key="i" :label="v.departmentName"
+                            :value="v.departmentId"> </el-option>
+                    </el-select>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -97,6 +111,9 @@ import { mixin } from "@/mixin/mixin"
 import {
     pageApprovalAll, addApproval, updateApproval, deleteApproval, getByApprovalId
 } from "@/api/basicInfo/approval"
+import {
+    likelistDepartments
+} from "@/api/documentAndApproval/index"
 
 
 export default {
@@ -124,6 +141,7 @@ export default {
             initPositionList: [],
             valueFieldList: [],
             valuePatternList: [],
+            departmentOptions: [],
             // 编辑弹窗
             dialogVisbleEdit: false,
             editForm: {
@@ -182,16 +200,18 @@ export default {
 
         // 加载下拉框选项
         async getOptions() {
-            let resMaterial = await listItemAndDocumentSub({ approvalItemId: this.itemId, pageNum: 1, pageSize: 500 });
-            if (!resMaterial.success) return;
-            this.materialOptions = resMaterial.data.records;
+            let result = await likelistDepartments();
+            if (!result.success) return;
+            this.departmentOptions = result.data.records;
         },
 
         // 新增打开弹框
         async addApproval() {
             this.dialogVisbleAdd = true;
+            let result = await likelistDepartments();
+            if (!result.success) return;
+            this.departmentOptions = result.data.records;
         },
-
         // 确认新增
         async addConfirm() {
             this.addForm.projectId = this.projectId;
@@ -207,6 +227,8 @@ export default {
             console.log('this.editForm');
             console.log(this.editForm);
             this.dialogVisbleEdit = true;
+            
+            this.getOptions()
         },
         // 确认编辑
         async editConfirm() {
