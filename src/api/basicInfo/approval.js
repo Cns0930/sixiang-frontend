@@ -71,3 +71,6 @@ export const addSysVersionItem = params => { return axios.post(`/account/SysVers
 
 // 事项管理查询-按用户
 export const listApprovalItemByUser = params => { return axios.get(`/ss/approvalItem/listApprovalItemByUser`, {params}).then(res=>res.data); };
+
+// 查询上传的git信息列表
+export const listSysGitVersionLog = params => { return axios.get(`/account/SysGitVersionLog/listSysGitVersionLog`, {params}).then(res=>res.data); };

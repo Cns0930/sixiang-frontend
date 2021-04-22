@@ -9,6 +9,7 @@
     "build": "vue-cli-service build --max_old_space_size=4096"
   },
   "dependencies": {
+    "@vue/composition-api": "^1.0.0-rc.7",
     "ace-builds": "^1.4.11",
     "axios": "^0.19.2",
     "core-js": "^3.6.4",

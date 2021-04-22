@@ -22,11 +22,11 @@
                                     </div>
                                     <div class="sampleTable">
                                         <el-table ref="fileTable" :data="tableData" tooltip-effect="dark"
-                                            highlight-current-row style="width: 100%"
+                                            highlight-current-row style="width: 100%; min-width: 500px"
                                             :header-cell-style="{background: '#f9faff',color:'#333',fontFamily:'MicrosoftYaHeiUI',fontSize:'15px',fontWeight:800}"
                                             :row-style="{fontSize:'13px',color:'#666',fontFamily:'MicrosoftYaHeiUI'}"
                                             @selection-change="handleSelectionChange">
-                                            <el-table-column type="selection" :selectable="checkboxSelect" width="50">
+                                            <el-table-column type="selection" :selectable="checkboxSelect" width="45">
                                             </el-table-column>
                                             <el-table-column label="文件名" min-width="60%">
                                                 <template slot-scope="scope">
@@ -35,6 +35,14 @@
                                                     <el-button type="text" style="font-size: 16px"
                                                         @click="changeFileTable(scope.row)">
                                                         {{ scope.row.fileName }}</el-button>
+                                                </template>
+                                            </el-table-column>
+                                            <el-table-column prop="name" label="标定信息" min-width="40%">
+                                                <template slot-scope="scope">
+                                                    <span v-if="scope.row.documentsubSeq" style="color: green">
+                                                        <i class="el-icon-check"></i>
+                                                        {{ ' ' + scope.row.documentsubSeq + ' - ' + scope.row.documentsubDisplayname }}
+                                                    </span>
                                                 </template>
                                             </el-table-column>
                                         </el-table>
@@ -57,7 +65,7 @@
                                                     <el-button icon="el-icon-plus" @click="sizeUp(item)" circle>
                                                     </el-button>
                                                     <el-button round @click="imgOpen(item.valueUrl)">打开图片</el-button>
-                                                    <el-button @click="updateOcr(item)" >更新ocr</el-button>
+                                                    <el-button @click="updateOcr(item)">更新ocr</el-button>
                                                 </div>
                                             </div>
                                             <div class="case-rows">
@@ -83,14 +91,67 @@
                                     </div>
                                 </el-col>
                             </div>
-
                         </div>
-
                     </el-col>
                 </div>
             </el-row>
             <el-row :gutter="30" class="datatrend-body-items" style="padding: 0 15px;">
                 <div class="datatrend-body-items-box">
+                    <div class="datatrend-body-item">
+                        <div class="case-content">
+                            <div class="case-header">
+                                <div class="case-header-left">SortConfig</div>
+                                <div class="case-header-mid">
+                                    <el-select v-model="selectedSortConfigs" multiple filterable clearable
+                                        placeholder="请选择要修改的SortConfig(多选)" style="width: 600px"
+                                        @change="showSortConfigs()">
+                                        <el-option v-for="item in sortConfigOptions" :key="item.sortconfigId"
+                                            :label="item.documentsubSeq + ' : ' + item.documentsubDisplayname + ' sortconfigId : ' + item.sortconfigId"
+                                            :value="item.sortconfigId">
+                                        </el-option>
+                                    </el-select>
+                                </div>
+                            </div>
+                            <div class="case-rows">
+                                <div class="sortConfigTable">
+                                    <el-table ref="multipleTable" border :data="sortConfigData" tooltip-effect="dark"
+                                        highlight-current-row style="width: 100%"
+                                        :header-cell-style="{background: '#f9faff',color:'#333',fontFamily:'MicrosoftYaHeiUI',fontSize:'15px',fontWeight:900}"
+                                        :row-style="{fontSize:'14px',color:'#666',fontFamily:'MicrosoftYaHeiUI'}">
+                                        <el-table-column type="index" label="索引" width="55">
+                                        </el-table-column>
+                                        <el-table-column prop="documentsubSeq" label="材料编号" width="90">
+                                        </el-table-column>
+                                        <el-table-column prop="sortconfigId" label="sortconfig编号" width="100">
+                                        </el-table-column>
+                                        <el-table-column prop="documentsubDisplayname" label="材料名称" width="180"
+                                            show-overflow-tooltip>
+                                        </el-table-column>
+                                        <el-table-column prop="lordKeyword" label="主关键字" show-overflow-tooltip>
+                                        </el-table-column>
+                                        <el-table-column prop="assistKeyword" label="辅助关键字" show-overflow-tooltip>
+                                        </el-table-column>
+                                        <el-table-column prop="excludeKeyword" label="排除关键字" show-overflow-tooltip>
+                                        </el-table-column>
+                                        <el-table-column prop="pageCode" label="多页编号" width="100" show-overflow-tooltip>
+                                        </el-table-column>
+                                        <el-table-column label="操作" fixed="right" width="180">
+                                            <template slot-scope="scope">
+                                                <el-button type="primary" style="font-size: 14px"
+                                                    @click="editSortConfig(scope.row)">编辑
+                                                </el-button>
+                                            </template>
+                                        </el-table-column>
+                                    </el-table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </el-row>
+            <el-row :gutter="30" class="datatrend-body-items"
+                style="padding: 0 15px; margin-top: 15px; display: flex; flex-flow: row;">
+                <div class="datatrend-body-items-box" style="width: 85%;">
                     <div class="datatrend-body-item">
                         <div class="case-content">
                             <div class="case-header">
@@ -119,8 +180,8 @@
                                         <el-table-column prop="documentsubDisplayname" label="材料名称" width="180"
                                             show-overflow-tooltip>
                                         </el-table-column>
-                                        <el-table-column prop="multiPageInfo" label="是否为多页"
-                                            width="130" show-overflow-tooltip>
+                                        <el-table-column prop="multiPageInfo" label="是否为多页" width="130"
+                                            show-overflow-tooltip>
                                         </el-table-column>
                                         <el-table-column prop="fieldName" label="字段名" width="180" show-overflow-tooltip>
                                         </el-table-column>
@@ -213,58 +274,16 @@
                         </div>
                     </div>
                 </div>
-            </el-row>
-            <el-row :gutter="30" class="datatrend-body-items" style="padding: 0 15px; margin-top: 15px">
-                <div class="datatrend-body-items-box">
-                    <div class="datatrend-body-item">
-                        <div class="case-content">
-                            <div class="case-header">
-                                <div class="case-header-left">SortConfig</div>
-                                <div class="case-header-mid">
-                                    <el-select v-model="selectedSortConfigs" multiple filterable clearable
-                                        placeholder="请选择要修改的SortConfig(多选)" style="width: 600px"
-                                        @change="showSortConfigs()">
-                                        <el-option v-for="item in sortConfigOptions" :key="item.sortconfigId"
-                                            :label="item.documentsubSeq + ' : ' + item.documentsubDisplayname + ' sortconfigId : ' + item.sortconfigId"
-                                            :value="item.sortconfigId">
-                                        </el-option>
-                                    </el-select>
-                                </div>
-                            </div>
-                            <div class="case-rows">
-                                <div class="sortConfigTable">
-                                    <el-table ref="multipleTable" border :data="sortConfigData" tooltip-effect="dark"
-                                        highlight-current-row style="width: 100%"
-                                        :header-cell-style="{background: '#f9faff',color:'#333',fontFamily:'MicrosoftYaHeiUI',fontSize:'15px',fontWeight:900}"
-                                        :row-style="{fontSize:'14px',color:'#666',fontFamily:'MicrosoftYaHeiUI'}">
-                                        <el-table-column type="index" label="索引" width="55">
-                                        </el-table-column>
-                                        <el-table-column prop="documentsubSeq" label="材料编号" width="90">
-                                        </el-table-column>
-                                        <el-table-column prop="sortconfigId" label="sortconfig编号" width="100">
-                                        </el-table-column>
-                                        <el-table-column prop="documentsubDisplayname" label="材料名称" width="180"
-                                            show-overflow-tooltip>
-                                        </el-table-column>
-                                        <el-table-column prop="lordKeyword" label="主关键字" show-overflow-tooltip>
-                                        </el-table-column>
-                                        <el-table-column prop="assistKeyword" label="辅助关键字" show-overflow-tooltip>
-                                        </el-table-column>
-                                        <el-table-column prop="excludeKeyword" label="排除关键字" show-overflow-tooltip>
-                                        </el-table-column>
-                                        <el-table-column prop="pageCode" label="多页编号" width="100" show-overflow-tooltip>
-                                        </el-table-column>
-                                        <el-table-column label="操作" fixed="right" width="180">
-                                            <template slot-scope="scope">
-                                                <el-button type="primary" style="font-size: 14px"
-                                                    @click="editSortConfig(scope.row)">编辑
-                                                </el-button>
-                                            </template>
-                                        </el-table-column>
-                                    </el-table>
-                                </div>
-                            </div>
+                <div class="datatrend-body-items-box" style="width: 14%; margin-left: 1%; display: flex;
+                    flex-flow: column;
+                    align-items: center;
+                    justify-content: center;">
+                    <div class="results-presentation">
+                        <div>
+                            <el-button icon="el-icon-video-play" circle style="font-size: 30px"
+                                @click="openResultsPresentation"></el-button>
                         </div>
+                        <div style="font-size: 18px;color: rgb(99, 137, 231); margin-top: 10px">查看结果</div>
                     </div>
                 </div>
             </el-row>
@@ -413,6 +432,8 @@
                     <el-button type="primary" @click="editConfirmSortConfig">确 定</el-button>
                 </span>
             </el-dialog>
+            <!-- 结果展示页面dialog -->
+            <ResultsPresentationDialog ref="resPresentation" />
         </div>
     </div>
 </template>
@@ -424,6 +445,9 @@ import { mixin } from "@/mixin/mixin"
 import { mapGetters, mapState } from "vuex"
 import state from '@/vuex/home/state';
 import dayjs from "dayjs";
+import VueCompositionAPI from '@vue/composition-api'
+import { ref } from "@vue/composition-api";
+import ResultsPresentationDialog from "./ResultsPresentationDialog"
 // 接口
 import { getFileList, uploadOcrById } from "@/api/basicInfo/sample/document"
 import {
@@ -433,10 +457,20 @@ import {
     listSortconfig, updateSortconfig
 } from "@/api/aipreview/sortConfig"
 
+Vue.use(VueCompositionAPI)
 
 export default {
     name: "AiDevelopment",
     mixins: [mixin],
+    components: {
+        ResultsPresentationDialog
+    },
+    setup() {
+        const resPresentation = ref(null);
+        return {
+            resPresentation,
+        }
+    },
     data() {
         return {
             // 初始数据
@@ -679,6 +713,36 @@ export default {
             await this.getSortConfigList();
             this.showSortConfigs();
         },
+        // 打开结果展示页面弹框
+        openResultsPresentation() {
+            if (this.multipleSelection.length === 0) {
+                this.$message.warning('请先选择材料图片!');
+                return;
+            }
+            if (this.sortConfigData.length === 0) {
+                this.$message.warning('请先选择sortConfig!');
+                return;
+            }
+            if (this.CheckPointData.length === 0) {
+                this.$message.warning('请先选择checkPoint!');
+                return;
+            }
+            if(this.resPresentation) {
+                this.resPresentation.approvalItemId = Number(this.itemId);
+                this.resPresentation.checkpointIds = this.CheckPointData.map(item => {
+                    return item.checkpointId
+                })
+                this.resPresentation.sortconfigIds = this.sortConfigData.map(item => {
+                    return item.sortconfigId
+                })
+                this.resPresentation.picId = this.multipleSelection.map(item => {
+                    return item.id
+                })
+                this.resPresentation.picListInfo = this.multipleSelection;
+                this.resPresentation.calcMode = 1;
+            }
+            this.resPresentation && this.resPresentation.openDialog();
+        },
     },
 
 }
@@ -915,6 +979,19 @@ export default {
                             }
                         }
                     }
+                }
+                // 结果展示运行按钮页面样式
+                .results-presentation {
+                    border: thin #f7f3f3 solid;
+                    box-shadow: 1px 1px 3px #e2dddd;
+                    border-radius: 10px;
+                    display: flex;
+                    flex-flow: column;
+                    align-items: center;
+                    justify-content: center;
+                    width: 100%;
+                    padding: 64px 0px;
+                    background: #ffffff;
                 }
             }
         }

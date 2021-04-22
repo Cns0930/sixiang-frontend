@@ -723,9 +723,9 @@ export default {
             // 处理调研备注信息的展示
             this.temp_field_info = {descriptionInfo: result.data.descriptionInfo, validationInfo: result.data.validationInfo};
 
-            let newFieldObj = deserializeTableData({ id: result.data.id, fieldType: result.data.fieldType, remark: result.data.remark,
+            let newFieldObj = deserializeTableData({ ... result.data.object, id: result.data.id, fieldType: result.data.fieldType, remark: result.data.remark,
             parentId: result.data.parentId, 
-            children:  result.data.children, ... result.data.object }); 
+            children:  result.data.children  }); 
             this.temp_fieldObj = newFieldObj;
             console.log(this.temp_fieldObj)
             delete this.temp_fieldObj.list;
@@ -737,13 +737,14 @@ export default {
            
             if(!result.success) return;
             let newFieldObj = deserializeTableData({ 
+                ... result.data.object ,
                 id: result.data.id, 
                 fieldType: result.data.fieldType,
                 fieldName: result.data.fieldName,
                 descriptionInfo: result.data.descriptionInfo,
                 validationInfo: result.data.validationInfo, 
-                children: result.data.children, 
-                ... result.data.object 
+                children: result.data.children
+                
             }); 
             this.temp_fieldObj = newFieldObj;
             delete this.temp_fieldObj.list;
@@ -797,9 +798,9 @@ export default {
         async handlePreview() {
             let result = await getFieldAll({ approvalItemId: this.itemId});
             if (!result.success) return;
-            let tableData = result.data.map(v => ({ id: v.id, fieldType: v.fieldType, fieldName: v.fieldName,
+            let tableData = result.data.map(v => ({...v.object , id: v.id, fieldType: v.fieldType, fieldName: v.fieldName,
                 remark: v.remark,
-                children: v.children, ...v.object })).map(deserializeTableData);
+                children: v.children})).map(deserializeTableData);
             let baseFields =  tableData.filter(v => v.fieldType == 1);
             let computedFields = tableData.filter(v => v.fieldType == 2);
             let module = {
@@ -914,10 +915,10 @@ export default {
             if (!result.success) return;
             this.totalCount = result.data.total;
             this.currentPage = result.data.current;
-            let tableData = result.data.records.map(v => ({ id: v.id, fieldType: v.fieldType, fieldName: v.fieldName,
+            let tableData = result.data.records.map(v => ({  ...v.object , id: v.id, fieldType: v.fieldType, fieldName: v.fieldName,
                 remark: v.remark,
                 descriptionInfo: v.descriptionInfo,
-                validationInfo: v.validationInfo,children: v.children, ...v.object })).map(deserializeTableData);
+                validationInfo: v.validationInfo,children: v.children})).map(deserializeTableData);
             console.log("tableData:",tableData)
             this.$store.commit(
                 "putTableData",
