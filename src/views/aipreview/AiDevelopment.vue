@@ -110,6 +110,7 @@
                                             :value="item.sortconfigId">
                                         </el-option>
                                     </el-select>
+                                    <el-button @click="addSortConfig" style="margin-left: 15px">新增</el-button>
                                 </div>
                             </div>
                             <div class="case-rows">
@@ -165,6 +166,7 @@
                                             :value="item.checkpointId">
                                         </el-option>
                                     </el-select>
+                                    <el-button @click="addCheckPoint" style="margin-left: 15px">新增</el-button>
                                 </div>
                             </div>
                             <div class="case-rows">
@@ -279,6 +281,10 @@
                     align-items: center;
                     justify-content: center;">
                     <div class="results-presentation">
+                        <el-select v-model="calcMode" style="width:100px;margin:10px;">
+                            <el-option label="分类" :value="Number(1)"></el-option>
+                            <el-option label="提取" :value="Number(3)"></el-option>
+                        </el-select>
                         <div>
                             <el-button icon="el-icon-video-play" circle style="font-size: 30px"
                                 @click="openResultsPresentation"></el-button>
@@ -289,6 +295,99 @@
             </el-row>
         </div>
         <div class="workHandleBox">
+            <!--添加CheckPoint-->
+            <el-dialog title="填写ai-CheckPoint" :visible.sync="dialogVisbleAddCheckPoint" width="50%"
+                :close-on-click-modal="false">
+                <el-form label-width="120px" :model="addForm">
+                    <el-form-item label="材料" required>
+                        <el-select v-model="addForm.approvalItemAndDocumentsubId" clearable placeholder="请选择材料展示名称">
+                            <el-option v-for="(v,i) in materialOptions" :key="i" :label="v.documentsubDisplayname"
+                                :value="v.id"> </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="字段" required>
+                        <el-select v-model="addForm.fieldId" clearable placeholder="请选择字段名称">
+                            <el-option v-for="(v,i) in fieldOptions" :key="i" :label="v.fieldName" :value="v.fieldId">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="字段值所处环境">
+                        <el-select v-model="addForm.valueEnvironment" clearable>
+                            <el-option label="table - 表格" value="table"></el-option>
+                            <el-option label="text - 文本" value="text"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="key和value位置关系">
+                        <el-select v-model="addForm.keyValueRelativePosition" filterable allow-create clearable
+                            placeholder="上、右、下、左、周围、中央">
+                            <el-option label="up" value="up"></el-option>
+                            <el-option label="right" value="right"></el-option>
+                            <el-option label="down" value="down"></el-option>
+                            <el-option label="left" value="left"></el-option>
+                            <el-option label="around" value="around"></el-option>
+                            <el-option label="middle" value="middle"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="文本正则表达式" class="ruleItem">
+                        <div v-for="(item,i) in valuePatternList" :key="i" class="ruleItems">
+                            <el-input type='textarea' v-model="item.value"></el-input>
+                            <i v-if="valuePatternList.length>=1" style="margin-left:10px;color:red;cursor: pointer;"
+                                class="el-icon-delete" @click="deleteItem(i, 'valuePattern')"></i>
+                        </div>
+                        <i class="el-icon-plus" style="margin-left:10px;color:#409EFF;cursor: pointer;"
+                            @click="addRuleLawList('valuePattern')"></i>
+                    </el-form-item>
+                    <el-form-item label="文本正则表达式作用域">
+                        <el-select v-model="addForm.textStringPatternRange" clearable>
+                            <el-option label="line - 提取信息和提取锚点位于一行" value="line"></el-option>
+                            <el-option label="context - 提取信息和提取锚点处于多行" value="context"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="截图表达式" class="ruleItem">
+                        <div v-for="(item,i) in cutImgTagList" :key="i" class="ruleItems">
+                            <el-input type='textarea' v-model="item.value"></el-input>
+                            <i v-if="cutImgTagList.length>=1" style="margin-left:10px;color:red;cursor: pointer;"
+                                class="el-icon-delete" @click="deleteItem(i, 'cutImgTag')"></i>
+                        </div>
+                        <i class="el-icon-plus" style="margin-left:10px;color:#409EFF;cursor: pointer;"
+                            @click="addRuleLawList('cutImgTag')"></i>
+                    </el-form-item>
+                    <el-form-item label="截图初始化位置" class="ruleItem">
+                        <div v-for="(item,i) in initPositionList" :key="i" class="ruleItems">
+                            <el-input type='textarea' v-model="item.value"></el-input>
+                            <i v-if="initPositionList.length>=1" style="margin-left:10px;color:red;cursor: pointer;"
+                                class="el-icon-delete" @click="deleteItem(i, 'initPosition')"></i>
+                        </div>
+                        <i class="el-icon-plus" style="margin-left:10px;color:#409EFF;cursor: pointer;"
+                            @click="addRuleLawList('initPosition')"></i>
+                    </el-form-item>
+                    <el-form-item label="行合并阈值">
+                        <el-input v-model="addForm.lineMerge"></el-input>
+                    </el-form-item>
+                    <el-form-item label="多页编号">
+                        <el-input v-model="addForm.page" placeholder="只允许数字"></el-input>
+                    </el-form-item>
+                    <el-form-item label="值域" class="ruleItem">
+                        <div v-for="(item,i) in valueFieldList" :key="i" class="ruleItems">
+                            <el-input type='textarea' v-model="item.value"></el-input>
+                            <i v-if="valueFieldList.length>=1" style="margin-left:10px;color:red;cursor: pointer;"
+                                class="el-icon-delete" @click="deleteItem(i, 'valueField')"></i>
+                        </div>
+                        <i class="el-icon-plus" style="margin-left:10px;color:#409EFF;cursor: pointer;"
+                            @click="addRuleLawList('valueField')"></i>
+                    </el-form-item>
+                    <el-form-item label="字段属性">
+                        <el-select v-model="addForm.valueProperty" filterable clearable>
+                            <el-option v-for="(v,i) in valuePropertyOptions" :key="i" :label="v.label" :value="v.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-form>
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="dialogVisbleAddCheckPoint = false">取 消</el-button>
+                    <el-button type="primary" @click="addConfirm">确 定</el-button>
+                </span>
+            </el-dialog>
             <!--编辑CheckPoint-->
             <el-dialog title="编辑ai-CheckPoint" :visible.sync="dialogVisbleEdit" width="50%"
                 :close-on-click-modal="false">
@@ -404,6 +503,35 @@
                     <el-button type="primary" @click="editConfirm">确 定</el-button>
                 </span>
             </el-dialog>
+            <!--添加SortConfig-->
+            <el-dialog title="填写ai-SortConfig" :visible.sync="dialogVisbleAddSortConfig" width="50%"
+                :close-on-click-modal="false">
+                <el-form label-width="120px" :model="addFormSortConfig">
+                    <el-form-item label="材料" required>
+                        <el-select v-model="addFormSortConfig.approvalItemAndDocumentsubId" clearable
+                            placeholder="请选择材料展示名称">
+                            <el-option v-for="(v,i) in materialOptions" :key="i" :label="v.documentsubDisplayname"
+                                :value="v.id"> </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="主关键字">
+                        <el-input v-model="addFormSortConfig.lordKeyword"></el-input>
+                    </el-form-item>
+                    <el-form-item label="辅助关键字">
+                        <el-input v-model="addFormSortConfig.assistKeyword"></el-input>
+                    </el-form-item>
+                    <el-form-item label="排除关键字">
+                        <el-input v-model="addFormSortConfig.excludeKeyword"></el-input>
+                    </el-form-item>
+                    <el-form-item label="多页编号">
+                        <el-input v-model="addFormSortConfig.pageCode" placeholder="只允许数字"></el-input>
+                    </el-form-item>
+                </el-form>
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="dialogVisbleAddSortConfig = false">取 消</el-button>
+                    <el-button type="primary" @click="addConfirmSortConfig">确 定</el-button>
+                </span>
+            </el-dialog>
             <!--编辑SortConfig-->
             <el-dialog title="编辑ai-SortConfig" :visible.sync="dialogVisbleEditSortConfig" width="50%"
                 :close-on-click-modal="false">
@@ -451,11 +579,13 @@ import ResultsPresentationDialog from "./ResultsPresentationDialog"
 // 接口
 import { getFileList, uploadOcrById } from "@/api/basicInfo/sample/document"
 import {
-    listCheckpoint, updateCheckpoint
+    listCheckpoint, updateCheckpoint, addCheckpoint
 } from "@/api/aipreview/checkPoint.js"
 import {
-    listSortconfig, updateSortconfig
+    listSortconfig, updateSortconfig, addSortconfig
 } from "@/api/aipreview/sortConfig"
+import { listItemAndDocumentSub } from '@/api/basicInfo/approvalSub'
+import { listFieldUnionMaterial } from '@/api/basicInfo/field'
 
 Vue.use(VueCompositionAPI)
 
@@ -490,6 +620,11 @@ export default {
             CheckPointData: [],
             CheckPointOptions: [],
             selectedCheckPoints: [],
+            // 新增弹窗
+            dialogVisbleAddCheckPoint: false,
+            addForm: {},
+            materialOptions: [],
+            fieldOptions: [],
             // CheckPoint编辑弹窗
             cutImgTagList: [],
             initPositionList: [],
@@ -499,7 +634,8 @@ export default {
             screenshotInfoOptions: [
                 { value: '是否签字', label: '是否签字' }, { value: '是否盖章', label: '是否盖章' }, { value: '是否填写日期', label: '是否填写日期' }, { value: '是否粘贴身份证', label: '是否粘贴身份证' }, { value: '提取身份证姓名', label: '提取身份证姓名' }, { value: '提取身份证有效期限', label: '提取身份证有效期限' },
                 { value: '是否已填写', label: '是否已填写' }, { value: '提取身份证住址', label: '提取身份证住址' }, { value: '提取身份证公民身份号码', label: '提取身份证公民身份号码' }, { value: '提取身份证性别', label: '提取身份证性别' }, { value: '提取身份证民族', label: '提取身份证民族' },
-                { value: '提取身份证出生', label: '提取身份证出生' }, { value: '是否勾选', label: '是否勾选' }, { value: '勾选内容', label: '勾选内容' }, { value: '是否粘贴证件照片', label: '是否粘贴证件照片' }, { value: '是否盖红章', label: '是否盖红章' }
+                { value: '提取身份证出生', label: '提取身份证出生' }, { value: '是否勾选', label: '是否勾选' }, { value: '勾选内容', label: '勾选内容' }, { value: '是否粘贴证件照片', label: '是否粘贴证件照片' }, { value: '是否盖红章', label: '是否盖红章' },
+                { value: 'NER', label: 'NER' }
             ],
             sortOptions: [
                 { value: 'WHO', label: 'WHO' }, { value: 'WHERE', label: 'WHERE' }, { value: 'WHAT', label: 'WHAT' },
@@ -521,9 +657,15 @@ export default {
             sortConfigOptions: [],
             sortConfigData: [],
             selectedSortConfigs: [],
+            // 新增弹窗
+            dialogVisbleAddSortConfig: false,
+            addFormSortConfig: {},
             // 编辑弹框
             editFormSortConfig: {},
             dialogVisbleEditSortConfig: false,
+
+            // 运行结果
+            calcMode: 1,
         }
     },
     computed: {
@@ -541,6 +683,7 @@ export default {
         await this.getFileListTable();
         await this.getListCheckpoint();
         await this.getSortConfigList();
+        await this.getOptions();
     },
     methods: {
         // 多选
@@ -551,6 +694,15 @@ export default {
                 item.imgWidth = '100%';
             })
             console.log('multipleSelection', this.multipleSelection);
+        },
+        // 加载下拉框选项
+        async getOptions() {
+            let resMaterial = await listItemAndDocumentSub({ approvalItemId: this.itemId, pageNum: 1, pageSize: 500 });
+            if (!resMaterial.success) return;
+            this.materialOptions = resMaterial.data.records;
+            let resField = await listFieldUnionMaterial({ approvalItemId: this.itemId, isCheckpoint: 1, pageNum: 1, pageSize: 500 });
+            if (!resField.success) return;
+            this.fieldOptions = resField.data.records;
         },
         // 禁用选择文件夹
         checkboxSelect(row, rowIndex) {
@@ -622,6 +774,9 @@ export default {
             result.data.unshift('- - - - - OCR结果已更新 - - - - - - ');
             item.ocrResultShow = result.data;
         },
+
+
+        // CheckPoint
         // 加载checkPointOptions
         async getListCheckpoint() {
             let request = {
@@ -673,6 +828,40 @@ export default {
             await this.getListCheckpoint();
             this.showCheckPoints();
         },
+        // 增加
+        addRuleLawList(val) {
+            if (val == 'cutImgTag') {
+                this.cutImgTagList.push({ value: '' });
+            }
+            if (val == 'initPosition') {
+                this.initPositionList.push({ value: '' });
+            }
+            if (val == 'valueField') {
+                this.valueFieldList.push({ value: '' });
+            }
+            if (val === 'valuePattern') {
+                this.valuePatternList.push({ value: '' });
+            }
+        },
+        // 新增打开弹框
+        async addCheckPoint() {
+            this.dialogVisbleAddCheckPoint = true;
+        },
+        // 确认新增
+        async addConfirm() {
+            console.log(this.cutImgTagList);
+            this.addForm.cutImgTag = this.cutImgTagList.map(item => item.value);
+            this.addForm.initPosition = this.initPositionList.map(item => item.value);
+            this.addForm.valueField = this.valueFieldList.map(item => item.value);
+            this.addForm.valuePattern = this.valuePatternList.map(item => item.value);
+            this.addForm.approvalItemId = this.itemId;
+            console.log('this.addForm', this.addForm);
+            let res = await addCheckpoint(this.addForm);
+            if (!res.success) return;
+            this.dialogVisbleAddCheckPoint = false;
+            this.getListCheckpoint();
+        },
+
 
         // SortConfig
         // 加载表单
@@ -713,6 +902,21 @@ export default {
             await this.getSortConfigList();
             this.showSortConfigs();
         },
+        // 新增打开弹框
+        async addSortConfig() {
+            this.dialogVisbleAddSortConfig = true;
+        },
+        // 确认新增
+        async addConfirmSortConfig() {
+            this.addFormSortConfig.approvalItemId = this.itemId;
+            console.log('this.addFormSortConfig', this.addFormSortConfig);
+            let res = await addSortconfig(this.addFormSortConfig);
+            if (!res.success) return;
+            this.dialogVisbleAddSortConfig = false;
+            this.getSortConfigList();
+        },
+
+
         // 打开结果展示页面弹框
         openResultsPresentation() {
             if (this.multipleSelection.length === 0) {
@@ -723,11 +927,7 @@ export default {
                 this.$message.warning('请先选择sortConfig!');
                 return;
             }
-            if (this.CheckPointData.length === 0) {
-                this.$message.warning('请先选择checkPoint!');
-                return;
-            }
-            if(this.resPresentation) {
+            if (this.resPresentation) {
                 this.resPresentation.approvalItemId = Number(this.itemId);
                 this.resPresentation.checkpointIds = this.CheckPointData.map(item => {
                     return item.checkpointId
@@ -739,7 +939,7 @@ export default {
                     return item.id
                 })
                 this.resPresentation.picListInfo = this.multipleSelection;
-                this.resPresentation.calcMode = 1;
+                this.resPresentation.calcMode = this.calcMode;
             }
             this.resPresentation && this.resPresentation.openDialog();
         },
@@ -990,7 +1190,7 @@ export default {
                     align-items: center;
                     justify-content: center;
                     width: 100%;
-                    padding: 64px 0px;
+                    padding: 40px 0px;
                     background: #ffffff;
                 }
             }

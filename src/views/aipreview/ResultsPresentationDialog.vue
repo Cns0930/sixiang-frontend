@@ -42,10 +42,10 @@
                     <span>{{ this.nonInfo }}</span>
                 </div>
                 <div class="result-run">
-                    <el-select v-model="calcMode" clearable>
+                    <!-- <el-select v-model="calcMode" clearable>
                         <el-option label="分类" :value="Number(1)"></el-option>
                         <el-option label="提取" :value="Number(3)"></el-option>
-                    </el-select>
+                    </el-select> -->
                     <el-button type="primary" @click="runObtainExtractResult" :loading="loading">运行结果</el-button>
                 </div>
             </div>
@@ -69,7 +69,7 @@ export default {
             checkpointIds: [],
             sortconfigIds: [],
             picId: [],
-            calcMode: 3,
+            calcMode: 1,
             displayData: [],
             nonInfo: '暂无历史信息填写的配置信息对应的分类或者提取结果的内容, 请先运行一次配置数据',
             loading: false,
@@ -95,7 +95,7 @@ export default {
                 checkpointIds: this.checkpointIds,
                 sortconfigIds: this.sortconfigIds,
                 picId: this.picId,
-                calcMode: 3,
+                calcMode: this.calcMode,
             }
             console.log('params');
             console.log(params);
@@ -151,19 +151,19 @@ export default {
 
                 // 绘制图片对象 ctx.drawImage(图片对象， x位置， y位置)
                 let img = new Image();
+                img.src = this.valueUrl;
                 console.log('this.valueUrl');
                 console.log(this.valueUrl);
-                img.src = this.valueUrl;
 
                 img.onload = () => {
-                    // ctx.clearRect(10,10,this.rowInfo.width -10,this.rowInfo.height - 10); // 清空画布, 但没用，应该是dialog关闭没有销毁元素
                     console.log('img');
                     console.log(img);
                     ctx.drawImage(img, 0, 0);
                     let number = 1;
                     console.log('item.documentKvInfoList');
                     console.log(item.documentKvInfoList);
-                    item.documentKvInfoList.forEach(pic => {
+                    if(item.documentKvInfoList !== null) {
+                        item.documentKvInfoList.forEach(pic => {
                         if (pic.fieldLocation !== null) {
                             let coordinate = pic.fieldLocation;
                             let x = coordinate[0][1];
@@ -186,6 +186,7 @@ export default {
                             number += 1;
                         }
                     })
+                    }
                 }
             })
         }
