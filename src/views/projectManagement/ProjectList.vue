@@ -122,7 +122,7 @@ import { mixin } from "@/mixin/mixin"
 import _ from "lodash"
 import Vue from "vue";
 
-import { mapGetters } from "vuex"
+import { mapGetters, mapState } from "vuex"
 import {
     listProjectAll,
     addProject,
@@ -166,7 +166,10 @@ export default {
         };
     },
     computed: {
-        ...mapGetters({ hasManagePermission: 'config/hasManagePermission' })
+        ...mapGetters({ hasManagePermission: 'config/hasManagePermission' }),
+        ...mapState({
+            roles: state => state.config.roles,
+        })
     },
     async created() {
         await this.loadProjects();
@@ -228,8 +231,13 @@ export default {
         async loadProjects() {
             // 获取项目列表
             let projectRes = await listProjectAll({ keyword: this.filterKeyword });
+            if (!projectRes.success) return;
             if (projectRes.success) {
-                this.projectList = projectRes.data;
+                if(this.roles.includes('intern')) {
+                    this.projectList = projectRes.data.filter(item => item.projectId === 2);
+                } else {
+                    this.projectList = projectRes.data;
+                }     
             }
         },
         handleClickItemDefault(item) {
