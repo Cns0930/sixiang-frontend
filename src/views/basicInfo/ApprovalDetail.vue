@@ -442,6 +442,16 @@ export default {
         },
         // 确认导入
         async confirmImport(row) {
+            const confirmResult = await this.$confirm('导入将覆盖当前事项已开发的暂存数据，建议先保存当前事项版本数据，确定继续么?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).catch(err => err)
+            /*如果用户确认打印confirm,如果用户取消显示cancel*/
+            if (confirmResult !== 'confirm') {
+                return this.$message.info('已取消导入!');
+            }
+            console.log('确认了导入');
             row.loadingImport = true;
             let request = {
                 approvalItemLordId: row.approvalItemLordId,
