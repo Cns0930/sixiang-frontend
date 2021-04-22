@@ -64,8 +64,8 @@
                 </div>
                 <div v-if="!itemInfo.isPublic" class="handleBox">
                     <p class="title">保存当前事项版本</p>
-                    <el-button type="primary" icon="el-icon-upload2" :loading="loadingSaveApprovalItem"
-                        @click="saveApprovalItem">保存事项
+                    <el-button type="primary" icon="el-icon-upload2"
+                        @click="dialogItemConfirmVisible = true;">保存事项
                     </el-button>
                 </div>
                 <div v-if="!itemInfo.isPublic" class="handleBox">
@@ -75,7 +75,12 @@
                 </div>
                 <div class="handleBox">
                     <p class="title">上传事项配置到git</p>
-                    <el-button type="primary" icon="el-icon-upload2" :loading="loadingUptoGit" @click="upToGit">点击上传
+                    <el-button type="primary" icon="el-icon-upload2" @click="dialogGitConfirmVisible = true;">点击上传
+                    </el-button>
+                </div>
+                <div class="handleBox">
+                    <p class="title">查看git提交信息</p>
+                    <el-button type="primary" @click="showGitHistory">点击查看
                     </el-button>
                 </div>
             </div>
@@ -137,13 +142,13 @@
         </el-dialog>
         <!-- 事项多版本查看导入 -->
         <el-dialog title="版本列表" :visible.sync="dialogVisibleVersion" width="80%" :close-on-click-modal="false">
-
             <el-table ref="versionTable" :data="versionList" border style="width: 100%" row-key="id">
                 <el-table-column label="序号" type="index" width="50" :index="indexMethod"></el-table-column>
                 <el-table-column prop="version" label="版本号"></el-table-column>
                 <el-table-column prop="username" label="提交人"></el-table-column>
                 <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter"></el-table-column>
                 <el-table-column prop="latest" label="是否最新" :formatter="formatBoolean"></el-table-column>
+                <el-table-column prop="note" label="备注信息"></el-table-column>
                 <el-table-column label="操作" fixed="right" width="200px">
                     <template slot-scope="scope">
                         <el-button-group>
@@ -152,22 +157,58 @@
                     </template>
                 </el-table-column>
             </el-table>
-
-            <!-- <el-pagination style="margin: 40px auto 30px 500px;" background layout="total, sizes, prev, pager, next"
-                    :page-size="searchPageSize" :current-page="searchCurrentPage" :total="searchTotal"
-                    @current-change="tablePageChange" @size-change="handleSearchSizeChange"
-                    :page-sizes="[10, 15, 30, 50, 100, 200, 300]">
-                </el-pagination> -->
-
             <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogVisibleVersion = false">
                     关闭
                 </el-button>
-                <!-- <el-button type="primary" @click="updateItem(tempItem)">
-                    确定
-                </el-button> -->
             </span>
-
+        </el-dialog>
+        <!-- Git历史记录列表查看 -->
+        <el-dialog title="git记录列表" :visible.sync="dialogGitHistoryVisible" width="80%" :close-on-click-modal="false">
+            <el-table ref="gitHistoryTable" :data="gitHistoryList" border style="width: 100%" row-key="id">
+                <el-table-column label="序号" type="index" width="50" :index="indexMethod"></el-table-column>
+                <el-table-column prop="version" label="版本号"></el-table-column>
+                <el-table-column prop="creator" label="提交人"></el-table-column>
+                <el-table-column prop="gitUrl" label="git链接"></el-table-column>
+                <el-table-column prop="itemVersion" label="事项版本"></el-table-column>
+                <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter"></el-table-column>
+                <el-table-column prop="note" label="备注信息"></el-table-column>
+            </el-table>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogGitHistoryVisible = false">
+                    关闭
+                </el-button>
+            </span>
+        </el-dialog>
+        <!-- 保存事项备注填写框 -->
+        <el-dialog title="保存事项" :visible.sync="dialogItemConfirmVisible" width="50%" :close-on-click-modal="false">
+            <div class="attribute-content">
+                <span>备注填写:</span>
+                <el-input type="textarea" v-model="itemNote" :autosize="{ minRows: 2, maxRows: 6 }"></el-input>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogItemConfirmVisible = false">
+                    取消
+                </el-button>
+                <el-button type="primary" :loading="loadingSaveApprovalItem" @click="saveApprovalItem">
+                    确定
+                </el-button>
+            </span>
+        </el-dialog>
+        <!-- 提交git备注填写框 -->
+        <el-dialog title="提交git" :visible.sync="dialogGitConfirmVisible" width="50%" :close-on-click-modal="false">
+            <div class="attribute-content">
+                <span>备注填写:</span>
+                <el-input type="textarea" v-model="gitNote" :autosize="{ minRows: 2, maxRows: 6 }"></el-input>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogGitConfirmVisible = false">
+                    取消
+                </el-button>
+                <el-button type="primary" :loading="loadingUptoGit" @click="upToGit">
+                    确定
+                </el-button>
+            </span>
         </el-dialog>
     </div>
 </template>
@@ -183,7 +224,7 @@ import _ from "lodash"
 // 接口
 import {
     getByApprovalItemId, listApprovalAll, updateApprovalItem, submitItemInfo,
-    listVersionItem, obtainVersionItem, addSysVersionItem
+    listVersionItem, obtainVersionItem, addSysVersionItem, listSysGitVersionLog
 } from "@/api/basicInfo/approval"
 
 export default {
@@ -213,6 +254,14 @@ export default {
             loadingDownApprovalItem: false,
             dialogVisibleVersion: false,
             versionList: [],
+
+            // 保存提交加备注
+            itemNote: '',
+            gitNote: '',
+            dialogItemConfirmVisible: false,
+            dialogGitConfirmVisible: false,
+            dialogGitHistoryVisible: false,
+            gitHistoryList: [],
         }
     },
     computed: {
@@ -326,26 +375,38 @@ export default {
         },
         // 上传事项配置到git
         async upToGit() {
+            if (this.gitNote === '') {
+                this.$message.warning("请填写备注再提交");
+                return;
+            }
             this.loadingUptoGit = true;
-            let res = await submitItemInfo({ approvalItemId: this.itemId });
+            let res = await submitItemInfo({ approvalItemId: this.itemId, note: this.gitNote });
             if (res.success) {
                 this.$message.success('上传配置到Git成功！');
             } else {
                 this.$message.warning('上传配置到Git失败！');
             }
             this.loadingUptoGit = false;
+            this.dialogGitConfirmVisible = false;
+            this.gitNote = '';
         },
 
         // 多版本相关
         async saveApprovalItem() {
+            if (this.itemNote === '') {
+                this.$message.warning("请填写备注再提交");
+                return;
+            }
             this.loadingSaveApprovalItem = true;
-            let res = await addSysVersionItem({ approvalItemId: this.itemId });
+            let res = await addSysVersionItem({ approvalItemId: this.itemId, note: this.itemNote });
             if (res.success) {
                 this.$message.success('保存当前事项成功！');
             } else {
                 this.$message.warning('保存当前事项失败！');
             }
             this.loadingSaveApprovalItem = false;
+            this.dialogItemConfirmVisible = false;
+            this.itemNote = '';
         },
         async downApprovalItem() {
             let res = await listVersionItem({ approvalItemLordId: this.itemInfo.approvalItemLordId });
@@ -356,6 +417,13 @@ export default {
             })
             console.log('versionList', this.versionList);
             this.dialogVisibleVersion = true;
+        },
+        // 查看git提交信息
+        async showGitHistory() {
+            let res = await listSysGitVersionLog({ approvalItemId : this.itemId });
+            if (!res.success) return;
+            this.gitHistoryList = res.data;
+            this.dialogGitHistoryVisible = true;
         },
         indexMethod(index) {
             return index + 1;
@@ -374,6 +442,16 @@ export default {
         },
         // 确认导入
         async confirmImport(row) {
+            const confirmResult = await this.$confirm('导入将覆盖当前事项已开发的暂存数据，建议先保存当前事项版本数据，确定继续么?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).catch(err => err)
+            /*如果用户确认打印confirm,如果用户取消显示cancel*/
+            if (confirmResult !== 'confirm') {
+                return this.$message.info('已取消导入!');
+            }
+            console.log('确认了导入');
             row.loadingImport = true;
             let request = {
                 approvalItemLordId: row.approvalItemLordId,
