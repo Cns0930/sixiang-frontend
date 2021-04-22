@@ -139,13 +139,13 @@ export function deserializeTableData(fieldJSON){
            
             
             if(fieldJSON.children.some(e=>e.validationInfo)||fieldJSON.children.some(e=>e.descriptionInfo)) {
-                let children = fieldJSON.children.map(v => ({ id: v.id, fieldType: v.fieldType,validationInfo:v.validationInfo,descriptionInfo:v.descriptionInfo, ...v.object })).map(deserializeBaseField)
+                let children = fieldJSON.children.map(v => ({...v.object, id: v.id, fieldType: v.fieldType,validationInfo:v.validationInfo,descriptionInfo:v.descriptionInfo })).map(deserializeBaseField)
                 if (output.componentDefs.meta) {
                     output.componentDefs.meta.value = children
                 }
                 output.list =children;
             } else {
-                let children = fieldJSON.children.map(v => ({ id: v.id, fieldType: v.fieldType, ...v.object })).map(deserializeBaseField)
+                let children = fieldJSON.children.map(v => ({ ...v.object, id: v.id, fieldType: v.fieldType  })).map(deserializeBaseField)
                 if (output.componentDefs.meta) {
                     output.componentDefs.meta.value = children
                 }
