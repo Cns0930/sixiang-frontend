@@ -7,7 +7,7 @@
                 <i class="delete-btn el-icon-close" @click.stop="handelRemove(i)"></i>
             </el-tooltip>
         </div>
-        <el-button-group>
+        <el-button-group v-if="showAddBtn">
             <el-button type="primary" @click="value.push('')">添加</el-button>
         </el-button-group>
     </div>
@@ -15,7 +15,7 @@
 <script>
 export default {
     name: "InputList",
-    props: ["value"],
+    props: ["value","showAddBtn"],//showAddBtn是否显示添加按钮
     methods: {
         handleInput(e, i) {
             this.$set(this.value, i, e)
