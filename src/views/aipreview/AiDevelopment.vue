@@ -843,6 +843,18 @@ export default {
                 this.valuePatternList.push({ value: '' });
             }
         },
+        // 删除
+        deleteItem(i, val) {
+            if (val === 'cutImgTag') {
+                this.cutImgTagList.splice(i, 1);
+            } else if (val === 'initPosition') {
+                this.initPositionList.splice(i, 1);
+            } else if (val === 'valueField') {
+                this.valueFieldList.splice(i, 1);
+            } else if (val === 'valuePattern') {
+                this.valuePatternList.splice(i, 1);
+            }
+        },
         // 新增打开弹框
         async addCheckPoint() {
             this.dialogVisbleAddCheckPoint = true;
@@ -925,6 +937,10 @@ export default {
             }
             if (this.sortConfigData.length === 0) {
                 this.$message.warning('请先选择sortConfig!');
+                return;
+            }
+            if (this.CheckPointData.length === 0 && this.calcMode === 3) {
+                this.$message.warning('选择提取模式, 需要选择checkPoint!');
                 return;
             }
             if (this.resPresentation) {

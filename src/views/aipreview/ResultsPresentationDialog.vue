@@ -186,19 +186,20 @@ export default {
                                 let y = coordinate[0][0];
                                 let width = coordinate[1][1] - x;
                                 let height = coordinate[1][0] - y;
-                                let xText = coordinate[1][1] + 40;
-                                let yText = coordinate[1][0] - 10;
+                                let xText = coordinate[0][1] + 10;
+                                let yText = coordinate[1][0] + 45;
                                 console.log(x, y, width, height);
                                 ctx.rect(x, y, width, height);
                                 ctx.strokeStyle = 'salmon';
                                 ctx.lineWidth = 5;
                                 ctx.stroke();
-                                ctx.font = "60px 微软雅黑";
+                                ctx.font = "50px 微软雅黑";
                                 ctx.shadowBlur = 10;
                                 ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
                                 ctx.shadowOffsetX = 5;
                                 ctx.shadowOffsetY = 5;
-                                ctx.strokeText(String(number) + ' - ' + pic.fieldName, xText, yText);
+                                ctx.fillStyle = 'red';
+                                ctx.fillText(String(number) + ' - ' + pic.fieldName, xText, yText);
                                 number += 1;
                             }
                         })
