@@ -7,9 +7,12 @@
                         <div class="title">
                             <span>{{ item.classif.documentsubDisplayname }}</span>
                             <el-popover placement="top" title="显示图片和标定" width="1000" trigger="click"
-                                @show="showImg(item, index)">
-                                <canvas :id="'canvas' + String(index)" :width="rowInfoPic.width" :height="rowInfoPic.height"
-                                    style="width: 100%;">你的浏览器不支持canvas，建议使用Chrome浏览器。</canvas>
+                                @show="showImg(item, index)" @hide="showed = false;">
+                                <div v-if="showed">
+                                    <canvas :id="'canvas' + String(index)" :width="rowInfoPic.width"
+                                        :height="rowInfoPic.height"
+                                        style="width: 100%;">你的浏览器不支持canvas，建议使用Chrome浏览器。</canvas>
+                                </div>
                                 <el-button slot="reference">显示图片</el-button>
                             </el-popover>
                         </div>
@@ -26,7 +29,15 @@
                                 </el-table-column>
                                 <el-table-column prop="fieldContent" label="提取内容">
                                 </el-table-column>
-                                <el-table-column prop="isCorrect" label="是否与真值一致">
+                                <el-table-column prop="isCorrect" label="是否与真值一致" width="150">
+                                    <template slot-scope="scope">
+                                        <div v-if="scope.row.isCorrect" style="display: flex; justify-content: center;font-size: 20px; color: #67C23A;">
+                                            <i class="el-icon-success"></i>
+                                        </div>
+                                        <div v-else>
+                                            <i class="el-icon-error" style="display: flex; justify-content: center;font-size: 20px; color: #F56C6C;"></i>
+                                        </div>
+                                    </template>
                                 </el-table-column>
                                 <el-table-column prop="note" label="备注">
                                     <template slot-scope="scope">
@@ -46,6 +57,7 @@
                         <el-option label="分类" :value="Number(1)"></el-option>
                         <el-option label="提取" :value="Number(3)"></el-option>
                     </el-select> -->
+                    <el-button type="plain" @click="downloadInputJson" :loading="loadingLoad">下载input.json</el-button>
                     <el-button type="primary" @click="runObtainExtractResult" :loading="loading">运行结果</el-button>
                 </div>
             </div>
@@ -57,6 +69,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 // 接口
 import { listClassifyAndKvInfo, ObtainExtractResult, updateKvInfoById } from "@/api/aipreview/aiDevelopment"
 
@@ -76,6 +89,8 @@ export default {
             picListInfo: [],
             valueUrl: '',
             rowInfoPic: {},
+            showed: false,
+            loadingLoad: false,
         }
     },
     created() {
@@ -138,6 +153,7 @@ export default {
         async showImg(item, index) {
             // console.log('this.picListInfo');
             // console.log(this.picListInfo);
+            this.showed = true;
             console.log('item');
             console.log(item);
             this.rowInfoPic = this.picListInfo.find(row => row.id === item.classif.documentId);
@@ -162,33 +178,96 @@ export default {
                     let number = 1;
                     console.log('item.documentKvInfoList');
                     console.log(item.documentKvInfoList);
-                    if(item.documentKvInfoList !== null) {
+                    if (item.documentKvInfoList !== null) {
                         item.documentKvInfoList.forEach(pic => {
-                        if (pic.fieldLocation !== null) {
-                            let coordinate = pic.fieldLocation;
-                            let x = coordinate[0][1];
-                            let y = coordinate[0][0];
-                            let width = coordinate[1][1] - x;
-                            let height = coordinate[1][0] - y;
-                            let xText = coordinate[1][1] + 40;
-                            let yText = coordinate[1][0] - 10;
-                            console.log(x, y, width, height);
-                            ctx.rect(x, y, width, height);
-                            ctx.strokeStyle = 'salmon';
-                            ctx.lineWidth = 5;
-                            ctx.stroke();
-                            ctx.font = "60px 微软雅黑";
-                            ctx.shadowBlur = 10;
-                            ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
-                            ctx.shadowOffsetX = 5;
-                            ctx.shadowOffsetY = 5;
-                            ctx.strokeText(String(number) +' - '+ pic.fieldName, xText, yText);
-                            number += 1;
-                        }
-                    })
+                            if (pic.fieldLocation !== null) {
+                                let coordinate = pic.fieldLocation;
+                                let x = coordinate[0][1];
+                                let y = coordinate[0][0];
+                                let width = coordinate[1][1] - x;
+                                let height = coordinate[1][0] - y;
+                                let xText = coordinate[1][1] + 40;
+                                let yText = coordinate[1][0] - 10;
+                                console.log(x, y, width, height);
+                                ctx.rect(x, y, width, height);
+                                ctx.strokeStyle = 'salmon';
+                                ctx.lineWidth = 5;
+                                ctx.stroke();
+                                ctx.font = "60px 微软雅黑";
+                                ctx.shadowBlur = 10;
+                                ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+                                ctx.shadowOffsetX = 5;
+                                ctx.shadowOffsetY = 5;
+                                ctx.strokeText(String(number) + ' - ' + pic.fieldName, xText, yText);
+                                number += 1;
+                            }
+                        })
                     }
                 }
             })
+        },
+        // 下载input.json
+        async downloadInputJson() {
+            this.loadingLoad = true;
+            let res
+            try {
+                res = await axios({
+                    method: "post",
+                    url: "/ai/aiCheckpoint/getInputJson",
+                    data: {
+                        approvalItemId: this.approvalItemId,
+                        checkpointIds: this.checkpointIds,
+                        sortconfigIds: this.sortconfigIds,
+                        picId: this.picId,
+                        calcMode: this.calcMode,
+                    },
+                    responseType: "arraybuffer",
+                    timeout: 1000 * 60
+                });
+            } catch (error) {
+                this.loadingLoad = false;
+                if (error.response) {
+                    // The request was made and the server responded with a status code
+                    // that falls out of the range of 2xx
+                    //   console.log(error.response.data);
+                    //   console.log(error.response.status);
+                    //   console.log(error.response.headers);
+                    this.$message.warning('哦no，不知道后端的开发又搞了什么乱子！');
+                } else if (error.request) {
+                    // The request was made but no response was received
+                    // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                    // http.ClientRequest in node.js
+                    //   console.log(error.request);
+                    this.$message.warning('你用的2g网络么，现在都5g时代了！');
+                } else {
+                    // Something happened in setting up the request that triggered an Error
+                    //   console.log('Error', error.message);
+                    this.$message.warning('哦no，不知道后端的开发又搞了什么乱子！');
+                }
+            }
+            // if (res.data.byteLength === 0) {
+            //     this.$message.warning("该事项下没有样本文件");
+            //     return;
+            // }
+            let blob = new Blob([res.data], { type: "application/zip" });
+            const a = document.createElement("a");
+            // 生成文件路径
+            let href = window.URL.createObjectURL(blob);
+            a.href = href;
+            console.log('res');
+            console.log(res);
+            // let _fileName = _res.headers['Content-disposition'].split(';')[1].split('=')[1].split('.')[0]
+            let _fileName = res.headers["content-disposition"]
+                .split(";")[1]
+                .split("=")[1];
+            // 文件名中有中文 则对文件名进行转码
+            a.download = decodeURIComponent(_fileName);
+            // 利用a标签做下载
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(href);
+            this.loadingLoad = false;
         }
     }
 }
