@@ -289,7 +289,8 @@
                             <el-button icon="el-icon-video-play" circle style="font-size: 30px"
                                 @click="openResultsPresentation"></el-button>
                         </div>
-                        <div style="font-size: 18px;color: rgb(99, 137, 231); margin-top: 10px; margin-bottom: 10px;">查看结果</div>
+                        <div style="font-size: 18px;color: rgb(99, 137, 231); margin-top: 10px; margin-bottom: 10px;">
+                            查看结果</div>
                         <el-button type="primary" @click="downLoad" :loading="loadingDownFile">下载ai开发文档</el-button>
                     </div>
                 </div>
@@ -963,7 +964,7 @@ export default {
             }
             this.resPresentation && this.resPresentation.openDialog();
         },
-         // 下载 支持压缩包和单个图片文件的下载
+        // 下载 支持压缩包和单个图片文件的下载
         async downLoad() {
             this.loadingDownFile = true;
             let res;
@@ -1000,40 +1001,40 @@ export default {
             }
             console.log('res');
             console.log(res);
-            if (res.status === 201) {
+            try {
                 let enc = new TextDecoder('utf-8');
                 let resJson = JSON.parse(enc.decode(new Uint8Array(res.data)));
                 console.log('resJson');
                 console.log(resJson);
-                this.$message.warning(resJson.message);
+                this.$message.warning(resJson.msg);
+                this.loadingDownFile = false;
                 return;
+            } catch (err) {
+                console.log('下载文件');
+                this.loadingDownFile = true;
+                if (res.data.byteLength === 0) {
+                    this.$message.warning("该事项下没有ai开发文件");
+                    return;
+                }
+                let blob = new Blob([res.data], { type: "application/zip" });
+                const a = document.createElement("a");
+                // 生成文件路径
+                let href = window.URL.createObjectURL(blob);
+                a.href = href;
+                // let _fileName = _res.headers['Content-disposition'].split(';')[1].split('=')[1].split('.')[0]
+                let _fileName = res.headers["content-disposition"]
+                    .split(";")[1]
+                    .split("=")[1];
+                // 文件名中有中文 则对文件名进行转码
+                a.download = decodeURIComponent(_fileName);
+                // 利用a标签做下载
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(href);
+                this.loadingDownFile = false;
             }
-            
-            // if(res.data.success === false){
-            //     this.loadingDownFile = false;
-            //     return;
-            // }
-            if (res.data.byteLength === 0) {
-                this.$message.warning("该事项下没有ai开发文件");
-                return;
-            }
-            let blob = new Blob([res.data], { type: "application/zip" });
-            const a = document.createElement("a");
-            // 生成文件路径
-            let href = window.URL.createObjectURL(blob);
-            a.href = href;
-            // let _fileName = _res.headers['Content-disposition'].split(';')[1].split('=')[1].split('.')[0]
-            let _fileName = res.headers["content-disposition"]
-                .split(";")[1]
-                .split("=")[1];
-            // 文件名中有中文 则对文件名进行转码
-            a.download = decodeURIComponent(_fileName);
-            // 利用a标签做下载
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(href);
-            this.loadingDownFile = false;
+            return;
         },
     },
 
