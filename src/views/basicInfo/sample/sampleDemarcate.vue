@@ -440,7 +440,9 @@ export default {
             this.imgName = '';
             this.imgClass = '';
             this.filePath = row.filePath;
-            this.filePathQueue.push({ path: row.filePath, name: row.fileName, index: this.filePathQueue.length });
+            if (!this.filePathQueue.find(item => item.path === row.filePath)) {
+                this.filePathQueue.push({ path: row.filePath, name: row.fileName, index: this.filePathQueue.length });
+            }
             // console.log('this.filePathQueue');
             // console.log(this.filePathQueue);
             this.getFileListTable();
