@@ -33,8 +33,8 @@
 
                 <el-table-column prop="ruleCode" label="规则编号" width="90" show-overflow-tooltip sortable></el-table-column>
                 
-                <el-table-column prop="rulePoint" label="审批点" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="ruleDesc" label="描述" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="rulePoint" label="审批点" show-overflow-tooltip width="180"></el-table-column>
+                <el-table-column prop="ruleDesc" label="描述" show-overflow-tooltip width="180"></el-table-column>
                 <el-table-column prop="ruleType" label="判断方式" show-overflow-tooltip>
                 </el-table-column>
                 <el-table-column prop="ruleTips" label="提示语" width="260" show-overflow-tooltip>
@@ -65,6 +65,17 @@
                             <ul>
                                 <li v-for="(item, i) in scope.row.ruleInputs" :key="i">
                                     {{ '材料编号：' + item.材料编号 + ' ; ' + '字段名：' + item.字段名 }}
+                                </li>
+                            </ul>
+                        </div>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="ruleTips" label="字段附加参数" width="200" show-overflow-tooltip>
+                    <template slot-scope="scope">
+                        <div>
+                            <ul>
+                                <li v-for="(item, i) in scope.row.ruleArgs" :key="i">
+                                    {{ '- ' + item }}
                                 </li>
                             </ul>
                         </div>
