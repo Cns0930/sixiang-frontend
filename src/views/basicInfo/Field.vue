@@ -131,6 +131,9 @@
                             :value="v.id"> </el-option>
                     </el-select>
                 </el-form-item>
+                <el-form-item label="字段名称" required>
+                    <el-input v-model="addForm.fieldName" @change="getPinyin"></el-input>
+                </el-form-item>
                 <el-form-item label="字段编号" required>
                     <el-input v-model="addForm.fieldNo"></el-input>
                 </el-form-item>
@@ -187,9 +190,6 @@
                         <el-option label="是" :value="Number(1)"></el-option>
                         <el-option label="否" :value="Number(0)"></el-option>
                     </el-select>
-                </el-form-item>
-                <el-form-item label="字段名称">
-                    <el-input v-model="addForm.fieldName"></el-input>
                 </el-form-item>
                 <el-form-item label="是否为截图">
                     <el-select v-model="addForm.isScreenshot" clearable placeholder="是否为截图">
@@ -257,6 +257,9 @@
                             :value="v.id"> </el-option>
                     </el-select>
                 </el-form-item>
+                <el-form-item label="字段名称" prop="fieldName">
+                    <el-input v-model="editForm.fieldName"></el-input>
+                </el-form-item>
                 <el-form-item label="字段编号" required>
                     <el-input v-model="editForm.fieldNo"></el-input>
                 </el-form-item>
@@ -313,9 +316,6 @@
                         <el-option label="是" :value="Number(1)"></el-option>
                         <el-option label="否" :value="Number(0)"></el-option>
                     </el-select>
-                </el-form-item>
-                <el-form-item label="字段名称" prop="fieldName">
-                    <el-input v-model="editForm.fieldName"></el-input>
                 </el-form-item>
                 <el-form-item label="是否为截图">
                     <el-select v-model="editForm.isScreenshot" clearable placeholder="是否为截图">
@@ -505,6 +505,7 @@ import { listItemDocumentSubAllByMaterial } from "@/api/basicInfo/approvalSub";
 import dayjs from "dayjs";
 import { getRolelist } from '@/api/item';
 import axios from "axios";
+var pinyin = require("pinyin");
 export default {
     name: "FieldItem",
     mixins: [basicMixin, mixin],
@@ -540,6 +541,7 @@ export default {
             addForm: {
                 note: "",
                 approvalItemAndDocumentsubId: '',
+                fieldNo: '',
             },
             editDialogVisible: false,
             editForm: {
@@ -594,7 +596,7 @@ export default {
     computed: {
         ...mapState({
             roles: state => state.config.roles,
-
+            approvalItem:  state => state.home.item,
         })
     },
     async created() {
@@ -685,6 +687,38 @@ export default {
             let result = await listGlobalCheckpoint(params);
             if (!result.success) return;
             this.globalCheckpointOptions = result.data.records;
+        },
+        // 拼音填充字段编号
+        getPinyin() {
+            // console.log(this.approvalItem.itemName);
+            // console.log(this.addForm.fieldName);
+            let pinyinString = '';
+            if (this.approvalItem.itemName && this.addForm.fieldName) {
+                pinyinString = pinyin(this.approvalItem.itemName + '_' + this.addForm.fieldName, {
+                    style: pinyin.STYLE_NORMAL, // 设置拼音风格
+                    heteronym: false
+                }).join('');
+            }
+            this.addForm.fieldNo = this.removeSpecialChar(pinyinString);
+            // console.log('this.addForm.fieldNo');
+            // console.log(this.addForm.fieldNo);
+            
+        },
+        removeSpecialChar(s){
+            let pattern = /[a-zA-Z0-9_]{1}/;
+            let res = '';
+            // s.forEach(single => {
+            //     console.log(single);
+            //     if(single.martch(pattern)) {
+            //         res += single
+            //     }
+            // })
+            for(let i = 0; i <= s.length - 1; i++) {
+                if(s[i].match(pattern)) {
+                    res += s[i]
+                }
+            }
+            return res;
         },
         // 添加
         async addField() {
