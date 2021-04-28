@@ -5,7 +5,21 @@
                 <div class="body-content">
                     <div v-for="(item, index) in displayData" :key="item.id" class="card-board">
                         <div class="title">
-                            <span>{{ item.classif.documentsubDisplayname }}</span>
+                            <span>{{ item.classif.documentsubDisplayname ? item.classif.documentsubDisplayname : '---未分出类别---'}}</span>
+                            <div class="title-info">
+                                <span style="font-size: 15px;width: 100px;">是否正确:</span>
+                                <span v-if="item.classif.isCorrect"
+                                    style="display: flex; justify-content: center;font-size: 20px; color: #67C23A;">
+                                    <i class="el-icon-success"></i>
+                                </span>
+                                <span v-else
+                                    style="display: flex; justify-content: center;font-size: 20px; color: #F56C6C;">
+                                    <i class="el-icon-error"></i>
+                                </span>
+                                <el-input v-model="item.classif.note" placeholder="分类备注" style="margin-left: 20px;"
+                                    @change="saveClassifyNote(item.classif)">
+                                </el-input>
+                            </div>
                             <el-popover placement="top" title="显示图片和标定" width="1000" trigger="click"
                                 @show="showImg(item, index)" @hide="showed = false;">
                                 <div v-if="showed">
@@ -31,11 +45,13 @@
                                 </el-table-column>
                                 <el-table-column prop="isCorrect" label="是否与真值一致" width="150">
                                     <template slot-scope="scope">
-                                        <div v-if="scope.row.isCorrect" style="display: flex; justify-content: center;font-size: 20px; color: #67C23A;">
+                                        <div v-if="scope.row.isCorrect"
+                                            style="display: flex; justify-content: center;font-size: 20px; color: #67C23A;">
                                             <i class="el-icon-success"></i>
                                         </div>
                                         <div v-else>
-                                            <i class="el-icon-error" style="display: flex; justify-content: center;font-size: 20px; color: #F56C6C;"></i>
+                                            <i class="el-icon-error"
+                                                style="display: flex; justify-content: center;font-size: 20px; color: #F56C6C;"></i>
                                         </div>
                                     </template>
                                 </el-table-column>
@@ -71,7 +87,7 @@
 <script>
 import axios from 'axios';
 // 接口
-import { listClassifyAndKvInfo, ObtainExtractResult, updateKvInfoById } from "@/api/aipreview/aiDevelopment"
+import { listClassifyAndKvInfo, ObtainExtractResult, updateKvInfoById, updateClassifById } from "@/api/aipreview/aiDevelopment"
 
 export default {
     name: "ResultsPresentationDialog",
@@ -148,6 +164,15 @@ export default {
                 this.$message.warning('备注保存失败')
             } else {
                 this.$message.success('备注保存成功')
+            }
+        },
+        // 保存分类备注
+        async saveClassifyNote(item) {
+            let res = await updateClassifById(item);
+            if (!res.success) {
+                this.$message.warning('分类备注保存失败')
+            } else {
+                this.$message.success('分类备注保存成功')
             }
         },
         async showImg(item, index) {
@@ -318,6 +343,13 @@ export default {
                 border-left: 4px solid #6389e7;
                 padding-left: 10px;
                 padding-right: 20px;
+                .title-info {
+                    width: 50%;
+                    display: flex;
+                    flex-flow: row;
+                    align-items: center;
+                    justify-content: space-between;
+                }
             }
             .docTable {
                 .docTable-title {

@@ -8,3 +8,6 @@ export const ObtainExtractResult = params => { return axios.post(`/ai/aiCheckpoi
 
 // 更新提取点备注
 export const updateKvInfoById = params => { return axios.post(`/ai/DocumentKvInfo/updateKvInfoById`, params).then(res=>res.data); };
+
+// 更新分类备注
+export const updateClassifById = params => { return axios.post(`/ai/DocumentClassify/updateClassifById`, params).then(res=>res.data); };
