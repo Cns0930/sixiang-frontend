@@ -181,6 +181,15 @@
                                         </el-tab-pane>
                                         <el-tab-pane label="真值标定" name="fourth" class="truth">
                                             <span>
+                                                <span>
+                                                    <el-popover placement="bottom" title="注释" width="200"
+                                                        trigger="click"
+                                                        content="如果遇到左边图片显示不出的情况，是图片兼容性问题，可以将该图片用画图等软件原样'另存为'一下重新上传。">
+                                                        <el-button slot="reference" type="text" size="medium" round><i
+                                                                class="el-icon-info" style="font-size: 18px;" />
+                                                        </el-button>
+                                                    </el-popover>
+                                                </span>
                                                 <el-button type="plain" @click="showRectangles()"
                                                     style="margin-left: 10px;" round>显示坐标框图</el-button>
                                                 <el-button type="plain" @click="importTruthData(sampleTruthTable)"
