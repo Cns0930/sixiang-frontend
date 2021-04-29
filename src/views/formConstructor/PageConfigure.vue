@@ -252,9 +252,10 @@
             </span>
         </el-dialog>
         <!-- init -->
-        <el-dialog title="init方法" :visible.sync="initDialog" width="50%" :close-on-click-modal="false">
+        <el-dialog title="帮办初始化方法" :visible.sync="initDialog" width="50%" :close-on-click-modal="false">
             <pre ref="initEditor" style="height:500px"></pre>
             <span slot="footer" class="dialog-footer">
+                <el-button @click="stashInit">保 存</el-button>
                 <el-button @click="initDialog = false">取 消</el-button>
             </span>
         </el-dialog>
@@ -278,7 +279,7 @@ import { mapState } from "vuex";
 import { getStep, saveStep, deleteStep, saveStepBatch, transferJs,listStepsBytype,batchSaveBytype } from "@/api/step/index";
 import { getFieldAll,getSaveMaxTimeStep } from "@/api/superForm/index";
 import { getTemplate } from '@/api/template/index'
-import { listApprovalItemByUser, listProjectAll } from "@/api/basicInfo/approval";
+import { listApprovalItemByUser, listProjectAll,getStepInitJs,addStepInitJs,updateStepInitJs } from "@/api/basicInfo/approval";
 import { getById, addSysTransferLog,getUptoDateSysTransferLog } from "@/api/item/index";
 import ace from "ace-builds";
 import beautify from "ace-builds/src-noconflict/ext-beautify";
@@ -353,6 +354,10 @@ export default {
             }`,
             // init
             initDialog: false,
+            initMsg: {
+                id: null,
+                type: 0,//0新增 1修改
+            },
             initEditor: null,
             // output 
             outputDialog: false,
@@ -736,18 +741,41 @@ export default {
             this.initFn();
         },
         async initFn() {
+            let defaultJs = function initPage(state, getters,userinfo) {};
+            let initJs = null;
+            let {data,msg,success,code} = await getStepInitJs({approvalItemId: this.itemId});
+            if(code == 200 && success) {
+                this.initMsg.id = data ? data.id : null;
+                this.initMsg.type = data ? 1:0;
+                initJs = data?eval(`(${data.stepInitJs})`):defaultJs;
+                
+            }
+
             await this.$nextTick();
             this.initEditor = ace.edit(this.$refs.initEditor);
             this.initEditor.setTheme("ace/theme/monokai");
             this.initEditor.session.setMode("ace/mode/javascript");
             this.initEditor.setOption("wrap", "free");
              this.initEditor.setValue(`
-            // 包含day.js axios state getters
-            function() {
-                console.log(123);
-            }
+            // 包含day.js axios state getters userinfo
+                ${initJs}
             `);
             beautify.beautify(this.initEditor.session)
+        },
+        //保存 init
+        async stashInit() {
+            let initJs = this.initEditor && this.initEditor.getValue();
+
+            if(this.initMsg.type) {//编辑
+                let editInit = await updateStepInitJs({approvalItemId: this.itemId,id: this.initMsg.id,stepInitJs: initJs})
+                if(!editInit.success) return;
+    
+            } else{//新增
+                let addInit = await addStepInitJs({approvalItemId: this.itemId,stepInitJs: initJs});
+                if(!addInit.success) return;
+            }
+            this.$message({ type: "success", message: "保存成功" })
+            this.initDialog = false;
         },
         // 输出 首页
         handleOutput() {

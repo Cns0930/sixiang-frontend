@@ -62,3 +62,12 @@ export const listApprovalItemByUser = params => { return axios.get(`/ss/approval
 
 // 查询上传的git信息列表
 export const listSysGitVersionLog = params => { return axios.get(`/account/SysGitVersionLog/listSysGitVersionLog`, {params}).then(res=>res.data); };
+
+//查询事项对应步骤init-js
+export const getStepInitJs = params => {return axios.get('/ss/approvalItem/getStepInitJs',{params}).then(res => res.data)}
+
+//新增事项对应步骤init-js
+export const addStepInitJs = params => {return axios.post('/ss/approvalItem/addStepInitJs',params).then(res => res.data)}
+
+//修改事项对应步骤init-js
+export const updateStepInitJs = params => {return axios.post('/ss/approvalItem/updateStepInitJs',params).then(res => res.data)}
