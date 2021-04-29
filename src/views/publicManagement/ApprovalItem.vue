@@ -134,6 +134,13 @@
                             <el-input v-model="tempItem.sort">
                             </el-input>
                         </el-form-item> -->
+                        <el-form-item label="办件类型">
+                            <el-select v-model="tempItem.sujectType" multiple filterable placeholder="个人/企业"
+                            style="width:300px">
+                                <el-option :value="Number(0)" label="个人"></el-option>
+                                <el-option :value="Number(1)" label="企业"></el-option>
+                            </el-select>
+                        </el-form-item>
                     </el-form>
                 </div>
                 <span slot="footer" class="dialog-footer">
@@ -182,6 +189,13 @@
                             <el-input v-model="tempItem.sort">
                             </el-input>
                         </el-form-item> -->
+                        <el-form-item label="办件类型">
+                            <el-select v-model="tempItem.sujectType" multiple filterable placeholder="个人/企业"
+                            style="width:300px">
+                                <el-option :value="Number(0)" label="个人"></el-option>
+                                <el-option :value="Number(1)" label="企业"></el-option>
+                            </el-select>
+                        </el-form-item>
                     </el-form>
                 </div>
                 <span slot="footer" class="dialog-footer">
@@ -335,6 +349,7 @@ export default {
             }
             this.tempItem = res.data;
             this.tempItem.approvalItemId = row.approvalItemLordId;
+            this.tempItem.sujectType ? this.tempItem.sujectType = this.tempItem.sujectType.split(',').map(Number) : [];
             this.dialogUpdateVisible = true;
             // 获取选项
             let approvalRes = await listApprovalAll();
@@ -355,6 +370,7 @@ export default {
         // 新增保存
         async saveItem(tempItem) {
             tempItem.projectId = this.$route.query.projectId;
+            this.tempItem.sujectType = this.tempItem.sujectType.toString();
             this.$refs.tempItem.validate(async (valid) => {
                 if (valid) {
                     this.tempItem.createBy = localStorage.getItem("username");
@@ -373,6 +389,7 @@ export default {
 
         },
         async updateItem() {
+            this.tempItem.sujectType = this.tempItem.sujectType.toString();
             this.$refs.tempItem.validate(async (valid) => {
                 if (valid) {
                     let res = await updateApprovalItem(this.tempItem);
