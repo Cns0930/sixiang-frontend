@@ -5,10 +5,11 @@
             <el-button @click="importPreview">导入自选步骤</el-button>
             <el-button @click="createStepPage">创建步骤页面</el-button>
            <!-- <el-button @click="handlePreview">预览页面</el-button>-->
+            <el-button @click="showInit">页面Init方法</el-button>
             <el-button @click="loadAll">载入页面</el-button>
             <el-button @click="$router.push({path:'/run',query:{itemId, projectId: $route.query.projectId}})">运行页面</el-button>
             <el-button @click="handleOutput">输出</el-button>
-            <el-link :href="`bangban.html#/?itemId=${itemId}&barcode=${barcode}`" target="_blank">超级帮办模拟运行</el-link>barcode<el-input v-model="barcode" style="width:100px"></el-input>
+            <el-link :href="`bangban.html#/?itemId=${itemId}&barcode=${barcode}`" class="mock-work" target="_blank">超级帮办模拟运行</el-link>barcode<el-input v-model="barcode" style="width:100px"></el-input>
 
             <el-divider direction="vertical"></el-divider>
             <el-badge :is-dot="!isLast">
@@ -250,6 +251,14 @@
                 <el-button type="primary" @click="save">添 加</el-button>
             </span>
         </el-dialog>
+        <!-- init -->
+        <el-dialog title="帮办初始化方法" :visible.sync="initDialog" width="50%" :close-on-click-modal="false">
+            <pre ref="initEditor" style="height:500px"></pre>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="stashInit">保 存</el-button>
+                <el-button @click="initDialog = false">取 消</el-button>
+            </span>
+        </el-dialog>
         <!-- 输出 -->
         <el-dialog title="输出" :visible.sync="outputDialog" width="50%" :close-on-click-modal="false">
             <el-button @click="getState">获取state</el-button>
@@ -258,7 +267,6 @@
 
             <span slot="footer" class="dialog-footer">
                 <el-button @click="outputDialog = false">取 消</el-button>
-
             </span>
         </el-dialog>
     </div>
@@ -271,7 +279,7 @@ import { mapState } from "vuex";
 import { getStep, saveStep, deleteStep, saveStepBatch, transferJs,listStepsBytype,batchSaveBytype } from "@/api/step/index";
 import { getFieldAll,getSaveMaxTimeStep } from "@/api/superForm/index";
 import { getTemplate } from '@/api/template/index'
-import { listApprovalItemByUser, listProjectAll } from "@/api/basicInfo/approval";
+import { listApprovalItemByUser, listProjectAll,getStepInitJs,addStepInitJs,updateStepInitJs } from "@/api/basicInfo/approval";
 import { getById, addSysTransferLog,getUptoDateSysTransferLog } from "@/api/item/index";
 import ace from "ace-builds";
 import beautify from "ace-builds/src-noconflict/ext-beautify";
@@ -344,7 +352,14 @@ export default {
             defaultAfterEnter:`function afterEnter(state,getters){
 
             }`,
-            //  output 
+            // init
+            initDialog: false,
+            initMsg: {
+                id: null,
+                type: 0,//0新增 1修改
+            },
+            initEditor: null,
+            // output 
             outputDialog: false,
             outputEditor: null,
             outputContent: "",
@@ -720,6 +735,48 @@ export default {
             }`);
             return v;
         },
+        // 输出 init
+        showInit() {
+            this.initDialog = true;
+            this.initFn();
+        },
+        async initFn() {
+            let defaultJs = function initPage(state, getters,userinfo) {};
+            let initJs = null;
+            let {data,msg,success,code} = await getStepInitJs({approvalItemId: this.itemId});
+            if(code == 200 && success) {
+                this.initMsg.id = data ? data.id : null;
+                this.initMsg.type = data ? 1:0;
+                initJs = data?eval(`(${data.stepInitJs})`):defaultJs;
+                
+            }
+
+            await this.$nextTick();
+            this.initEditor = ace.edit(this.$refs.initEditor);
+            this.initEditor.setTheme("ace/theme/monokai");
+            this.initEditor.session.setMode("ace/mode/javascript");
+            this.initEditor.setOption("wrap", "free");
+             this.initEditor.setValue(`
+            // 包含day.js axios state getters userinfo
+                ${initJs}
+            `);
+            beautify.beautify(this.initEditor.session)
+        },
+        //保存 init
+        async stashInit() {
+            let initJs = this.initEditor && this.initEditor.getValue();
+
+            if(this.initMsg.type) {//编辑
+                let editInit = await updateStepInitJs({approvalItemId: this.itemId,id: this.initMsg.id,stepInitJs: initJs})
+                if(!editInit.success) return;
+    
+            } else{//新增
+                let addInit = await addStepInitJs({approvalItemId: this.itemId,stepInitJs: initJs});
+                if(!addInit.success) return;
+            }
+            this.$message({ type: "success", message: "保存成功" })
+            this.initDialog = false;
+        },
         // 输出 首页
         handleOutput() {
             this.outputDialog = true;
@@ -1008,6 +1065,14 @@ export default {
     }
     .el-textarea {
         width: 400px;
+    }
+    .mock-work {
+        font-size: 12px;
+        padding: 5px 10px;
+        border-radius: 2px;
+        box-sizing: border-box;
+        margin: 0 10px;
+        border: 1px solid #DCDFE6;
     }
 }
 .base-field-list {
