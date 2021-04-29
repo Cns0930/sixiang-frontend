@@ -64,6 +64,10 @@
                             <el-input v-model="tempItem.projectDetails">
                             </el-input>
                         </el-form-item>
+                        <el-form-item label="行政区划编码">
+                            <el-input v-model="tempItem.areaCode">
+                            </el-input>
+                        </el-form-item>
                     </el-form>
                 </div>
                 <span slot="footer" class="dialog-footer">
@@ -97,6 +101,10 @@
                         </el-form-item>
                         <el-form-item label="项目详情">
                             <el-input v-model="tempItem.projectDetails">
+                            </el-input>
+                        </el-form-item>
+                        <el-form-item label="行政区划编码">
+                            <el-input v-model="tempItem.areaCode">
                             </el-input>
                         </el-form-item>
                     </el-form>
