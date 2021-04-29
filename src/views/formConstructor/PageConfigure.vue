@@ -5,10 +5,11 @@
             <el-button @click="importPreview">导入自选步骤</el-button>
             <el-button @click="createStepPage">创建步骤页面</el-button>
            <!-- <el-button @click="handlePreview">预览页面</el-button>-->
+            <el-button @click="showInit">页面Init方法</el-button>
             <el-button @click="loadAll">载入页面</el-button>
             <el-button @click="$router.push({path:'/run',query:{itemId, projectId: $route.query.projectId}})">运行页面</el-button>
             <el-button @click="handleOutput">输出</el-button>
-            <el-link :href="`bangban.html#/?itemId=${itemId}&barcode=${barcode}`" target="_blank">超级帮办模拟运行</el-link>barcode<el-input v-model="barcode" style="width:100px"></el-input>
+            <el-link :href="`bangban.html#/?itemId=${itemId}&barcode=${barcode}`" class="mock-work" target="_blank">超级帮办模拟运行</el-link>barcode<el-input v-model="barcode" style="width:100px"></el-input>
 
             <el-divider direction="vertical"></el-divider>
             <el-badge :is-dot="!isLast">
@@ -250,6 +251,13 @@
                 <el-button type="primary" @click="save">添 加</el-button>
             </span>
         </el-dialog>
+        <!-- init -->
+        <el-dialog title="init方法" :visible.sync="initDialog" width="50%" :close-on-click-modal="false">
+            <pre ref="initEditor" style="height:500px"></pre>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="initDialog = false">取 消</el-button>
+            </span>
+        </el-dialog>
         <!-- 输出 -->
         <el-dialog title="输出" :visible.sync="outputDialog" width="50%" :close-on-click-modal="false">
             <el-button @click="getState">获取state</el-button>
@@ -258,7 +266,6 @@
 
             <span slot="footer" class="dialog-footer">
                 <el-button @click="outputDialog = false">取 消</el-button>
-
             </span>
         </el-dialog>
     </div>
@@ -344,7 +351,10 @@ export default {
             defaultAfterEnter:`function afterEnter(state,getters){
 
             }`,
-            //  output 
+            // init
+            initDialog: false,
+            initEditor: null,
+            // output 
             outputDialog: false,
             outputEditor: null,
             outputContent: "",
@@ -720,6 +730,25 @@ export default {
             }`);
             return v;
         },
+        // 输出 init
+        showInit() {
+            this.initDialog = true;
+            this.initFn();
+        },
+        async initFn() {
+            await this.$nextTick();
+            this.initEditor = ace.edit(this.$refs.initEditor);
+            this.initEditor.setTheme("ace/theme/monokai");
+            this.initEditor.session.setMode("ace/mode/javascript");
+            this.initEditor.setOption("wrap", "free");
+             this.initEditor.setValue(`
+            // 包含day.js axios state getters
+            function() {
+                console.log(123);
+            }
+            `);
+            beautify.beautify(this.initEditor.session)
+        },
         // 输出 首页
         handleOutput() {
             this.outputDialog = true;
@@ -1008,6 +1037,14 @@ export default {
     }
     .el-textarea {
         width: 400px;
+    }
+    .mock-work {
+        font-size: 12px;
+        padding: 5px 10px;
+        border-radius: 2px;
+        box-sizing: border-box;
+        margin: 0 10px;
+        border: 1px solid #DCDFE6;
     }
 }
 .base-field-list {
