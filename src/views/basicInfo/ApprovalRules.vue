@@ -147,6 +147,12 @@
                             </div> -->
                             </el-select>
                     </el-form-item>
+                    <el-form-item label="与情形的关系" prop="addForm">
+                        <el-select v-model="addForm.ruleSubitemLogicType" clearable placeholder="and/or 、 +/|">
+                            <el-option value="and" label="and"></el-option>
+                            <el-option value="or" label="or"></el-option>
+                        </el-select>
+                    </el-form-item>
                     <el-form-item label="依据" class="ruleItem">
                         <div v-for="(item,i) in ruleLawList" :key="i" class="ruleItems">
                            <el-input type='textarea' v-model="item.ruleLaw"></el-input>
@@ -353,6 +359,12 @@
                                 </a>
                             </div> -->
                             </el-select>
+                    </el-form-item>
+                    <el-form-item label="与情形的关系" prop="addForm">
+                        <el-select v-model="editForm.ruleSubitemLogicType" clearable placeholder="and/or 、 +/|">
+                            <el-option value="and" label="and"></el-option>
+                            <el-option value="or" label="or"></el-option>
+                        </el-select>
                     </el-form-item>
                     <el-form-item label="依据" class="ruleItem">
                         <div v-for="(item,i) in ruleLawList" :key="i" class="ruleItems">
