@@ -70,7 +70,6 @@
                                             </div>
                                             <div class="case-rows">
                                                 <img :src="item.valueUrl" :alt="item.imgName" :width="item.imgWidth" />
-                                                -->
                                             </div>
                                         </div>
                                     </div>
@@ -388,6 +387,37 @@
             <el-dialog title="编辑ai-CheckPoint" :visible.sync="dialogVisbleEdit" width="50%"
                 :close-on-click-modal="false">
                 <el-form label-width="120px" :model="editForm">
+                    <el-form-item label="是否为多页">
+                        <el-select v-model="editForm.multiPageInfo" clearable placeholder="是否为多页">
+                            <el-option label="是" value="是"></el-option>
+                            <el-option label="否" value="否"></el-option>
+                            <el-option label="董事监事经理" value="董事监事经理"></el-option>
+                            <el-option label="公司章程" value="公司章程"></el-option>
+                            <el-option label="营业执照" value="营业执照"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="是否为截图">
+                        <el-select v-model="editForm.isScreenshot" clearable placeholder="是否为截图">
+                            <el-option label="是" :value="Number(1)"></el-option>
+                            <el-option label="否" :value="Number(0)"></el-option>
+                            <el-option label="是否" :value="Number(2)"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="截图信息">
+                        <el-select v-model="editForm.screenshotInfo" filterable clearable placeholder="截图信息">
+                            <el-option v-for="(v,i) in screenshotInfoOptions" :key="i" :label="v.label"
+                                :value="v.value"> </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="4W分类">
+                        <el-select v-model="editForm.sort" filterable clearable>
+                            <el-option v-for="(v,i) in sortOptions" :key="i" :label="v.label" :value="v.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="4W归类">
+                        <el-input v-model="editForm.classify"></el-input>
+                    </el-form-item>
                     <el-form-item label="字段值所处环境">
                         <el-select v-model="editForm.valueEnvironment" clearable>
                             <el-option label="table - 表格" value="table"></el-option>
@@ -456,37 +486,6 @@
                     <el-form-item label="字段别名">
                         <el-input v-model="editForm.alias"></el-input>
                     </el-form-item>
-                    <el-form-item label="是否为多页">
-                        <el-select v-model="editForm.multiPageInfo" clearable placeholder="是否为多页">
-                            <el-option label="是" value="是"></el-option>
-                            <el-option label="否" value="否"></el-option>
-                            <el-option label="董事监事经理" value="董事监事经理"></el-option>
-                            <el-option label="公司章程" value="公司章程"></el-option>
-                            <el-option label="营业执照" value="营业执照"></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="是否为截图">
-                        <el-select v-model="editForm.isScreenshot" clearable placeholder="是否为截图">
-                            <el-option label="是" :value="Number(1)"></el-option>
-                            <el-option label="否" :value="Number(0)"></el-option>
-                            <el-option label="是否" :value="Number(2)"></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="截图信息">
-                        <el-select v-model="editForm.screenshotInfo" filterable clearable placeholder="截图信息">
-                            <el-option v-for="(v,i) in screenshotInfoOptions" :key="i" :label="v.label"
-                                :value="v.value"> </el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="4W分类">
-                        <el-select v-model="editForm.sort" filterable clearable>
-                            <el-option v-for="(v,i) in sortOptions" :key="i" :label="v.label" :value="v.value">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="4W归类">
-                        <el-input v-model="editForm.classify"></el-input>
-                    </el-form-item>
                 </el-form>
                 <span slot="footer" class="dialog-footer">
                     <el-button @click="dialogVisbleEdit = false">取 消</el-button>
@@ -552,6 +551,14 @@
             </el-dialog>
             <!-- 结果展示页面dialog -->
             <ResultsPresentationDialog ref="resPresentation" />
+            <!-- 抽屉 -->
+            <el-drawer title="显示图片与标注信息" :visible.sync="showDrawer" direction="rtl" size="50%">
+                <span v-if="drawerRowInfo.documentsubSeq" style="color: green">
+                    <i class="el-icon-check"></i>
+                    {{ ' ' + drawerRowInfo.documentsubSeq + ' - ' + drawerRowInfo.documentsubDisplayname }}
+                </span>
+                <img :src="valueUrl" :alt="drawerRowInfo.imgName" width="100%" />
+            </el-drawer>
         </div>
     </div>
 </template>
@@ -658,6 +665,10 @@ export default {
             // 运行结果
             calcMode: 1,
             loadingDownFile: false,
+
+            // 抽屉
+            showDrawer: false,
+            drawerRowInfo: {},
         }
     },
     computed: {
@@ -721,6 +732,9 @@ export default {
                 this.valueUrl = process.env.VUE_APP_BASE_IP + `/docInfo/getPic?fileId=${row.fileId}`
                 this.imgName = row.fileName;
                 this.imgClass = row.approvalItemAndDocumentsubId;
+                // 打开抽屉
+                this.showDrawer = true;
+                this.drawerRowInfo = row;
                 return;
             }
             this.valueUrl = null;
@@ -805,7 +819,7 @@ export default {
             this.cutImgTagList = this.editForm.cutImgTag.map(item => { return { value: item } });
             this.valueFieldList = this.editForm.valueField.map(item => { return { value: item } });
             this.valuePatternList = this.editForm.valuePattern.map(item => { return { value: item } });
-            if(this.editForm.initPosition) {
+            if (this.editForm.initPosition) {
                 this.editForm.initPosition = JSON.stringify(this.editForm.initPosition[0]) + ',' + JSON.stringify(this.editForm.initPosition[1]);
             }
             this.dialogVisbleEdit = true;
@@ -1025,6 +1039,13 @@ export default {
 
 }
 </script>
+
+<style>
+    .el-drawer__body {
+    overflow: auto;
+    /* overflow-x: auto; */
+}
+</style>
 
 <style scoped lang="scss">
 @import "../../assets/css/global.scss";
