@@ -4,7 +4,7 @@
             <el-button @click="importDefault">导入默认步骤</el-button>
             <el-button @click="importPreview">导入自选步骤</el-button>
             <el-button @click="createStepPage">创建步骤页面</el-button>
-           <!-- <el-button @click="handlePreview">预览页面</el-button>-->
+            <!-- <el-button @click="handlePreview">预览页面</el-button>-->
             <el-button @click="showInit">页面Init方法</el-button>
             <el-button @click="loadAll">载入页面</el-button>
             <el-button @click="$router.push({path:'/run',query:{itemId, projectId: $route.query.projectId}})">运行页面</el-button>
@@ -12,10 +12,15 @@
             <el-link :href="`bangban.html#/?itemId=${itemId}&barcode=${barcode}`" class="mock-work" target="_blank">超级帮办模拟运行</el-link>barcode<el-input v-model="barcode" style="width:100px"></el-input>
 
             <el-divider direction="vertical"></el-divider>
-            <el-badge :is-dot="!isLast">
-                 <el-button @click="transferOutput" :disabled="backend.includes('4141')">保存输出到超级帮办</el-button>
-            </el-badge>
-           
+            <!-- <el-badge :is-dot="!isLast">
+                <el-button @click="transferOutput" :disabled="backend.includes('4141')">保存输出到超级帮办</el-button>
+            </el-badge> -->
+            <el-select v-model="address" filterable placeholder="地址+说明" style="width:400px">
+                <el-option v-for="item in addressOptions" :key="item.id"
+                    :label="'地址：' + item.superformIpPort + ' 说明：' + item.displayNotes" :value="item.superformIpPort">
+                </el-option>
+            </el-select>
+            <el-button :loading="loadingPalace" @click="toNinePalace()">同步到九宫</el-button>
         </div>
         <div class="main">
             <!-- 页面 -->
@@ -279,7 +284,9 @@ import { mapState } from "vuex";
 import { getStep, saveStep, deleteStep, saveStepBatch, transferJs,listStepsBytype,batchSaveBytype } from "@/api/step/index";
 import { getFieldAll,getSaveMaxTimeStep } from "@/api/superForm/index";
 import { getTemplate } from '@/api/template/index'
-import { listApprovalItemByUser, listProjectAll,getStepInitJs,addStepInitJs,updateStepInitJs } from "@/api/basicInfo/approval";
+import { listApprovalItemByUser, listProjectAll,getStepInitJs,addStepInitJs,updateStepInitJs,
+    listMachines, synchronizeItemZip
+} from "@/api/basicInfo/approval";
 import { getById, addSysTransferLog,getUptoDateSysTransferLog } from "@/api/item/index";
 import ace from "ace-builds";
 import beautify from "ace-builds/src-noconflict/ext-beautify";
@@ -366,6 +373,11 @@ export default {
             barcode:"test",
             // 输出是否最新
             isLast:true,
+
+            // 同步到九宫
+            address: '',
+            addressOptions: [],
+            loadingPalace: false,
         };
     },
     computed: {
@@ -408,10 +420,34 @@ export default {
         await this.initProject();
         await this.init();
         await this.loadAll();
+        await this.getOptions();
         this.getLastUpdateInfo();
         
     },
     methods: {
+        async getOptions() {
+            let {success, data} = await listMachines();
+            if(!success) return;
+            this.addressOptions = data;
+        },
+        async toNinePalace() {
+            if(!this.address) {
+                this.$message.warning('请先选择要同步的地址')
+                return;
+            }
+            this.loadingPalace = true;
+            let params = {
+                approvalItemId: this.itemId,
+                superformIpPort: this.address,
+            }
+            let {success} = await synchronizeItemZip(params);
+            if(!success) {
+                this.$message.warning('推送失败！');
+            } else {
+                this.$message.success('推送成功！');
+            }
+            this.loadingPalace = false;
+        },
         // async init(){
         //     if(this.itemId == null){
         //         let itemId = this.$route.query.itemId;

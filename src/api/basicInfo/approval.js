@@ -71,3 +71,9 @@ export const addStepInitJs = params => {return axios.post('/ss/approvalItem/addS
 
 //修改事项对应步骤init-js
 export const updateStepInitJs = params => {return axios.post('/ss/approvalItem/updateStepInitJs',params).then(res => res.data)}
+
+// 推送九宫数据机器列表
+export const listMachines = params => {return axios.get('/ss/approvalItem/listMachines',{params}).then(res => res.data)}
+
+// 同步九宫事项数据
+export const synchronizeItemZip = params => {return axios.get('/ss/approvalItem/synchronizeItemZip',{params}).then(res => res.data)}
