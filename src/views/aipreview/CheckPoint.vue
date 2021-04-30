@@ -78,7 +78,7 @@
                             <div>
                                 <ul>
                                     <li v-for="(item, i) in scope.row.initPosition" :key="i">
-                                        {{ '- ' + item }}
+                                        {{ '[' + item + ']' }}
                                     </li>
                                 </ul>
                             </div>
@@ -177,14 +177,8 @@
                     <i class="el-icon-plus" style="margin-left:10px;color:#409EFF;cursor: pointer;"
                         @click="addRuleLawList('cutImgTag')"></i>
                 </el-form-item>
-                <el-form-item label="截图初始化位置" class="ruleItem">
-                    <div v-for="(item,i) in initPositionList" :key="i" class="ruleItems">
-                        <el-input type='textarea' v-model="item.value"></el-input>
-                        <i v-if="initPositionList.length>=1" style="margin-left:10px;color:red;cursor: pointer;"
-                            class="el-icon-delete" @click="deleteItem(i, 'initPosition')"></i>
-                    </div>
-                    <i class="el-icon-plus" style="margin-left:10px;color:#409EFF;cursor: pointer;"
-                        @click="addRuleLawList('initPosition')"></i>
+                <el-form-item label="截图初始化位置">
+                    <el-input v-model="addForm.initPosition" placeholder="座标格式：[0,0],[12,12]"></el-input>
                 </el-form-item>
                 <el-form-item label="行合并阈值">
                     <el-input v-model="addForm.lineMerge"></el-input>
@@ -269,14 +263,8 @@
                     <i class="el-icon-plus" style="margin-left:10px;color:#409EFF;cursor: pointer;"
                         @click="addRuleLawList('cutImgTag')"></i>
                 </el-form-item>
-                <el-form-item label="截图初始化位置" class="ruleItem">
-                    <div v-for="(item,i) in initPositionList" :key="i" class="ruleItems">
-                        <el-input type='textarea' v-model="item.value"></el-input>
-                        <i v-if="initPositionList.length>=1" style="margin-left:10px;color:red;cursor: pointer;"
-                            class="el-icon-delete" @click="deleteItem(i, 'initPosition')"></i>
-                    </div>
-                    <i class="el-icon-plus" style="margin-left:10px;color:#409EFF;cursor: pointer;"
-                        @click="addRuleLawList('initPosition')"></i>
+                <el-form-item label="截图初始化位置">
+                    <el-input v-model="editForm.initPosition" placeholder="座标格式：[0,0],[12,12]"></el-input>
                 </el-form-item>
                 <el-form-item label="行合并阈值">
                     <el-input v-model="editForm.lineMerge"></el-input>
@@ -373,11 +361,12 @@ export default {
             totalCount: 0,
             // 新增弹窗
             dialogVisbleAdd: false,
-            addForm: {},
+            addForm: {
+                initPosition: '',
+            },
             materialOptions: [],
             fieldOptions: [],
             cutImgTagList: [],
-            initPositionList: [],
             valueFieldList: [],
             valuePatternList: [],
             // 编辑弹窗
@@ -385,7 +374,7 @@ export default {
             screenshotInfoOptions: [
                 {value: '是否签字', label: '是否签字'}, {value: '是否盖章', label: '是否盖章'}, {value: '是否填写日期', label: '是否填写日期'}, {value: '是否粘贴身份证', label: '是否粘贴身份证'}, {value: '提取身份证姓名', label: '提取身份证姓名'}, {value: '提取身份证有效期限', label: '提取身份证有效期限'},
                 {value: '是否已填写', label: '是否已填写'}, {value: '提取身份证住址', label: '提取身份证住址'}, {value: '提取身份证公民身份号码', label: '提取身份证公民身份号码'}, {value: '提取身份证性别', label: '提取身份证性别'}, {value: '提取身份证民族', label: '提取身份证民族'},
-                {value: '提取身份证出生', label: '提取身份证出生'}, {value: '是否勾选', label: '是否勾选'}, {value: '勾选内容', label: '勾选内容'}, {value: '是否粘贴证件照片', label: '是否粘贴证件照片'}, {value: '是否盖红章', label: '是否盖红章'}
+                {value: '提取身份证出生', label: '提取身份证出生'}, {value: '是否勾选', label: '是否勾选'}, { value: '勾选内容_right', label: '勾选内容_right' }, { value: '勾选内容_left', label: '勾选内容_left' }, {value: '是否粘贴证件照片', label: '是否粘贴证件照片'}, {value: '是否盖红章', label: '是否盖红章'}
             ],
             sortOptions: [
                 {value: 'WHO', label: 'WHO'}, {value: 'WHERE', label: 'WHERE'}, {value: 'WHAT', label: 'WHAT'}, 
@@ -398,7 +387,7 @@ export default {
             ],
             editForm: {
                 cutImgTag: [],
-                initPosition: [],
+                initPosition: '',
                 valueField: [],
                 valuePattern: [],
             },
@@ -486,9 +475,6 @@ export default {
             if (val == 'cutImgTag') {
                 this.cutImgTagList.push({ value: '' });
             }
-            if (val == 'initPosition') {
-                this.initPositionList.push({ value: '' });
-            }
             if (val == 'valueField') {
                 this.valueFieldList.push({ value: '' });
             }
@@ -500,8 +486,6 @@ export default {
         deleteItem(i, val) {
             if (val === 'cutImgTag') {
                 this.cutImgTagList.splice(i, 1);
-            } else if (val === 'initPosition') {
-                this.initPositionList.splice(i, 1);
             } else if (val === 'valueField') {
                 this.valueFieldList.splice(i, 1);
             } else if (val === 'valuePattern') {
@@ -528,7 +512,7 @@ export default {
         async addConfirm() {
             console.log(this.cutImgTagList);
             this.addForm.cutImgTag = this.cutImgTagList.map(item => item.value);
-            this.addForm.initPosition = this.initPositionList.map(item => item.value);
+            this.addForm.initPosition = JSON.parse('[' + this.addForm.initPosition + ']');
             this.addForm.valueField = this.valueFieldList.map(item => item.value);
             this.addForm.valuePattern = this.valuePatternList.map(item => item.value);
             this.addForm.approvalItemId = this.itemId;
@@ -545,19 +529,20 @@ export default {
             console.log('this.editForm');
             console.log(this.editForm);
             this.editForm.cutImgTag === null ? this.editForm.cutImgTag = [] : this.editForm.cutImgTag
-            this.editForm.initPosition === null ? this.editForm.initPosition = [] : this.editForm.initPosition
             this.editForm.valueField === null ? this.editForm.valueField = [] : this.editForm.valueField
             this.editForm.valuePattern === null ? this.editForm.valuePattern = [] : this.editForm.valuePattern
             this.cutImgTagList = this.editForm.cutImgTag.map(item => { return { value: item } });
-            this.initPositionList = this.editForm.initPosition.map(item => { return { value: item } });
             this.valueFieldList = this.editForm.valueField.map(item => { return { value: item } });
             this.valuePatternList = this.editForm.valuePattern.map(item => { return { value: item } });
+            if(this.editForm.initPosition) {
+                this.editForm.initPosition = JSON.stringify(this.editForm.initPosition[0]) + ',' + JSON.stringify(this.editForm.initPosition[1]);
+            }
             this.dialogVisbleEdit = true;
         },
         // 确认编辑
         async editConfirm() {
             this.editForm.cutImgTag = this.cutImgTagList.map(item => item.value);
-            this.editForm.initPosition = this.initPositionList.map(item => item.value);
+            this.editForm.initPosition = JSON.parse('[' + this.editForm.initPosition + ']');
             this.editForm.valueField = this.valueFieldList.map(item => item.value);
             this.editForm.valuePattern = this.valuePatternList.map(item => item.value);
             this.editForm.approvalItemId = this.itemId;
