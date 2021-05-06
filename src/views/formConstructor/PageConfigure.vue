@@ -12,9 +12,9 @@
             <el-link :href="`bangban.html#/?itemId=${itemId}&barcode=${barcode}`" class="mock-work" target="_blank">超级帮办模拟运行</el-link>barcode<el-input v-model="barcode" style="width:100px"></el-input>
 
             <el-divider direction="vertical"></el-divider>
-            <!-- <el-badge :is-dot="!isLast">
+            <el-badge :is-dot="!isLast">
                 <el-button @click="transferOutput" :disabled="backend.includes('4141')">保存输出到超级帮办</el-button>
-            </el-badge> -->
+            </el-badge>
             <el-select v-model="address" filterable placeholder="地址+说明" style="width:400px">
                 <el-option v-for="item in addressOptions" :key="item.id"
                     :label="'地址：' + item.superformIpPort + ' 说明：' + item.displayNotes" :value="item.superformIpPort">
