@@ -172,14 +172,22 @@
         </el-dialog>
         <!-- Git历史记录列表查看 -->
         <el-dialog title="git记录列表" :visible.sync="dialogGitHistoryVisible" width="80%" :close-on-click-modal="false">
-            <el-table ref="gitHistoryTable" :data="gitHistoryList" border style="width: 100%" row-key="id">
+            <el-table ref="gitHistoryTable" :data="gitHistoryList" border style="width: 100%" row-key="id" :row-class-name="tableRowClassName">
                 <el-table-column label="序号" type="index" width="50" :index="indexMethod"></el-table-column>
                 <el-table-column prop="version" label="版本号"></el-table-column>
                 <el-table-column prop="creator" label="提交人"></el-table-column>
                 <el-table-column prop="gitUrl" label="git链接"></el-table-column>
                 <el-table-column prop="itemVersion" label="事项版本"></el-table-column>
                 <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter"></el-table-column>
-                <el-table-column prop="note" label="备注信息"></el-table-column>
+                <el-table-column prop="note" label="提交备注"></el-table-column>
+                <el-table-column prop="delNote" label="删除备注"></el-table-column>
+                <el-table-column label="操作" fixed="right" width="200px">
+                    <template slot-scope="scope">
+                        <el-button-group>
+                            <el-button type="danger" :disabled="scope.row.isDelete === 1" @click="deleteGitlog(scope.row)">删除</el-button>
+                        </el-button-group>
+                    </template>
+                </el-table-column>
             </el-table>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogGitHistoryVisible = false">
@@ -217,6 +225,21 @@
                 </el-button>
             </span>
         </el-dialog>
+        <!-- 删除git备注填写框 -->
+        <el-dialog title="删除git" :visible.sync="dialogGitDeleteVisible" width="50%" :append-to-body="true" :close-on-click-modal="false">
+            <div class="attribute-content">
+                <span>备注填写:</span>
+                <el-input type="textarea" v-model="deleteNote" :autosize="{ minRows: 2, maxRows: 6 }"></el-input>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogGitDeleteVisible = false">
+                    取消
+                </el-button>
+                <el-button type="primary" @click="deleteGit">
+                    确定
+                </el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -231,7 +254,8 @@ import _ from "lodash"
 // 接口
 import {
     getByApprovalItemId, listApprovalAll, updateApprovalItem, submitItemInfo,
-    listVersionItem, obtainVersionItem, addSysVersionItem, listSysGitVersionLog
+    listVersionItem, obtainVersionItem, addSysVersionItem, listSysGitVersionLog,
+    deleteSysGitVersion
 } from "@/api/basicInfo/approval"
 
 export default {
@@ -269,6 +293,9 @@ export default {
             dialogGitConfirmVisible: false,
             dialogGitHistoryVisible: false,
             gitHistoryList: [],
+            deleteNote: '',
+            deleteId: null,
+            dialogGitDeleteVisible: false,
         }
     },
     computed: {
@@ -475,11 +502,49 @@ export default {
                 this.$message.warning('导入事项数据失败！');
             }
             row.loadingImport = false;
+        },
+        // 删除git提交记录
+        deleteGitlog(row) {
+            this.dialogGitDeleteVisible = true;
+            this.deleteId = row.id;
+        },
+        // 确认删除
+        async deleteGit() {
+            if (this.deleteNote === '') {
+                this.$message.warning("请填写备注再提交");
+                return;
+            }
+            let res = await deleteSysGitVersion({ id: this.deleteId, delNote: this.deleteNote });
+            if (res.success) {
+                this.$message.success('删除记录成功！');
+            } else {
+                this.$message.warning('删除记录失败！');
+            }
+            this.dialogGitDeleteVisible = false;
+            this.showGitHistory();
+            this.deleteNote = '';
+        },
+        // 改变已删掉的数据的行样式
+        tableRowClassName({ row, rowIndex }) {
+            if (row) {
+                if (row.isDelete === 1) {
+                    return 'gray-row'
+                } else {
+                    return ''
+                }
+            }
         }
     },
 
 }
 </script>
+
+<style>
+.el-table .gray-row {
+    color:#bdbdbd;
+    background:#f3f3f3;
+}
+</style>
 
 <style scoped lang="scss">
 @import "../../assets/css/global.scss";

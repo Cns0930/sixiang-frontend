@@ -1041,7 +1041,7 @@ export default {
 </script>
 
 <style>
-    .el-drawer__body {
+.el-drawer__body {
     overflow: auto;
     /* overflow-x: auto; */
 }
