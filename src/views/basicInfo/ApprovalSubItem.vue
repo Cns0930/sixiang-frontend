@@ -86,10 +86,10 @@
                         style="width: calc(100% - 47px)" class="sub-table">
                         <el-table-column prop="documentsubDisplayname" label="事项二级材料" show-overflow-tooltip>
                             <template slot-scope="scopeM">
-                                <el-select v-if="scopeM.row.flagAI" v-model="scopeM.row.globalDocumentSubId"
+                                <el-select v-if="scopeM.row.flagAI" v-model="scopeM.row.approvalItemAndDocumentsubId"
                                     placeholder="请选择材料名称">
-                                    <el-option v-for="item in AIMOptions" :key="item.globalDocumentSubId"
-                                        :label="item.documentsubDisplayname" :value="item.globalDocumentSubId" />
+                                    <el-option v-for="item in AIMOptions" :key="item.id"
+                                        :label="item.documentsubDisplayname" :value="item.id" />
                                 </el-select>
                                 <span v-else>{{scopeM.row.documentsubDisplayname}}</span>
                             </template>
@@ -687,7 +687,8 @@ export default {
                 let request = {
                     approvalItemId: Number(this.itemId),
                     approvalSubitemId: approvalSubitemId,
-                    globalDocumentSubId: item.globalDocumentSubId,
+                    // globalDocumentSubId: item.globalDocumentSubId,
+                    approvalItemAndDocumentsubId: item.approvalItemAndDocumentsubId,
                     isRequired: item.isRequired,
                     requiredDescription: item.requiredDescription
                 }
