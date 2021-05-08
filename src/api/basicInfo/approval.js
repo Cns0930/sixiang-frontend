@@ -7,7 +7,7 @@ export const listApprovalItem = params => { return axios.get(`/ss/approvalItem/l
 export const listMaterial = params => { return axios.get(`/ss/material/listMaterial`, params).then(res=>res.data); };
 
 // 获取大项列表
-export const listApprovalAll = params => { return axios.get(`/ss/approval/listApprovalAll`, params).then(res=>res.data); };
+export const listApprovalAll = params => { return axios.get(`/ss/approval/listApprovalAll`, {params}).then(res=>res.data); };
 
 // 获取大项列表 - 根据项目id 、 分页
 export const pageApprovalAll = params => { return axios.get(`/ss/approval/pageApprovalAll`, {params}).then(res=>res.data); };

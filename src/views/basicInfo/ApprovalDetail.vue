@@ -381,7 +381,7 @@ export default {
         },
         async edit() {
             // 获取选项
-            let approvalRes = await listApprovalAll();
+            let approvalRes = await listApprovalAll({projectId: this.$route.query.projectId});
             if (approvalRes.success) {
                 this.approvalOptions = approvalRes.data;
             }

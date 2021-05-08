@@ -352,7 +352,7 @@ export default {
             this.tempItem.sujectType ? this.tempItem.sujectType = this.tempItem.sujectType.split(',').map(Number) : [];
             this.dialogUpdateVisible = true;
             // 获取选项
-            let approvalRes = await listApprovalAll();
+            let approvalRes = await listApprovalAll({projectId: this.$route.query.projectId});
             if (approvalRes.success) {
                 this.approvalOptions = approvalRes.data;
             }
@@ -411,7 +411,7 @@ export default {
             // if (projectRes.success) {
             //     this.projectOptions = projectRes.data;
             // }
-            let approvalRes = await listApprovalAll();
+            let approvalRes = await listApprovalAll({projectId: this.$route.query.projectId});
             if (approvalRes.success) {
                 this.approvalOptions = approvalRes.data;
             }

@@ -303,7 +303,7 @@ export default {
             this.tempItem = res.data;
             this.dialogUpdateVisible = true;
             // 获取选项
-            let approvalRes = await listApprovalAll();
+            let approvalRes = await listApprovalAll(this.$route.query.projectId);
             if (approvalRes.success) {
                 this.approvalOptions = approvalRes.data;
             }
@@ -341,7 +341,7 @@ export default {
             // if (projectRes.success) {
             //     this.projectOptions = projectRes.data;
             // }
-            let approvalRes = await listApprovalAll();
+            let approvalRes = await listApprovalAll(this.$route.query.projectId);
             if (approvalRes.success) {
                 this.approvalOptions = approvalRes.data;
             }
