@@ -793,7 +793,7 @@ export default {
             this.initEditor.session.setMode("ace/mode/javascript");
             this.initEditor.setOption("wrap", "free");
              this.initEditor.setValue(`
-            // 包含day.js axios state getters userinfo
+            // 参数 state getters userinfo(用户登录信息) approvalMsg(区分个人/法人事项的信息)
                 ${initJs}
             `);
             beautify.beautify(this.initEditor.session)

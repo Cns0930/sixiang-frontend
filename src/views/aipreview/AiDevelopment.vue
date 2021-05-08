@@ -22,11 +22,19 @@
                                     </div>
                                     <div class="sampleTable">
                                         <el-table ref="fileTable" :data="tableData" tooltip-effect="dark"
-                                            highlight-current-row style="width: 100%; min-width: 500px"
+                                            highlight-current-row style="width: 100%; min-width: 250px"
                                             :header-cell-style="{background: '#f9faff',color:'#333',fontFamily:'MicrosoftYaHeiUI',fontSize:'15px',fontWeight:800}"
                                             :row-style="{fontSize:'13px',color:'#666',fontFamily:'MicrosoftYaHeiUI'}"
                                             @selection-change="handleSelectionChange">
                                             <el-table-column type="selection" :selectable="checkboxSelect" width="45">
+                                            </el-table-column>
+                                            <el-table-column prop="name" label="标定信息" min-width="40%">
+                                                <template slot-scope="scope">
+                                                    <span v-if="scope.row.documentsubSeq" style="color: green">
+                                                        <i class="el-icon-check"></i>
+                                                        {{ ' ' + scope.row.documentsubSeq + ' - ' + scope.row.documentsubDisplayname }}
+                                                    </span>
+                                                </template>
                                             </el-table-column>
                                             <el-table-column label="文件名" min-width="60%">
                                                 <template slot-scope="scope">
@@ -37,14 +45,7 @@
                                                         {{ scope.row.fileName }}</el-button>
                                                 </template>
                                             </el-table-column>
-                                            <el-table-column prop="name" label="标定信息" min-width="40%">
-                                                <template slot-scope="scope">
-                                                    <span v-if="scope.row.documentsubSeq" style="color: green">
-                                                        <i class="el-icon-check"></i>
-                                                        {{ ' ' + scope.row.documentsubSeq + ' - ' + scope.row.documentsubDisplayname }}
-                                                    </span>
-                                                </template>
-                                            </el-table-column>
+                                            
                                         </el-table>
                                     </div>
                                 </div>
