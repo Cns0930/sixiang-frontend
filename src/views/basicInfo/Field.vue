@@ -647,7 +647,7 @@ export default {
             this.pageSize = val;
             this.reloadTable();
         },
-        // 查询当前事项下的所有材料
+        // 查询当前事项下的所有材料 
         async materialList() {
             let result = await getAllByApprovalItemId({ approvalItemId: this.itemId });
             if (!result.success) return;

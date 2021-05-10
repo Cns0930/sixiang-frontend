@@ -152,7 +152,8 @@ export default {
             if (this.$route.path === '/user' || this.$route.path === '/basic' || this.$route.path === '/project'
             || this.$route.path === '/publicdocument' || this.$route.path === '/publicsubdocument'
             || this.$route.path === '/examination' || this.$route.path === '/readme'
-            || this.$route.path === '/public' || this.$route.path === '/allEdit' || this.$route.path === '/document') {
+            || this.$route.path === '/public' || this.$route.path === '/allEdit' || this.$route.path === '/document'
+            || this.$route.path === '/approval') {
                 return false;
             } else {
                 return true;

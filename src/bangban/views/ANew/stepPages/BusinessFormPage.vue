@@ -39,7 +39,8 @@
                                     :obj="v">
                                         <component :is="v.component" v-model="v.value" v-bind="v.attributes"
                                             @change="v.onchange && v.onchange($event,itemState,itemGetters)"
-                                            @input="v.oninput && v.oninput($event,itemState,itemGetters)" 
+                                            @input="v.oninput && v.oninput($event,itemState,itemGetters)"
+                                            @select="v.select && v.select($event,itemState,itemGetters)"
                                             :class="{'default-text-color':v.hasConfirmed === false}" @focus="handleFocus(v)"></component>
                                     </el-form-item>
                                 </el-col>
