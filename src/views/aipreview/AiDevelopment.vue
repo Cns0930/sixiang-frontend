@@ -822,6 +822,9 @@ export default {
             this.valuePatternList = this.editForm.valuePattern.map(item => { return { value: item } });
             if (this.editForm.initPosition) {
                 this.editForm.initPosition = JSON.stringify(this.editForm.initPosition[0]) + ',' + JSON.stringify(this.editForm.initPosition[1]);
+                if (this.editForm.initPosition === 'null,undefined') {
+                    this.editForm.initPosition = '';
+                }
             }
             this.dialogVisbleEdit = true;
         },
