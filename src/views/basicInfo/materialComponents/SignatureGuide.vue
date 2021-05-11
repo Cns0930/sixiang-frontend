@@ -73,7 +73,7 @@
                                                         @click="editSignature(item)">
                                                         编辑
                                                     </el-button>
-                                                    <el-button size="mini" type="danger" @click="deleteSignature(item)">
+                                                    <el-button v-show="!item.rowflag" size="mini" type="danger" @click="deleteSignature(item)">
                                                         删除
                                                     </el-button>
                                                 </div>
@@ -194,12 +194,12 @@ export default {
         addSignature() {
             let isHaveAddRow = 0;
             this.signatureListData.forEach(item => {
-                if (item.rowflag === 1) {
+                if (item.rowflag === 1 || item.rowflag === 2) {
                     isHaveAddRow = 1
                 };
             })
             if (isHaveAddRow) {
-                this.$message.warning('请保存后再继续新增')
+                this.$message.warning('请保存或取消后再继续新增别的签章')
                 return;
             }
             this.signatureListData.splice(this.signatureListData.length, 0, {
@@ -250,6 +250,16 @@ export default {
         },
         // 编辑签章
         editSignature(row) {
+            let isHaveAddRow = 0;
+            this.signatureListData.forEach(item => {
+                if (item.rowflag === 1 || item.rowflag === 2) {
+                    isHaveAddRow = 1
+                };
+            })
+            if (isHaveAddRow) {
+                this.$message.warning('请保存或取消后再继续编辑别的签章')
+                return;
+            }
             row.rowflag = 2;
             this.flag = 1;
         },
