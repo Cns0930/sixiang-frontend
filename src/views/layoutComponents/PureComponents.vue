@@ -10,6 +10,7 @@
                     :parent="parent">
                     <component :is="v.component" v-model="v.value" v-bind="v.attributes" :siblings="fields"
                         :parent="parent" @change="v.onchange && v.onchange($event,itemState,itemGetters,fields,parent)"
+                        @select="v.select && v.select($event,itemState,itemGetters,fields,parent)"
                         @input="v.oninput && v.oninput($event,itemState,itemGetters,fields,parent)">
                     </component>
                 </el-form-item>
