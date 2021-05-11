@@ -16,6 +16,7 @@
                                                 :outputSize="Number(1)" :canMove="false" :full="true" :fixedBox="false"
                                                 :canScale="false" autoCropWidth="100" autoCropHeight="100"></vueCropper>
                                         </div>
+                                        <div v-else-if="flag === 2"></div>
                                         <div v-else>
                                             <canvas id="canvas" :width="row.width" :height="row.height"
                                                 style="width: 100%;">你的浏览器不支持canvas，建议使用Chrome浏览器。</canvas>
@@ -298,7 +299,11 @@ export default {
             let result = await deleteMaterialFigureSignature({ materialAndFigureSignatureId: item.materialAndFigureSignatureId });
             if (!result.success) return;
             this.$message.success('删除成功');
-            this.getSignature();
+            await this.getSignature();
+            this.flag = 2;
+            await this.$nextTick();
+            this.flag = 0;
+            this.showRectangles();
         },
         // 显示or关闭坐标框
         showRectangles() {
@@ -313,7 +318,7 @@ export default {
                 img.onload = () => {
                     console.log('img');
                     console.log(img);
-                    // ctx.clearRect(10,10,this.row.width -10,this.row.height - 10); // 清空画布, 但没用，应该是dialog关闭没有销毁元素
+                    ctx.clearRect(0,0,canvas.width,canvas.height); // 清空画布
                     ctx.drawImage(img, 0, 0);
                     let number = 1;
                     this.signatureListData.forEach(item => {
