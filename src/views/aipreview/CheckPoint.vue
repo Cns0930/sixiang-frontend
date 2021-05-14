@@ -10,11 +10,19 @@
                 <el-button @click="search">搜索</el-button>
                 <el-button @click="addCheckPoint">新增</el-button>
                 <el-button @click="loadCheckPoint">载入数据</el-button>
-                <el-select v-model="isMapping" clearable placeholder="选择生成Json的模式" style="width:200px;margin-left: 15px">
+                <el-select v-model="isMapping" clearable placeholder="选择生成Json的模式"
+                    style="width:200px;margin-left: 15px">
                     <el-option label="生成mapping.json" :value="true"></el-option>
                     <el-option label="生成checkpoint.json" :value="false"></el-option>
                 </el-select>
                 <el-button type="primary" @click="downLoadJson('/ai/aiCheckpoint/getCheckpointJson')">生成Json</el-button>
+                <el-upload class="upload-demo" ref="upload" :action="urlExcel" :multiple="false" :limit="1"
+                    :with-credentials="true" :on-success="uploadSuccess" :on-remove="handleRemove"
+                    :on-exceed="handleExceed" :auto-upload='true' :before-upload="customUpload">
+                    <el-button type="primary" icon="el-icon-upload" class="button" :loading="loadings"
+                        @click="upLoad()" style="margin-left: 20px;">Excel上传
+                    </el-button>
+                </el-upload>
             </div>
             <div class="sampleTable">
                 <el-table ref="multipleTable" border :data="tableData" tooltip-effect="dark" highlight-current-row
@@ -36,7 +44,8 @@
                     </el-table-column>
                     <el-table-column prop="alias" label="字段别名" width="180" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="isScreenshot" label="是否为截图" width="100" :formatter="isRequiredFormatter" show-overflow-tooltip>
+                    <el-table-column prop="isScreenshot" label="是否为截图" width="100" :formatter="isRequiredFormatter"
+                        show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="screenshotInfo" label="截图信息" width="180" show-overflow-tooltip>
                     </el-table-column>
@@ -197,8 +206,8 @@
                 </el-form-item>
                 <el-form-item label="字段属性">
                     <el-select v-model="addForm.valueProperty" filterable clearable>
-                        <el-option v-for="(v,i) in valuePropertyOptions" :key="i" :label="v.label"
-                            :value="v.value"> </el-option>
+                        <el-option v-for="(v,i) in valuePropertyOptions" :key="i" :label="v.label" :value="v.value">
+                        </el-option>
                     </el-select>
                 </el-form-item>
             </el-form>
@@ -240,14 +249,13 @@
                 </el-form-item>
                 <el-form-item label="截图信息">
                     <el-select v-model="editForm.screenshotInfo" filterable clearable placeholder="截图信息">
-                        <el-option v-for="(v,i) in screenshotInfoOptions" :key="i" :label="v.label"
-                            :value="v.value"> </el-option>
+                        <el-option v-for="(v,i) in screenshotInfoOptions" :key="i" :label="v.label" :value="v.value">
+                        </el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="4W分类">
                     <el-select v-model="editForm.sort" filterable clearable>
-                        <el-option v-for="(v,i) in sortOptions" :key="i" :label="v.label"
-                            :value="v.value"> </el-option>
+                        <el-option v-for="(v,i) in sortOptions" :key="i" :label="v.label" :value="v.value"> </el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="4W归类">
@@ -314,8 +322,8 @@
                 </el-form-item>
                 <el-form-item label="字段属性">
                     <el-select v-model="editForm.valueProperty" filterable clearable>
-                        <el-option v-for="(v,i) in valuePropertyOptions" :key="i" :label="v.label"
-                            :value="v.value"> </el-option>
+                        <el-option v-for="(v,i) in valuePropertyOptions" :key="i" :label="v.label" :value="v.value">
+                        </el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="字段别名">
@@ -372,18 +380,18 @@ export default {
             // 编辑弹窗
             dialogVisbleEdit: false,
             screenshotInfoOptions: [
-                {value: '是否签字', label: '是否签字'}, {value: '是否盖章', label: '是否盖章'}, {value: '是否填写日期', label: '是否填写日期'}, {value: '是否粘贴身份证', label: '是否粘贴身份证'}, {value: '提取身份证姓名', label: '提取身份证姓名'}, {value: '提取身份证有效期限', label: '提取身份证有效期限'},
-                {value: '是否已填写', label: '是否已填写'}, {value: '提取身份证住址', label: '提取身份证住址'}, {value: '提取身份证公民身份号码', label: '提取身份证公民身份号码'}, {value: '提取身份证性别', label: '提取身份证性别'}, {value: '提取身份证民族', label: '提取身份证民族'},
-                {value: '提取身份证出生', label: '提取身份证出生'}, {value: '是否勾选', label: '是否勾选'}, { value: '勾选内容_right', label: '勾选内容_right' }, { value: '勾选内容_left', label: '勾选内容_left' }, {value: '是否粘贴证件照片', label: '是否粘贴证件照片'}, {value: '是否盖红章', label: '是否盖红章'}
+                { value: '是否签字', label: '是否签字' }, { value: '是否盖章', label: '是否盖章' }, { value: '是否填写日期', label: '是否填写日期' }, { value: '是否粘贴身份证', label: '是否粘贴身份证' }, { value: '提取身份证姓名', label: '提取身份证姓名' }, { value: '提取身份证有效期限', label: '提取身份证有效期限' },
+                { value: '是否已填写', label: '是否已填写' }, { value: '提取身份证住址', label: '提取身份证住址' }, { value: '提取身份证公民身份号码', label: '提取身份证公民身份号码' }, { value: '提取身份证性别', label: '提取身份证性别' }, { value: '提取身份证民族', label: '提取身份证民族' },
+                { value: '提取身份证出生', label: '提取身份证出生' }, { value: '是否勾选', label: '是否勾选' }, { value: '勾选内容_right', label: '勾选内容_right' }, { value: '勾选内容_left', label: '勾选内容_left' }, { value: '是否粘贴证件照片', label: '是否粘贴证件照片' }, { value: '是否盖红章', label: '是否盖红章' }
             ],
             sortOptions: [
-                {value: 'WHO', label: 'WHO'}, {value: 'WHERE', label: 'WHERE'}, {value: 'WHAT', label: 'WHAT'}, 
-                {value: 'WHEN', label: 'WHEN'}, {value: 'SIGN', label: 'SIGN'} 
+                { value: 'WHO', label: 'WHO' }, { value: 'WHERE', label: 'WHERE' }, { value: 'WHAT', label: 'WHAT' },
+                { value: 'WHEN', label: 'WHEN' }, { value: 'SIGN', label: 'SIGN' }
             ],
             valuePropertyOptions: [
-                {value: 'ch', label: 'ch 汉字'}, {value: 'char', label: 'char 字母'}, {value: 'num', label: 'num 数字'}, {value: 'num_char', label: '数字+字母'}, 
-                {value: 'ch_char', label: 'ch_char 汉字+字母'}, {value: 'ch_num', label: 'ch_num 汉字+数字'}, {value: 'ch_char_num', label: 'ch_char_num 汉字字母数字'}, {value: 'date', label: 'date 单一日期'}, 
-                {value: 'id_number', label: 'id_number 身份证号'}, {value: 'last4id', label: 'last4id 后4位'}, {value: 'addr', label: 'addr 地址'}, {value: 'credit_number', label: 'credit_number 机构统一信用代码'}
+                { value: 'ch', label: 'ch 汉字' }, { value: 'char', label: 'char 字母' }, { value: 'num', label: 'num 数字' }, { value: 'num_char', label: '数字+字母' },
+                { value: 'ch_char', label: 'ch_char 汉字+字母' }, { value: 'ch_num', label: 'ch_num 汉字+数字' }, { value: 'ch_char_num', label: 'ch_char_num 汉字字母数字' }, { value: 'date', label: 'date 单一日期' },
+                { value: 'id_number', label: 'id_number 身份证号' }, { value: 'last4id', label: 'last4id 后4位' }, { value: 'addr', label: 'addr 地址' }, { value: 'credit_number', label: 'credit_number 机构统一信用代码' }
             ],
             editForm: {
                 cutImgTag: [],
@@ -391,6 +399,9 @@ export default {
                 valueField: [],
                 valuePattern: [],
             },
+            // 上传EXCEL
+            loadings: false,
+            urlExcel: process.env.VUE_APP_BASE_IP + '/ss/Import/aiCheckpointImportData',
         }
     },
     async created() {
@@ -534,7 +545,7 @@ export default {
             this.cutImgTagList = this.editForm.cutImgTag.map(item => { return { value: item } });
             this.valueFieldList = this.editForm.valueField.map(item => { return { value: item } });
             this.valuePatternList = this.editForm.valuePattern.map(item => { return { value: item } });
-            if(this.editForm.initPosition) {
+            if (this.editForm.initPosition) {
                 this.editForm.initPosition = JSON.stringify(this.editForm.initPosition[0]) + ',' + JSON.stringify(this.editForm.initPosition[1]);
                 if (this.editForm.initPosition === 'null,undefined') {
                     this.editForm.initPosition = '';
@@ -603,6 +614,77 @@ export default {
             document.body.removeChild(a);
             window.URL.revokeObjectURL(href);
         },
+        // Excel上传
+        // 成功上传文件
+        uploadSuccess(res, file) {
+            console.log(res)
+            if (res.status == 200) {
+                this.$message.success(res);
+            }
+        },
+        uploadError(err) {
+            console.log(err);
+            this.$message.error(err);
+        },
+        // 上传文件超出个数
+        handleExceed(files, fileList) {
+            this.$message.warning(`只能选择上传 1 个文件`);
+        },
+        //  移除文件
+        handleRemove(file, fileList) {
+        },
+        upLoad() {
+            this.$refs.upload.submit();
+        },
+        customUpload(file) {
+            this.loadings = true
+            let fd = new FormData();
+            fd.append("file", file);
+            fd.append("approvalItemId", this.itemId);
+            try {
+                axios.post(
+                    this.urlExcel,
+                    fd, { timeout: 1000 * 90 }
+                ).then(
+                    (res) => {
+                        console.log('rescode', res.code);
+                        if (res.data.success) {
+                            this.$message.success('上传成功');
+                            this.$refs.upload.clearFiles();
+                            this.loadings = false;
+                            this.getListCheckpoint();
+                        } else {
+                            this.$message.warning('上传失败,请重新上传');
+                            this.loadings = false;
+                            this.getListCheckpoint();
+                        }
+                    },
+                ).catch(error => {
+                    this.loadings = false;
+                    if (error.response) {
+                        // The request was made and the server responded with a status code
+                        // that falls out of the range of 2xx
+                        //   console.log(error.response.data);
+                        //   console.log(error.response.status);
+                        //   console.log(error.response.headers);
+                        this.$message.warning('哦no，不知道后端的开发又搞了什么乱子！');
+                    } else if (error.request) {
+                        // The request was made but no response was received
+                        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                        // http.ClientRequest in node.js
+                        //   console.log(error.request);
+                        this.$message.warning('你用的2g网络么，现在都5g时代了！');
+                    } else {
+                        // Something happened in setting up the request that triggered an Error
+                        //   console.log('Error', error.message);
+                        this.$message.warning('出现了其他问题！');
+                    }
+                    // console.log(error.config);
+                });
+            } catch (error) {
+            }
+            return false;
+        },
     }
 }
 </script>
@@ -624,6 +706,10 @@ export default {
     }
     .searchBox {
         margin-left: 20px;
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        justify-content: flex-start;
     }
     .workBox {
         width: 100%;
