@@ -57,5 +57,18 @@ export const deleteMaterialAndFigure = params => { return axios.delete(`/ss/Mate
 
 // 导入事项下对应材料
 export const copyMaterialByItemId = params => { return axios.get(`/ss/material/copyMaterialByItemId`, {params}).then(res=>res.data); };
+
 // 查询材料模板对应的二级材料
 export const listGlobalSubAllByMaterial = params => { return axios.get(`/ss/material/listGlobalSubAllByMaterial`, {params}).then(res=>res.data); };
+
+// 查看指定预览图下的签章列表
+export const getMaterialFigureSignature = params => { return axios.get(`/ss/MaterialAndFigure/getMaterialFigureSignature`, {params}).then(res=>res.data); };
+
+// 删除签章引导
+export const deleteMaterialFigureSignature = params => { return axios.get(`/ss/MaterialAndFigure/deleteMaterialFigureSignature`, {params}).then(res=>res.data); };
+
+// 新增预览图签章 必填:预览图主键,坐标,提示语
+export const addMaterialFigureSignature = params => { return axios.post(`/ss/MaterialAndFigure/addMaterialFigureSignature`, params).then(res=>res.data); };
+
+// 修改预览图签章
+export const updateMaterialFigureSignature = params => { return axios.post(`/ss/MaterialAndFigure/updateMaterialFigureSignature`, params).then(res=>res.data); };
