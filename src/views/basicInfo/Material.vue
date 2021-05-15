@@ -137,7 +137,7 @@
                         <el-input v-model="materialT.templateName"></el-input>
                     </el-form-item>
                     <el-form-item label="是否显示在左侧导航">
-                        <el-select v-model="materialT.isNavigation">
+                        <el-select v-model="materialT.isNavigation" clearable>
                             <el-option label="是" :value="Number(1)"></el-option>
                             <el-option label="否" :value="Number(0)"></el-option>
                         </el-select>
@@ -146,7 +146,7 @@
                         <el-input v-model="materialT.navigationOrder" placeholder="请输入数字"></el-input>
                     </el-form-item>
                     <el-form-item label="是否必须上传">
-                        <el-select v-model="materialT.uploadRequired">
+                        <el-select v-model="materialT.uploadRequired" clearable>
                             <el-option label="是" :value="Number(1)"></el-option>
                             <el-option label="否" :value="Number(0)"></el-option>
                         </el-select>
@@ -200,13 +200,13 @@
                         <el-input v-model="materialTEdit.documentSeq"></el-input>
                     </el-form-item>
                     <el-form-item label="是否显示在左侧导航">
-                        <el-select v-model="materialTEdit.isNavigation">
+                        <el-select v-model="materialTEdit.isNavigation" clearable>
                             <el-option label="是" :value="Number(1)"></el-option>
                             <el-option label="否" :value="Number(0)"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="是否必须上传">
-                        <el-select v-model="materialTEdit.uploadRequired">
+                        <el-select v-model="materialTEdit.uploadRequired" clearable>
                             <el-option label="是" :value="Number(1)"></el-option>
                             <el-option label="否" :value="Number(0)"></el-option>
                         </el-select>
