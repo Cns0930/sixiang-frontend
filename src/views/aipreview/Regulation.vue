@@ -90,7 +90,7 @@
                             <span>审批点: {{item.rulePoint}}</span> <span style="position: absolute; left: 55%;">规则编号:
                                 {{item.ruleCode}}</span>
                         </div>
-                        <div>审批结果: {{item.ruleTips[1]}}</div>
+                        <div>审批结果: {{item.ruleTips[2]}}</div>
                         <el-divider></el-divider>
                     </div>
                     <div class="three-main">
@@ -141,7 +141,7 @@
                             <span>审批点: {{item.rulePoint}}</span> <span style="position: absolute; left: 55%;">规则编号:
                                 {{item.ruleCode}}</span>
                         </div>
-                        <div>审批结果: {{item.ruleTips[1]}}</div>
+                        <div>审批结果: {{item.ruleTips[0]}}</div>
                         <el-divider></el-divider>
                     </div>
                     <div class="three-main">
