@@ -17,3 +17,6 @@ export const renamePic = params => { return axios.post(`/docInfo/rename_pic`, pa
 
 // 更新样例图片ocr
 export const uploadOcrById = params => { return axios.get(`/docInfo/uploadOcrById`, {params}).then(res=>res.data); };
+
+// 导入标定数
+export const importTag = params => { return axios.get(`/tag/importTag`, {params}).then(res=>res.data); };
