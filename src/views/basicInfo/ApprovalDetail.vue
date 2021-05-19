@@ -179,16 +179,21 @@
                 <el-table-column label="序号" type="index" width="50" :index="indexMethod"></el-table-column>
                 <el-table-column prop="version" label="版本号"></el-table-column>
                 <el-table-column prop="creator" label="提交人"></el-table-column>
-                <el-table-column label="git链接">
+                <el-table-column label="git链接" width="200">
                     <template slot-scope="scope">
                         <a target="_blank" :href="scope.row.gitUrl">{{scope.row.gitUrl}}</a>
+                    </template>
+                </el-table-column>
+                <el-table-column label="git压缩包下载">
+                    <template slot-scope="scope">
+                        <a :href="scope.row.downloadUrl">点击下载</a>
                     </template>
                 </el-table-column>
                 <el-table-column prop="itemVersion" label="事项版本"></el-table-column>
                 <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter"></el-table-column>
                 <el-table-column prop="note" label="提交备注"></el-table-column>
                 <el-table-column prop="delNote" label="删除备注"></el-table-column>
-                <el-table-column label="操作" fixed="right" width="200px">
+                <el-table-column label="操作" fixed="right" width="100px">
                     <template slot-scope="scope">
                         <el-button-group>
                             <el-button type="danger" :disabled="scope.row.isDelete === 1"
