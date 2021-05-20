@@ -229,6 +229,14 @@
                 <span>备注填写:</span>
                 <el-input type="textarea" v-model="gitNote" :autosize="{ minRows: 2, maxRows: 6 }"></el-input>
             </div>
+            <div style="margin-top: 20px">
+                <span>同步到九宫程序：</span>
+                <el-select v-model="machineId" filterable clearable placeholder="地址+说明+版本" style="width:400px">
+                    <el-option v-for="item in addressOptions" :key="item.id"
+                        :label="'地址:' + item.superformIpPort + ' 说明:' + item.displayNotes + ' 版本:' + item.version" :value="item.id">
+                    </el-option>
+                </el-select>
+            </div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogGitConfirmVisible = false">
                     取消
@@ -269,7 +277,7 @@ import _ from "lodash"
 import {
     getByApprovalItemId, listApprovalAll, updateApprovalItem, submitItemInfo,
     listVersionItem, obtainVersionItem, addSysVersionItem, listSysGitVersionLog,
-    deleteSysGitVersion
+    deleteSysGitVersion, listMachines
 } from "@/api/basicInfo/approval"
 
 export default {
@@ -306,6 +314,8 @@ export default {
             gitNote: '',
             dialogItemConfirmVisible: false,
             dialogGitConfirmVisible: false,
+            machineId: null,
+            addressOptions: [],
             dialogGitHistoryVisible: false,
             gitHistoryList: [],
             deleteNote: '',
@@ -333,7 +343,15 @@ export default {
         // await this.search();
         console.log('this.itemInfo', this.itemInfo)
     },
+    async mounted() {
+        await this.getOptions();
+    },
     methods: {
+        async getOptions() {
+            let {success, data} = await listMachines();
+            if(!success) return;
+            this.addressOptions = data;
+        },
         getApprovalDetailInfo() {
             // Object.assign(this.formInline, this.itemInfo);
             // dayjs(cellValue).format("YYYY-MM-DD HH:mm:ss")
@@ -430,8 +448,12 @@ export default {
                 this.$message.warning("请填写备注再提交");
                 return;
             }
+            if (!this.machineId) {
+                this.$message.warning("请选择九宫地址再提交");
+                return;
+            }
             this.loadingUptoGit = true;
-            let res = await submitItemInfo({ approvalItemId: this.itemId, note: this.gitNote });
+            let res = await submitItemInfo({ approvalItemId: this.itemId, note: this.gitNote, machineId: this.machineId });
             if (res.success) {
                 this.$message.success('上传配置到Git成功！');
             } else {
