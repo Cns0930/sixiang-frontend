@@ -114,10 +114,10 @@
                             <el-input v-model="tempItem.itemNo">
                             </el-input>
                         </el-form-item>
-                        <el-form-item label="事项内部编号">
+                        <!-- <el-form-item label="事项内部编号">
                             <el-input v-model="tempItem.itemInternalNo">
                             </el-input>
-                        </el-form-item>
+                        </el-form-item> -->
                         <!-- <el-form-item label="事项实施编码" prop="itemCode">
                             <el-input v-model="tempItem.itemCode">
                             </el-input>
