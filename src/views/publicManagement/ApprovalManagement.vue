@@ -88,9 +88,12 @@
                     <el-input v-model="editForm.approvalType"></el-input>
                 </el-form-item>
                 <el-form-item label="所属委办局" required>
-                    <el-select v-model="editForm.departmentName" clearable placeholder="请选择所属委办局">
+                    <el-select v-model="editForm.departmentName" clearable placeholder="请选择所属委办局"  
+                    @change="editForm.departmentId = departmentOptions
+                        .find((one) => one.departmentName == editForm.departmentName)
+                        .departmentId">
                         <el-option v-for="(v,i) in departmentOptions" :key="i" :label="v.departmentName"
-                            :value="v.departmentId"> </el-option>
+                            :value="v.departmentName"> </el-option>
                     </el-select>
                 </el-form-item>
             </el-form>

@@ -54,6 +54,9 @@
                                 </el-button>
                                 <el-button size="mini" type="primary" @click="Edit(scope.row)" icon="el-icon-edit">
                                 </el-button>
+                                <el-button size="mini" type="primary" @click="showSignature(scope.row)">
+                                    签章引导标注
+                                </el-button>
                             </div>
                         </template>
                     </el-table-column>
@@ -90,6 +93,8 @@
                 <el-button type="primary" @click="uploadEdit()">确 定</el-button>
             </span>
         </el-dialog>
+        <!-- 签章引导弹窗 -->
+        <SignatureGuide ref="signature" />
     </div>
 </template>
 
@@ -97,10 +102,26 @@
 import axios from "axios";
 import dayjs from "dayjs";
 import _ from "lodash";
+import Vue from "vue";
+import VueCompositionAPI from '@vue/composition-api'
+import { ref } from "@vue/composition-api";
+// 组件
+import SignatureGuide from './SignatureGuide.vue';
 // 接口
 import { listMaterialAndFigure, deleteMaterialAndFigure } from '../../../api/basicInfo/material';
 
+Vue.use(VueCompositionAPI);
+
 export default {
+    components: {
+        SignatureGuide
+    },
+    setup() {
+        const signature = ref(null);
+        return {
+            signature,
+        }
+    },
     data() {
         return {
             previewVisible: false,
@@ -185,6 +206,15 @@ export default {
             this.$message.success('删除成功');
             this.getListMaterialAndFigure();
         },
+
+        // 签章引导标注
+        showSignature(row) {
+            // console.log('row');
+            // console.log(row
+            this.signature && this.signature.openDialog(row);
+            this.signature.row = row;
+        },
+
         // 上传图片相关
         // 上传文件
         customUpload(file) {

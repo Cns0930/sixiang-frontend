@@ -223,7 +223,7 @@ import {mixin} from "@/mixin/mixin"
 // import { listGlobalCheckpoint} from '@/api/basicInfo/examination'
 import {listCheckpoint} from '@/api/basicInfo/field';
 import { getApprovalSub, addApprovalSubitemSubkey, deleteApprovalSubitemSubkey, updateApprovalSubitemSubkey
-,listApprovalSubitemSubkey, getByApprovalSubitemSubkeyId} from "../../api/basicInfo/approvalSub";
+,listApprovalSubitemSubkey, getByApprovalSubitemSubkeyId, listApprovalSubAll} from "../../api/basicInfo/approvalSub";
 import { listDocumentSubByItemId } from '@/api/basicInfo/ApprovalRules'
 import { mapGetters } from "vuex"
 export default {
@@ -309,10 +309,10 @@ export default {
         },
         // 情形列表
         async getApprovalList() {
-            let result = await getApprovalSub({approvalItemId: this.$route.query.itemId});
+            let result = await listApprovalSubAll({approvalItemId: this.$route.query.itemId});
             console.log(result)
             if (!result.success) return;
-            this.approvalSubList=result.data.records.map(ele=>ele.approvalSubitem)   
+            this.approvalSubList=result.data;   
         },
         
         // 增加

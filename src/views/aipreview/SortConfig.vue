@@ -11,6 +11,13 @@
                 <el-button @click="addSortConfig">新增</el-button>
                 <el-button @click="loadSortConfig">载入数据</el-button>
                 <el-button type="primary" @click="downLoadJson('/ai/aiSortconfig/getSortconfigJson')">生成Json</el-button>
+                <el-upload class="upload-demo" ref="upload" :action="urlExcel" :multiple="false" :limit="1"
+                    :with-credentials="true" :on-success="uploadSuccess" :on-remove="handleRemove"
+                    :on-exceed="handleExceed" :auto-upload='true' :before-upload="customUpload">
+                    <el-button type="primary" icon="el-icon-upload" class="button" :loading="loadings"
+                        @click="upLoad()" style="margin-left: 20px;">Excel上传
+                    </el-button>
+                </el-upload>
             </div>
             <div class="sampleTable">
                 <el-table ref="multipleTable" border :data="tableData" tooltip-effect="dark" highlight-current-row
@@ -157,6 +164,9 @@ export default {
                 valueField: [],
                 valuePattern: [],
             },
+            // 上传EXCEL
+            loadings: false,
+            urlExcel: process.env.VUE_APP_BASE_IP + '/ss/Import/aiSortConfigImportData',
         }
     },
     async created() {
@@ -319,6 +329,77 @@ export default {
             document.body.removeChild(a);
             window.URL.revokeObjectURL(href);
         },
+        // Excel上传
+        // 成功上传文件
+        uploadSuccess(res, file) {
+            console.log(res)
+            if (res.status == 200) {
+                this.$message.success(res);
+            }
+        },
+        uploadError(err) {
+            console.log(err);
+            this.$message.error(err);
+        },
+        // 上传文件超出个数
+        handleExceed(files, fileList) {
+            this.$message.warning(`只能选择上传 1 个文件`);
+        },
+        //  移除文件
+        handleRemove(file, fileList) {
+        },
+        upLoad() {
+            this.$refs.upload.submit();
+        },
+        customUpload(file) {
+            this.loadings = true
+            let fd = new FormData();
+            fd.append("file", file);
+            fd.append("approvalItemId", this.itemId);
+            try {
+                axios.post(
+                    this.urlExcel,
+                    fd, { timeout: 1000 * 90 }
+                ).then(
+                    (res) => {
+                        console.log('rescode', res.code);
+                        if (res.data.success) {
+                            this.$message.success('上传成功');
+                            this.$refs.upload.clearFiles();
+                            this.loadings = false;
+                            this.getSortConfigList();
+                        } else {
+                            this.$message.warning('上传失败,请重新上传');
+                            this.loadings = false;
+                            this.getSortConfigList();
+                        }
+                    },
+                ).catch(error => {
+                    this.loadings = false;
+                    if (error.response) {
+                        // The request was made and the server responded with a status code
+                        // that falls out of the range of 2xx
+                        //   console.log(error.response.data);
+                        //   console.log(error.response.status);
+                        //   console.log(error.response.headers);
+                        this.$message.warning('哦no，不知道后端的开发又搞了什么乱子！');
+                    } else if (error.request) {
+                        // The request was made but no response was received
+                        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                        // http.ClientRequest in node.js
+                        //   console.log(error.request);
+                        this.$message.warning('你用的2g网络么，现在都5g时代了！');
+                    } else {
+                        // Something happened in setting up the request that triggered an Error
+                        //   console.log('Error', error.message);
+                        this.$message.warning('出现了其他问题！');
+                    }
+                    // console.log(error.config);
+                });
+            } catch (error) {
+            }
+            return false;
+        },
     }
 }
 </script>
@@ -340,6 +421,10 @@ export default {
     }
     .searchBox {
         margin-left: 20px;
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        justify-content: flex-start;
     }
     .workBox {
         width: 100%;

@@ -324,6 +324,7 @@
                             placeholder="上、右、下、左、周围、中央">
                             <el-option label="up" value="up"></el-option>
                             <el-option label="right" value="right"></el-option>
+                            <el-option label="right_all" value="right_all"></el-option>
                             <el-option label="down" value="down"></el-option>
                             <el-option label="left" value="left"></el-option>
                             <el-option label="around" value="around"></el-option>
@@ -430,6 +431,7 @@
                             placeholder="上、右、下、左、周围、中央">
                             <el-option label="up" value="up"></el-option>
                             <el-option label="right" value="right"></el-option>
+                            <el-option label="right_all" value="right_all"></el-option>
                             <el-option label="down" value="down"></el-option>
                             <el-option label="left" value="left"></el-option>
                             <el-option label="around" value="around"></el-option>

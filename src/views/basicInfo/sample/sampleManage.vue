@@ -23,6 +23,7 @@
                 @click="reName">重命名</el-button>
             <el-button type="danger" icon="el-icon-delete" class="button" :disabled="multipleSelection.length === 0"
                 @click="deleteDcument">删除</el-button>
+            <el-button type="primary" icon="el-icon-finished" class="button" @click="openDialog">样本复用</el-button>
         </div>
         <div class="workBox">
             <div class="history-navigation">
@@ -68,7 +69,7 @@
             </div>
         </div>
         <!-- rename弹窗 -->
-        <el-dialog title="重命名文件" :visible.sync="dialogVisible" width="30%">
+        <el-dialog title="重命名文件" :visible.sync="dialogVisible" width="30%" :close-on-click-modal="false">
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="文件名称：">
                     <el-input v-model="form.name"></el-input>
@@ -82,6 +83,8 @@
                 <el-button type="primary" @click="confirmEdit">确 定</el-button>
             </span>
         </el-dialog>
+        <!-- 样本复用 -->
+        <SampleReuseDialog  ref="sampleReuse"/>
 
     </div>
 </template>
@@ -89,16 +92,30 @@
 <script>
 import axios from 'axios'
 import Vue from "vue";
+import VueCompositionAPI from '@vue/composition-api'
+import { ref } from "@vue/composition-api";
 import { mixin } from "@/mixin/mixin"
 import { mapGetters, mapState } from "vuex"
 import state from '@/vuex/home/state';
 import dayjs from "dayjs";
+//组件
+import SampleReuseDialog from './sampleReuseDialog'
 // 接口
 import { getFileList, deleteDoc, modifyFileName } from "@/api/basicInfo/sample/document"
 
+Vue.use(VueCompositionAPI)
 export default {
     name: "SampleManage",
     mixins: [mixin],
+    components: {
+        SampleReuseDialog
+    },
+    setup() {
+        const sampleReuse = ref(null);
+        return {
+            sampleReuse,
+        }
+    },
     data() {
         return {
             // 初始参数
@@ -432,9 +449,13 @@ export default {
                     filePathQueue: JSON.stringify(this.filePathQueue)
                 },
             });
-        }
-
+        },
+        // 样本复用
+        async openDialog() {
+            this.sampleReuse && this.sampleReuse.openDialog();
+        },
     },
+        
 
 }
 </script>
