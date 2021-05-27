@@ -75,6 +75,7 @@
                     </el-select> -->
                     <el-button type="plain" @click="downloadInputJson" :loading="loadingLoad">下载input.json</el-button>
                     <el-button type="primary" @click="runObtainExtractResult" :loading="loading">运行结果</el-button>
+                    <el-button type="primary" @click="showRegulationPage">查看对应规则</el-button>
                 </div>
             </div>
             <span slot="footer" class="dialog-footer">
@@ -294,6 +295,11 @@ export default {
             document.body.removeChild(a);
             window.URL.revokeObjectURL(href);
             this.loadingLoad = false;
+        },
+        // 展示规则页面
+        showRegulationPage() {
+            let routeUrl = this.$router.resolve({ name: "Regulation", query: { 'itemId': this.$route.query.itemId, 'projectId': this.$route.query.projectId } });
+            window.open(routeUrl.href, '_blank');
         }
     }
 }
