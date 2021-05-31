@@ -11,3 +11,6 @@ export const updateKvInfoById = params => { return axios.post(`/ai/DocumentKvInf
 
 // 更新分类备注
 export const updateClassifById = params => { return axios.post(`/ai/DocumentClassify/updateClassifById`, params).then(res=>res.data); };
+
+// 获取规则结果列表
+export const listRuleResult = params => { return axios.get(`/ss/rule/listRuleResult`, {params}).then(res=>res.data); };

@@ -64,7 +64,7 @@
                     </el-table-column>
                     <el-table-column prop="documentSeq" label="文档序号" width="50px">
                     </el-table-column>
-                    <el-table-column prop="isNavigation" label="是否显示在左侧导航" width="90px"
+                    <el-table-column prop="isNavigation" label="是否材料清单展示" width="90px"
                         :formatter="isRequiredFormatter">
                     </el-table-column>
                     <el-table-column prop="uploadRequired" label="是否必须上传" width="60px" :formatter="isRequiredFormatter">
@@ -136,8 +136,8 @@
                     <el-form-item label="模板名称(自取)">
                         <el-input v-model="materialT.templateName"></el-input>
                     </el-form-item>
-                    <el-form-item label="是否显示在左侧导航">
-                        <el-select v-model="materialT.isNavigation" clearable>
+                    <el-form-item label="是否材料清单展示">
+                        <el-select v-model="materialT.isNavigation">
                             <el-option label="是" :value="Number(1)"></el-option>
                             <el-option label="否" :value="Number(0)"></el-option>
                         </el-select>
@@ -199,8 +199,8 @@
                     <el-form-item label="文档序号">
                         <el-input v-model="materialTEdit.documentSeq"></el-input>
                     </el-form-item>
-                    <el-form-item label="是否显示在左侧导航">
-                        <el-select v-model="materialTEdit.isNavigation" clearable>
+                    <el-form-item label="是否材料清单展示">
+                        <el-select v-model="materialTEdit.isNavigation">
                             <el-option label="是" :value="Number(1)"></el-option>
                             <el-option label="否" :value="Number(0)"></el-option>
                         </el-select>

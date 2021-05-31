@@ -73,7 +73,8 @@
                                                         @click="editSignature(item)">
                                                         编辑
                                                     </el-button>
-                                                    <el-button v-show="!item.rowflag" size="mini" type="danger" @click="deleteSignature(item)">
+                                                    <el-button v-show="!item.rowflag" size="mini" type="danger"
+                                                        @click="deleteSignature(item)">
                                                         删除
                                                     </el-button>
                                                 </div>
@@ -93,19 +94,23 @@
                                                         </el-select>
                                                     </div>
                                                     <div>
-                                                        <span>座标:</span>
+                                                        <span>坐标:</span>
                                                         <el-button size="medium" type="plain"
                                                             @click="addSignatureLocation(item)"
                                                             :disabled="!item.rowflag">
-                                                            框入座标
+                                                            框入坐标
                                                         </el-button>
                                                     </div>
                                                     <div class="signatureLocation">
                                                         <div>
-                                                            <span>顶点座标座标:</span>
-                                                            <el-input placeholder="左边画框获取, 左上顶点座标"
-                                                                v-model="item.signatureLocation.zuobiao" disabled
-                                                                style="width: 240px">
+                                                            <span>顶点坐标:</span>
+                                                            <el-input placeholder="画框获取"
+                                                                v-model="item.signatureLocation.zuobiao[0]" disabled
+                                                                style="width: 115px">
+                                                            </el-input>
+                                                            <el-input placeholder="左上顶点坐标"
+                                                                v-model="item.signatureLocation.zuobiao[1]" disabled
+                                                                style="width: 115px">
                                                             </el-input>
                                                         </div>
                                                         <div>
@@ -230,21 +235,21 @@ export default {
             let imgAxis = this.$refs.cropper.getImgAxis(); // 获取图片基于容器的坐标点
             let cropAxis = this.$refs.cropper.getCropAxis(); // 获取截图框基于容器的坐标点
             let zoom = this.row.width / (imgAxis.x2 - imgAxis.x1); // 真实图片放大系数
-            // coordinate = [[cropAxis.x1-imgAxis.x1, cropAxis.y1-imgAxis.y1], [cropAxis.x2-imgAxis.x1, cropAxis.y2-imgAxis.y1]]  // 正常座标系 [[x1, y1], [x2, y2]] 左上座标和右下座标
-            // 反人类座标系 [[y1, x1], [y2, x2]] 左上座标和右下座标
-            // let coordinateNew = [[cropAxis.x1-imgAxis.x1, cropAxis.y1-imgAxis.y1], [cropAxis.x2-imgAxis.x1, cropAxis.y2-imgAxis.y1]];  // 正常座标系 [[x1, y1], [x2, y2]] 左上座标和右下座标
+            // coordinate = [[cropAxis.x1-imgAxis.x1, cropAxis.y1-imgAxis.y1], [cropAxis.x2-imgAxis.x1, cropAxis.y2-imgAxis.y1]]  // 正常坐标系 [[x1, y1], [x2, y2]] 左上坐标和右下坐标
+            // 反人类坐标系 [[y1, x1], [y2, x2]] 左上坐标和右下坐标
+            // let coordinateNew = [[cropAxis.x1-imgAxis.x1, cropAxis.y1-imgAxis.y1], [cropAxis.x2-imgAxis.x1, cropAxis.y2-imgAxis.y1]];  // 正常坐标系 [[x1, y1], [x2, y2]] 左上坐标和右下坐标
             // let coordinateNewRatio = [[(cropAxis.x1-imgAxis.x1)/(imgAxis.x2 - imgAxis.x1), (cropAxis.y1-imgAxis.y1)/(imgAxis.y2 - imgAxis.y1)], [(cropAxis.x2-imgAxis.x1)/(imgAxis.x2 - imgAxis.x1), (cropAxis.y2-imgAxis.y1)/(imgAxis.y2 - imgAxis.y1)]];
             let coordinateNewPix = {
                 coordinate: [Math.round((cropAxis.x1 - imgAxis.x1) * zoom), Math.round((cropAxis.y1 - imgAxis.y1) * zoom)],
                 width: Math.round((cropAxis.x2 - cropAxis.x1) * zoom),
                 height: Math.round((cropAxis.y2 - cropAxis.y1) * zoom),
             }
-            // 比例座标
-            console.log('座标,像素为单位,一个顶点+框宽高');
+            // 比例坐标
+            console.log('坐标,像素为单位,一个顶点+框宽高');
             console.log(coordinateNewPix);
-            // console.log('比例座标');
+            // console.log('比例坐标');
             // console.log(coordinateNewRatio);
-            row.signatureLocation.zuobiao = JSON.stringify(coordinateNewPix.coordinate);
+            row.signatureLocation.zuobiao = coordinateNewPix.coordinate;
             row.signatureLocation.length = coordinateNewPix.width;
             row.signatureLocation.width = coordinateNewPix.height;
         },
@@ -274,7 +279,7 @@ export default {
             console.log('保存');
             console.log(row);
             if (row.signatureTips === '' || row.signatureLocation.zuobiao === '') {
-                this.$message.warning('保存前请填入座标和提示语！');
+                this.$message.warning('保存前请填入坐标和提示语！');
                 return;
             }
             if (row.rowflag === 1) {
@@ -328,12 +333,12 @@ export default {
                 img.onload = () => {
                     console.log('img');
                     console.log(img);
-                    ctx.clearRect(0,0,canvas.width,canvas.height); // 清空画布
+                    ctx.clearRect(0, 0, canvas.width, canvas.height); // 清空画布
                     ctx.drawImage(img, 0, 0);
                     let number = 1;
                     this.signatureListData.forEach(item => {
                         if (item.signatureLocation.zuobiao !== null) {
-                            let coordinate = JSON.parse(item.signatureLocation.zuobiao);
+                            let coordinate = item.signatureLocation.zuobiao;
                             let x = coordinate[0];
                             let y = coordinate[1];
                             let width = item.signatureLocation.length;

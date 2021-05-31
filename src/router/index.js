@@ -300,6 +300,11 @@ const routes = [
                         name: 'AiDevelopment',
                         component: resolve => require(['@/views/aipreview/AiDevelopment.vue'],resolve),
                     },
+                    {
+                        path: '/aipreview/regulation',
+                        name: 'Regulation',
+                        component: resolve => require(['@/views/aipreview/Regulation.vue'],resolve),
+                    },
                 ]
             }, 
             {

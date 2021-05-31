@@ -198,7 +198,10 @@ p.trip {
         }
     }
 }
-
+// 解决elementUI表格错位的问题
+.el-table th.gutter {
+    display: table-cell !important;
+}
 
 
 .ui-compiler {

@@ -230,7 +230,7 @@
                 <el-input type="textarea" v-model="gitNote" :autosize="{ minRows: 2, maxRows: 6 }"></el-input>
             </div>
             <div style="margin-top: 20px">
-                <span>同步到九宫程序：</span>
+                <span>对应九宫版本：</span>
                 <el-select v-model="machineId" filterable clearable placeholder="地址+说明+版本" style="width:400px">
                     <el-option v-for="item in addressOptions" :key="item.id"
                         :label="'地址:' + item.superformIpPort + ' 说明:' + item.displayNotes + ' 版本:' + item.version" :value="item.id">
