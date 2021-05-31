@@ -302,6 +302,20 @@ const routes = [
                     },
                 ]
             }, 
+            {
+                path: '/questionnaire',
+                component: resolve => require(['@/views/questionnaire/QuestionHome.vue'],resolve),
+                meta:{
+                    showLeftMenu:true,
+                },
+                children: [
+                    {
+                        path: '/questionnaire/questionmanagement',
+                        name: 'QuestionManagement',
+                        component: resolve => require(['@/views/questionnaire/QuestionManagement.vue'],resolve),
+                    },
+                ]
+            }, 
         ]
     },
     {

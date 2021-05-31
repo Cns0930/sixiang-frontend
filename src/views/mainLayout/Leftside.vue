@@ -14,9 +14,8 @@
         </transition-group> -->
         <el-menu  router :default-active="$route.path" @open="handleOpen"
             @close="handleClose" :collapse="isCollapse">
-           
-             <el-menu-item v-for="(t,i) of navList" @click="changeCrumbListSecond(t)"
-                    :index="t.path" :key="i" >{{t.label}}</el-menu-item>
+            <el-menu-item v-for="(t,i) of navList" @click="changeCrumbListSecond(t)"
+                    :index="t.path" :key="i" ><i :class="t.iconClass"></i>{{t.label}}</el-menu-item>
         </el-menu>
     </div>
 </template>
