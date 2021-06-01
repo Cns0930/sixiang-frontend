@@ -240,6 +240,7 @@ export default {
         },
         // 编辑题目
         editQuestionnaireItem(row) {
+            this.paperList = []
             this.getQuestionnaireItem(row.questionKey)
             this.dialogVisiblePaper = true
         },

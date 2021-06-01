@@ -108,6 +108,16 @@ export default {
         },
         // 回填数据
         async backfillQuestionnaire(row) {
+            try {
+                await this.$confirm('是否确定回填? 这将会覆盖一些字段数据', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                })
+            } catch (e) {
+                this.$message.info('取消了回填')
+                return;
+            }
             let params = {
                 approvalItemId: Number(this.$route.query.itemId),
                 replyId: row.replyId
