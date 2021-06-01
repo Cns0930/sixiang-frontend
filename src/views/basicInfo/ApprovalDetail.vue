@@ -140,6 +140,18 @@
                             <el-option :value="Number(1)" label="企业"></el-option>
                         </el-select>
                     </el-form-item>
+                    <el-form-item label="是否制件">
+                        <el-select v-model="tempItem.isPart" placeholder="否/是" style="width:300px">
+                            <el-option :value="Number(0)" label="否"></el-option>
+                            <el-option :value="Number(1)" label="是"></el-option>
+                        </el-select>
+                        <span v-if="tempItem.isPart">制件方式：</span>
+                        <el-radio-group v-if="tempItem.isPart" v-model="tempItem.partMode">
+                            <el-radio label="邮寄">邮寄</el-radio>
+                            <el-radio label="自取">自取</el-radio>
+                            <el-radio label="邮寄or自取">邮寄or自取</el-radio>
+                        </el-radio-group>
+                    </el-form-item>
                 </el-form>
             </div>
             <span slot="footer" class="dialog-footer">
@@ -486,6 +498,9 @@ export default {
         async updateItem() {
             this.tempItem.extraInfo = JSON.stringify(this.extraInfoList);
             this.tempItem.sujectType = this.tempItem.sujectType.toString();
+            if(!this.tempItem.isPart) {
+                this.tempItem.partMode = ''
+            }
             let res = await updateApprovalItem(this.tempItem);
             if (res.success) {
                 this.$message.success("事项修改成功!");
