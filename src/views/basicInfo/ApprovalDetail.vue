@@ -82,6 +82,11 @@
                     <el-button type="primary" @click="showGitHistory">点击查看
                     </el-button>
                 </div>
+                <div class="handleBox">
+                    <p class="title">复用其他版本事项</p>
+                    <el-button type="primary" @click="showReuseDialog">选取复用
+                    </el-button>
+                </div>
             </div>
         </div>
         <!-- 事项编辑弹窗 -->
@@ -233,7 +238,8 @@
                 <span>对应九宫版本：</span>
                 <el-select v-model="machineId" filterable clearable placeholder="地址+说明+版本" style="width:400px">
                     <el-option v-for="item in addressOptions" :key="item.id"
-                        :label="'地址:' + item.superformIpPort + ' 说明:' + item.displayNotes + ' 版本:' + item.version" :value="item.id">
+                        :label="'地址:' + item.superformIpPort + ' 说明:' + item.displayNotes + ' 版本:' + item.version"
+                        :value="item.id">
                     </el-option>
                 </el-select>
             </div>
@@ -262,6 +268,49 @@
                 </el-button>
             </span>
         </el-dialog>
+        <!-- 复用 -->
+        <el-dialog title="复用其他事项数据" :visible.sync="reuseDialogVisible" width="50%" :close-on-click-modal="false">
+            <div style="margin:10px 0px">
+                项目选择:
+                <el-select v-model="tempProjectId" placeholder="请选择项目名称" @change="selectProject">
+                    <el-option v-for="item in projectOptions" :key="item.projectId" :label="item.projectName"
+                        :value="item.projectId">
+                    </el-option>
+                </el-select>
+            </div>
+            <div>
+                事项名称:
+                <el-select filterable clearable placeholder="请选择事项名称" v-model="tempItemId" @change="showVersionList"
+                    style="position:relative; margin-bottom: 20px;">
+                    <el-option v-for="(v,i) in typeSubItemOptions" :key="i" :label="v.itemName"
+                        :value="v.approvalItemLordId">
+                    </el-option>
+                </el-select>
+            </div>
+            <div class="sampleTable">
+                <el-table ref="versionTable" v-loading="loadingReuse" element-loading-text="拼命加载中"
+                    element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.5)"
+                    :data="reuseTableData" border style="width: 100%" row-key="id">
+                    <el-table-column label="序号" type="index" width="50" :index="indexMethod"></el-table-column>
+                    <el-table-column prop="version" label="版本号"></el-table-column>
+                    <el-table-column prop="username" label="提交人"></el-table-column>
+                    <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter"></el-table-column>
+                    <el-table-column prop="latest" label="是否最新" :formatter="formatBoolean"></el-table-column>
+                    <el-table-column prop="note" label="备注信息"></el-table-column>
+                    <el-table-column label="操作" fixed="right" width="200px">
+                        <template slot-scope="scope">
+                            <el-button-group>
+                                <el-button type="primary" :loading="scope.row.loadingImport"
+                                    @click="affirmReuse(scope.row)">复用</el-button>
+                            </el-button-group>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="reuseDialogVisible = false">关闭</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -279,7 +328,9 @@ import {
     listVersionItem, obtainVersionItem, addSysVersionItem, listSysGitVersionLog,
     deleteSysGitVersion, listMachines
 } from "@/api/basicInfo/approval"
-
+import {
+    listApprovalItem, listProjectAll, copyVersionItem
+} from "@/api/basicInfo/approval";
 export default {
     name: "ApprovalDetail",
     mixins: [mixin],
@@ -321,6 +372,14 @@ export default {
             deleteNote: '',
             deleteId: null,
             dialogGitDeleteVisible: false,
+            // 复用事项
+            reuseDialogVisible: false,
+            loadingReuse: false,
+            tempProjectId: null,
+            projectOptions: [],
+            tempItemId: null,
+            typeSubItemOptions: [],
+            reuseTableData: [],
         }
     },
     computed: {
@@ -348,8 +407,8 @@ export default {
     },
     methods: {
         async getOptions() {
-            let {success, data} = await listMachines();
-            if(!success) return;
+            let { success, data } = await listMachines();
+            if (!success) return;
             this.addressOptions = data;
         },
         getApprovalDetailInfo() {
@@ -572,7 +631,56 @@ export default {
                     return ''
                 }
             }
-        }
+        },
+        // 复用事项
+        async showReuseDialog() {
+            let resultProject = await listProjectAll();
+            this.projectOptions = resultProject.data;
+            this.reuseDialogVisible = true
+        },
+        // 确认复用
+        async affirmReuse(row) {
+            console.log('row')
+            console.log(row)
+            row.loadingResuseRow = true;
+            this.loadingReuse = true;
+            let params = {
+                approvalItemLordId: this.itemInfo.approvalItemLordId,
+                id: row.id,
+            }
+            let res = await copyVersionItem(params);
+            if (!res.success) {
+                this.$message.warning('导入失败！');
+                row.loadingResuseRow = false;
+                this.loadingReuse = false;
+                return;
+            } else {
+                this.$message.success('导入成功！');
+                row.loadingResuseRow = false;
+                this.loadingReuse = false;
+                this.reuseTableData = [];
+                this.tempItemId = null;
+                this.tempProjectId = null,
+                this.reuseDialogVisible = false
+            }
+        },
+        async selectProject() {
+            this.reuseTableData = [];
+            this.tempItemId = '';
+            let result = await listApprovalItem({ pageNum: 1, pageSize: 500, projectId: this.tempProjectId });
+            this.typeSubItemOptions = result.data.records;
+        },
+        async showVersionList() {
+            this.reuseTableData = [];
+            if (this.tempItemId) {
+                let res = await listVersionItem({ approvalItemLordId: this.tempItemId });
+                if (!res.success) return;
+                this.reuseTableData = res.data;
+                this.reuseTableData.forEach((item) => {
+                    this.$set(item, 'loadingResuseRow', false)
+                })
+            }
+        },
     },
 
 }
