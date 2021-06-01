@@ -33,6 +33,9 @@ export default {
                 materialStatus: this.materialStatus,});
                 if(!result.success) return;
                 this.tableData = result.data.records;
+                this.tableData.forEach((item) => {
+                this.$set(item, 'loadingFile', false)
+            })
             } else if(this.type === 'pickUp') {
                 
             } else if(this.type === 'singleWindow') {
