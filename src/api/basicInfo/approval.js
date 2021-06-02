@@ -92,3 +92,6 @@ export const listMachines = params => {return axios.get('/ss/approvalItem/listMa
 
 // 同步九宫事项数据
 export const synchronizeItemZip = params => {return axios.get('/ss/approvalItem/synchronizeItemZip',{params}).then(res => res.data)}
+
+// copy一份事项数据
+export const copyVersionItem = params => {return axios.get('/account/SysVersionItem/copyVersionItem',{params}).then(res => res.data)}
