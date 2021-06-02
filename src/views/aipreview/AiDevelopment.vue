@@ -67,6 +67,8 @@
                                                     </el-button>
                                                     <el-button round @click="imgOpen(item.valueUrl)">打开图片</el-button>
                                                     <el-button @click="updateOcr(item)">更新ocr</el-button>
+                                                    <span style="color: green; margin: 0px 10px;">{{item.documentsubDisplayname}}</span>
+                                                    <span style="color: #409EFF">{{item.fileName}}</span>
                                                 </div>
                                             </div>
                                             <div class="case-rows">
