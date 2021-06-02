@@ -14,6 +14,12 @@
                         </el-table-column>
                         <el-table-column prop="completeTime" label="作答时长" show-overflow-tooltip>
                         </el-table-column>
+                        <el-table-column label="问题反馈">
+                            <el-table-column prop="answerExpand.telephone" label="联系电话" width="160">
+                            </el-table-column>
+                            <el-table-column prop="answerExpand.problem" label="问题描述" width="300">
+                            </el-table-column>
+                        </el-table-column>
                         <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable>
                         </el-table-column>
                         <el-table-column label="操作" fixed="right" width="240">
@@ -36,7 +42,7 @@
         <!-- 查看问卷答案的dialog -->
         <el-dialog title="问卷回答" :visible.sync="dialogVisiblePaper" width="60%">
             <div>
-                <Paper :paper-list="paperList"/>
+                <Paper :paper-list="paperList" />
             </div>
         </el-dialog>
     </div>
@@ -53,7 +59,7 @@ import {
 
 export default {
     mixins: [mixin],
-    components: {Paper},
+    components: { Paper },
     data() {
         return {
             row: {},
@@ -123,7 +129,7 @@ export default {
                 replyId: row.replyId
             }
             let res = await fillback(params)
-            if(!res.success) {
+            if (!res.success) {
                 this.$message.warning('回填失败')
                 return
             }
