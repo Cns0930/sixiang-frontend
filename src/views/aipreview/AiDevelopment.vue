@@ -835,7 +835,7 @@ export default {
         // 确认编辑
         async editConfirm() {
             this.editForm.cutImgTag = this.cutImgTagList.map(item => item.value);
-            this.editForm.initPosition = JSON.parse('[' + this.editForm.initPosition + ']');
+            this.editForm.initPosition = this.editForm.initPosition === null ? null : JSON.parse('[' + this.editForm.initPosition + ']');
             this.editForm.valueField = this.valueFieldList.map(item => item.value);
             this.editForm.valuePattern = this.valuePatternList.map(item => item.value);
             this.editForm.approvalItemId = this.itemId;
@@ -875,7 +875,7 @@ export default {
         async addConfirm() {
             console.log(this.cutImgTagList);
             this.addForm.cutImgTag = this.cutImgTagList.map(item => item.value);
-            this.addForm.initPosition = JSON.parse('[' + this.addForm.initPosition + ']');
+            this.addForm.initPosition = this.addForm.initPosition === null || this.addForm.initPosition === '' ? null : JSON.parse('[' + this.addForm.initPosition + ']');
             this.addForm.valueField = this.valueFieldList.map(item => item.value);
             this.addForm.valuePattern = this.valuePatternList.map(item => item.value);
             this.addForm.approvalItemId = this.itemId;
