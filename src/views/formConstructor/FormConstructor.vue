@@ -9,6 +9,7 @@
 
                 <el-button @click="load">载入字段</el-button>
                 <el-button @click="handlePreview">预览全字段</el-button>
+                <el-button type="primary" :loading="loadingDownFile" @click="downLoad">下载</el-button>
             </div>
 
             <div class="right-bar">
@@ -316,6 +317,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import draggable from 'vuedraggable'
 import Sortable from 'sortablejs'
 import defs, {
@@ -402,7 +404,9 @@ export default {
             publicApprovalItemList: [],
             allPublicFields: [],
             showTip: false,
-            tempFieldNo: ''
+            tempFieldNo: '',
+            // 下载
+            loadingDownFile: false,
         };
     },
     computed: {
@@ -446,6 +450,65 @@ export default {
         next()
     },
     methods: {
+        // 下载帮办字段
+        async downLoad() {
+            this.loadingDownFile = true;
+            let res;
+            try {
+                res = await axios({
+                    method: "get",
+                    url: "/ss/Import/downloadFiedsExcelByItemId",
+                    params: {
+                        approvalItemId: this.$route.query.itemId,
+                    },
+                    responseType: "arraybuffer",
+                    timeout: 1000 * 180
+                });
+            } catch (error) {
+                this.loadingDownFile = false;
+                if (error.response) {
+                    // The request was made and the server responded with a status code
+                    // that falls out of the range of 2xx
+                    //   console.log(error.response.data);
+                    //   console.log(error.response.status);
+                    //   console.log(error.response.headers);
+                    this.$message.warning('哦no，不知道后端的开发又搞了什么乱子！');
+                } else if (error.request) {
+                    // The request was made but no response was received
+                    // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                    // http.ClientRequest in node.js
+                    //   console.log(error.request);
+                    this.$message.warning('你用的2g网络么，现在都5g时代了！');
+                } else {
+                    // Something happened in setting up the request that triggered an Error
+                    //   console.log('Error', error.message);
+                    this.$message.warning('哦no，不知道后端的开发又搞了什么乱子！');
+                }
+            }
+            if (res.data.byteLength === 0) {
+                this.$message.warning("该事项下没有样本文件");
+                return;
+            }
+            let blob = new Blob([res.data], { type: "application/zip" });
+            const a = document.createElement("a");
+            // 生成文件路径
+            let href = window.URL.createObjectURL(blob);
+            a.href = href;
+            console.log('res');
+            console.log(res);
+            // let _fileName = _res.headers['Content-disposition'].split(';')[1].split('=')[1].split('.')[0]
+            let _fileName = res.headers["content-disposition"]
+                .split(";")[1]
+                .split("=")[1];
+            // 文件名中有中文 则对文件名进行转码
+            a.download = decodeURIComponent(_fileName);
+            // 利用a标签做下载
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(href);
+            this.loadingDownFile = false;
+        },
         // 查询公共字段列表
         async getAllPublicFields() {
             let res = await listAllPublicFields();
