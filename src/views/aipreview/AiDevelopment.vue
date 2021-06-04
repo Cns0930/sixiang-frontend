@@ -67,6 +67,8 @@
                                                     </el-button>
                                                     <el-button round @click="imgOpen(item.valueUrl)">打开图片</el-button>
                                                     <el-button @click="updateOcr(item)">更新ocr</el-button>
+                                                    <span style="color: green; margin: 0px 10px;">{{item.documentsubDisplayname}}</span>
+                                                    <span style="color: #409EFF">{{item.fileName}}</span>
                                                 </div>
                                             </div>
                                             <div class="case-rows">
@@ -833,7 +835,7 @@ export default {
         // 确认编辑
         async editConfirm() {
             this.editForm.cutImgTag = this.cutImgTagList.map(item => item.value);
-            this.editForm.initPosition = JSON.parse('[' + this.editForm.initPosition + ']');
+            this.editForm.initPosition = this.editForm.initPosition === null ? null : JSON.parse('[' + this.editForm.initPosition + ']');
             this.editForm.valueField = this.valueFieldList.map(item => item.value);
             this.editForm.valuePattern = this.valuePatternList.map(item => item.value);
             this.editForm.approvalItemId = this.itemId;
@@ -873,7 +875,7 @@ export default {
         async addConfirm() {
             console.log(this.cutImgTagList);
             this.addForm.cutImgTag = this.cutImgTagList.map(item => item.value);
-            this.addForm.initPosition = JSON.parse('[' + this.addForm.initPosition + ']');
+            this.addForm.initPosition = this.addForm.initPosition === null || this.addForm.initPosition === '' ? null : JSON.parse('[' + this.addForm.initPosition + ']');
             this.addForm.valueField = this.valueFieldList.map(item => item.value);
             this.addForm.valuePattern = this.valuePatternList.map(item => item.value);
             this.addForm.approvalItemId = this.itemId;

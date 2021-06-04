@@ -13,6 +13,9 @@
                     <el-button type="primary" @click="handleClickAdd">
                         新增项目
                     </el-button>
+                    <el-button type="primary" @click="openDialog">
+                        全局操作
+                    </el-button>
                 </div>
             </div>
             <div class="titleBox">
@@ -119,6 +122,8 @@
                 </span>
             </el-dialog>
         </section>
+        <!-- 全局操作弹框 -->
+        <GlobalOperationsDialog ref="globalOperations" />
     </div>
 </template>
 
@@ -129,8 +134,12 @@
 import { mixin } from "@/mixin/mixin"
 import _ from "lodash"
 import Vue from "vue";
+import { ref } from "@vue/composition-api";
 
 import { mapGetters, mapState } from "vuex"
+// 组件
+import GlobalOperationsDialog from "./GlobalOperationsDialog"
+// 接口
 import {
     listProjectAll,
     addProject,
@@ -141,6 +150,15 @@ import {
 export default {
     name: "ProjectList",
     mixins: [mixin],
+    components: {
+        GlobalOperationsDialog
+    },
+    setup() {
+        const globalOperations = ref(null);
+        return {
+            globalOperations,
+        }
+    },
     data() {
         return {
             // 页面信息
@@ -302,6 +320,10 @@ export default {
                 this.$message.success('删除项目成功');
             }
             await this.loadProjects();
+        },
+        // 打开全局操作弹框
+        openDialog() {
+            this.globalOperations && this.globalOperations.openDialog();
         }
     },
 };
