@@ -146,14 +146,36 @@ export default {
             }
             console.log('params');
             console.log(params);
-            let result = await ObtainExtractResult(params);
-            if (!result.success) {
-                this.$message.warning('运行失败！')
+            try {
+                let result = await ObtainExtractResult(params);
+                if (!result.success) {
+                    this.$message.warning('运行失败！')
+                    this.loading = false;
+                    return;
+                }
                 this.loading = false;
-                return;
+                this.displayData = result.data;
+            } catch (error) {
+                this.loading = false;
+                if (error.response) {
+                    // The request was made and the server responded with a status code
+                    // that falls out of the range of 2xx
+                    //   console.log(error.response.data);
+                    //   console.log(error.response.status);
+                    //   console.log(error.response.headers);
+                    this.$message.warning('接口错误码500！');
+                } else if (error.request) {
+                    // The request was made but no response was received
+                    // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                    // http.ClientRequest in node.js
+                    //   console.log(error.request);
+                    this.$message.warning('你用的2g网络么，现在都5g时代了！');
+                } else {
+                    // Something happened in setting up the request that triggered an Error
+                    //   console.log('Error', error.message);
+                    this.$message.warning('接口错误码500！');
+                }
             }
-            this.loading = false;
-            this.displayData = result.data;
         },
         async saveNote(row, docId) {
             let params = {
