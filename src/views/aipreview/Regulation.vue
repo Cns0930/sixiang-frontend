@@ -39,7 +39,7 @@
                             <span>审批点: {{item.rulePoint}}</span> <span style="position: absolute; left: 55%;">规则编号:
                                 {{item.ruleCode}}</span>
                         </div>
-                        <div>审批结果: {{item.ruleTips[1]}}</div>
+                        <div>审批结果: {{item.ruleTips? item.ruleTips[1]: ''}}</div>
                         <el-divider></el-divider>
                     </div>
                     <div class="three-main">
@@ -90,7 +90,7 @@
                             <span>审批点: {{item.rulePoint}}</span> <span style="position: absolute; left: 55%;">规则编号:
                                 {{item.ruleCode}}</span>
                         </div>
-                        <div>审批结果: {{item.ruleTips[2]}}</div>
+                        <div>审批结果: {{item.ruleTips? item.ruleTips[2] : ''}}</div>
                         <el-divider></el-divider>
                     </div>
                     <div class="three-main">
@@ -141,7 +141,7 @@
                             <span>审批点: {{item.rulePoint}}</span> <span style="position: absolute; left: 55%;">规则编号:
                                 {{item.ruleCode}}</span>
                         </div>
-                        <div>审批结果: {{item.ruleTips[0]}}</div>
+                        <div>审批结果: {{item.ruleTips ? item.ruleTips[0] : ''}}</div>
                         <el-divider></el-divider>
                     </div>
                     <div class="three-main">
@@ -235,11 +235,11 @@ export default {
         
     },
     async mounted() {
-        // 获取规则数据
-        await this.getListRuleResult();
         // 获取项目信息
         await this.initProject();
         await this.init();
+        // 获取规则数据
+        await this.getListRuleResult();
     },
     beforeUpdate() {
         // 根据`URL地址捕获当前激活的标签
