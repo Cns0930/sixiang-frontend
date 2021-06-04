@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from '@/vuex/store'
+import VueCompositionAPI from '@vue/composition-api'
 import 'element-ui/lib/theme-chalk/index.css'
 import "@/assets/css/editor.css"
 import "@/assets/css/editor_frame.css"
@@ -28,6 +29,8 @@ Vue.use(ElementUI ,{ size: 'mini'})
 Vue.config.errorHandler=function(err,vm,info){
     console.error(err,vm,info)
 }
+
+Vue.use(VueCompositionAPI)
 
 //  全局组件
 import CustomComponents from "@/views/layoutComponents/index"
