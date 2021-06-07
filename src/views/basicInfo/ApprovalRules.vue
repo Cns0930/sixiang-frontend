@@ -167,6 +167,7 @@
                             <el-select
                                 v-model="item.value1"
                                 placeholder="请选择子文档名称"
+                                multiple
                                 clearable filterable
                                 style="width:45%"
                                 remote reserve-keyword :remote-method="remoteMethod" :loading="loading" @change="(val)=>getCheckpoint(val,i)"
@@ -247,6 +248,7 @@
                             <el-select
                                 v-model="item.value1"
                                 placeholder="请选择子文档名称"
+                                multiple
                                 clearable filterable
                                 style="width:45%"
                                 remote reserve-keyword :remote-method="remoteMethod" :loading="loading" @change="(val)=>getCheckpoint(val,i)"
@@ -380,6 +382,7 @@
                             <el-select
                                 v-model="item.value1"
                                 placeholder="请选择子文档名称"
+                                multiple
                                 clearable filterable
                                 style="width:45%"
                                 remote reserve-keyword :remote-method="remoteMethod" :loading="loading" @change="(val)=>getCheckpoint(val,i)"
@@ -460,6 +463,7 @@
                             <el-select
                                 v-model="item.value1"
                                 placeholder="请选择子文档名称"
+                                multiple
                                 clearable filterable
                                 style="width:45%"
                                 remote reserve-keyword :remote-method="remoteMethod" :loading="loading" @change="(val)=>getCheckpoint(val,i)"
@@ -618,11 +622,11 @@ export default {
                 },
             ],
             ruleInputsList:[{
-                value1:'',
+                value1: [],
                 value2:'',
             }],
             ruleTipsInputList:[{
-                value1:'',
+                value1: [],
                 value2:'',
             }],
             approvalSubTextChange:true,
@@ -683,13 +687,13 @@ export default {
             }
             if(val == 'inputs') {
                 this.ruleInputsList.push({
-                value1:'',
+                value1: [],
                 value2:'',
             })
             }
             if(val === 'tips') {
                 this.ruleTipsInputList.push({
-                value1:'',
+                value1: [],
                 value2:'',
             })
             }
@@ -713,7 +717,7 @@ export default {
             console.log(val)
             this.filterKey = val
             let params = {
-                documentsubSeq:val,
+                documentsubSeq: val.join('|'),
                 approvalItemId: this.$route.query.itemId,
                 pageNum: this.currentPageSelects,
                 pageSize: this.pageSizes,
@@ -793,8 +797,8 @@ export default {
         // },
         async edit(){
             this.editBtnLoading=true;
-            let ruleInputs = this.ruleInputsList[0].value1 === '' ? [] : this.ruleInputsList.map(v=>({'材料编号':v.value1,'字段名':v.value2}))
-            let ruleTipsInput = this.ruleTipsInputList[0].value1 === '' ? [] : this.ruleTipsInputList.map(v=>({'材料编号':v.value1,'字段名':v.value2}))
+            let ruleInputs = this.ruleInputsList[0].value1 === '' ? [] : this.ruleInputsList.map(v=>({'材料编号':v.value1.join('|'),'字段名':v.value2}))
+            let ruleTipsInput = this.ruleTipsInputList[0].value1 === '' ? [] : this.ruleTipsInputList.map(v=>({'材料编号':v.value1.join('|'),'字段名':v.value2}))
             this.editForm.ruleInputs = ruleInputs
             this.editForm.ruleTipsInput = ruleTipsInput
             this.editForm.ruleTips = this.ruleTipsList.map(e=>e.ruleTips)
@@ -825,10 +829,7 @@ export default {
         async handleEdit(row){
             let res = await getByRuleId({ruleId :row.ruleId })
             let result = await listSubitemNameByRuleId({RuleId :row.ruleId })
-            console.log(res)
             this.addApprovalSub = result.data
-            console.log(this.approvalSubList,'111')
-            console.log(result)
             this.editForm = res.data;
             let vm = this
             if(Array.isArray(this.editForm.ruleTips)) {
@@ -842,8 +843,8 @@ export default {
                 });
             }
 
-            if(Array.isArray(this.editForm.ruleInputs)) {this.ruleInputsList = this.editForm.ruleInputs.map(e=>({value1:e.材料编号,value2:e.字段名}))}
-            if(Array.isArray(this.editForm.ruleTipsInput)) {this.ruleTipsInputList = this.editForm.ruleTipsInput.map(e=>({value1:e.材料编号,value2:e.字段名}))}
+            if(Array.isArray(this.editForm.ruleInputs)) {this.ruleInputsList = this.editForm.ruleInputs.map(e=>({value1:e.材料编号.split("|"),value2:e.字段名}))}
+            if(Array.isArray(this.editForm.ruleTipsInput)) {this.ruleTipsInputList = this.editForm.ruleTipsInput.map(e=>({value1:e.材料编号.split("|"),value2:e.字段名}))}
             if(Array.isArray(this.editForm.ruleLaw)) {this.ruleLawList = this.editForm.ruleLaw.map(e=>({ruleLaw:e}))}
             if(Array.isArray(this.editForm.ruleArgs)) {this.ruleArgsList = this.editForm.ruleArgs.map(e=>({ruleArgs:e}))}
             if(this.ruleInputsList.length === 0) {
@@ -897,8 +898,8 @@ export default {
             this.checkpointList = []
         },
         async add(){
-            let ruleInputs = this.ruleInputsList[0].value1 === '' ? [] : this.ruleInputsList.map(v=>({'材料编号':v.value1,'字段名':v.value2}))
-            let ruleTipsInput = this.ruleTipsInputList[0].value1 === '' ? [] : this.ruleTipsInputList.map(v=>({'材料编号':v.value1,'字段名':v.value2}))
+            let ruleInputs = this.ruleInputsList[0].value1 === '' ? [] : this.ruleInputsList.map(v=>({'材料编号':v.value1.join('|'),'字段名':v.value2}))
+            let ruleTipsInput = this.ruleTipsInputList[0].value1 === '' ? [] : this.ruleTipsInputList.map(v=>({'材料编号':v.value1.join('|'),'字段名':v.value2}))
             this.addForm.ruleInputs = ruleInputs
             this.addForm.ruleTipsInput = ruleTipsInput
             this.addForm.ruleTips = this.ruleTipsList.map(e=>e.ruleTips)
