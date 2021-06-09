@@ -24,6 +24,12 @@
             <el-button type="danger" icon="el-icon-delete" class="button" :disabled="multipleSelection.length === 0"
                 @click="deleteDcument">删除</el-button>
             <el-button type="primary" icon="el-icon-finished" class="button" @click="openDialog">样本复用</el-button>
+            <el-upload class="upload-demo" ref="uploadNine" :action="urlNine" :multiple="false" :limit="1"
+                :with-credentials="true" :on-success="uploadSuccess" :on-remove="handleRemove" :on-exceed="handleExceed"
+                :auto-upload='true' :before-upload="customUploadNine">
+                <el-button type="primary" icon="el-icon-document-copy" class="button" :loading="loadingNine" @click="upLoadNine()">导入九宫样本
+                </el-button>
+            </el-upload>
         </div>
         <div class="workBox">
             <div class="history-navigation">
@@ -132,6 +138,8 @@ export default {
             loadingDownFile: false,
             urlImg: process.env.VUE_APP_BASE_IP + '/docInfo/uploadImg',
             urlZip: process.env.VUE_APP_BASE_IP + '/docInfo/upload',
+            urlNine: process.env.VUE_APP_BASE_IP + '/tag/jiugongSampleBackfill',
+            loadingNine: false,
             // 编辑名字
             dialogVisible: false,
             form: {
@@ -320,6 +328,56 @@ export default {
             }
             return false;
         },
+        // 单个上传九宫json
+        customUploadNine(file) {
+            console.log('file');
+            console.log(file);
+            this.loadingNine = true;
+            let fd = new FormData();
+            fd.append("input", file);
+            fd.append("approvalItemId", this.itemId);
+            try {
+                axios.post(
+                    this.urlNine,
+                    fd, { timeout: 1000 * 60 }
+                ).then(
+                    (res) => {
+                        if (res.data.success) {
+                            this.$message.success('上传成功');
+                            this.loadingNine = false;
+                            this.getFileListTable();
+                        } else {
+                            this.$message.warning('上传失败,请重新上传');
+                            this.loadingNine = false;
+                            this.getFileListTable();
+                        }
+                    },
+                ).catch(error => {
+                    this.loadingNine = false;
+                    if (error.response) {
+                        // The request was made and the server responded with a status code
+                        // that falls out of the range of 2xx
+                        //   console.log(error.response.data);
+                        //   console.log(error.response.status);
+                        //   console.log(error.response.headers);
+                        this.$message.warning('哦no，不知道后端的开发又搞了什么乱子！');
+                    } else if (error.request) {
+                        // The request was made but no response was received
+                        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                        // http.ClientRequest in node.js
+                        //   console.log(error.request);
+                        this.$message.warning('你用的2g网络么，现在都5g时代了！');
+                    } else {
+                        // Something happened in setting up the request that triggered an Error
+                        //   console.log('Error', error.message);
+                        this.$message.warning('哦no，不知道后端的开发又搞了什么乱子！');
+                    }
+                    // console.log(error.config);
+                });
+            } catch (error) {
+            }
+            return false;
+        },
         // 图片上传，支持批量
         upLoad() {
             this.$refs.upload.submit();
@@ -329,6 +387,9 @@ export default {
         },
         upLoadAI() {
 
+        },
+        upLoadNine() {
+            this.$refs.uploadNine.submit();
         },
         // 编辑文件名
         reName() {
