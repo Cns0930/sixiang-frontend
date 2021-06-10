@@ -936,7 +936,7 @@ export default {
                         fieldId: ele.fieldId,
                         fieldNo: v.fieldNo,
                         label: v.label,
-                        fieldComponentName: v.componentDefs?.type?.value,
+                        fieldComponentName: v.fieldComponentName,
                         fieldName: ele.fieldName,
                         approvalItemId: vm.itemId,
                         descriptionInfo: ele.descriptionInfo,
