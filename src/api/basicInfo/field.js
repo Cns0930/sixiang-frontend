@@ -49,3 +49,6 @@ export const listCheckpoint = params => { return axios.get(`/ss/field/listCheckp
 
 // 所有公共字段-带子项
 export const listAllPublicFields = params => axios.get('/superform/fields/listAllPublicFields', {params}).then(res => res.data);
+
+// 获取所有字段
+export const fieldsListAll = params => axios.get('/superform/fields/listAll', {params}).then(res => res.data);
