@@ -47,7 +47,6 @@ export default {
                 result = await listRule({approvalItemId: this.$route.query.itemId,ruleCode:params,pageNum: this.currentPage,
                 pageSize: this.pagesize});
                 this.tableData = result.data.records;
-                console.log(this.tableData)
                 this.totalCount = result.data.total
             } 
              else if(this.type === 'public'){

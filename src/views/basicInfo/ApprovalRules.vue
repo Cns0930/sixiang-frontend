@@ -212,7 +212,7 @@
                                     </a>
                                 </div>
                             </el-select>
-                           <i v-if="ruleInputsList.length>1" style="margin-left:10px;color:red;cursor: pointer;" class="el-icon-delete" @click="deletInputs(i)"></i>
+                           <i v-if="ruleInputsList.length>=1" style="margin-left:10px;color:red;cursor: pointer;" class="el-icon-delete" @click="deletInputs(i)"></i>
                         </div>
                         <i class="el-icon-plus" style="margin-left:10px;color:#409EFF;cursor: pointer;" @click="addRuleLawList('inputs')"></i>
                     </el-form-item>
@@ -427,7 +427,7 @@
                                     </a>
                                 </div>
                             </el-select>
-                           <i v-if="ruleInputsList.length>1" style="margin-left:10px;color:red;cursor: pointer;" class="el-icon-delete" @click="deletInputs(i)"></i>
+                           <i v-if="ruleInputsList.length>=1" style="margin-left:10px;color:red;cursor: pointer;" class="el-icon-delete" @click="deletInputs(i)"></i>
                         </div>
                         <i class="el-icon-plus" style="margin-left:10px;color:#409EFF;cursor: pointer;" @click="addRuleLawList('inputs')"></i>
                     </el-form-item>
@@ -672,7 +672,6 @@ export default {
         // 情形列表
         async getApprovalList() {
             let result = await getApprovalSub({approvalItemId: this.$route.query.itemId});
-            console.log(result)
             if (!result.success) return;
             this.approvalSubList=result.data.records.map(ele=>ele.approvalSubitem)   
         },
@@ -766,7 +765,6 @@ export default {
             if (!result.success) return;
 
             this.approvalSubTextList = result.data
-            console.log(this.approvalSubTextList)
             // this.totalAim = result.data.total
         },
         //远程搜索
@@ -797,7 +795,7 @@ export default {
         // },
         async edit(){
             this.editBtnLoading=true;
-            let ruleInputs = this.ruleInputsList[0].value1 === '' ? [] : this.ruleInputsList.map(v=>({'材料编号':v.value1.join('|'),'字段名':v.value2}))
+            let ruleInputs = this.ruleInputsList.length === 0 ? [] : this.ruleInputsList.map(v=>({'材料编号':v.value1.join('|'),'字段名':v.value2}))
             let ruleTipsInput = this.ruleTipsInputList.length === 0 ? [] : this.ruleTipsInputList.map(v=>({'材料编号':v.value1.join('|'),'字段名':v.value2}))
             this.editForm.ruleInputs = ruleInputs
             this.editForm.ruleTipsInput = ruleTipsInput
@@ -816,15 +814,20 @@ export default {
                 ruleId:this.editForm.ruleId,
                 approvalSubitemIdList:this.addApprovalSub
             }
-            console.log(params)
             let res = await saveSubitemAndRuleBatch(params)
             console.log(res)
             this.editBtnLoading=false;
             this.editDialogVisible=false; 
             this.$refs.editForm.resetFields()
+            this.resetInputList()
             this.resetForms()
             this.search();
 
+        },
+        // 重置输入和输入语提示list
+        resetInputList() {
+            this.ruleInputsList = []
+            this.ruleTipsInputList = []
         },
         async handleEdit(row){
             let res = await getByRuleId({ruleId :row.ruleId })
@@ -843,7 +846,11 @@ export default {
                 });
             }
 
-            if(Array.isArray(this.editForm.ruleInputs)) {this.ruleInputsList = this.editForm.ruleInputs.map(e=>({value1:e.材料编号.split("|"),value2:e.字段名}))}
+            if(Array.isArray(this.editForm.ruleInputs) && this.editForm.ruleInputs.length >= 1) {
+                this.ruleInputsList = this.editForm.ruleInputs.map(e=>({value1:e.材料编号.split("|"),value2:e.字段名}))
+            } else {
+                this.ruleInputsList = []
+            }
             if(Array.isArray(this.editForm.ruleTipsInput) && this.editForm.ruleTipsInput.length >= 1) {
                 this.ruleTipsInputList = this.editForm.ruleTipsInput.map(e=>({value1:e.材料编号.split("|"),value2:e.字段名}))
             } else {
@@ -851,12 +858,6 @@ export default {
             }
             if(Array.isArray(this.editForm.ruleLaw)) {this.ruleLawList = this.editForm.ruleLaw.map(e=>({ruleLaw:e}))}
             if(Array.isArray(this.editForm.ruleArgs)) {this.ruleArgsList = this.editForm.ruleArgs.map(e=>({ruleArgs:e}))}
-            if(this.ruleInputsList.length === 0) {
-                this.ruleInputsList = [{ value1:'', value2:''}];
-            }
-            if(this.ruleTipsInputList.length === 0) {
-                this.ruleTipsInputList = [{ value1:'', value2:''}];
-            }
             if(this.ruleLawList.length === 0) {
                 this.ruleLawList = [{ruleLaw:''}];
             }
@@ -902,8 +903,8 @@ export default {
             this.checkpointList = []
         },
         async add(){
-            let ruleInputs = this.ruleInputsList[0].value1 === '' ? [] : this.ruleInputsList.map(v=>({'材料编号':v.value1.join('|'),'字段名':v.value2}))
-            let ruleTipsInput = this.ruleTipsInputList[0].value1 === '' ? [] : this.ruleTipsInputList.map(v=>({'材料编号':v.value1.join('|'),'字段名':v.value2}))
+            let ruleInputs = this.ruleInputsList.length === 0 ? [] : this.ruleInputsList.map(v=>({'材料编号':v.value1.join('|'),'字段名':v.value2}))
+            let ruleTipsInput = this.ruleTipsInputList.length === 0 ? [] : this.ruleTipsInputList.map(v=>({'材料编号':v.value1.join('|'),'字段名':v.value2}))
             this.addForm.ruleInputs = ruleInputs
             this.addForm.ruleTipsInput = ruleTipsInput
             this.addForm.ruleTips = this.ruleTipsList.map(e=>e.ruleTips)
@@ -918,14 +919,13 @@ export default {
                 approvalSubitemIdList:this.addApprovalSub
             }
             let res = await saveSubitemAndRuleBatch(params)
-            console.log(res)
             if(!res.success) return
             this.$message.success('新增审批规则成功')
             this.addDialogVisible = false
             this.$refs.addForm.resetFields()
             this.resetForms()
+            this.resetInputList()
             this.search();
-            console.log(this.addForm,'9999')
         },
         // 上传文件
         customUpload(file) {
