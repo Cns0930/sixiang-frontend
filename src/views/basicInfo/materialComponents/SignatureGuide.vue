@@ -129,7 +129,7 @@
                                                     <div>
                                                         <span>生成逻辑:</span>
                                                         <CodeEditor v-model="item.signatureProduce" ref="codeEditorAdd"
-                                                            :disabled="!item.rowflag" style="width: 280px">
+                                                            :disabled="!item.rowflag" style="width: 380px">
                                                         </CodeEditor>
                                                     </div>
                                                     <div>

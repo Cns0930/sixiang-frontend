@@ -888,7 +888,8 @@ export default {
             this.tableDataDown = data;
         },
         async upToBangban() {
-            let result = await saveBatchCheck({ approvalItemId: this.itemId });
+            let fieldIdList = this.multipleSelection.map(e => e.fieldId)
+            let result = await saveBatchCheck({ approvalItemId: this.itemId, sourceFieldIds: fieldIdList});
             if (!result.success) {
                 this.$message.warning('转到帮办字段失败')
             } else {
