@@ -293,7 +293,7 @@
                                     </a>
                                 </div>
                             </el-select>
-                           <i v-if="ruleTipsInputList.length>1" style="margin-left:10px;color:red;cursor: pointer;" class="el-icon-delete" @click="deletTipsInputs(i)"></i>
+                           <i v-if="ruleTipsInputList.length>=1" style="margin-left:10px;color:red;cursor: pointer;" class="el-icon-delete" @click="deletTipsInputs(i)"></i>
                         </div>
                         <i class="el-icon-plus" style="margin-left:10px;color:#409EFF;cursor: pointer;" @click="addRuleLawList('tips')"></i>
                     </el-form-item>
@@ -508,7 +508,7 @@
                                     </a>
                                 </div>
                             </el-select>
-                           <i v-if="ruleTipsInputList.length>1" style="margin-left:10px;color:red;cursor: pointer;" class="el-icon-delete" @click="deletTipsInputs(i)"></i>
+                           <i v-if="ruleTipsInputList.length>=1" style="margin-left:10px;color:red;cursor: pointer;" class="el-icon-delete" @click="deletTipsInputs(i)"></i>
                         </div>
                         <i class="el-icon-plus" style="margin-left:10px;color:#409EFF;cursor: pointer;" @click="addRuleLawList('tips')"></i>
                     </el-form-item>
@@ -798,7 +798,7 @@ export default {
         async edit(){
             this.editBtnLoading=true;
             let ruleInputs = this.ruleInputsList[0].value1 === '' ? [] : this.ruleInputsList.map(v=>({'材料编号':v.value1.join('|'),'字段名':v.value2}))
-            let ruleTipsInput = this.ruleTipsInputList[0].value1 === '' ? [] : this.ruleTipsInputList.map(v=>({'材料编号':v.value1.join('|'),'字段名':v.value2}))
+            let ruleTipsInput = this.ruleTipsInputList.length === 0 ? [] : this.ruleTipsInputList.map(v=>({'材料编号':v.value1.join('|'),'字段名':v.value2}))
             this.editForm.ruleInputs = ruleInputs
             this.editForm.ruleTipsInput = ruleTipsInput
             this.editForm.ruleTips = this.ruleTipsList.map(e=>e.ruleTips)
@@ -844,7 +844,11 @@ export default {
             }
 
             if(Array.isArray(this.editForm.ruleInputs)) {this.ruleInputsList = this.editForm.ruleInputs.map(e=>({value1:e.材料编号.split("|"),value2:e.字段名}))}
-            if(Array.isArray(this.editForm.ruleTipsInput)) {this.ruleTipsInputList = this.editForm.ruleTipsInput.map(e=>({value1:e.材料编号.split("|"),value2:e.字段名}))}
+            if(Array.isArray(this.editForm.ruleTipsInput) && this.editForm.ruleTipsInput.length >= 1) {
+                this.ruleTipsInputList = this.editForm.ruleTipsInput.map(e=>({value1:e.材料编号.split("|"),value2:e.字段名}))
+            } else {
+                this.ruleTipsInputList = []
+            }
             if(Array.isArray(this.editForm.ruleLaw)) {this.ruleLawList = this.editForm.ruleLaw.map(e=>({ruleLaw:e}))}
             if(Array.isArray(this.editForm.ruleArgs)) {this.ruleArgsList = this.editForm.ruleArgs.map(e=>({ruleArgs:e}))}
             if(this.ruleInputsList.length === 0) {
