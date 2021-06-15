@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-dialog title="签章引导" :visible.sync="dialogVisible" width="80%" :close-on-click-modal="false">
+        <el-dialog title="签章引导" :visible.sync="dialogVisible" width="80%" :close-on-click-modal="false" :destroy-on-close="true">
             <div class="workBox">
                 <el-row :gutter="30" class="datatrend-body-items">
                     <div class="datatrend-body-items-box">
@@ -129,7 +129,7 @@
                                                     <div>
                                                         <span>生成逻辑:</span>
                                                         <CodeEditor v-model="item.signatureProduce" ref="codeEditorAdd"
-                                                            :disabled="!item.rowflag" style="width: 280px">
+                                                            :disabled="!item.rowflag" style="width: 380px">
                                                         </CodeEditor>
                                                     </div>
                                                     <div>

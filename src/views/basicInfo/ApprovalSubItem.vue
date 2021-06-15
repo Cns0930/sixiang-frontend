@@ -676,7 +676,8 @@ export default {
                 let request = {
                     approvalSubitemId: approvalSubitemId,
                     id: item.id,
-                    globalDocumentSubId: item.globalDocumentSubId,
+                    // globalDocumentSubId: item.globalDocumentSubId,
+                    approvalItemAndDocumentsubId: item.approvalItemAndDocumentsubId,
                     isRequired: item.isRequired,
                     requiredDescription: item.requiredDescription
                 }

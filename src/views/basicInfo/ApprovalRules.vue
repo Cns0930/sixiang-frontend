@@ -6,10 +6,13 @@
         </header>
         <div class="workBox">
         <el-input placeholder="按规则编号查询" v-model="ruleIds" clearable style="width: 200px;margin-right:20px"
-                @keyup.native.enter="search(ruleIds)"></el-input>
-        <!-- <el-input placeholder="按字段别名查询" v-model="aliasName" clearable style="width: 200px;"
-        @keyup.native.enter="search"></el-input> -->
-            <el-button @click="search(ruleIds)" type="primary">搜索</el-button>
+                @change="search"></el-input>
+        <el-input placeholder="按'输入'列查询，输入材料编号或字段名" v-model="keyWord" clearable style="width: 280px;margin-right:20px"
+        @change="search"></el-input>
+        <el-select  v-model="ruleType" filterable clearable allow-create @change="search" style="width: 200px;margin-right:20px">
+            <el-option v-for="item in sortList" :key="item" :label="item" :value="item"></el-option>
+        </el-select>
+            <el-button @click="search" type="primary">搜索</el-button>
             <div class="upload-box" style="float:right;margin-right:30px">
                 <el-select v-model="importPattern" clearable placeholder="上传选择模式: 去重 or 更新">
                     <el-option label="忽略重复项模式" :value="true"></el-option>
@@ -35,7 +38,7 @@
                 
                 <el-table-column prop="rulePoint" label="审批点" show-overflow-tooltip width="180"></el-table-column>
                 <el-table-column prop="ruleDesc" label="描述" show-overflow-tooltip width="180"></el-table-column>
-                <el-table-column prop="ruleType" label="判断方式" show-overflow-tooltip>
+                <el-table-column prop="ruleType" label="判断方式" show-overflow-tooltip width="180">
                 </el-table-column>
                 <el-table-column prop="ruleTips" label="提示语" width="260" show-overflow-tooltip>
                     <template slot-scope="scope">
@@ -167,6 +170,7 @@
                             <el-select
                                 v-model="item.value1"
                                 placeholder="请选择子文档名称"
+                                multiple
                                 clearable filterable
                                 style="width:45%"
                                 remote reserve-keyword :remote-method="remoteMethod" :loading="loading" @change="(val)=>getCheckpoint(val,i)"
@@ -211,7 +215,7 @@
                                     </a>
                                 </div>
                             </el-select>
-                           <i v-if="ruleInputsList.length>1" style="margin-left:10px;color:red;cursor: pointer;" class="el-icon-delete" @click="deletInputs(i)"></i>
+                           <i v-if="ruleInputsList.length>=1" style="margin-left:10px;color:red;cursor: pointer;" class="el-icon-delete" @click="deletInputs(i)"></i>
                         </div>
                         <i class="el-icon-plus" style="margin-left:10px;color:#409EFF;cursor: pointer;" @click="addRuleLawList('inputs')"></i>
                     </el-form-item>
@@ -247,6 +251,7 @@
                             <el-select
                                 v-model="item.value1"
                                 placeholder="请选择子文档名称"
+                                multiple
                                 clearable filterable
                                 style="width:45%"
                                 remote reserve-keyword :remote-method="remoteMethod" :loading="loading" @change="(val)=>getCheckpoint(val,i)"
@@ -291,7 +296,7 @@
                                     </a>
                                 </div>
                             </el-select>
-                           <i v-if="ruleTipsInputList.length>1" style="margin-left:10px;color:red;cursor: pointer;" class="el-icon-delete" @click="deletTipsInputs(i)"></i>
+                           <i v-if="ruleTipsInputList.length>=1" style="margin-left:10px;color:red;cursor: pointer;" class="el-icon-delete" @click="deletTipsInputs(i)"></i>
                         </div>
                         <i class="el-icon-plus" style="margin-left:10px;color:#409EFF;cursor: pointer;" @click="addRuleLawList('tips')"></i>
                     </el-form-item>
@@ -380,6 +385,7 @@
                             <el-select
                                 v-model="item.value1"
                                 placeholder="请选择子文档名称"
+                                multiple
                                 clearable filterable
                                 style="width:45%"
                                 remote reserve-keyword :remote-method="remoteMethod" :loading="loading" @change="(val)=>getCheckpoint(val,i)"
@@ -424,7 +430,7 @@
                                     </a>
                                 </div>
                             </el-select>
-                           <i v-if="ruleInputsList.length>1" style="margin-left:10px;color:red;cursor: pointer;" class="el-icon-delete" @click="deletInputs(i)"></i>
+                           <i v-if="ruleInputsList.length>=1" style="margin-left:10px;color:red;cursor: pointer;" class="el-icon-delete" @click="deletInputs(i)"></i>
                         </div>
                         <i class="el-icon-plus" style="margin-left:10px;color:#409EFF;cursor: pointer;" @click="addRuleLawList('inputs')"></i>
                     </el-form-item>
@@ -460,6 +466,7 @@
                             <el-select
                                 v-model="item.value1"
                                 placeholder="请选择子文档名称"
+                                multiple
                                 clearable filterable
                                 style="width:45%"
                                 remote reserve-keyword :remote-method="remoteMethod" :loading="loading" @change="(val)=>getCheckpoint(val,i)"
@@ -504,7 +511,7 @@
                                     </a>
                                 </div>
                             </el-select>
-                           <i v-if="ruleTipsInputList.length>1" style="margin-left:10px;color:red;cursor: pointer;" class="el-icon-delete" @click="deletTipsInputs(i)"></i>
+                           <i v-if="ruleTipsInputList.length>=1" style="margin-left:10px;color:red;cursor: pointer;" class="el-icon-delete" @click="deletTipsInputs(i)"></i>
                         </div>
                         <i class="el-icon-plus" style="margin-left:10px;color:#409EFF;cursor: pointer;" @click="addRuleLawList('tips')"></i>
                     </el-form-item>
@@ -558,7 +565,8 @@ export default {
             globalDocumentSubName:'',
             // checkpointName:'',
             ruleIds:'',
-            aliasName: "",
+            keyWord: "",
+            ruleType: '',
             // 类型查询
             standardFilter: "",
             // 来源查询
@@ -618,11 +626,11 @@ export default {
                 },
             ],
             ruleInputsList:[{
-                value1:'',
+                value1: [],
                 value2:'',
             }],
             ruleTipsInputList:[{
-                value1:'',
+                value1: [],
                 value2:'',
             }],
             approvalSubTextChange:true,
@@ -668,7 +676,6 @@ export default {
         // 情形列表
         async getApprovalList() {
             let result = await getApprovalSub({approvalItemId: this.$route.query.itemId});
-            console.log(result)
             if (!result.success) return;
             this.approvalSubList=result.data.records.map(ele=>ele.approvalSubitem)   
         },
@@ -683,13 +690,13 @@ export default {
             }
             if(val == 'inputs') {
                 this.ruleInputsList.push({
-                value1:'',
+                value1: [],
                 value2:'',
             })
             }
             if(val === 'tips') {
                 this.ruleTipsInputList.push({
-                value1:'',
+                value1: [],
                 value2:'',
             })
             }
@@ -713,7 +720,7 @@ export default {
             console.log(val)
             this.filterKey = val
             let params = {
-                documentsubSeq:val,
+                documentsubSeq: val.join('|'),
                 approvalItemId: this.$route.query.itemId,
                 pageNum: this.currentPageSelects,
                 pageSize: this.pageSizes,
@@ -762,7 +769,6 @@ export default {
             if (!result.success) return;
 
             this.approvalSubTextList = result.data
-            console.log(this.approvalSubTextList)
             // this.totalAim = result.data.total
         },
         //远程搜索
@@ -793,8 +799,8 @@ export default {
         // },
         async edit(){
             this.editBtnLoading=true;
-            let ruleInputs = this.ruleInputsList[0].value1 === '' ? [] : this.ruleInputsList.map(v=>({'材料编号':v.value1,'字段名':v.value2}))
-            let ruleTipsInput = this.ruleTipsInputList[0].value1 === '' ? [] : this.ruleTipsInputList.map(v=>({'材料编号':v.value1,'字段名':v.value2}))
+            let ruleInputs = this.ruleInputsList.length === 0 ? [] : this.ruleInputsList.map(v=>({'材料编号':v.value1.join('|'),'字段名':v.value2}))
+            let ruleTipsInput = this.ruleTipsInputList.length === 0 ? [] : this.ruleTipsInputList.map(v=>({'材料编号':v.value1.join('|'),'字段名':v.value2}))
             this.editForm.ruleInputs = ruleInputs
             this.editForm.ruleTipsInput = ruleTipsInput
             this.editForm.ruleTips = this.ruleTipsList.map(e=>e.ruleTips)
@@ -812,23 +818,25 @@ export default {
                 ruleId:this.editForm.ruleId,
                 approvalSubitemIdList:this.addApprovalSub
             }
-            console.log(params)
             let res = await saveSubitemAndRuleBatch(params)
             console.log(res)
             this.editBtnLoading=false;
             this.editDialogVisible=false; 
             this.$refs.editForm.resetFields()
+            this.resetInputList()
             this.resetForms()
             this.search();
 
         },
+        // 重置输入和输入语提示list
+        resetInputList() {
+            this.ruleInputsList = []
+            this.ruleTipsInputList = []
+        },
         async handleEdit(row){
             let res = await getByRuleId({ruleId :row.ruleId })
             let result = await listSubitemNameByRuleId({RuleId :row.ruleId })
-            console.log(res)
             this.addApprovalSub = result.data
-            console.log(this.approvalSubList,'111')
-            console.log(result)
             this.editForm = res.data;
             let vm = this
             if(Array.isArray(this.editForm.ruleTips)) {
@@ -842,16 +850,18 @@ export default {
                 });
             }
 
-            if(Array.isArray(this.editForm.ruleInputs)) {this.ruleInputsList = this.editForm.ruleInputs.map(e=>({value1:e.材料编号,value2:e.字段名}))}
-            if(Array.isArray(this.editForm.ruleTipsInput)) {this.ruleTipsInputList = this.editForm.ruleTipsInput.map(e=>({value1:e.材料编号,value2:e.字段名}))}
+            if(Array.isArray(this.editForm.ruleInputs) && this.editForm.ruleInputs.length >= 1) {
+                this.ruleInputsList = this.editForm.ruleInputs.map(e=>({value1:e.材料编号.split("|"),value2:e.字段名}))
+            } else {
+                this.ruleInputsList = []
+            }
+            if(Array.isArray(this.editForm.ruleTipsInput) && this.editForm.ruleTipsInput.length >= 1) {
+                this.ruleTipsInputList = this.editForm.ruleTipsInput.map(e=>({value1:e.材料编号.split("|"),value2:e.字段名}))
+            } else {
+                this.ruleTipsInputList = []
+            }
             if(Array.isArray(this.editForm.ruleLaw)) {this.ruleLawList = this.editForm.ruleLaw.map(e=>({ruleLaw:e}))}
             if(Array.isArray(this.editForm.ruleArgs)) {this.ruleArgsList = this.editForm.ruleArgs.map(e=>({ruleArgs:e}))}
-            if(this.ruleInputsList.length === 0) {
-                this.ruleInputsList = [{ value1:'', value2:''}];
-            }
-            if(this.ruleTipsInputList.length === 0) {
-                this.ruleTipsInputList = [{ value1:'', value2:''}];
-            }
             if(this.ruleLawList.length === 0) {
                 this.ruleLawList = [{ruleLaw:''}];
             }
@@ -897,8 +907,8 @@ export default {
             this.checkpointList = []
         },
         async add(){
-            let ruleInputs = this.ruleInputsList[0].value1 === '' ? [] : this.ruleInputsList.map(v=>({'材料编号':v.value1,'字段名':v.value2}))
-            let ruleTipsInput = this.ruleTipsInputList[0].value1 === '' ? [] : this.ruleTipsInputList.map(v=>({'材料编号':v.value1,'字段名':v.value2}))
+            let ruleInputs = this.ruleInputsList.length === 0 ? [] : this.ruleInputsList.map(v=>({'材料编号':v.value1.join('|'),'字段名':v.value2}))
+            let ruleTipsInput = this.ruleTipsInputList.length === 0 ? [] : this.ruleTipsInputList.map(v=>({'材料编号':v.value1.join('|'),'字段名':v.value2}))
             this.addForm.ruleInputs = ruleInputs
             this.addForm.ruleTipsInput = ruleTipsInput
             this.addForm.ruleTips = this.ruleTipsList.map(e=>e.ruleTips)
@@ -913,14 +923,13 @@ export default {
                 approvalSubitemIdList:this.addApprovalSub
             }
             let res = await saveSubitemAndRuleBatch(params)
-            console.log(res)
             if(!res.success) return
             this.$message.success('新增审批规则成功')
             this.addDialogVisible = false
             this.$refs.addForm.resetFields()
             this.resetForms()
+            this.resetInputList()
             this.search();
-            console.log(this.addForm,'9999')
         },
         // 上传文件
         customUpload(file) {

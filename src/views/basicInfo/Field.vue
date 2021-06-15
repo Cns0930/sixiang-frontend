@@ -83,6 +83,7 @@
             <el-table-column prop="module" label="前端模块" show-overflow-tooltip></el-table-column>
             <el-table-column prop="isCheckpoint" label="是否涉及审批规则" :formatter="isRequiredFormatter" show-overflow-tooltip>
             </el-table-column>
+            <el-table-column prop="relateFieldNo" label="关联帮办提取点" show-overflow-tooltip></el-table-column>
             <el-table-column prop="isScreenshot" label="是否为截图" :formatter="isRequiredFormatter" show-overflow-tooltip>
             </el-table-column>
             <el-table-column prop="screenshotInfo" label="截图信息" show-overflow-tooltip></el-table-column>
@@ -317,6 +318,12 @@
                         <el-option label="否" :value="Number(0)"></el-option>
                     </el-select>
                 </el-form-item>
+                <el-form-item label="关联帮办提取点">
+                    <el-select v-model="editForm.relateFieldNoId" filterable placeholder="请选择帮办提取点">
+                        <el-option v-for="(v,i) in checkpointList" :key="i" :label="v.fieldNo"
+                            :value="v.id"> </el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item label="是否为截图">
                     <el-select v-model="editForm.isScreenshot" clearable placeholder="是否为截图">
                         <el-option label="是" :value="Number(1)"></el-option>
@@ -498,7 +505,7 @@ import {
     addField, updateField, deleteField,
     getAllByApprovalItemId,
     listFieldUnionMaterial, listAllMaterial, importfields, lookfields, listFieldNosByIds, updateFieldComponentName, saveBatch,
-    saveBatchCheck, listAllPublicFields
+    saveBatchCheck, listAllPublicFields, fieldsListAll
 } from "@/api/basicInfo/field";
 import { listGlobalCheckpoint } from '@/api/basicInfo/examination'
 import { listItemDocumentSubAllByMaterial } from "@/api/basicInfo/approvalSub";
@@ -549,6 +556,7 @@ export default {
                 note: "",
                 approvalItemAndDocumentsubId: '',
             },
+            checkpointList: [],
             // 导入材料字段相关
             exMode: null,
             importDialogVisible: false,
@@ -622,6 +630,8 @@ export default {
         },
         // 获取公共字段列表
         this.getAllPublicFields();
+         // 查询帮办提取点列表
+        this.getFieldsListAll();
     },
     // 注销window.onresize事件
     beforeRouteLeave(to, from, next) {
@@ -652,6 +662,12 @@ export default {
             let result = await getAllByApprovalItemId({ approvalItemId: this.itemId });
             if (!result.success) return;
             this.typeMaterialOptions = result.data;
+        },
+        // 查询帮办提取点列表
+        async getFieldsListAll() {
+            let res = await fieldsListAll({approvalItemId: this.itemId, fieldComponentName: 'checkpoint'})
+            if(!res.success) return;
+            this.checkpointList = res.data;
         },
         // 查询公共字段列表
         async getAllPublicFields() {
@@ -757,7 +773,11 @@ export default {
         // 编辑
         async editField() {
             let result = await updateField(this.editForm);
-            if (!result.success) return;
+            if (!result.success) {
+                this.$message.warning('材料字段更新失败')
+                return;
+            }
+            this.$message.success('材料字段更新成功')
             this.reloadTable();
             this.editDialogVisible = false;
         },
@@ -868,7 +888,8 @@ export default {
             this.tableDataDown = data;
         },
         async upToBangban() {
-            let result = await saveBatchCheck({ approvalItemId: this.itemId });
+            let fieldIdList = this.multipleSelection.map(e => e.fieldId)
+            let result = await saveBatchCheck({ approvalItemId: this.itemId, sourceFieldIds: fieldIdList});
             if (!result.success) {
                 this.$message.warning('转到帮办字段失败')
             } else {
@@ -916,7 +937,7 @@ export default {
                         fieldId: ele.fieldId,
                         fieldNo: v.fieldNo,
                         label: v.label,
-                        fieldComponentName: v.componentDefs?.type?.value,
+                        fieldComponentName: v.fieldComponentName,
                         fieldName: ele.fieldName,
                         approvalItemId: vm.itemId,
                         descriptionInfo: ele.descriptionInfo,

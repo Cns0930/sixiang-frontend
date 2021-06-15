@@ -31,12 +31,36 @@ let ElSelectC = {
         } else {
             realOption = this.options
         }
-
+        function zhString(label) {
+            switch (label) {
+                case 'none':
+                    return ' 无'
+                case 'required':
+                    return ' 必须的'
+                case 'socialCreditCode':
+                    return ' 统一社会信用代码'
+                case 'phone':
+                    return ' 手机号'
+                case 'fixedTelephone':
+                    return ' 电话号'
+                case 'postCode':
+                    return ' 邮编号'
+                case 'idCardNum':
+                    return ' 身份证件号'
+                case 'mail':
+                    return ' 电子邮箱'
+                case 'cardNum':
+                    return ' '
+                case 'custom':
+                    return ' 自定义'
+                default:
+                    return '';
+                }
+        }
         return <ElSelect value={this.value} onInput={(e) => this.$emit("input", e)} >
             {
-                realOption.map(option => <ElOption lable={option.label} value={option.value} ></ElOption>)
+                realOption.map(option => <ElOption label={option.label + zhString(option.label)} value={option.value} ></ElOption>)
             }
-
         </ElSelect>
     }
 

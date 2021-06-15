@@ -63,7 +63,11 @@ export default {
             localStorage.setItem("account", result.data.userInfo.account);
             axios.defaults.headers.Authorization = result.data.authorization;
             this.$store.commit('config/setRoles',result.data.roles.sort())
-            this.$message.success("登录成功");
+            if(result.data.roles.length) {
+                this.$message.success("登录成功");
+            } else {
+                this.$message.warning("账号权限不足，请联系系统管理员获取角色！");
+            }
 
             let hasAdmin = result.data.roles.includes('admin');
             let hasResearcher = result.data.roles.includes('researcher');

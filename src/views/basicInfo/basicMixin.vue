@@ -47,10 +47,9 @@ export default {
                 this.tableData = result.data.records;
             } 
             else if(this.type === 'ApprovalRules') {
-                result = await listRule({approvalItemId: this.$route.query.itemId,ruleCode:params,pageNum: this.currentPage,
-                pageSize: this.pagesize});
+                result = await listRule({approvalItemId: this.$route.query.itemId,ruleCode: this.ruleIds,pageNum: this.currentPage,
+                pageSize: this.pagesize, keyWord: this.keyWord, ruleType: this.ruleType});
                 this.tableData = result.data.records;
-                console.log(this.tableData)
                 this.totalCount = result.data.total
             } 
              else if(this.type === 'public'){

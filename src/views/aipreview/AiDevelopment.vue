@@ -689,8 +689,8 @@ export default {
         await this.initProject();
         await this.init();
         await this.getFileListTable();
-        await this.getListCheckpoint();
         await this.getSortConfigList();
+        await this.getListCheckpoint();
         await this.getOptions();
     },
     methods: {
