@@ -785,7 +785,7 @@ export default {
         async handleDelete(scope) {
 
             try {
-                await this.$confirm("是否删除", "确认删除",);
+                await this.$confirm("会同时删除 AI预检开发管理-checkpoint, 样本标定-真值标定 里与该材料字段相关的内容（如有），是否确认删除？", "确认删除",);
                 let result = await deleteField({ fieldId: scope.row.fieldId });
                 if (!result.success) return;
                 this.$message({ type: "success", message: "删除成功" })
