@@ -112,6 +112,8 @@
                                             :value="item.sortconfigId">
                                         </el-option>
                                     </el-select>
+                                    <el-button @click="pickAllSortConfig" style="margin-left: 15px">全选</el-button>
+                                    <el-button @click="cleanAllSortConfig" style="margin-left: 15px">清空</el-button>
                                     <el-button @click="addSortConfig" style="margin-left: 15px">新增</el-button>
                                 </div>
                             </div>
@@ -168,6 +170,8 @@
                                             :value="item.checkpointId">
                                         </el-option>
                                     </el-select>
+                                    <el-button @click="pickAllCheckPoint" style="margin-left: 15px">全选</el-button>
+                                    <el-button @click="cleanAllCheckPoint" style="margin-left: 15px">清空</el-button>
                                     <el-button @click="addCheckPoint" style="margin-left: 15px">新增</el-button>
                                 </div>
                             </div>
@@ -939,8 +943,26 @@ export default {
             this.dialogVisbleAddSortConfig = false;
             this.getSortConfigList();
         },
-
-
+        // 全选sortConfig
+        pickAllSortConfig() {
+            this.selectedSortConfigs = this.sortConfigOptions.map(item => item.sortconfigId)
+            this.showSortConfigs()
+        },
+        // 清空sortConfig
+        cleanAllSortConfig() {
+            this.selectedSortConfigs = []
+            this.showSortConfigs()
+        },
+        // 全选CheckPoint
+        pickAllCheckPoint() {
+            this.selectedCheckPoints = this.CheckPointOptions.map(item => item.checkpointId)
+            this.showCheckPoints()
+        },
+        // 清空CheckPoint
+        cleanAllCheckPoint() {
+            this.selectedCheckPoints = []
+            this.showCheckPoints()
+        },
         // 打开结果展示页面弹框
         openResultsPresentation() {
             if (this.multipleSelection.length === 0) {
