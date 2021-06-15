@@ -44,8 +44,8 @@ export default {
                 this.tableData = result.data.records;
             } 
             else if(this.type === 'ApprovalRules') {
-                result = await listRule({approvalItemId: this.$route.query.itemId,ruleCode:params,pageNum: this.currentPage,
-                pageSize: this.pagesize});
+                result = await listRule({approvalItemId: this.$route.query.itemId,ruleCode: this.ruleIds,pageNum: this.currentPage,
+                pageSize: this.pagesize, keyWord: this.keyWord, ruleType: this.ruleType});
                 this.tableData = result.data.records;
                 this.totalCount = result.data.total
             } 

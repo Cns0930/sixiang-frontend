@@ -6,10 +6,13 @@
         </header>
         <div class="workBox">
         <el-input placeholder="按规则编号查询" v-model="ruleIds" clearable style="width: 200px;margin-right:20px"
-                @keyup.native.enter="search(ruleIds)"></el-input>
-        <!-- <el-input placeholder="按字段别名查询" v-model="aliasName" clearable style="width: 200px;"
-        @keyup.native.enter="search"></el-input> -->
-            <el-button @click="search(ruleIds)" type="primary">搜索</el-button>
+                @change="search"></el-input>
+        <el-input placeholder="按'输入'列查询，输入材料编号或字段名" v-model="keyWord" clearable style="width: 280px;margin-right:20px"
+        @change="search"></el-input>
+        <el-select  v-model="ruleType" filterable clearable allow-create @change="search" style="width: 200px;margin-right:20px">
+            <el-option v-for="item in sortList" :key="item" :label="item" :value="item"></el-option>
+        </el-select>
+            <el-button @click="search" type="primary">搜索</el-button>
             <div class="upload-box" style="float:right;margin-right:30px">
                 <el-select v-model="importPattern" clearable placeholder="上传选择模式: 去重 or 更新">
                     <el-option label="忽略重复项模式" :value="true"></el-option>
@@ -35,7 +38,7 @@
                 
                 <el-table-column prop="rulePoint" label="审批点" show-overflow-tooltip width="180"></el-table-column>
                 <el-table-column prop="ruleDesc" label="描述" show-overflow-tooltip width="180"></el-table-column>
-                <el-table-column prop="ruleType" label="判断方式" show-overflow-tooltip>
+                <el-table-column prop="ruleType" label="判断方式" show-overflow-tooltip width="180">
                 </el-table-column>
                 <el-table-column prop="ruleTips" label="提示语" width="260" show-overflow-tooltip>
                     <template slot-scope="scope">
@@ -562,7 +565,8 @@ export default {
             globalDocumentSubName:'',
             // checkpointName:'',
             ruleIds:'',
-            aliasName: "",
+            keyWord: "",
+            ruleType: '',
             // 类型查询
             standardFilter: "",
             // 来源查询
