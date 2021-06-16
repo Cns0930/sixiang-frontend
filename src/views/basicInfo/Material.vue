@@ -834,7 +834,7 @@ export default {
             let res = await updateMaterial(this.materialTEdit);
             if (!res.success) return;
 
-            this.$message.success('编辑成功');
+            this.$message.success(res.data);
             this.editMaterialWriteVisible = false;
             // this.materialT_item_id = '';
             // if (!this.materialTEdit.materialId) {
