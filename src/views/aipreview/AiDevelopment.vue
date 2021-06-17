@@ -1071,6 +1071,7 @@ export default {
 </script>
 
 <style>
+/* 预览图可以出滚动条 */
 .el-drawer__body {
     overflow: auto;
     /* overflow-x: auto; */

@@ -261,7 +261,7 @@ import {
     listApprovalItem,
     exApprovalItem,
     listVersionItem,
-    obtainVersionItem,
+    obtainVersionItem, isNewItemVersion
 } from "../../api/basicInfo/approval";
 
 export default {
@@ -527,7 +527,11 @@ export default {
                     console.log('新建', res);
                     return res.data;
                 }
-            } else {
+            } else { 
+                let res = await isNewItemVersion({approvalItemId: row.approvalItemId})
+                if (res.data) {
+                    this.$message.warning(res.data)
+                }
                 return result.data;
             }
         },
