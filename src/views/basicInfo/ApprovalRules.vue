@@ -586,7 +586,7 @@ export default {
             currentPageSelects: 1,
             pageSizes: 15,
             totals: 0,
-            sortList:['完全一致','字符串1包含字符串2','暂不支持','日期是否填写','是否填写','身份证在有效期内','数字完全一致','经营期限比较'],
+            sortList:['字符串比较','完全一致','字符串1包含字符串2','暂不支持','日期是否填写','是否填写','身份证在有效期内','数字完全一致','经营期限比较'],
             addForm:{
                 ruleCode:'',
                 ruleTrigger:'',
