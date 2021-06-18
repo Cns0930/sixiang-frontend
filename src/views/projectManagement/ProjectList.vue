@@ -6,6 +6,9 @@
                 <el-input placeholder="搜索项目" v-model="filterKeyword" clearable style="width: 200px;"
                     @change="loadProjects">
                 </el-input>
+                <el-input placeholder="搜索事项编号" v-model="itemNoKeyword" clearable style="width: 200px;"
+                    @change="loadProjects">
+                </el-input>
                 <el-button @click="loadProjects">
                     搜索
                 </el-button>
@@ -166,6 +169,7 @@ export default {
             // 筛选
             filterProjectId: null,
             filterApprovalId: null,
+            itemNoKeyword: '',
             filterKeyword: "",
             // 弹窗
             dialogAddVisible: false,
@@ -256,7 +260,7 @@ export default {
         },
         async loadProjects() {
             // 获取项目列表
-            let projectRes = await listProjectAll({ keyword: this.filterKeyword });
+            let projectRes = await listProjectAll({ keyword: this.filterKeyword, itemNoKeyword: this.itemNoKeyword });
             if (!projectRes.success) return;
             if (projectRes.success) {
                 if(this.roles.includes('intern')) {
