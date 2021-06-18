@@ -245,6 +245,7 @@ export default {
     },
     async mounted() {
         await this.init()
+        await this.initProject()
         this.getTemplate()
         this.getFieldAll();
         // 获取关联二级材料列表
