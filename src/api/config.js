@@ -48,7 +48,7 @@ axios.interceptors.response.use(
             sessionStorage.clear();
             // router.push('/login');
             // source.cancel('Operation canceled by the user.');
-            throttleNotification(`登录超时，请自行保存数据、并重新登录 <br/> <a href="#/login?reload=refresh">登录</a>`);
+            throttleNotification(`登录超时，请自行保存数据、并重新登录 <br/> <a href="#/login">登录</a>`);
             sessionStorage.setItem('refresh', 'getnew'); // 登录页刷新标志，来更新系统
         }
         return response;
