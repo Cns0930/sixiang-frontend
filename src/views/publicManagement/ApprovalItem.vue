@@ -527,8 +527,8 @@ export default {
                     console.log('新建', res);
                     return res.data;
                 }
-            } else { 
-                let res = await isNewItemVersion({approvalItemId: row.approvalItemId})
+            } else {
+                let res = await isNewItemVersion({approvalItemId: result.data.approvalItemId})
                 if (res.data) {
                     this.$message.warning(res.data)
                 }

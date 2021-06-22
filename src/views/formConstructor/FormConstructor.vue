@@ -2,6 +2,7 @@
     <div class="form-constructor">
         <div class="op-bar">
             <div class="left-bar">
+                <el-button type="danger" @click="handleDeleteField()" :disabled="multipleSelection.length < 1" :loading="loadingDelete">批量删除</el-button>
                 <el-button @click="handleAddBaseField">创建字段模型</el-button>
                 <!-- <el-button @click="handleAddComputedField">创建合成字段模型</el-button> -->
 
@@ -17,79 +18,75 @@
                 <el-button @click="handleImportPublic">导入公共字段</el-button>
                 <!-- <el-button :disabled="itemId==-1" @click="handleManagePublic">管理公共字段</el-button> -->
             </div>
-            
+
         </div>
         <div class="searchBox">
             <div class="left">
                 <el-input placeholder="筛选字段名称或者字段编号" v-model="valueF" clearable style="width:240px"></el-input>
                 <el-select v-model="temp_type_search" clearable filterable placeholder="筛选组件类型" style="width:240px">
-                    <el-option v-for="(v,i) in typeOptions" :key="i" :label="v.label" :value="v.value" ></el-option>
+                    <el-option v-for="(v,i) in typeOptions" :key="i" :label="v.label" :value="v.value"></el-option>
                 </el-select>
-                
-                <el-select v-model="field_type" placeholder="筛选字段类型" clearable >
-                        <el-option label="基本字段" value="1"></el-option>
-                        <el-option label="合成字段" value="2"></el-option>
-                    </el-select>
+
+                <el-select v-model="field_type" placeholder="筛选字段类型" clearable>
+                    <el-option label="基本字段" value="1"></el-option>
+                    <el-option label="合成字段" value="2"></el-option>
+                </el-select>
                 <el-button @click="fieldSearch()">搜索</el-button>
-                </div>
-                <div class="right">
-                <el-pagination 
-                    @size-change="handleSizeChange"
-                    @current-change="handleCurrentChange"
-                    :current-page.sync="currentPage"
-                    :page-sizes="[15, 30, 50, 100, 200, 300]"
-                    :page-size="pagesize"
-                    layout="total, sizes, prev, pager, next"
-                    :total="totalCount"
-                ></el-pagination>
-                </div>
+            </div>
+            <div class="right">
+                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                    :current-page.sync="currentPage" :page-sizes="[15, 30, 50, 100, 200, 300]" :page-size="pagesize"
+                    layout="total, sizes, prev, pager, next" :total="totalCount"></el-pagination>
+            </div>
         </div>
-        <div class="main">                       
+        <div class="main">
             <!-- 字段表格 -->
             <div class="fields-table" style="width: 100%;padding:10px 60px">
                 <!-- <draggable @start="drag=true" @end="drag=false"> -->
-                <el-table :data="tableData" border style="width: 100%" row-key="id" :row-style="{height:'40px'}" :header-row-style="{height:'50px'}"
-                    :tree-props="{children: 'list', hasChildren: 'hasChildren'}" default-expand-all :height="tableHeight">
-                    <el-table-column fixed prop="fieldNo" label="fieldNo" width="150" show-overflow-tooltip></el-table-column>
+                <el-table ref="multipleTable" :data="tableData" border style="width: 100%" row-key="id" :row-style="{height:'40px'}"
+                    :header-row-style="{height:'50px'}" :tree-props="{children: 'list', hasChildren: 'hasChildren'}"
+                    default-expand-all :height="tableHeight" @selection-change="handleSelectionChangeMain">
+                    <el-table-column type="selection" width="55">
+                    </el-table-column>
+                    <el-table-column fixed prop="fieldNo" label="fieldNo" width="150" show-overflow-tooltip>
+                    </el-table-column>
                     <el-table-column prop="fieldName" label="字段名称" width="100" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="label" label="label" width="150" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="type" label="组件名" width="100" show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="fieldType" label="类型" :formatter="formatFieldType" width="100" show-overflow-tooltip>
+                    <el-table-column prop="fieldType" label="类型" :formatter="formatFieldType" width="100"
+                        show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="validationInfo" label="前端验证信息" show-overflow-tooltip> </el-table-column>
                     <el-table-column prop="descriptionInfo" label="字段描述信息" show-overflow-tooltip> </el-table-column>
                     <el-table-column prop="remark" label="备注" show-overflow-tooltip width="150"> </el-table-column>
                     <el-table-column fixed="right" label="操作">
                         <template slot-scope="scope">
-                            <el-button @click="handleClickFieldDY(scope.row);" type="text" size="small"> 需求编辑</el-button>
+                            <el-button @click="handleClickFieldDY(scope.row);" type="text" size="small"> 需求编辑
+                            </el-button>
                             <el-button @click="handleClickField(scope.row);" type="text" size="small"> 编辑</el-button>
                             <el-button @click="handleClickChangeType(scope);" type="text" size="small">更改组件类型
                             </el-button>
-                            <el-button v-if="scope.row.isList" @click="handleClickAddChild(scope.row);" type="text" size="small">添加子项
+                            <el-button v-if="scope.row.isList" @click="handleClickAddChild(scope.row);" type="text"
+                                size="small">添加子项
                             </el-button>
-                            <el-button v-if="scope.row.fieldType==3" @click="handleClickChildToParent(scope.row);" type="text" size="small">转为基本字段
+                            <el-button v-if="scope.row.fieldType==3" @click="handleClickChildToParent(scope.row);"
+                                type="text" size="small">转为基本字段
                             </el-button>
-                            <el-button @click="handleDeleteField(scope.row)" type="text" size="small">删除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
-                 <!-- </draggable> -->
+                <!-- </draggable> -->
                 <div class="tablePagination">
-                    <el-pagination
-                        @size-change="handleSizeChange"
-                        @current-change="handleCurrentChange"
-                        :current-page.sync="currentPage"
-                        :page-sizes="[10, 15, 30, 50, 100, 200, 300]"
-                        :page-size="pagesize"
-                        layout="total, sizes, prev, pager, next, jumper"
-                        :total="totalCount"
-                    ></el-pagination>
+                    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                        :current-page.sync="currentPage" :page-sizes="[10, 15, 30, 50, 100, 200, 300]"
+                        :page-size="pagesize" layout="total, sizes, prev, pager, next, jumper" :total="totalCount">
+                    </el-pagination>
                 </div>
             </div>
         </div>
-        
+
         <!-- 编辑 -->
-        <el-dialog title="字段组件属性填写" :visible.sync="editDialogVisible" width="80%" :close-on-click-modal="false" >
+        <el-dialog title="字段组件属性填写" :visible.sync="editDialogVisible" width="80%" :close-on-click-modal="false">
             <div class="attribute-content">
                 <div v-if="temp_field_info">
                     <div class="attribute">字段说明信息: {{temp_field_info.descriptionInfo}}</div>
@@ -124,7 +121,7 @@
             </span>
         </el-dialog>
         <!-- 调研人员编辑 -->
-        <el-dialog title="字段组件属性填写" :visible.sync="editDialogVisibleDY" width="80%" :close-on-click-modal="false" >
+        <el-dialog title="字段组件属性填写" :visible.sync="editDialogVisibleDY" width="80%" :close-on-click-modal="false">
             <div class="attribute-content">
                 <div v-if="temp_fieldObj">
                     <div class="attribute">
@@ -147,7 +144,7 @@
                         <span class="attribute-key">前端信息验证</span>
                         <el-input type="textarea" v-model="temp_fieldObj.validationInfo" autosize></el-input>
                     </div>
-                   <!-- <div class="attribute" v-for="(v,i) in temp_fieldObj.componentDefs" :key="i">
+                    <!-- <div class="attribute" v-for="(v,i) in temp_fieldObj.componentDefs" :key="i">
                         <span class="attribute-key">{{v.label || i}} </span>
                         <component class="attribute-value" :is="v.renderTemplateName" v-model="v.value"
                             v-bind="v.attributes" :key="temp_fieldObj.fieldNo+v.renderTemplateName"></component>
@@ -192,12 +189,12 @@
                     </el-select>
                 </div>
 
-                </div>
-                    <span slot="footer" class="dialog-footer">
-                    <el-button @click="dialogVisible = false">取 消</el-button>
-                    <el-button type="primary" @click="addFieldConfirm">确 定</el-button>
-                </span>
-            </el-dialog>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="addFieldConfirm">确 定</el-button>
+            </span>
+        </el-dialog>
         <!-- 创建子项字段 -->
         <el-dialog title="创建子项字段" :visible.sync="dialogChildVisible" width="600px" :close-on-click-modal="false">
             <div>
@@ -251,12 +248,16 @@
         <!-- 导入自选字段 -->
         <el-dialog title="导入自选字段" :visible.sync="dialogSelectVisible" width="80%" :close-on-click-modal="false">
 
-            <el-input style="width: 240px;margin: 10px; 10px" placeholder="输入关键词（不限事项字段）" clearable v-model="generalKeyword" @change="searchField"></el-input>
-            <el-input style="width: 240px;margin: 10px; 10px" placeholder="输入关键词（事项名称）" clearable v-model="itemKeyword" @change="searchField"></el-input>
-            <el-input style="width: 240px;margin: 10px; 10px" placeholder="输入关键词（fieldNo/label）" clearable v-model="fieldKeyword" @change="searchField"></el-input>
+            <el-input style="width: 240px;margin: 10px; 10px" placeholder="输入关键词（不限事项字段）" clearable
+                v-model="generalKeyword" @change="searchField"></el-input>
+            <el-input style="width: 240px;margin: 10px; 10px" placeholder="输入关键词（事项名称）" clearable v-model="itemKeyword"
+                @change="searchField"></el-input>
+            <el-input style="width: 240px;margin: 10px; 10px" placeholder="输入关键词（fieldNo/label）" clearable
+                v-model="fieldKeyword" @change="searchField"></el-input>
             <el-button icon="el-icon-search" circle @click="searchField"></el-button>
 
-            <el-table ref="checkTable" :data="searchResult" border style="width: 100%" row-key="id" @selection-change="handleSelectionChange">
+            <el-table ref="checkTable" :data="searchResult" border style="width: 100%" row-key="id"
+                @selection-change="handleSelectionChange">
                 <el-table-column prop="projectName" label="项目名称" width="160"></el-table-column>
                 <el-table-column prop="itemName" label="事项名称" width="200"></el-table-column>
                 <el-table-column prop="fieldNo" label="fieldNo"></el-table-column>
@@ -266,12 +267,10 @@
                 </el-table-column>
             </el-table>
 
-            <el-pagination style="margin: 40px auto 30px 500px;" background layout="total, sizes, prev, pager, next" 
-            :page-size="searchPageSize" 
-            :current-page="searchCurrentPage" :total="searchTotal" @current-change="tablePageChange"
-            @size-change="handleSearchSizeChange" 
-            :page-sizes="[10, 15, 30, 50, 100, 200, 300]"
-            >
+            <el-pagination style="margin: 40px auto 30px 500px;" background layout="total, sizes, prev, pager, next"
+                :page-size="searchPageSize" :current-page="searchCurrentPage" :total="searchTotal"
+                @current-change="tablePageChange" @size-change="handleSearchSizeChange"
+                :page-sizes="[10, 15, 30, 50, 100, 200, 300]">
             </el-pagination>
 
             <p>已选中{{temp_selected_fields.length}}个字段</p>
@@ -284,13 +283,16 @@
         <!-- 导入公共字段 -->
         <el-dialog title="导入公共字段" :visible.sync="dialogPublicVisible" width="80%" :close-on-click-modal="false">
             <el-select v-model="publicApprovalItemId" clearable style="width: 200px;" @change="searchPublicField">
-                    <el-option v-for="(v,i) in publicApprovalItemList" :key="i" :label="v.itemName" :value="v.approvalItemId" placeholder="选择需要的公共事项"></el-option>
+                <el-option v-for="(v,i) in publicApprovalItemList" :key="i" :label="v.itemName"
+                    :value="v.approvalItemId" placeholder="选择需要的公共事项"></el-option>
             </el-select>
 
-           <el-input style="width: 240px;margin: 10px; 10px" placeholder="输入关键词（fieldNo/label）" clearable v-model="fieldKeyword" @change="searchPublicField"></el-input>
+            <el-input style="width: 240px;margin: 10px; 10px" placeholder="输入关键词（fieldNo/label）" clearable
+                v-model="fieldKeyword" @change="searchPublicField"></el-input>
             <el-button icon="el-icon-search" circle @click="searchPublicField"></el-button>
 
-            <el-table ref="checkTable1" :data="searchPublicResult" border style="width: 100%" row-key="id" @selection-change="handlePublicSelectionChange">
+            <el-table ref="checkTable1" :data="searchPublicResult" border style="width: 100%" row-key="id"
+                @selection-change="handlePublicSelectionChange">
                 <el-table-column prop="itemName" label="事项名称" width="160"></el-table-column>
                 <el-table-column prop="fieldNo" label="fieldNo"></el-table-column>
                 <el-table-column prop="label" label="label" width="240"></el-table-column>
@@ -299,12 +301,10 @@
                 </el-table-column>
             </el-table>
 
-            <el-pagination style="margin: 40px auto 30px 500px;" background layout="total, sizes, prev, pager, next" 
-            :page-size="publicPagesize" 
-            :current-page="publicCurrentpage" :total="publicTotal" @current-change="publicPageChange"
-            @size-change="handlePublicSizeChange" 
-            :page-sizes="[10, 15, 30, 50, 100, 200, 300]"
-            >
+            <el-pagination style="margin: 40px auto 30px 500px;" background layout="total, sizes, prev, pager, next"
+                :page-size="publicPagesize" :current-page="publicCurrentpage" :total="publicTotal"
+                @current-change="publicPageChange" @size-change="handlePublicSizeChange"
+                :page-sizes="[10, 15, 30, 50, 100, 200, 300]">
             </el-pagination>
 
             <p>已选中{{selected_public_fields.length}}个字段</p>
@@ -329,8 +329,10 @@ import { getById } from "@/api/item/index";
 import { mapState } from "vuex";
 import _ from "lodash";
 import defRenderers from "@/views/attributeComponents/defRendererComponents/index";
-import { getField, saveOne, deleteOne, getFieldById,searchFields,forkSelectedFields, getFieldAll,
- searchPublic, forkPublic, childToParent } from "@/api/superForm/index";
+import {
+    getField, saveOne, deleteOne, getFieldById, searchFields, forkSelectedFields, getFieldAll,
+    searchPublic, forkPublic, childToParent
+} from "@/api/superForm/index";
 import { listMaterialFieldLayer } from "@/api/basicInfo/field";
 import { listPublicApprovalItem } from "../../api/basicInfo/approval";
 import { listAllPublicFields } from "@/api/basicInfo/field";
@@ -348,8 +350,12 @@ export default {
     data() {
         return {
             defRenderers,
-            tableHeight:500,
+            tableHeight: 500,
             pageSize: 30,
+            // 表格多选
+            multipleSelection: [],
+            // 批量删除loading
+            loadingDelete: false,
             // 添加 fieldNo 的dialog 用
             dialogVisible: false,
             editDialogVisible: false,
@@ -425,18 +431,18 @@ export default {
         await this.init();
         await this.load();
         await this.getTableHeight()
-        
+
     },
     //挂载window.onresize事件
     mounted() {
         let _this = this
         window.onresize = () => {
             if (_this.resizeFlag) {
-            clearTimeout(_this.resizeFlag)
+                clearTimeout(_this.resizeFlag)
             }
             _this.resizeFlag = setTimeout(() => {
-            _this.getTableHeight()
-            _this.resizeFlag = null
+                _this.getTableHeight()
+                _this.resizeFlag = null
             }, 100)
         }
         this.rowDrop();
@@ -516,20 +522,24 @@ export default {
             this.allPublicFields = res.data;
         },
         // 行拖拽
-            rowDrop () {
-               // 此时找到的元素是要拖拽元素的父容器
-                const tbody = document.querySelector('.el-table__body-wrapper tbody');
-                console.log(tbody)
-                const _this = this;
-                Sortable.create(tbody, {
-           //  指定父元素下可被拖拽的子元素
-                  draggable: ".el-table__row",
-                   onEnd ({ newIndex, oldIndex }) {
-                        const currRow = _this.tableData.splice(oldIndex, 1)[0];
-                        _this.tableData.splice(newIndex, 0, currRow);
-                    }
-                });
-            },
+        rowDrop() {
+            // 此时找到的元素是要拖拽元素的父容器
+            const tbody = document.querySelector('.el-table__body-wrapper tbody');
+            console.log(tbody)
+            const _this = this;
+            Sortable.create(tbody, {
+                //  指定父元素下可被拖拽的子元素
+                draggable: ".el-table__row",
+                onEnd({ newIndex, oldIndex }) {
+                    const currRow = _this.tableData.splice(oldIndex, 1)[0];
+                    _this.tableData.splice(newIndex, 0, currRow);
+                }
+            });
+        },
+        // 表格多选
+        handleSelectionChangeMain(val) {
+            this.multipleSelection = val;
+        },
         // 创建 基本字段
         handleAddBaseField() {
             this.dialogVisible = true;
@@ -541,16 +551,16 @@ export default {
             }).join('');
             this.showTip = false;
             this.allPublicFields.forEach(item => {
-                if(item.fieldNo === this.temp_fieldNo) {
+                if (item.fieldNo === this.temp_fieldNo) {
                     this.showTip = true;
                     this.tempFieldNo = this.temp_fieldNo;
                 }
             })
         },
-        changeFieldNo(){
+        changeFieldNo() {
             this.showTip = false;
             this.allPublicFields.forEach(item => {
-                if(item.fieldNo === this.temp_fieldNo) {
+                if (item.fieldNo === this.temp_fieldNo) {
                     this.showTip = true;
                     this.tempFieldNo = this.temp_fieldNo;
                 }
@@ -582,22 +592,22 @@ export default {
             this.load();
         },
         //条件查询
-        async fieldSearch(){
+        async fieldSearch() {
             this.currentPage = 1;
             this.load();
         },
         // 判断按钮是否可用 
-        handleDisabledDY(){
-            if(this.roles.includes("admin") || this.roles.includes("researcher")){
+        handleDisabledDY() {
+            if (this.roles.includes("admin") || this.roles.includes("researcher")) {
                 return false;
-            }else{
+            } else {
                 return true;
             }
         },
-        handleDisabledKF(){
-            if(this.roles.includes("admin") || this.roles.includes("developer")){
+        handleDisabledKF() {
+            if (this.roles.includes("admin") || this.roles.includes("developer")) {
                 return false;
-            }else{
+            } else {
                 return true;
             }
         },
@@ -610,11 +620,11 @@ export default {
         async addChildFieldConfirm() {
             const pattern = /^[0-9a-zA-Z_]{1,}$/;
             if (!pattern.test(this.temp_fieldNo)) {
-                this.$message({type:"warning",message:"fieldNo只能包含字母、数字、下划线"})
+                this.$message({ type: "warning", message: "fieldNo只能包含字母、数字、下划线" })
                 return;
             }
-            if(this.temp_fieldNo.startsWith('$')){
-                this.$message({type:"warning",message:"fieldNo不能以$开头"})
+            if (this.temp_fieldNo.startsWith('$')) {
+                this.$message({ type: "warning", message: "fieldNo不能以$开头" })
                 return;
             }
             let ComponentDefClass = defs.find(v => v.value == this.temp_type)?.componentDef
@@ -631,7 +641,7 @@ export default {
                 fieldNo: v.fieldNo,
                 label: v.label,
                 fieldComponentName: v.fieldComponentName,
-                fieldName: this.temp_fieldName, 
+                fieldName: this.temp_fieldName,
                 fieldType: 3,
                 object: v,
                 approvalItemId: this.itemId,
@@ -662,7 +672,7 @@ export default {
             }
 
             this.temp_fieldObj =
-                (this.temp_change_type == "computed" || this.temp_change_type == "checkpoint")?
+                (this.temp_change_type == "computed" || this.temp_change_type == "checkpoint") ?
                     {
                         id: this.temp_fieldObj.id,
                         fieldNo: this.temp_fieldObj.fieldNo,
@@ -695,17 +705,17 @@ export default {
         async addFieldConfirm() {
             const pattern = /^[0-9a-zA-Z_]{1,}$/;
             if (!pattern.test(this.temp_fieldNo)) {
-                this.$message({type:"warning",message:"fieldNo只能包含字母、数字、下划线"})
+                this.$message({ type: "warning", message: "fieldNo只能包含字母、数字、下划线" })
                 return;
             }
-            
-            if(this.temp_fieldNo.startsWith('$')){
-                this.$message({type:"warning",message:"fieldNo不能以$开头"})
+
+            if (this.temp_fieldNo.startsWith('$')) {
+                this.$message({ type: "warning", message: "fieldNo不能以$开头" })
                 return;
             }
-            console.log("defs:",defs)
+            console.log("defs:", defs)
             let def = defs.find(v => v.value == this.temp_type);
-            console.log("def:",def)
+            console.log("def:", def)
             let ComponentDefClass = def.componentDef
             let fieldType = (this.temp_type == "computed" || this.temp_type == "checkpoint") ? 2 : 1;
             let isList = !!def.isList;
@@ -722,15 +732,15 @@ export default {
             let param = {
                 fieldNo: v.fieldNo,
                 label: v.label,
-                fieldComponentName: fieldType==1?v.componentDefs?.type?.value:v.fieldComponentName,
+                fieldComponentName: fieldType == 1 ? v.componentDefs?.type?.value : v.fieldComponentName,
                 fieldName: this.temp_fieldName,
                 approvalItemId: this.itemId,
                 fieldType,
                 object: v,
             }
-            if(this.roles.includes("admin") || this.roles.includes("developer")){
+            if (this.roles.includes("admin") || this.roles.includes("developer")) {
                 param.createRole = "developer";
-            }else{
+            } else {
                 param.createRole = "researcher";
             }
             let result = await saveOne(param);
@@ -761,12 +771,12 @@ export default {
                 fieldType: 2,
                 object: v
             }
-            if(this.roles.includes("admin") || this.roles.includes("developer")){
+            if (this.roles.includes("admin") || this.roles.includes("developer")) {
                 param.createRole = "developer";
-            }else{
+            } else {
                 param.createRole = "researcher";
             }
-          
+
             let result = await saveOne(param);
 
             if (!result.success) return;
@@ -779,16 +789,18 @@ export default {
         // 点击 fieldNo
         async handleClickField(fieldObj) {
 
-            let result = await getFieldById({id:fieldObj.id});
-           
-            if(!result.success) return;
+            let result = await getFieldById({ id: fieldObj.id });
+
+            if (!result.success) return;
 
             // 处理调研备注信息的展示
-            this.temp_field_info = {descriptionInfo: result.data.descriptionInfo, validationInfo: result.data.validationInfo};
+            this.temp_field_info = { descriptionInfo: result.data.descriptionInfo, validationInfo: result.data.validationInfo };
 
-            let newFieldObj = deserializeTableData({ ... result.data.object, id: result.data.id, fieldType: result.data.fieldType, remark: result.data.remark,
-            parentId: result.data.parentId, 
-            children:  result.data.children  }); 
+            let newFieldObj = deserializeTableData({
+                ...result.data.object, id: result.data.id, fieldType: result.data.fieldType, remark: result.data.remark,
+                parentId: result.data.parentId,
+                children: result.data.children
+            });
             this.temp_fieldObj = newFieldObj;
             console.log(this.temp_fieldObj)
             delete this.temp_fieldObj.list;
@@ -796,19 +808,19 @@ export default {
         },
         //调研人员的 点击 fieldNo
         async handleClickFieldDY(fieldObj) {
-            let result = await getFieldById({id:fieldObj.id});
-           
-            if(!result.success) return;
-            let newFieldObj = deserializeTableData({ 
-                ... result.data.object ,
-                id: result.data.id, 
+            let result = await getFieldById({ id: fieldObj.id });
+
+            if (!result.success) return;
+            let newFieldObj = deserializeTableData({
+                ...result.data.object,
+                id: result.data.id,
                 fieldType: result.data.fieldType,
                 fieldName: result.data.fieldName,
                 descriptionInfo: result.data.descriptionInfo,
-                validationInfo: result.data.validationInfo, 
+                validationInfo: result.data.validationInfo,
                 children: result.data.children
-                
-            }); 
+
+            });
             this.temp_fieldObj = newFieldObj;
             delete this.temp_fieldObj.list;
             this.editDialogVisibleDY = true;
@@ -818,7 +830,7 @@ export default {
             let param = {
                 fieldId: v.id
             };
-         
+
             let result = await deleteOne(param);
             if (!result.success) return;
             this.$message({ type: "success", message: "删除成功" });
@@ -829,7 +841,7 @@ export default {
             let param = {
                 fieldId: v.id
             };
-       
+
             let result = await deleteOne(param);
             if (!result.success) return;
             this.$message({ type: "success", message: "删除成功" });
@@ -837,7 +849,8 @@ export default {
         },
 
         // 重新定义删除
-        async handleDeleteField(v) {
+        async handleDeleteField() {
+            let ids = this.multipleSelection.map(item => item.id)
             try {
                 await this.$confirm('确定删除? 步骤页面-调研中也会删除相应的配置', '提示', {
                     confirmButtonText: '确定',
@@ -845,35 +858,40 @@ export default {
                     type: 'warning'
                 })
             } catch (e) {
+                this.$message({ type: "info", message: "取消了删除" });
                 return;
             }
+            this.loadingDelete = true
             let param = {
-                fieldId: v.id
+                fieldId: ids
             };
-    
             let result = await deleteOne(param);
             if (!result.success) return;
             this.$message({ type: "success", message: "删除成功" });
+            this.loadingDelete = false
+            this.$refs.multipleTable.clearSelection();
             this.load();
         },
 
         //  预览
         async handlePreview() {
-            let result = await getFieldAll({ approvalItemId: this.itemId});
+            let result = await getFieldAll({ approvalItemId: this.itemId });
             if (!result.success) return;
-            let tableData = result.data.map(v => ({...v.object , id: v.id, fieldType: v.fieldType, fieldName: v.fieldName,
+            let tableData = result.data.map(v => ({
+                ...v.object, id: v.id, fieldType: v.fieldType, fieldName: v.fieldName,
                 remark: v.remark,
-                children: v.children})).map(deserializeTableData);
-            let baseFields =  tableData.filter(v => v.fieldType == 1);
+                children: v.children
+            })).map(deserializeTableData);
+            let baseFields = tableData.filter(v => v.fieldType == 1);
             let computedFields = tableData.filter(v => v.fieldType == 2);
             let module = {
-                namespaced:true,
+                namespaced: true,
                 state: {},
                 getters: {}
             };
-            let itemState= convertDefToConfigEventRuntime(baseFields, "meta");
-    
-            module.state=itemState;
+            let itemState = convertDefToConfigEventRuntime(baseFields, "meta");
+
+            module.state = itemState;
 
             let itemGetters = computedFields.reduce((result, item) => {
                 // let attrObj = _.mapValues(item.componentDefs, (o) => this.parseFunction(o.value));
@@ -884,7 +902,7 @@ export default {
 
                 return result;
             }, {});
-           
+
             module.getters = itemGetters
             let gettersList = Object.keys(itemGetters)
             this.$store.commit("putGettersList", gettersList)
@@ -893,9 +911,9 @@ export default {
             }
 
             this.$store.registerModule("run", module);
-             
-             // 对state中的计算属性进行处理
-            
+
+            // 对state中的计算属性进行处理
+
 
             this.$router.push("/preview");
         },
@@ -903,10 +921,10 @@ export default {
         async handleSaveField(v) {
             console.log(v)
             //情形默认选中则添加value
-            if(v.type && v.type === "qingxingCheckbox") {
+            if (v.type && v.type === "qingxingCheckbox") {
                 v.componentDefs.options.value.forEach(m => {
-                    if(m.chosen) {
-                        if(!v.componentDefs.value.value.includes(m.value)) {
+                    if (m.chosen) {
+                        if (!v.componentDefs.value.value.includes(m.value)) {
                             v.componentDefs.value.value.push(m.value)
                         }
                     } else {
@@ -923,7 +941,7 @@ export default {
                 fieldNo: v.fieldNo,
                 fieldName: v.fieldName,
                 label: v.label.trim(),
-                fieldComponentName: (v.fieldType == 2)?v.fieldComponentName : v.componentDefs?.type?.value,
+                fieldComponentName: (v.fieldType == 2) ? v.fieldComponentName : v.componentDefs?.type?.value,
                 fieldType: v.fieldType,
                 object: vsimple,
                 remark: v.remark,
@@ -940,7 +958,7 @@ export default {
             this.editDialogVisible = false;
         },
         // 调研编辑的保存 有些字段不用改
-        async handleSaveFieldReseacher(v){
+        async handleSaveFieldReseacher(v) {
             let vsimple = _.cloneDeep(v)
             delete vsimple.descriptionInfo
             delete vsimple.validationInfo
@@ -969,20 +987,23 @@ export default {
         },
         // 载入
         async load() {
-            let result = await getField({ approvalItemId: this.itemId,pageNum: this.currentPage,
+            let result = await getField({
+                approvalItemId: this.itemId, pageNum: this.currentPage,
                 pageSize: this.pagesize,
                 keyword: this.valueF,
                 fieldComponentName: this.temp_type_search,
                 fieldType: this.field_type
-                 });
+            });
             if (!result.success) return;
             this.totalCount = result.data.total;
             this.currentPage = result.data.current;
-            let tableData = result.data.records.map(v => ({  ...v.object , id: v.id, fieldType: v.fieldType, fieldName: v.fieldName,
+            let tableData = result.data.records.map(v => ({
+                ...v.object, id: v.id, fieldType: v.fieldType, fieldName: v.fieldName,
                 remark: v.remark,
                 descriptionInfo: v.descriptionInfo,
-                validationInfo: v.validationInfo,children: v.children})).map(deserializeTableData);
-            console.log("tableData:",tableData)
+                validationInfo: v.validationInfo, children: v.children
+            })).map(deserializeTableData);
+            console.log("tableData:", tableData)
             this.$store.commit(
                 "putTableData",
                 tableData
@@ -1010,13 +1031,13 @@ export default {
         async handleImportPublic() {
             this.dialogPublicVisible = true;
             // 初始化公共事项列表
-            let result = await listPublicApprovalItem({pageSize: 10});
+            let result = await listPublicApprovalItem({ pageSize: 10 });
             this.publicApprovalItemList = result.data.records;
         },
-        handleSelect(){
+        handleSelect() {
             this.dialogSelectVisible = true;
         },
-        searchField(){
+        searchField() {
             this.searchCurrentPage = 1;
             this.loadSearch();
         },
@@ -1033,91 +1054,91 @@ export default {
             this.searchCurrentPage = 1;
             this.loadSearch();
         },
-        async loadSearch(){
-            let params = {keyword: this.generalKeyword, itemKeyword: this.itemKeyword, fieldKeyword: this.fieldKeyword, pageNum: this.searchCurrentPage, pageSize: this.searchPageSize};
+        async loadSearch() {
+            let params = { keyword: this.generalKeyword, itemKeyword: this.itemKeyword, fieldKeyword: this.fieldKeyword, pageNum: this.searchCurrentPage, pageSize: this.searchPageSize };
             let result = await searchFields(params);
-            if(result.success){
+            if (result.success) {
                 // 页码
                 this.searchTotal = result.data.total
                 this.searchResult = result.data.records;
-            }else{
-                this.$message({ type: "error", message: "查询出错"});
+            } else {
+                this.$message({ type: "error", message: "查询出错" });
             }
         },
-        handleSelectionChange(sel){
+        handleSelectionChange(sel) {
             this.temp_selected_fields = sel;
         },
-        async forkSelected(){
-            if(this.temp_selected_fields.length > 0){
-            // 进行fieldNo是否重复的检查
-            for (let index = 0; index < this.temp_selected_fields.length; index++){
-                let field = this.temp_selected_fields[index]
-                if(this.temp_selected_fields.map(v => v.fieldNo).indexOf(field.fieldNo) !== index){
-                    this.$message({ type: "warning", message: "重复fieldNo:"+field.fieldNo});
-                    return;
+        async forkSelected() {
+            if (this.temp_selected_fields.length > 0) {
+                // 进行fieldNo是否重复的检查
+                for (let index = 0; index < this.temp_selected_fields.length; index++) {
+                    let field = this.temp_selected_fields[index]
+                    if (this.temp_selected_fields.map(v => v.fieldNo).indexOf(field.fieldNo) !== index) {
+                        this.$message({ type: "warning", message: "重复fieldNo:" + field.fieldNo });
+                        return;
+                    }
                 }
-            }
 
-            let selectIds = this.temp_selected_fields.map(f => f.id);
-            let params = { approvalItemId: this.itemId, sourceFieldIds: selectIds};
-            let result = await forkSelectedFields(params);
-            if(result.success){
-                this.$message({ type: "success", message: "导入成功"});
-                this.clearSelected();
-                this.load();
-                this.dialogSelectVisible = false;
-            }
+                let selectIds = this.temp_selected_fields.map(f => f.id);
+                let params = { approvalItemId: this.itemId, sourceFieldIds: selectIds };
+                let result = await forkSelectedFields(params);
+                if (result.success) {
+                    this.$message({ type: "success", message: "导入成功" });
+                    this.clearSelected();
+                    this.load();
+                    this.dialogSelectVisible = false;
+                }
             }
         },
         // 公共字段导入相关
-        clearSelected(){
+        clearSelected() {
             this.$refs.checkTable.clearSelection();
             this.temp_selected_fields = [];
         },
-        handlePublicSizeChange(val){
+        handlePublicSizeChange(val) {
             this.publicPagesize = val;
             this.publicCurrentpage = 1;
             this.loadPublicSearch();
         },
-        handlePublicSelectionChange(sel){
+        handlePublicSelectionChange(sel) {
             this.selected_public_fields = sel;
         },
-        publicPageChange(n){
+        publicPageChange(n) {
             console.log('n', n);
             if (this.publicCurrentpage != n) {
                 this.publicCurrentpage = n;
             }
             this.loadPublicSearch();
         },
-        clearPublic(){
+        clearPublic() {
             this.selected_public_fields = [];
         },
-        searchPublicField(){
+        searchPublicField() {
             this.publicCurrentpage = 1;
             this.loadPublicSearch();
         },
-        async forkPublic(){
-            if(this.selected_public_fields.length > 0){
-            let selectIds = this.selected_public_fields.map(f => f.id);
-            let params = { approvalItemId: this.itemId, sourceFieldIds: selectIds};
-            let result = await forkPublic(params);
-            if(result.success){
-                this.$message({ type: "success", message: "导入成功"});
-                this.clearPublic();
-                this.load();
-                this.dialogPublicVisible = false;
-            }
+        async forkPublic() {
+            if (this.selected_public_fields.length > 0) {
+                let selectIds = this.selected_public_fields.map(f => f.id);
+                let params = { approvalItemId: this.itemId, sourceFieldIds: selectIds };
+                let result = await forkPublic(params);
+                if (result.success) {
+                    this.$message({ type: "success", message: "导入成功" });
+                    this.clearPublic();
+                    this.load();
+                    this.dialogPublicVisible = false;
+                }
             }
         },
-        async loadPublicSearch(){
-            let params = {approvalItemId: this.publicApprovalItemId, keyword: this.fieldKeyword, pageNum: this.publicCurrentpage, pageSize: this.publicPagesize};
+        async loadPublicSearch() {
+            let params = { approvalItemId: this.publicApprovalItemId, keyword: this.fieldKeyword, pageNum: this.publicCurrentpage, pageSize: this.publicPagesize };
             let result = await searchPublic(params);
-            if(result.success){
+            if (result.success) {
                 // 页码
                 this.publicTotal = result.data.total
                 this.searchPublicResult = result.data.records;
-            }else{
-                this.$message({ type: "error", message: "查询出错"});
+            } else {
+                this.$message({ type: "error", message: "查询出错" });
             }
         },
         getTableHeight() {
@@ -1129,7 +1150,7 @@ export default {
                 this.tableHeight = window.innerHeight - tableH
             }
         },
-        async handleClickChildToParent(v){
+        async handleClickChildToParent(v) {
             try {
                 await this.$confirm('确定要把子字段转为基本字段吗?', '提示', {
                     confirmButtonText: '确定',
@@ -1142,7 +1163,7 @@ export default {
             let param = {
                 id: v.id
             };
-    
+
             let result = await childToParent(param);
             if (!result.success) {
                 return;
@@ -1155,19 +1176,18 @@ export default {
 </script>
 
 <style scoped lang="scss">
- .searchBox {
-        margin-top: 10px;
+.searchBox {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .left {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        .left{
-            display:flex;
-            & > * {
-                margin-left: 10px;
-            }
+        & > * {
+            margin-left: 10px;
         }
-        
     }
+}
 .form-constructor {
     // ::v-deep .el-dialog{
     //     margin:0 30px 50px auto;
