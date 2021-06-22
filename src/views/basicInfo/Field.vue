@@ -58,10 +58,13 @@
                     </div>
                 </div>
             </el-col>
+            <div>
+                <el-button type="danger" @click="handleDelete()" :disabled="multipleSelection.length < 1" :loading="loadingDelete">批量删除</el-button>
+            </div>
         </el-row>
 
-        <el-table ref="multipleTables" :data="tableData" border style="width: 100%;margin-top: 10px;"
-            :row-style="{height:'60px'}" :header-row-style="{height:'50px'}" :height="tableHeight" v-loading="loading"
+        <el-table ref="multipleTables" :data="tableData" border style="width: 100%;margin-top: 10px"
+            :row-style="{height:'50px'}" :header-row-style="{height:'50px'}" :height="tableHeight" v-loading="loading"
             :row-key="getRowKey" @selection-change="handleSelectionChange">
             <el-table-column type="selection" :reserve-selection='true'></el-table-column>
             <el-table-column prop="fieldName" label="字段名称" show-overflow-tooltip width="180"></el-table-column>
@@ -101,11 +104,10 @@
             </el-table-column>
             <el-table-column prop="updateTime" label="更新时间" :formatter="timeFormatter" show-overflow-tooltip>
             </el-table-column>
-            <el-table-column label="操作" fixed="right" width="120px">
+            <el-table-column label="操作" fixed="right" width="100px">
                 <template slot-scope="scope">
                     <el-button-group>
                         <el-button @click="handleEdit(scope)" type="primary">编辑</el-button>
-                        <el-button type="danger" @click="handleDelete(scope)">删除</el-button>
                     </el-button-group>
                 </template>
             </el-table-column>
@@ -599,6 +601,8 @@ export default {
             subdownList: [],
             updownDialogVisible: false,
             typeOptions: defs.map(v => ({ value: v.value, label: v.label })),
+            // 批量删除loading
+            loadingDelete: false,
         };
     },
     computed: {
@@ -782,13 +786,16 @@ export default {
             this.editDialogVisible = false;
         },
         // 删除
-        async handleDelete(scope) {
-
+        async handleDelete() {
+            let ids = this.multipleSelection.map(item => item.fieldId).toString()
             try {
-                await this.$confirm("会同时删除 AI预检开发管理-checkpoint, 样本标定-真值标定 里与该材料字段相关的内容（如有），是否确认删除？", "确认删除",);
-                let result = await deleteField({ fieldId: scope.row.fieldId });
+                await this.$confirm("会同时删除 AI预检开发管理-checkpoint, 样本标定-真值标定 里与该材料字段相关的内容（如有），是否确认删除？", "确认删除");
+                this.loadingDelete = true
+                let result = await deleteField({ fieldIds: ids });
                 if (!result.success) return;
                 this.$message({ type: "success", message: "删除成功" })
+                this.loadingDelete = false
+                this.$refs.multipleTables.clearSelection();
                 this.reloadTable();
             } catch (e) {
                 this.$message({ type: "warning", message: "取消删除" })
@@ -1224,8 +1231,9 @@ export default {
     }
     .upload-box {
         padding: 10px 12px 12px 12px;
+        border-radius: 15px;
         width: 230px;
-        background: #f0f2f5;
+        background: #f1f4fd;
         display: flex;
         flex-direction: row;
         .upload-demo {

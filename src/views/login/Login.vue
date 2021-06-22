@@ -4,7 +4,6 @@
             <el-form :model="ruleForm" label-position="left" label-width="0px"
                 class="form-container">
                 <div class="login-title">
-        
                     <h1 style="color:#0A3D81;letter-spacing:4px;">四象2.0登录</h1>
                 </div>
                 <el-form-item prop="account" class="login-item-margin">
@@ -17,6 +16,7 @@
                 </el-form-item>
                 <el-form-item>
                     <el-checkbox v-model="ruleForm.rememberMe">记住密码</el-checkbox>
+                    <!-- <el-button @click="$router.go(0)" style="margin-left: 20px">更新系统</el-button> -->
                 </el-form-item>
                 <el-form-item class="login-submit-bg">
                     <el-button class="submit-btn" @click.native.prevent="login(ruleForm)">登 录</el-button>
@@ -41,6 +41,12 @@ export default {
                 rememberMe: false
             },
         };
+    },
+    created() {
+        if(sessionStorage.getItem('refresh') && sessionStorage.getItem('refresh') === 'getnew') {
+            sessionStorage.setItem('refresh', 'isnew');
+            this.$router.go(0)
+        }
     },
     methods: {
         async login(ruleForm) {

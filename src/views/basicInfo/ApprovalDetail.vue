@@ -165,9 +165,47 @@
         </el-dialog>
         <!-- 事项多版本查看导入 -->
         <el-dialog title="版本列表" :visible.sync="dialogVisibleVersion" width="80%" :close-on-click-modal="false">
+            <div>
+                <h3 style="color:#606266">当前事项数据来源:</h3>
+                <i v-if="itemInfo.versionInfo" class="itemInfo-text">提交人：<i class="itemInfo-text-in">{{ itemInfo.versionInfo.userName }}</i> </i>
+                <i v-if="itemInfo.versionInfo" class="itemInfo-text">版本号：<i class="itemInfo-text-in">{{ itemInfo.versionInfo.version }}</i> </i>
+            </div>
+            <div style="margin:10px 0px">
+                <el-input placeholder="按版本号或者用户名查询" v-model="versionorUserName" clearable style="width: 200px;margin-right:10px"
+                @change="searchVersion"></el-input>
+                <el-button icon="el-icon-search" @change="searchVersion"></el-button>
+            </div>
             <el-table ref="versionTable" v-loading="loadingTable" element-loading-text="拼命加载中"
                 element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.5)"
                 :data="versionList" border style="width: 100%" row-key="id">
+                <el-table-column label="序号" type="index" width="50" :index="indexMethod"></el-table-column>
+                <el-table-column prop="version" label="版本号"></el-table-column>
+                <el-table-column prop="username" label="提交人"></el-table-column>
+                <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter"></el-table-column>
+                <el-table-column prop="latest" label="是否最新" :formatter="formatBoolean"></el-table-column>
+                <el-table-column prop="note" label="备注信息"></el-table-column>
+                <el-table-column label="操作" fixed="right" width="200px">
+                    <template slot-scope="scope">
+                        <el-button-group>
+                            <el-button type="primary" :loading="scope.row.loadingImport"
+                                @click="confirmImport(scope.row)">确认导入</el-button>
+                            <el-button type="primary"
+                                @click="showVersionHistory(scope.row)">溯源版本</el-button>
+                        </el-button-group>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisibleVersion = false">
+                    关闭
+                </el-button>
+            </span>
+        </el-dialog>
+        <!-- 多版本溯源查看导入 -->
+        <el-dialog title="溯源版本列表" :visible.sync="versionHistoryDialogVisible" width="70%" :close-on-click-modal="false">
+            <el-table ref="versionTable" v-loading="loadingTable" element-loading-text="拼命加载中"
+                element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.5)"
+                :data="versionHistoryTableData" border style="width: 100%" row-key="id">
                 <el-table-column label="序号" type="index" width="50" :index="indexMethod"></el-table-column>
                 <el-table-column prop="version" label="版本号"></el-table-column>
                 <el-table-column prop="username" label="提交人"></el-table-column>
@@ -184,7 +222,7 @@
                 </el-table-column>
             </el-table>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisibleVersion = false">
+                <el-button @click="versionHistoryDialogVisible = false">
                     关闭
                 </el-button>
             </span>
@@ -338,7 +376,7 @@ import _ from "lodash"
 import {
     getByApprovalItemId, listApprovalAll, updateApprovalItem, submitItemInfo,
     listVersionItem, obtainVersionItem, addSysVersionItem, listSysGitVersionLog,
-    deleteSysGitVersion, listMachines
+    deleteSysGitVersion, listMachines, listHistoryRecord
 } from "@/api/basicInfo/approval"
 import {
     listApprovalItem, listProjectAll, copyVersionItem
@@ -371,6 +409,10 @@ export default {
             dialogVisibleVersion: false,
             versionList: [],
             loadingTable: false,
+            versionorUserName: '',
+            //    溯源
+            versionHistoryTableData: [],
+            versionHistoryDialogVisible: false,
 
             // 保存提交加备注
             itemNote: '',
@@ -498,7 +540,7 @@ export default {
         async updateItem() {
             this.tempItem.extraInfo = JSON.stringify(this.extraInfoList);
             this.tempItem.sujectType = this.tempItem.sujectType.toString();
-            if(!this.tempItem.isPart) {
+            if (!this.tempItem.isPart) {
                 this.tempItem.partMode = ''
             }
             let res = await updateApprovalItem(this.tempItem);
@@ -555,15 +597,17 @@ export default {
             this.dialogItemConfirmVisible = false;
             this.itemNote = '';
         },
-        async downApprovalItem() {
-            let res = await listVersionItem({ approvalItemLordId: this.itemInfo.approvalItemLordId });
+        downApprovalItem() {
+            this.searchVersion();
+            this.dialogVisibleVersion = true;
+        },
+        async searchVersion() {
+            let res = await listVersionItem({ approvalItemLordId: this.itemInfo.approvalItemLordId, versionorUserName: this.versionorUserName });
             if (!res.success) return;
             this.versionList = res.data;
             this.versionList.forEach((item) => {
                 this.$set(item, 'loadingImport', false)
             })
-            console.log('versionList', this.versionList);
-            this.dialogVisibleVersion = true;
         },
         // 查看git提交信息
         async showGitHistory() {
@@ -615,6 +659,23 @@ export default {
             }
             row.loadingImport = false;
             this.loadingTable = false;
+            // 重新加载事项详情信息更新versionInfo //this.init();
+            let result = await getByApprovalItemId({ approvalItemId: this.$route.query.itemId });
+            if (!result.success) {
+                this.$message({ type: "warning", message: "更新事项信息失败" });
+                return;
+            }
+            this.versionHistoryDialogVisible = false
+            this.$store.commit("changeItem", result.data);
+        },
+        // 查看溯源版本
+        async showVersionHistory(row) {
+            console.log('row')
+            console.log(row)
+            let res = await listHistoryRecord({versionItemId: row.id})
+            if (!res.success) return
+            this.versionHistoryTableData = res.data
+            this.versionHistoryDialogVisible = true
         },
         // 删除git提交记录
         deleteGitlog(row) {
@@ -814,6 +875,16 @@ export default {
         justify-content: space-between;
         margin-right: 10px;
         margin-bottom: 5px;
+    }
+    // 版本来源区域样式
+    .itemInfo-text {
+        font-size: 14px;
+    }
+    .itemInfo-text-in {
+        margin-right: 8px;
+        color: #f5588a;
+        font-weight: bold;
+        font-size: 14px;
     }
 }
 </style>

@@ -17,7 +17,7 @@ cd $SOURCE_CODE
 
 echo 'start clone source code from gitlab'
 #拉取前端代码
-git clone http://gitlab.seassoon.ai/sixiang/sixiang-2.0/sixiang-frontend.git
+git clone -b develop http://gitlab.seassoon.ai/sixiang/sixiang-2.0/sixiang-frontend.git
 
 echo 'clone source code done!'
 
@@ -41,10 +41,10 @@ password='k*-3X8$y2WMKq2qw'
 
 #清空远程Linux上已有文件夹
 
-ssh -t root@10.0.101.18 rm -rf /test/dist/*
+ssh -t root@10.0.101.18 rm -rf /opt/project/dev-sixiang-front/*
 
 if [ -d dist ];then
-scp -rp $distDir$baseDir root@10.0.101.18:/test/dist
+scp -rp $distDir$baseDir root@10.0.101.18:/opt/project/dev-sixiang-front/dist
 fi
 
 if [ -d $SOURCE_CODE ];then

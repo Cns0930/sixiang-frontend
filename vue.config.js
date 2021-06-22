@@ -34,5 +34,7 @@ module.exports = {
     },
     devServer:{
         port:8080
-    }
+    },
+    // 不打包出 .map文件
+    productionSourceMap: false,
 };
