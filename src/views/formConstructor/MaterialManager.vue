@@ -703,6 +703,7 @@ export default {
                         pageNum: detail.pageNum,
                         script: detail.script,
                         sid: this.$store.state.home.item.itemNo,
+                        itemInternalNo: this.$store.state.home.item.itemInternalNo,
                         padding: detail.isTable == 1 ? "table" : "text",
                         htmlPath:
                             "/" +
