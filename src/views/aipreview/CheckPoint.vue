@@ -133,15 +133,15 @@
         <!--添加CheckPoint-->
         <el-dialog title="填写ai-CheckPoint" :visible.sync="dialogVisbleAdd" width="50%" :close-on-click-modal="false">
             <el-form label-width="120px" :model="addForm">
-                <el-form-item label="材料" required>
+                <!-- <el-form-item label="材料" required>
                     <el-select v-model="addForm.approvalItemAndDocumentsubId" clearable placeholder="请选择材料展示名称">
                         <el-option v-for="(v,i) in materialOptions" :key="i" :label="v.documentsubDisplayname"
                             :value="v.id"> </el-option>
                     </el-select>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="字段" required>
-                    <el-select v-model="addForm.fieldId" clearable placeholder="请选择字段名称">
-                        <el-option v-for="(v,i) in fieldOptions" :key="i" :label="v.fieldName" :value="v.fieldId">
+                    <el-select v-model="addForm.fieldId" clearable filterable placeholder="请选择字段名称">
+                        <el-option v-for="(v,i) in fieldOptions" :key="i" :label="v.documentsubDisplayname + ' - ' + v.fieldName" :value="v.fieldId">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -374,7 +374,7 @@ export default {
             addForm: {
                 initPosition: '',
             },
-            materialOptions: [],
+            // materialOptions: [],
             fieldOptions: [],
             cutImgTagList: [],
             valueFieldList: [],
@@ -508,9 +508,9 @@ export default {
 
         // 加载下拉框选项
         async getOptions() {
-            let resMaterial = await listItemAndDocumentSub({ approvalItemId: this.itemId, pageNum: 1, pageSize: 500 });
-            if (!resMaterial.success) return;
-            this.materialOptions = resMaterial.data.records;
+            // let resMaterial = await listItemAndDocumentSub({ approvalItemId: this.itemId, pageNum: 1, pageSize: 500 });
+            // if (!resMaterial.success) return;
+            // this.materialOptions = resMaterial.data.records;
             let resField = await listFieldUnionMaterial({ approvalItemId: this.itemId, isCheckpoint: 1, pageNum: 1, pageSize: 500 });
             if (!resField.success) return;
             this.fieldOptions = resField.data.records;
