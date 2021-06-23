@@ -131,13 +131,15 @@ export default {
         },
         //  打开 关闭 多选框
         async switchMultiChosen(action, index) {
+            console.log('action')
+            console.log(action)
             this.tempActionIndex = index;
             this.tempChosenValue = action.value;
             let choosedItem = this.list.filter(item => action.value.fields.indexOf(item.fieldNo) >= 0)
             this.multiChosenDialog = true;
             await this.$nextTick()
             choosedItem.forEach(item => {
-                this.$refs.multipleTable.toggleRowSelection(item);
+                this.$refs.multipleTable.toggleRowSelection(item, true);
             })
             return;
             // console.log(action)
