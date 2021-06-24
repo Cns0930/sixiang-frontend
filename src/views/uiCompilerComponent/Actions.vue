@@ -46,9 +46,9 @@
                     <el-input v-model="tempChosenValue.fact" style="width:200px; margin-right: 20px;" />
                     搜索：
                     <el-input v-model="keyWord" placeholder="请输入字段名称（label）" clearable
-                        style="width:200px; margin-right: 20px;" @change="search" />
-                    <!-- <el-button @click="search" style="margin-top: 3px; font-size:16px; padding:12px 10px;">搜索
-                    </el-button> -->
+                        style="width:200px; margin-right: 20px;" />
+                    <el-button @click="handleAllChange" style="margin-top: 3px; font-size:16px; padding:12px 10px;">筛后全选/清空
+                    </el-button>
                 </span>
                 <!-- <el-checkbox-group v-model="tempChosenValue.fields"> -->
                 <el-table ref="multipleTable" :data="list" max-height="480" @selection-change="handleSelectionChange"
@@ -158,10 +158,6 @@ export default {
         //     action.value = v.map(v=>v.fieldNo)
         //     // console.log(v)
         // },
-        // 筛选
-        search() {
-
-        },
         handleSelectionChange(val) {
             this.multipleSelection = val;
         },
@@ -174,6 +170,23 @@ export default {
                 } else {
                     return ''
                 }
+            }
+        },
+        handleAllChange() {
+            if (this.keyWord === '') {
+                if (this.multipleSelection.length < this.list.length) {
+                    this.list.forEach(item => {
+                        this.$refs.multipleTable.toggleRowSelection(item, true);
+                    })
+                } else {
+                    this.$refs.multipleTable.clearSelection();
+                }
+            } else {
+                this.list.forEach(item => {
+                    if (item.label.indexOf(this.keyWord) >= 0) {
+                        this.$refs.multipleTable.toggleRowSelection(item);
+                    }
+                })
             }
         },
         copyToAction() {
