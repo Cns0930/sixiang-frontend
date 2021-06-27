@@ -181,6 +181,11 @@
                 <el-table-column label="序号" type="index" width="50" :index="indexMethod"></el-table-column>
                 <el-table-column prop="version" label="版本号"></el-table-column>
                 <el-table-column prop="username" label="提交人"></el-table-column>
+                <el-table-column label="git链接" width="200">
+                    <template slot-scope="scope">
+                        <a target="_blank" :href="scope.row.gitUrl">{{scope.row.gitUrl}}</a>
+                    </template>
+                </el-table-column>
                 <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter"></el-table-column>
                 <el-table-column prop="latest" label="是否最新" :formatter="formatBoolean"></el-table-column>
                 <el-table-column prop="note" label="备注信息"></el-table-column>

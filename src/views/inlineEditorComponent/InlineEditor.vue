@@ -1,5 +1,5 @@
 <template>
-    <div class="body">
+    <div class="body" style="max-height: 740px;">
         <div class="ckeditor" data-editor="DecoupledDocumentEditor">
             <div style="margin-bottom:10px">
                 <button @click="getHtmlToAce">在线获取html</button>
@@ -18,7 +18,7 @@
             </div>
 
             <div class="main">
-                <div style="width:30cm">
+                <div style="width:40cm;max-height: 740px; overflow:auto">
                     <!-- <div ref="toolbar" style="position:fixed;top:32px;z-index:30"></div> -->
                     <div ref="toolbar" style="width: 780px;position:fixed;top:180px;z-index: 10;"></div>
 
@@ -45,7 +45,7 @@
 
                 <div
                     ref="container"
-                    style="width:100%;height:720px;top:0px;position:relative;margin-top:0px"
+                    style="width:100%;top:0px;margin-top:0px;margin-top: 100px;max-height: 640px; overflow:auto"
                 ></div>
             </div>
 
@@ -561,8 +561,12 @@ export default {
     padding: 10px;
     background-color: #f2f2f2;
     width: 1800px;
+    max-height: 775px;
 }
 .main {
     display: flex;
+    // height: 740px;
+    height: 740px;
+    // background: #f3dbdb;
 }
 </style>
