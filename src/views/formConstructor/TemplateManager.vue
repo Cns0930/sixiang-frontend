@@ -503,7 +503,7 @@ export default {
         overflow-x: auto;
         // height: calc(100vh - 150px);
         // height: 790px;
-        height: 100%;
+        height: 790px;
         overflow-y: auto;
     }
     .el-input {
