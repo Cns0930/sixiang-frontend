@@ -131,7 +131,7 @@
                             @change="globalDocumentChange" ref="globalDocument">
                             <el-option v-for="item in approvalTextList" :key="item.globalDocumentId"
                                 :label="item.globalDocumentName" :value="item.globalDocumentId" />
-                            <div class="text-center"
+                            <!-- <div class="text-center"
                                 style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
                                 <a class="text-normal">
                                     <el-pagination @size-change="handleSizeChangeSelectBang"
@@ -139,7 +139,7 @@
                                         :current-page="currentPageSelectBang" :total="totalBang"
                                         :page-size="pageSizeBang" layout="prev, pager, next" />
                                 </a>
-                            </div>
+                            </div> -->
                         </el-select>
                     </el-form-item>
                     <el-form-item label="材料展示名称">
