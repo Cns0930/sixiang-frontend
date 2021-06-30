@@ -3,7 +3,7 @@ import Renderer from "./Renderer"
 
 class ComputedDef{
     constructor(){
-        this.sample = new Renderer('ElInput', 'sampleValue_ComputedDef',null,"样例值")
+        this.sample = new Renderer('ElInput', 'sample_CD',null,"样例值")
         this.source = new Renderer('ElInput', '',null,"来源描述")
         this.getter = new Renderer("CodeEditor",`function(state,getters){
             return ""
