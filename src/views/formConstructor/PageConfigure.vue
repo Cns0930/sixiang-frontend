@@ -18,7 +18,7 @@
             <div>
                 <el-select v-model="address" filterable clearable placeholder="地址+说明+版本" style="width:400px">
                     <el-option v-for="item in addressOptions" :key="item.id"
-                        :label="'地址:' + item.superformIpPort + ' 说明:' + item.displayNotes + ' 版本:' + item.version" :value="item.superformIpPort">
+                        :label="'地址:' + item.superformIpPort + ' 说明:' + item.displayNotes + ' 版本:' + item.version" :value="item.id">
                     </el-option>
                 </el-select>
                 <el-button :loading="loadingPalace" @click="toNinePalace()">同步到九宫</el-button>
@@ -440,7 +440,7 @@ export default {
             this.loadingPalace = true;
             let params = {
                 approvalItemId: this.itemId,
-                superformIpPort: this.address,
+                machineId: this.address,
             }
             let {success} = await synchronizeItemZip(params);
             if(!success) {
