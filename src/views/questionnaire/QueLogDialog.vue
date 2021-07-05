@@ -22,11 +22,13 @@
                         </el-table-column>
                         <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable>
                         </el-table-column>
-                        <el-table-column label="操作" fixed="right" width="240">
+                        <el-table-column label="操作" fixed="right" width="300">
                             <template slot-scope="scope">
                                 <el-button type="primary" size="mini" @click="checkQuestionnaire(scope.row)">查看回答
                                 </el-button>
                                 <el-button type="primary" size="mini" @click="backfillQuestionnaire(scope.row)">回填数据
+                                </el-button>
+                                <el-button type="plain" size="mini" @click="backfillLog(scope.row)">查看回填日志
                                 </el-button>
                             </template>
                         </el-table-column>
@@ -45,6 +47,26 @@
                 <Paper :paper-list="paperList" />
             </div>
         </el-dialog>
+        <!-- 回填日志 -->
+        <el-dialog title="问卷回答记录列表" :visible.sync="dialogVisibleLog" width="60%">
+            <div>
+                <el-table ref="multipleTable" border :data="tableDataLog" tooltip-effect="dark" highlight-current-row
+                    style="width: 100%"
+                    :header-cell-style="{background: '#f9faff',color:'#333',fontFamily:'MicrosoftYaHeiUI',fontSize:'15px',fontWeight:900}"
+                    :row-style="{fontSize:'14px',color:'#666',fontFamily:'MicrosoftYaHeiUI'}">
+                    <el-table-column label="序号" type="index" width="80" :index="indexMethod"></el-table-column>
+                    <el-table-column prop="operateUser" label="回填操作人"></el-table-column>
+                    <el-table-column prop="createTime" label="回填时间"></el-table-column>
+                    <el-table-column prop="fillbackLog" label="日志信息" show-overflow-tooltip></el-table-column>
+                </el-table>
+                <div class="tablePagination">
+                    <el-pagination :current-page.sync="currentPage_log" :page-size.sync="pageSize_log"
+                        :page-sizes="[5, 10, 20, 50, 100]" layout="total, sizes, prev, pager, next"
+                        :total="totalCount_log">
+                    </el-pagination>
+                </div>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -54,7 +76,7 @@ import { mixin } from "@/mixin/mixin"
 import Paper from "./showQueModule/paper"
 // 接口
 import {
-    listReply, fillback
+    listReply, fillback, listReplyFillbackLog
 } from "@/api/questionnaire/management"
 
 export default {
@@ -72,7 +94,23 @@ export default {
             // 查看问卷答案
             dialogVisiblePaper: false,
             paperList: [],
+            // 回填日志
+            dialogVisibleLog: false,
+            tableDataLog: [],
+            currentPage_log: 1,
+            pageSize_log: 10,
+            totalCount_log: 0,
+            rowInfo: {},
         }
+    },
+    watch: {
+        currentPage_log: function (newValue, oldValue) {
+            this.getReplyFillbackLog(this.rowInfo.replyId)
+        },
+        pageSize_log: function (newValue, oldValue) {
+            this.currentPage_log = 1;
+            this.getReplyFillbackLog(this.rowInfo.replyId)
+        },
     },
     methods: {
         // 分页
@@ -86,6 +124,10 @@ export default {
             // console.log(`当前页: ${val}`);
             this.currentPage = val;
             await this.getTableData();
+        },
+        // 序号
+        indexMethod(index) {
+            return index + 1;
         },
 
         async openDialog() {
@@ -134,6 +176,24 @@ export default {
                 return
             }
             this.$message.success('回填成功')
+        },
+        // 获取回填的日志数据
+        async getReplyFillbackLog(id) {
+            let params = {
+                replyId: id,
+                pageNum: this.currentPage_log,
+                pageSize: this.pageSize_log,
+            }
+            let res = await listReplyFillbackLog(params)
+            if (!res.success) return
+            this.tableDataLog = res.data.records
+            this.totalCount_log = res.data.total
+        },
+        // 查看回填日志
+        backfillLog(row) {
+            this.rowInfo = row;
+            this.getReplyFillbackLog(row.replyId)
+            this.dialogVisibleLog = true;
         }
     }
 }

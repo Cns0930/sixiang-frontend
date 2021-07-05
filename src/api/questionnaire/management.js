@@ -34,3 +34,7 @@ export const getByQuestionKey = params => { return axios.get(`/qnr/question/getB
 
 // 删除一道题
 export const deleteItem = params => { return axios.get(`/qnr/question/deleteItem`, {params}).then(res=>res.data); };
+
+// 2021.7.5 新增
+// 查询问卷答案回填日志记录-分页
+export const listReplyFillbackLog = params => { return axios.get(`/qnr/question/listReplyFillbackLog`, {params}).then(res=>res.data); };
