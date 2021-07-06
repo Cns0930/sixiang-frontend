@@ -175,7 +175,7 @@ export default {
                 this.$message.warning('回填失败')
                 return
             }
-            this.$message.success('回填成功')
+            this.$message.success(res.data)
         },
         // 获取回填的日志数据
         async getReplyFillbackLog(id) {
