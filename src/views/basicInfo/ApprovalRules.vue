@@ -842,8 +842,8 @@ export default {
             this.checkpointList = []
             this.ruleTipsList = [{ lables: '正确信息', ruleTips: '' }, { lables: '错误信息', ruleTips: '' }, { lables: '人工判断', ruleTips: '' },],
                 this.ruleTipsForUserList = [{ lables: '正确信息', ruleTipsForUser: '' }, { lables: '错误信息', ruleTipsForUser: '' }, { lables: '人工判断', ruleTipsForUser: '' },],
-                this.ruleInputsList = [{ value1: '', value2: '', }],
-                this.ruleTipsInputList = [{ value1: '', value2: '', }],
+                this.ruleInputsList = [{ value1: [], value2: '', }],
+                this.ruleTipsInputList = [{ value1: [], value2: '', }],
                 //依据
                 this.ruleLawList = [{ ruleLaw: '' }],
                 //附加
