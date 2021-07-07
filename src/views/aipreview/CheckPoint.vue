@@ -133,15 +133,15 @@
         <!--添加CheckPoint-->
         <el-dialog title="填写ai-CheckPoint" :visible.sync="dialogVisbleAdd" width="50%" :close-on-click-modal="false">
             <el-form label-width="120px" :model="addForm">
-                <el-form-item label="材料" required>
+                <!-- <el-form-item label="材料" required>
                     <el-select v-model="addForm.approvalItemAndDocumentsubId" clearable placeholder="请选择材料展示名称">
                         <el-option v-for="(v,i) in materialOptions" :key="i" :label="v.documentsubDisplayname"
                             :value="v.id"> </el-option>
                     </el-select>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="字段" required>
-                    <el-select v-model="addForm.fieldId" clearable placeholder="请选择字段名称">
-                        <el-option v-for="(v,i) in fieldOptions" :key="i" :label="v.fieldName" :value="v.fieldId">
+                    <el-select v-model="addForm.fieldId" clearable filterable placeholder="请选择字段名称">
+                        <el-option v-for="(v,i) in fieldOptions" :key="i" :label="v.documentsubDisplayname + ' - ' + v.fieldName" :value="v.fieldId">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -374,7 +374,7 @@ export default {
             addForm: {
                 initPosition: '',
             },
-            materialOptions: [],
+            // materialOptions: [],
             fieldOptions: [],
             cutImgTagList: [],
             valueFieldList: [],
@@ -508,9 +508,9 @@ export default {
 
         // 加载下拉框选项
         async getOptions() {
-            let resMaterial = await listItemAndDocumentSub({ approvalItemId: this.itemId, pageNum: 1, pageSize: 500 });
-            if (!resMaterial.success) return;
-            this.materialOptions = resMaterial.data.records;
+            // let resMaterial = await listItemAndDocumentSub({ approvalItemId: this.itemId, pageNum: 1, pageSize: 500 });
+            // if (!resMaterial.success) return;
+            // this.materialOptions = resMaterial.data.records;
             let resField = await listFieldUnionMaterial({ approvalItemId: this.itemId, isCheckpoint: 1, pageNum: 1, pageSize: 500 });
             if (!resField.success) return;
             this.fieldOptions = resField.data.records;
@@ -525,7 +525,7 @@ export default {
         async addConfirm() {
             console.log(this.cutImgTagList);
             this.addForm.cutImgTag = this.cutImgTagList.map(item => item.value);
-            this.addForm.initPosition = JSON.parse('[' + this.addForm.initPosition + ']');
+            this.addForm.initPosition = this.addForm.initPosition === null || this.addForm.initPosition === '' ? null : JSON.parse('[' + this.addForm.initPosition + ']');
             this.addForm.valueField = this.valueFieldList.map(item => item.value);
             this.addForm.valuePattern = this.valuePatternList.map(item => item.value);
             this.addForm.approvalItemId = this.itemId;
@@ -558,7 +558,7 @@ export default {
         // 确认编辑
         async editConfirm() {
             this.editForm.cutImgTag = this.cutImgTagList.map(item => item.value);
-            this.editForm.initPosition = JSON.parse('[' + this.editForm.initPosition + ']');
+            this.editForm.initPosition = this.editForm.initPosition === null ? null : JSON.parse('[' + this.editForm.initPosition + ']');
             this.editForm.valueField = this.valueFieldList.map(item => item.value);
             this.editForm.valuePattern = this.valuePatternList.map(item => item.value);
             this.editForm.approvalItemId = this.itemId;

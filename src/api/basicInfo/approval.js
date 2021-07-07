@@ -92,3 +92,12 @@ export const listMachines = params => {return axios.get('/ss/approvalItem/listMa
 
 // 同步九宫事项数据
 export const synchronizeItemZip = params => {return axios.get('/ss/approvalItem/synchronizeItemZip',{params}).then(res => res.data)}
+
+// copy一份事项数据
+export const copyVersionItem = params => {return axios.get('/account/SysVersionItem/copyVersionItem',{params}).then(res => res.data)}
+
+// 查询事项版本历史记录
+export const listHistoryRecord = params => {return axios.get('/account/SysVersionItem/listHistoryRecord',{params}).then(res => res.data)}
+
+// 判断当前事项版本是否最新
+export const isNewItemVersion = params => {return axios.get('/ss/approvalItem/isNewItemVersion',{params}).then(res => res.data)}

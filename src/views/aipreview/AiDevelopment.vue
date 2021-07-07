@@ -67,6 +67,8 @@
                                                     </el-button>
                                                     <el-button round @click="imgOpen(item.valueUrl)">打开图片</el-button>
                                                     <el-button @click="updateOcr(item)">更新ocr</el-button>
+                                                    <span style="color: green; margin: 0px 10px;">{{item.documentsubDisplayname}}</span>
+                                                    <span style="color: #409EFF">{{item.fileName}}</span>
                                                 </div>
                                             </div>
                                             <div class="case-rows">
@@ -110,6 +112,8 @@
                                             :value="item.sortconfigId">
                                         </el-option>
                                     </el-select>
+                                    <el-button @click="pickAllSortConfig" style="margin-left: 15px">全选</el-button>
+                                    <el-button @click="cleanAllSortConfig" style="margin-left: 15px">清空</el-button>
                                     <el-button @click="addSortConfig" style="margin-left: 15px">新增</el-button>
                                 </div>
                             </div>
@@ -166,6 +170,8 @@
                                             :value="item.checkpointId">
                                         </el-option>
                                     </el-select>
+                                    <el-button @click="pickAllCheckPoint" style="margin-left: 15px">全选</el-button>
+                                    <el-button @click="cleanAllCheckPoint" style="margin-left: 15px">清空</el-button>
                                     <el-button @click="addCheckPoint" style="margin-left: 15px">新增</el-button>
                                 </div>
                             </div>
@@ -301,15 +307,15 @@
             <el-dialog title="填写ai-CheckPoint" :visible.sync="dialogVisbleAddCheckPoint" width="50%"
                 :close-on-click-modal="false">
                 <el-form label-width="120px" :model="addForm">
-                    <el-form-item label="材料" required>
+                    <!-- <el-form-item label="材料" required>
                         <el-select v-model="addForm.approvalItemAndDocumentsubId" clearable placeholder="请选择材料展示名称">
                             <el-option v-for="(v,i) in materialOptions" :key="i" :label="v.documentsubDisplayname"
                                 :value="v.id"> </el-option>
                         </el-select>
-                    </el-form-item>
+                    </el-form-item> -->
                     <el-form-item label="字段" required>
-                        <el-select v-model="addForm.fieldId" clearable placeholder="请选择字段名称">
-                            <el-option v-for="(v,i) in fieldOptions" :key="i" :label="v.fieldName" :value="v.fieldId">
+                        <el-select v-model="addForm.fieldId" clearable filterable placeholder="请选择字段名称">
+                            <el-option v-for="(v,i) in fieldOptions" :key="i" :label="v.documentsubDisplayname + ' - ' + v.fieldName" :value="v.fieldId">
                             </el-option>
                         </el-select>
                     </el-form-item>
@@ -687,8 +693,8 @@ export default {
         await this.initProject();
         await this.init();
         await this.getFileListTable();
-        await this.getListCheckpoint();
         await this.getSortConfigList();
+        await this.getListCheckpoint();
         await this.getOptions();
     },
     methods: {
@@ -833,7 +839,7 @@ export default {
         // 确认编辑
         async editConfirm() {
             this.editForm.cutImgTag = this.cutImgTagList.map(item => item.value);
-            this.editForm.initPosition = JSON.parse('[' + this.editForm.initPosition + ']');
+            this.editForm.initPosition = this.editForm.initPosition === null ? null : JSON.parse('[' + this.editForm.initPosition + ']');
             this.editForm.valueField = this.valueFieldList.map(item => item.value);
             this.editForm.valuePattern = this.valuePatternList.map(item => item.value);
             this.editForm.approvalItemId = this.itemId;
@@ -873,7 +879,7 @@ export default {
         async addConfirm() {
             console.log(this.cutImgTagList);
             this.addForm.cutImgTag = this.cutImgTagList.map(item => item.value);
-            this.addForm.initPosition = JSON.parse('[' + this.addForm.initPosition + ']');
+            this.addForm.initPosition = this.addForm.initPosition === null || this.addForm.initPosition === '' ? null : JSON.parse('[' + this.addForm.initPosition + ']');
             this.addForm.valueField = this.valueFieldList.map(item => item.value);
             this.addForm.valuePattern = this.valuePatternList.map(item => item.value);
             this.addForm.approvalItemId = this.itemId;
@@ -937,8 +943,26 @@ export default {
             this.dialogVisbleAddSortConfig = false;
             this.getSortConfigList();
         },
-
-
+        // 全选sortConfig
+        pickAllSortConfig() {
+            this.selectedSortConfigs = this.sortConfigOptions.map(item => item.sortconfigId)
+            this.showSortConfigs()
+        },
+        // 清空sortConfig
+        cleanAllSortConfig() {
+            this.selectedSortConfigs = []
+            this.showSortConfigs()
+        },
+        // 全选CheckPoint
+        pickAllCheckPoint() {
+            this.selectedCheckPoints = this.CheckPointOptions.map(item => item.checkpointId)
+            this.showCheckPoints()
+        },
+        // 清空CheckPoint
+        cleanAllCheckPoint() {
+            this.selectedCheckPoints = []
+            this.showCheckPoints()
+        },
         // 打开结果展示页面弹框
         openResultsPresentation() {
             if (this.multipleSelection.length === 0) {
@@ -1047,6 +1071,7 @@ export default {
 </script>
 
 <style>
+/* 预览图可以出滚动条 */
 .el-drawer__body {
     overflow: auto;
     /* overflow-x: auto; */

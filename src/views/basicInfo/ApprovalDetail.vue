@@ -82,6 +82,11 @@
                     <el-button type="primary" @click="showGitHistory">点击查看
                     </el-button>
                 </div>
+                <div class="handleBox">
+                    <p class="title">复用其他版本事项</p>
+                    <el-button type="primary" @click="showReuseDialog">选取复用
+                    </el-button>
+                </div>
             </div>
         </div>
         <!-- 事项编辑弹窗 -->
@@ -135,6 +140,18 @@
                             <el-option :value="Number(1)" label="企业"></el-option>
                         </el-select>
                     </el-form-item>
+                    <el-form-item label="是否制件">
+                        <el-select v-model="tempItem.isPart" placeholder="否/是" style="width:300px">
+                            <el-option :value="Number(0)" label="否"></el-option>
+                            <el-option :value="Number(1)" label="是"></el-option>
+                        </el-select>
+                        <span v-if="tempItem.isPart">制件方式：</span>
+                        <el-radio-group v-if="tempItem.isPart" v-model="tempItem.partMode">
+                            <el-radio label="邮寄">邮寄</el-radio>
+                            <el-radio label="自取">自取</el-radio>
+                            <el-radio label="邮寄or自取">邮寄or自取</el-radio>
+                        </el-radio-group>
+                    </el-form-item>
                 </el-form>
             </div>
             <span slot="footer" class="dialog-footer">
@@ -148,9 +165,52 @@
         </el-dialog>
         <!-- 事项多版本查看导入 -->
         <el-dialog title="版本列表" :visible.sync="dialogVisibleVersion" width="80%" :close-on-click-modal="false">
+            <div>
+                <h3 style="color:#606266">当前事项数据来源:</h3>
+                <i v-if="itemInfo.versionInfo" class="itemInfo-text">提交人：<i class="itemInfo-text-in">{{ itemInfo.versionInfo.userName }}</i> </i>
+                <i v-if="itemInfo.versionInfo" class="itemInfo-text">版本号：<i class="itemInfo-text-in">{{ itemInfo.versionInfo.version }}</i> </i>
+            </div>
+            <div style="margin:10px 0px">
+                <el-input placeholder="按版本号或者用户名查询" v-model="versionorUserName" clearable style="width: 200px;margin-right:10px"
+                @change="searchVersion"></el-input>
+                <el-button icon="el-icon-search" @change="searchVersion"></el-button>
+            </div>
             <el-table ref="versionTable" v-loading="loadingTable" element-loading-text="拼命加载中"
                 element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.5)"
                 :data="versionList" border style="width: 100%" row-key="id">
+                <el-table-column label="序号" type="index" width="50" :index="indexMethod"></el-table-column>
+                <el-table-column prop="version" label="版本号"></el-table-column>
+                <el-table-column prop="username" label="提交人"></el-table-column>
+                <el-table-column label="git链接" width="200">
+                    <template slot-scope="scope">
+                        <a target="_blank" :href="scope.row.gitUrl">{{scope.row.gitUrl}}</a>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter"></el-table-column>
+                <el-table-column prop="latest" label="是否最新" :formatter="formatBoolean"></el-table-column>
+                <el-table-column prop="note" label="备注信息"></el-table-column>
+                <el-table-column label="操作" fixed="right" width="200px">
+                    <template slot-scope="scope">
+                        <el-button-group>
+                            <el-button type="primary" :loading="scope.row.loadingImport"
+                                @click="confirmImport(scope.row)">确认导入</el-button>
+                            <el-button type="primary"
+                                @click="showVersionHistory(scope.row)">溯源版本</el-button>
+                        </el-button-group>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisibleVersion = false">
+                    关闭
+                </el-button>
+            </span>
+        </el-dialog>
+        <!-- 多版本溯源查看导入 -->
+        <el-dialog title="溯源版本列表" :visible.sync="versionHistoryDialogVisible" width="70%" :close-on-click-modal="false">
+            <el-table ref="versionTable" v-loading="loadingTable" element-loading-text="拼命加载中"
+                element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.5)"
+                :data="versionHistoryTableData" border style="width: 100%" row-key="id">
                 <el-table-column label="序号" type="index" width="50" :index="indexMethod"></el-table-column>
                 <el-table-column prop="version" label="版本号"></el-table-column>
                 <el-table-column prop="username" label="提交人"></el-table-column>
@@ -167,7 +227,7 @@
                 </el-table-column>
             </el-table>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisibleVersion = false">
+                <el-button @click="versionHistoryDialogVisible = false">
                     关闭
                 </el-button>
             </span>
@@ -214,6 +274,13 @@
                 <span>备注填写:</span>
                 <el-input type="textarea" v-model="itemNote" :autosize="{ minRows: 2, maxRows: 6 }"></el-input>
             </div>
+            <div style="margin-top: 20px">
+                <span>本次修改主要所属阶段：</span>
+                <el-select v-model="saveStep"  placeholder="阶段" style="width:400px">
+                    <el-option v-for="item in stepOptions" :key="item.value" :value="item.value">
+                    </el-option>
+                </el-select>
+            </div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogItemConfirmVisible = false">
                     取消
@@ -230,10 +297,18 @@
                 <el-input type="textarea" v-model="gitNote" :autosize="{ minRows: 2, maxRows: 6 }"></el-input>
             </div>
             <div style="margin-top: 20px">
-                <span>同步到九宫程序：</span>
+                <span>对应九宫版本：</span>
                 <el-select v-model="machineId" filterable clearable placeholder="地址+说明+版本" style="width:400px">
                     <el-option v-for="item in addressOptions" :key="item.id"
-                        :label="'地址:' + item.superformIpPort + ' 说明:' + item.displayNotes + ' 版本:' + item.version" :value="item.id">
+                        :label="'地址:' + item.superformIpPort + ' 说明:' + item.displayNotes + ' 版本:' + item.version"
+                        :value="item.id">
+                    </el-option>
+                </el-select>
+            </div>
+            <div style="margin-top: 20px">
+                <span>本次修改主要所属阶段：</span>
+                <el-select v-model="pushStep"  placeholder="阶段" style="width:400px">
+                    <el-option v-for="item in stepOptions" :key="item.value" :value="item.value">
                     </el-option>
                 </el-select>
             </div>
@@ -262,6 +337,49 @@
                 </el-button>
             </span>
         </el-dialog>
+        <!-- 复用 -->
+        <el-dialog title="复用其他事项数据" :visible.sync="reuseDialogVisible" width="50%" :close-on-click-modal="false">
+            <div style="margin:10px 0px">
+                项目选择:
+                <el-select v-model="tempProjectId" placeholder="请选择项目名称" @change="selectProject">
+                    <el-option v-for="item in projectOptions" :key="item.projectId" :label="item.projectName"
+                        :value="item.projectId">
+                    </el-option>
+                </el-select>
+            </div>
+            <div>
+                事项名称:
+                <el-select filterable clearable placeholder="请选择事项名称" v-model="tempItemId" @change="showVersionList"
+                    style="position:relative; margin-bottom: 20px;">
+                    <el-option v-for="(v,i) in typeSubItemOptions" :key="i" :label="v.itemName"
+                        :value="v.approvalItemLordId">
+                    </el-option>
+                </el-select>
+            </div>
+            <div class="sampleTable">
+                <el-table ref="versionTable" v-loading="loadingReuse" element-loading-text="拼命加载中"
+                    element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.5)"
+                    :data="reuseTableData" border style="width: 100%" row-key="id">
+                    <el-table-column label="序号" type="index" width="50" :index="indexMethod"></el-table-column>
+                    <el-table-column prop="version" label="版本号"></el-table-column>
+                    <el-table-column prop="username" label="提交人"></el-table-column>
+                    <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter"></el-table-column>
+                    <el-table-column prop="latest" label="是否最新" :formatter="formatBoolean"></el-table-column>
+                    <el-table-column prop="note" label="备注信息"></el-table-column>
+                    <el-table-column label="操作" fixed="right" width="200px">
+                        <template slot-scope="scope">
+                            <el-button-group>
+                                <el-button type="primary" :loading="scope.row.loadingImport"
+                                    @click="affirmReuse(scope.row)">复用</el-button>
+                            </el-button-group>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="reuseDialogVisible = false">关闭</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -277,9 +395,11 @@ import _ from "lodash"
 import {
     getByApprovalItemId, listApprovalAll, updateApprovalItem, submitItemInfo,
     listVersionItem, obtainVersionItem, addSysVersionItem, listSysGitVersionLog,
-    deleteSysGitVersion, listMachines
+    deleteSysGitVersion, listMachines, listHistoryRecord
 } from "@/api/basicInfo/approval"
-
+import {
+    listApprovalItem, listProjectAll, copyVersionItem
+} from "@/api/basicInfo/approval";
 export default {
     name: "ApprovalDetail",
     mixins: [mixin],
@@ -308,6 +428,10 @@ export default {
             dialogVisibleVersion: false,
             versionList: [],
             loadingTable: false,
+            versionorUserName: '',
+            //    溯源
+            versionHistoryTableData: [],
+            versionHistoryDialogVisible: false,
 
             // 保存提交加备注
             itemNote: '',
@@ -321,6 +445,25 @@ export default {
             deleteNote: '',
             deleteId: null,
             dialogGitDeleteVisible: false,
+            // 复用事项
+            reuseDialogVisible: false,
+            loadingReuse: false,
+            tempProjectId: null,
+            projectOptions: [],
+            tempItemId: null,
+            typeSubItemOptions: [],
+            reuseTableData: [],
+            // 阶段统计
+            stepOptions: [
+                {value: '初步调研'},
+                {value: '基于问卷补充信息'},
+                {value: '帮办开发'},
+                {value: '预检开发'},
+                {value: '自测'},
+                {value: 'bug处理'},
+            ],
+            saveStep: '',
+            pushStep: ''
         }
     },
     computed: {
@@ -348,8 +491,8 @@ export default {
     },
     methods: {
         async getOptions() {
-            let {success, data} = await listMachines();
-            if(!success) return;
+            let { success, data } = await listMachines();
+            if (!success) return;
             this.addressOptions = data;
         },
         getApprovalDetailInfo() {
@@ -427,6 +570,9 @@ export default {
         async updateItem() {
             this.tempItem.extraInfo = JSON.stringify(this.extraInfoList);
             this.tempItem.sujectType = this.tempItem.sujectType.toString();
+            if (!this.tempItem.isPart) {
+                this.tempItem.partMode = ''
+            }
             let res = await updateApprovalItem(this.tempItem);
             if (res.success) {
                 this.$message.success("事项修改成功!");
@@ -452,8 +598,12 @@ export default {
                 this.$message.warning("请选择九宫地址再提交");
                 return;
             }
+            if (this.pushStep === '') {
+                this.$message.warning("请选择阶段再提交");
+                return;
+            }
             this.loadingUptoGit = true;
-            let res = await submitItemInfo({ approvalItemId: this.itemId, note: this.gitNote, machineId: this.machineId });
+            let res = await submitItemInfo({ approvalItemId: this.itemId, note: this.gitNote, machineId: this.machineId, stage: this.pushStep });
             if (res.success) {
                 this.$message.success('上传配置到Git成功！');
             } else {
@@ -462,6 +612,7 @@ export default {
             this.loadingUptoGit = false;
             this.dialogGitConfirmVisible = false;
             this.gitNote = '';
+            this.pushStep = '';
         },
 
         // 多版本相关
@@ -470,8 +621,12 @@ export default {
                 this.$message.warning("请填写备注再提交");
                 return;
             }
+            if (this.saveStep === '') {
+                this.$message.warning("请选择阶段再提交");
+                return;
+            }
             this.loadingSaveApprovalItem = true;
-            let res = await addSysVersionItem({ approvalItemId: this.itemId, note: this.itemNote });
+            let res = await addSysVersionItem({ approvalItemId: this.itemId, note: this.itemNote, stage: this.saveStep });
             if (res.success) {
                 this.$message.success('保存当前事项成功！');
             } else {
@@ -480,16 +635,19 @@ export default {
             this.loadingSaveApprovalItem = false;
             this.dialogItemConfirmVisible = false;
             this.itemNote = '';
+            this.saveStep = '';
         },
-        async downApprovalItem() {
-            let res = await listVersionItem({ approvalItemLordId: this.itemInfo.approvalItemLordId });
+        downApprovalItem() {
+            this.searchVersion();
+            this.dialogVisibleVersion = true;
+        },
+        async searchVersion() {
+            let res = await listVersionItem({ approvalItemLordId: this.itemInfo.approvalItemLordId, versionorUserName: this.versionorUserName });
             if (!res.success) return;
             this.versionList = res.data;
             this.versionList.forEach((item) => {
                 this.$set(item, 'loadingImport', false)
             })
-            console.log('versionList', this.versionList);
-            this.dialogVisibleVersion = true;
         },
         // 查看git提交信息
         async showGitHistory() {
@@ -541,6 +699,23 @@ export default {
             }
             row.loadingImport = false;
             this.loadingTable = false;
+            // 重新加载事项详情信息更新versionInfo //this.init();
+            let result = await getByApprovalItemId({ approvalItemId: this.$route.query.itemId });
+            if (!result.success) {
+                this.$message({ type: "warning", message: "更新事项信息失败" });
+                return;
+            }
+            this.versionHistoryDialogVisible = false
+            this.$store.commit("changeItem", result.data);
+        },
+        // 查看溯源版本
+        async showVersionHistory(row) {
+            console.log('row')
+            console.log(row)
+            let res = await listHistoryRecord({versionItemId: row.id})
+            if (!res.success) return
+            this.versionHistoryTableData = res.data
+            this.versionHistoryDialogVisible = true
         },
         // 删除git提交记录
         deleteGitlog(row) {
@@ -572,7 +747,56 @@ export default {
                     return ''
                 }
             }
-        }
+        },
+        // 复用事项
+        async showReuseDialog() {
+            let resultProject = await listProjectAll();
+            this.projectOptions = resultProject.data;
+            this.reuseDialogVisible = true
+        },
+        // 确认复用
+        async affirmReuse(row) {
+            console.log('row')
+            console.log(row)
+            row.loadingResuseRow = true;
+            this.loadingReuse = true;
+            let params = {
+                approvalItemLordId: this.itemInfo.approvalItemLordId,
+                id: row.id,
+            }
+            let res = await copyVersionItem(params);
+            if (!res.success) {
+                this.$message.warning('导入失败！');
+                row.loadingResuseRow = false;
+                this.loadingReuse = false;
+                return;
+            } else {
+                this.$message.success('导入成功！');
+                row.loadingResuseRow = false;
+                this.loadingReuse = false;
+                this.reuseTableData = [];
+                this.tempItemId = null;
+                this.tempProjectId = null,
+                this.reuseDialogVisible = false
+            }
+        },
+        async selectProject() {
+            this.reuseTableData = [];
+            this.tempItemId = '';
+            let result = await listApprovalItem({ pageNum: 1, pageSize: 500, projectId: this.tempProjectId });
+            this.typeSubItemOptions = result.data.records;
+        },
+        async showVersionList() {
+            this.reuseTableData = [];
+            if (this.tempItemId) {
+                let res = await listVersionItem({ approvalItemLordId: this.tempItemId });
+                if (!res.success) return;
+                this.reuseTableData = res.data;
+                this.reuseTableData.forEach((item) => {
+                    this.$set(item, 'loadingResuseRow', false)
+                })
+            }
+        },
     },
 
 }
@@ -691,6 +915,16 @@ export default {
         justify-content: space-between;
         margin-right: 10px;
         margin-bottom: 5px;
+    }
+    // 版本来源区域样式
+    .itemInfo-text {
+        font-size: 14px;
+    }
+    .itemInfo-text-in {
+        margin-right: 8px;
+        color: #f5588a;
+        font-weight: bold;
+        font-size: 14px;
     }
 }
 </style>

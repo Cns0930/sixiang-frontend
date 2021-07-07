@@ -6,12 +6,18 @@
                 <el-input placeholder="搜索项目" v-model="filterKeyword" clearable style="width: 200px;"
                     @change="loadProjects">
                 </el-input>
+                <el-input placeholder="搜索事项编号" v-model="itemNoKeyword" clearable style="width: 200px;"
+                    @change="loadProjects">
+                </el-input>
                 <el-button @click="loadProjects">
                     搜索
                 </el-button>
                 <div class="handle">
                     <el-button type="primary" @click="handleClickAdd">
                         新增项目
+                    </el-button>
+                    <el-button type="primary" @click="openDialog">
+                        全局操作
                     </el-button>
                 </div>
             </div>
@@ -119,6 +125,8 @@
                 </span>
             </el-dialog>
         </section>
+        <!-- 全局操作弹框 -->
+        <GlobalOperationsDialog ref="globalOperations" />
     </div>
 </template>
 
@@ -129,8 +137,12 @@
 import { mixin } from "@/mixin/mixin"
 import _ from "lodash"
 import Vue from "vue";
+import { ref } from "@vue/composition-api";
 
 import { mapGetters, mapState } from "vuex"
+// 组件
+import GlobalOperationsDialog from "./GlobalOperationsDialog"
+// 接口
 import {
     listProjectAll,
     addProject,
@@ -141,6 +153,15 @@ import {
 export default {
     name: "ProjectList",
     mixins: [mixin],
+    components: {
+        GlobalOperationsDialog
+    },
+    setup() {
+        const globalOperations = ref(null);
+        return {
+            globalOperations,
+        }
+    },
     data() {
         return {
             // 页面信息
@@ -148,6 +169,7 @@ export default {
             // 筛选
             filterProjectId: null,
             filterApprovalId: null,
+            itemNoKeyword: '',
             filterKeyword: "",
             // 弹窗
             dialogAddVisible: false,
@@ -238,7 +260,7 @@ export default {
         },
         async loadProjects() {
             // 获取项目列表
-            let projectRes = await listProjectAll({ keyword: this.filterKeyword });
+            let projectRes = await listProjectAll({ keyword: this.filterKeyword, itemNoKeyword: this.itemNoKeyword });
             if (!projectRes.success) return;
             if (projectRes.success) {
                 if(this.roles.includes('intern')) {
@@ -302,6 +324,10 @@ export default {
                 this.$message.success('删除项目成功');
             }
             await this.loadProjects();
+        },
+        // 打开全局操作弹框
+        openDialog() {
+            this.globalOperations && this.globalOperations.openDialog();
         }
     },
 };

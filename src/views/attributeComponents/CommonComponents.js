@@ -15,7 +15,7 @@ class CommonComponents {
         // 组件类型
         this.type =rendererBuilder("text",type,null,"组件") 
         // 样例 值
-        this.sample = new Renderer('ElInput', '',null,"样例值")
+        this.sample = new Renderer('ElInput', 'sample_CC',null,"样例值")
         // 是否必填
         // this.required = new Renderer('ElSingleCheckboxC', true,{options:[true]})
         // 是否隐藏

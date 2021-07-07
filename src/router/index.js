@@ -300,6 +300,25 @@ const routes = [
                         name: 'AiDevelopment',
                         component: resolve => require(['@/views/aipreview/AiDevelopment.vue'],resolve),
                     },
+                    {
+                        path: '/aipreview/regulation',
+                        name: 'Regulation',
+                        component: resolve => require(['@/views/aipreview/Regulation.vue'],resolve),
+                    },
+                ]
+            }, 
+            {
+                path: '/questionnaire',
+                component: resolve => require(['@/views/questionnaire/QuestionHome.vue'],resolve),
+                meta:{
+                    showLeftMenu:true,
+                },
+                children: [
+                    {
+                        path: '/questionnaire/questionmanagement',
+                        name: 'QuestionManagement',
+                        component: resolve => require(['@/views/questionnaire/QuestionManagement.vue'],resolve),
+                    },
                 ]
             }, 
         ]

@@ -24,8 +24,7 @@
                         {{templates.template.docxTemplateName}}
                     </el-button> -->
 
-                    <div>
-
+                    <div style="max-height: 780px;overflow:auto">
                         <div v-for="(page,pageIndex) in renderPages" :key='pageIndex' style="margin-top: 2px;"
                             :class="{'active':temp_page && page.id == temp_page.id}" class="page-card"
                             @click="handleClickPage(page,pageIndex)">
@@ -245,6 +244,7 @@ export default {
     },
     async mounted() {
         await this.init()
+        await this.initProject()
         this.getTemplate()
         this.getFieldAll();
         // 获取关联二级材料列表
@@ -501,7 +501,9 @@ export default {
     .main {
         display: flex;
         overflow-x: auto;
-        height: calc(100vh - 108px);
+        // height: calc(100vh - 150px);
+        // height: 790px;
+        height: 790px;
         overflow-y: auto;
     }
     .el-input {

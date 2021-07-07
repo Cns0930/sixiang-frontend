@@ -64,7 +64,7 @@
                     </el-table-column>
                     <el-table-column prop="documentSeq" label="文档序号" width="50px">
                     </el-table-column>
-                    <el-table-column prop="isNavigation" label="是否显示在左侧导航" width="90px"
+                    <el-table-column prop="isNavigation" label="是否材料清单展示" width="90px"
                         :formatter="isRequiredFormatter">
                     </el-table-column>
                     <el-table-column prop="uploadRequired" label="是否必须上传" width="60px" :formatter="isRequiredFormatter">
@@ -86,12 +86,30 @@
                         show-overflow-tooltip></el-table-column>
                     <el-table-column label="操作" fixed="right" width="250px">
                         <template slot-scope="scope">
-                            <el-button size="mini" @click="showPreview(scope.row)">查看预览图</el-button>
-                            <el-button size="mini" @click="showTemplate(scope.row)">查看模板</el-button>
-                            <el-button size="mini" @click="EditmaterialVisible(scope.row)">编辑</el-button>
-                            <el-button size="mini" type="primary" @click="goOnlineDocumentEditor(scope.row)">word编辑
-                            </el-button>
-                            <el-button size="mini" type="danger" @click="handleDeleteMaterial(scope.row)">删除</el-button>
+                            <el-row :gutter="10" type="flex" justify="space-between">
+                                <el-col :span="10">
+                                    <el-button size="mini" @click="showPreview(scope.row)">查看预览图</el-button>
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-button size="mini" @click="showTemplate(scope.row)">查看模板</el-button>
+                                </el-col>
+                                <el-col :span="6">
+                                    <el-button size="mini" @click="EditmaterialVisible(scope.row)">编辑</el-button>
+                                </el-col>
+                            </el-row>
+                            <el-row :gutter="10" type="flex" justify="space-between" style="margin-top: 5px;">
+                                <el-col :span="10">
+                                    <el-button size="mini" type="primary" @click="downloadFile(scope.row)" :loading="scope.row.loadingFile">下载模板文件</el-button>
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-button size="mini" type="danger" @click="handleDeleteMaterial(scope.row)">删除
+                                    </el-button>
+                                </el-col>
+                                <el-col :span="6">
+                                </el-col>
+                            </el-row>
+                            <!-- <el-button size="mini" type="primary" @click="goOnlineDocumentEditor(scope.row)">word编辑
+                            </el-button> -->
                         </template>
                     </el-table-column>
                 </el-table>
@@ -113,7 +131,7 @@
                             @change="globalDocumentChange" ref="globalDocument">
                             <el-option v-for="item in approvalTextList" :key="item.globalDocumentId"
                                 :label="item.globalDocumentName" :value="item.globalDocumentId" />
-                            <div class="text-center"
+                            <!-- <div class="text-center"
                                 style="position: sticky;background: #fff;height:30px;top:0;z-index:1">
                                 <a class="text-normal">
                                     <el-pagination @size-change="handleSizeChangeSelectBang"
@@ -121,7 +139,7 @@
                                         :current-page="currentPageSelectBang" :total="totalBang"
                                         :page-size="pageSizeBang" layout="prev, pager, next" />
                                 </a>
-                            </div>
+                            </div> -->
                         </el-select>
                     </el-form-item>
                     <el-form-item label="材料展示名称">
@@ -136,7 +154,7 @@
                     <el-form-item label="模板名称(自取)">
                         <el-input v-model="materialT.templateName"></el-input>
                     </el-form-item>
-                    <el-form-item label="是否显示在左侧导航">
+                    <el-form-item label="是否材料清单展示">
                         <el-select v-model="materialT.isNavigation">
                             <el-option label="是" :value="Number(1)"></el-option>
                             <el-option label="否" :value="Number(0)"></el-option>
@@ -146,7 +164,7 @@
                         <el-input v-model="materialT.navigationOrder" placeholder="请输入数字"></el-input>
                     </el-form-item>
                     <el-form-item label="是否必须上传">
-                        <el-select v-model="materialT.uploadRequired">
+                        <el-select v-model="materialT.uploadRequired" clearable>
                             <el-option label="是" :value="Number(1)"></el-option>
                             <el-option label="否" :value="Number(0)"></el-option>
                         </el-select>
@@ -199,14 +217,14 @@
                     <el-form-item label="文档序号">
                         <el-input v-model="materialTEdit.documentSeq"></el-input>
                     </el-form-item>
-                    <el-form-item label="是否显示在左侧导航">
+                    <el-form-item label="是否材料清单展示">
                         <el-select v-model="materialTEdit.isNavigation">
                             <el-option label="是" :value="Number(1)"></el-option>
                             <el-option label="否" :value="Number(0)"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="是否必须上传">
-                        <el-select v-model="materialTEdit.uploadRequired">
+                        <el-select v-model="materialTEdit.uploadRequired" clearable>
                             <el-option label="是" :value="Number(1)"></el-option>
                             <el-option label="否" :value="Number(0)"></el-option>
                         </el-select>
@@ -461,6 +479,7 @@ export default {
             templateVisible: false,
             tableDataTemplate: [],
             currentMaterialId: null,
+            downloadFileUrl: process.env.VUE_APP_BASE_IP + "/ss/material/downloadFile",
         };
     },
     computed: {
@@ -834,7 +853,7 @@ export default {
             let res = await updateMaterial(this.materialTEdit);
             if (!res.success) return;
 
-            this.$message.success('编辑成功');
+            this.$message.success(res.data);
             this.editMaterialWriteVisible = false;
             // this.materialT_item_id = '';
             // if (!this.materialTEdit.materialId) {
@@ -989,6 +1008,47 @@ export default {
                 window.URL.revokeObjectURL(href)
             })
         },
+        async downloadFile(row) {
+            console.log('row')
+            console.log(row)
+            if(!row.templateFilePath) {
+                this.$message.warning('该材料没有模板文件')
+                return
+            }
+            row.loadingFile = true
+            let res = await axios({
+                method: "get",
+                url: this.downloadFileUrl,
+                params: {
+                    filePath: row.templateFilePath,
+                },
+                responseType: "arraybuffer",
+            });
+            if (res.data.byteLength === 0) {
+                this.$message.warning("没有需要下载的文件");
+                row.loadingFile = false
+                return;
+            }
+            let blob = new Blob([res.data], { type: "application/zip" });
+            const a = document.createElement("a");
+            // 生成文件路径
+            let href = window.URL.createObjectURL(blob);
+            a.href = href;
+            console.log('res');
+            console.log(res);
+            // let _fileName = _res.headers['Content-disposition'].split(';')[1].split('=')[1].split('.')[0]
+            let _fileName = res.headers["content-disposition"]
+                .split(";")[1]
+                .split("=")[1];
+            // 文件名中有中文 则对文件名进行转码
+            a.download = decodeURIComponent(_fileName);
+            // 利用a标签做下载
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(href);
+            row.loadingFile = false
+        }
     },
 };
 </script>

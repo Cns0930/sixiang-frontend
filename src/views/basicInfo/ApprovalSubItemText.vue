@@ -359,7 +359,7 @@ export default {
         async handleDelete(item, index, rows) {
             console.log(item, index, rows)
             try {
-                await this.$confirm('此操作将永久删除该文档, 是否继续?', '提示', {
+                await this.$confirm('此操作将永久删除该文档，且删除该文档下的材料字段, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'

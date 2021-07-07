@@ -58,10 +58,13 @@
                     </div>
                 </div>
             </el-col>
+            <div>
+                <el-button type="danger" @click="handleDelete()" :disabled="multipleSelection.length < 1" :loading="loadingDelete">批量删除</el-button>
+            </div>
         </el-row>
 
-        <el-table ref="multipleTables" :data="tableData" border style="width: 100%;margin-top: 10px;"
-            :row-style="{height:'60px'}" :header-row-style="{height:'50px'}" :height="tableHeight" v-loading="loading"
+        <el-table ref="multipleTables" :data="tableData" border style="width: 100%;margin-top: 10px"
+            :row-style="{height:'50px'}" :header-row-style="{height:'50px'}" :height="tableHeight" v-loading="loading"
             :row-key="getRowKey" @selection-change="handleSelectionChange">
             <el-table-column type="selection" :reserve-selection='true'></el-table-column>
             <el-table-column prop="fieldName" label="字段名称" show-overflow-tooltip width="180"></el-table-column>
@@ -83,6 +86,7 @@
             <el-table-column prop="module" label="前端模块" show-overflow-tooltip></el-table-column>
             <el-table-column prop="isCheckpoint" label="是否涉及审批规则" :formatter="isRequiredFormatter" show-overflow-tooltip>
             </el-table-column>
+            <el-table-column prop="relateFieldNo" label="关联帮办提取点" show-overflow-tooltip></el-table-column>
             <el-table-column prop="isScreenshot" label="是否为截图" :formatter="isRequiredFormatter" show-overflow-tooltip>
             </el-table-column>
             <el-table-column prop="screenshotInfo" label="截图信息" show-overflow-tooltip></el-table-column>
@@ -100,11 +104,10 @@
             </el-table-column>
             <el-table-column prop="updateTime" label="更新时间" :formatter="timeFormatter" show-overflow-tooltip>
             </el-table-column>
-            <el-table-column label="操作" fixed="right" width="120px">
+            <el-table-column label="操作" fixed="right" width="100px">
                 <template slot-scope="scope">
                     <el-button-group>
                         <el-button @click="handleEdit(scope)" type="primary">编辑</el-button>
-                        <el-button type="danger" @click="handleDelete(scope)">删除</el-button>
                     </el-button-group>
                 </template>
             </el-table-column>
@@ -317,6 +320,12 @@
                         <el-option label="否" :value="Number(0)"></el-option>
                     </el-select>
                 </el-form-item>
+                <el-form-item label="关联帮办提取点">
+                    <el-select v-model="editForm.relateFieldNoId" filterable placeholder="请选择帮办提取点">
+                        <el-option v-for="(v,i) in checkpointList" :key="i" :label="v.fieldNo"
+                            :value="v.id"> </el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item label="是否为截图">
                     <el-select v-model="editForm.isScreenshot" clearable placeholder="是否为截图">
                         <el-option label="是" :value="Number(1)"></el-option>
@@ -498,7 +507,7 @@ import {
     addField, updateField, deleteField,
     getAllByApprovalItemId,
     listFieldUnionMaterial, listAllMaterial, importfields, lookfields, listFieldNosByIds, updateFieldComponentName, saveBatch,
-    saveBatchCheck, listAllPublicFields
+    saveBatchCheck, listAllPublicFields, fieldsListAll
 } from "@/api/basicInfo/field";
 import { listGlobalCheckpoint } from '@/api/basicInfo/examination'
 import { listItemDocumentSubAllByMaterial } from "@/api/basicInfo/approvalSub";
@@ -549,6 +558,7 @@ export default {
                 note: "",
                 approvalItemAndDocumentsubId: '',
             },
+            checkpointList: [],
             // 导入材料字段相关
             exMode: null,
             importDialogVisible: false,
@@ -591,6 +601,8 @@ export default {
             subdownList: [],
             updownDialogVisible: false,
             typeOptions: defs.map(v => ({ value: v.value, label: v.label })),
+            // 批量删除loading
+            loadingDelete: false,
         };
     },
     computed: {
@@ -622,6 +634,8 @@ export default {
         },
         // 获取公共字段列表
         this.getAllPublicFields();
+         // 查询帮办提取点列表
+        this.getFieldsListAll();
     },
     // 注销window.onresize事件
     beforeRouteLeave(to, from, next) {
@@ -652,6 +666,12 @@ export default {
             let result = await getAllByApprovalItemId({ approvalItemId: this.itemId });
             if (!result.success) return;
             this.typeMaterialOptions = result.data;
+        },
+        // 查询帮办提取点列表
+        async getFieldsListAll() {
+            let res = await fieldsListAll({approvalItemId: this.itemId, fieldComponentName: 'checkpoint'})
+            if(!res.success) return;
+            this.checkpointList = res.data;
         },
         // 查询公共字段列表
         async getAllPublicFields() {
@@ -757,18 +777,25 @@ export default {
         // 编辑
         async editField() {
             let result = await updateField(this.editForm);
-            if (!result.success) return;
+            if (!result.success) {
+                this.$message.warning('材料字段更新失败')
+                return;
+            }
+            this.$message.success('材料字段更新成功')
             this.reloadTable();
             this.editDialogVisible = false;
         },
         // 删除
-        async handleDelete(scope) {
-
+        async handleDelete() {
+            let ids = this.multipleSelection.map(item => item.fieldId).toString()
             try {
-                await this.$confirm("是否删除", "确认删除",);
-                let result = await deleteField({ fieldId: scope.row.fieldId });
+                await this.$confirm("会同时删除 AI预检开发管理-checkpoint, 样本标定-真值标定 里与该材料字段相关的内容（如有），是否确认删除？", "确认删除");
+                this.loadingDelete = true
+                let result = await deleteField({ fieldIds: ids });
                 if (!result.success) return;
                 this.$message({ type: "success", message: "删除成功" })
+                this.loadingDelete = false
+                this.$refs.multipleTables.clearSelection();
                 this.reloadTable();
             } catch (e) {
                 this.$message({ type: "warning", message: "取消删除" })
@@ -868,7 +895,8 @@ export default {
             this.tableDataDown = data;
         },
         async upToBangban() {
-            let result = await saveBatchCheck({ approvalItemId: this.itemId });
+            let fieldIdList = this.multipleSelection.map(e => e.fieldId)
+            let result = await saveBatchCheck({ approvalItemId: this.itemId, sourceFieldIds: fieldIdList});
             if (!result.success) {
                 this.$message.warning('转到帮办字段失败')
             } else {
@@ -916,7 +944,7 @@ export default {
                         fieldId: ele.fieldId,
                         fieldNo: v.fieldNo,
                         label: v.label,
-                        fieldComponentName: v.componentDefs?.type?.value,
+                        fieldComponentName: v.fieldComponentName,
                         fieldName: ele.fieldName,
                         approvalItemId: vm.itemId,
                         descriptionInfo: ele.descriptionInfo,
@@ -1203,8 +1231,9 @@ export default {
     }
     .upload-box {
         padding: 10px 12px 12px 12px;
+        border-radius: 15px;
         width: 230px;
-        background: #f0f2f5;
+        background: #f1f4fd;
         display: flex;
         flex-direction: row;
         .upload-demo {

@@ -42,10 +42,13 @@ export const updateFieldComponentName = params => { return axios.post(`/ss/field
 export const saveBatch = params => { return axios.post(`/superform/fields/saveBatch`, params).then(res=>res.data); };
 
 // 根据事项id 转到帮办字段类型为checkpoint
-export const saveBatchCheck = params => axios.get('/superform/fields/saveBatchCheck', {params}).then(res => res.data);
+export const saveBatchCheck = params => axios.post('/superform/fields/saveBatchCheck', params).then(res => res.data);
 
 // 查询事项下提取点-分页-可根据子文档编号筛选
 export const listCheckpoint = params => { return axios.get(`/ss/field/listCheckpoint`, {params}).then(res=>res.data); };
 
 // 所有公共字段-带子项
 export const listAllPublicFields = params => axios.get('/superform/fields/listAllPublicFields', {params}).then(res => res.data);
+
+// 获取所有字段
+export const fieldsListAll = params => axios.get('/superform/fields/listAll', {params}).then(res => res.data);
