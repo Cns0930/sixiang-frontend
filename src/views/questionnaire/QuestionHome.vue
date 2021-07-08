@@ -3,6 +3,7 @@
         <div class="menu">
             <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
                 <el-tab-pane label="问卷列表" name="questionmanagement"></el-tab-pane>
+                <el-tab-pane label="初始配置" name="questionsetting"></el-tab-pane>
             </el-tabs>
         </div>
 
@@ -39,14 +40,14 @@ export default {
     },
     methods: {
         handleClick(tab, event) {
-            if (this.activeName === "checkpoint") {
+            if (this.activeName === "questionmanagement") {
                 this.$router.push({
-                    path: "/aipreview/checkpoint",
+                    path: "/questionnaire/questionmanagement",
                     query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
                 });
-            } else if (this.activeName === "sortconfig") {
+            } else if (this.activeName === "questionsetting") {
                 this.$router.push({
-                    path: "/aipreview/sortconfig",
+                    path: "/questionnaire/questionsetting",
                     query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
                 });
             } else if (this.activeName === "aidevelopment") {

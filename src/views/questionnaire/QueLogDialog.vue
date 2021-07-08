@@ -55,9 +55,9 @@
                     :header-cell-style="{background: '#f9faff',color:'#333',fontFamily:'MicrosoftYaHeiUI',fontSize:'15px',fontWeight:900}"
                     :row-style="{fontSize:'14px',color:'#666',fontFamily:'MicrosoftYaHeiUI'}">
                     <el-table-column label="序号" type="index" width="80" :index="indexMethod"></el-table-column>
-                    <el-table-column prop="operateUser" label="回填操作人"></el-table-column>
-                    <el-table-column prop="createTime" label="回填时间"></el-table-column>
-                    <el-table-column prop="fillbackLog" label="日志信息" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="operateUser" label="回填操作人"  width="120"></el-table-column>
+                    <el-table-column prop="createTime" label="回填时间" :formatter="timeFormatter" width="180"></el-table-column>
+                    <el-table-column prop="fillbackLog" label="日志信息"></el-table-column>
                 </el-table>
                 <div class="tablePagination">
                     <el-pagination :current-page.sync="currentPage_log" :page-size.sync="pageSize_log"
@@ -198,6 +198,12 @@ export default {
     }
 }
 </script>
+
+<style>
+    .el-table .cell {
+    white-space: pre-line;
+}
+</style>
 
 <style scoped lang="scss">
 @import "../../assets/css/global.scss";
