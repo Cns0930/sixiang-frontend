@@ -11,6 +11,7 @@
                 <el-select v-model="addType" placeholder="请选择新增问卷方式" style="margin-left: 20px;">
                     <el-option label="按材料新增" value="material"></el-option>
                     <el-option label="按字段新增" value="field"></el-option>
+                    <el-option label="按材料和字段新增" value="materialAndField"></el-option>
                 </el-select>
                 <el-button type="primary" @click="addQuestionnaire">新增</el-button>
             </div>
@@ -35,7 +36,8 @@
                         <template slot-scope="scope" style="display: flex; flex-direction: column;">
                             <a target="_blank" :href="scope.row.visitUrl">{{scope.row.visitUrl}}</a>
                             <div v-if="scope.row.visitUrl">
-                                <el-button :data-clipboard-text="scope.row.visitUrl" class="table-read" @click="copy('.table-read')">复 制</el-button>
+                                <el-button :data-clipboard-text="scope.row.visitUrl" class="table-read"
+                                    @click="copy('.table-read')">复 制</el-button>
                             </div>
                         </template>
                     </el-table-column>
@@ -53,18 +55,35 @@
                     </el-table-column>
                     <el-table-column label="操作" fixed="right" width="300">
                         <template slot-scope="scope">
-                            <el-button type="primary" size="mini"
-                                @click="editQuestionnaire(scope.row)">编辑
-                            </el-button>
-                            <el-button type="primary" size="mini"
-                                @click="editQuestionnaireItem(scope.row)">编辑题目
-                            </el-button>
-                            <el-button type="danger" size="mini"
-                                @click="deleteQuestionnaireButton(scope.row)">删除
-                            </el-button>
-                            <el-button type="primary" size="mini"
-                                @click="showLog(scope.row)">查看记录
-                            </el-button>
+                            <el-row :gutter="10" type="flex" justify="space-between">
+                                <el-col :span="6">
+                                    <el-button type="primary" size="mini" @click="editQuestionnaire(scope.row)">编辑
+                                    </el-button>
+                                </el-col>
+                                <el-col :span="11">
+                                    <el-button type="primary" size="mini" @click="addQuestionnaireItem(scope.row)">
+                                        添加自定义题目
+                                    </el-button>
+                                </el-col>
+                                <el-col :span="7">
+                                    <el-button type="primary" size="mini" @click="editQuestionnaireItem(scope.row)">编辑题目
+                                    </el-button>
+                                </el-col>
+                            </el-row>
+                            <el-row :gutter="10" type="flex" justify="space-between" style="margin-top: 5px;">
+                                <el-col :span="6">
+                                    <el-button type="danger" size="mini" @click="deleteQuestionnaireButton(scope.row)">
+                                        删除
+                                    </el-button>
+                                </el-col>
+                                <el-col :span="11">
+                                    <el-button type="primary" size="mini" @click="showLog(scope.row)">查看记录
+                                    </el-button>
+                                </el-col>
+                                <el-col :span="7">
+                                </el-col>
+                            </el-row>
+
                         </template>
                     </el-table-column>
                 </el-table>
@@ -102,18 +121,21 @@
                 <a target="_blank" :href="releaseUrl" class="urltext">{{releaseUrl}}</a>
             </div>
             <span slot="footer" class="dialog-footer">
-                <el-button type="primary" :data-clipboard-text="releaseUrl" class="dialog-read" @click="copy('.dialog-read')">复 制</el-button>
+                <el-button type="primary" :data-clipboard-text="releaseUrl" class="dialog-read"
+                    @click="copy('.dialog-read')">复 制</el-button>
             </span>
         </el-dialog>
         <!-- 查看记录弹框 -->
-        <QueLogDialog ref="questionLog"/>
+        <QueLogDialog ref="questionLog" />
         <!-- 查看问卷答案的dialog -->
         <el-dialog title="问卷描述编辑" :visible.sync="dialogVisiblePaper" width="60%">
             <div>
                 <Paper :paper-list="paperList" :questionnaire-info="questionnaireInfo" father-name="QuestionManagement"
-                @getQuestionnaireItem="getQuestionnaireItem"/>
+                    @getQuestionnaireItem="getQuestionnaireItem" />
             </div>
         </el-dialog>
+        <!-- 新建自定义问题的弹窗 -->
+        <QueAddDialog ref="questionAdd" />
     </div>
 </template>
 
@@ -125,6 +147,7 @@ import VueCompositionAPI from '@vue/composition-api'
 import { ref } from "@vue/composition-api";
 // 组件
 import QueLogDialog from "./QueLogDialog"
+import QueAddDialog from "./QueAddDialog"
 import Paper from "./showQueModule/paper"
 // 接口
 import {
@@ -135,11 +158,13 @@ import {
 
 export default {
     mixins: [mixin],
-    components: { QueLogDialog, Paper },
+    components: { QueLogDialog, Paper, QueAddDialog },
     setup() {
         const questionLog = ref(null);
+        const questionAdd = ref(null);
         return {
             questionLog,
+            questionAdd
         }
     },
     data() {
@@ -224,6 +249,11 @@ export default {
             this.$message.success('新增成功')
             this.getQuestionnaireList();
         },
+        // 添加自定义题目
+        addQuestionnaireItem(row) {
+            this.questionAdd && this.questionAdd.openDialog();
+            this.questionAdd.row = row;
+        },
         // 编辑
         async editQuestionnaire(row) {
             this.editForm = _.cloneDeep(row);
@@ -246,8 +276,8 @@ export default {
         },
         // 获取问卷题目
         async getQuestionnaireItem(questionKey) {
-            let res = await getByQuestionKey({questionKey: questionKey})
-            if(!res.success) return
+            let res = await getByQuestionKey({ questionKey: questionKey })
+            if (!res.success) return
             this.paperList = res.data.list
             this.questionnaireInfo = res.data.question
         },

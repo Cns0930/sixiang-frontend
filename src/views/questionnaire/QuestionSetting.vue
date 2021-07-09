@@ -23,16 +23,8 @@ import axios from 'axios'
 import HandsontableMaterial from './settingComponents/HandsontableMaterial.vue'
 import HandsontableFiled from './settingComponents/HandsontableFiled.vue'
 import { mixin } from "@/mixin/mixin"
-// import Clipboard from "clipboard"
-// import VueCompositionAPI from '@vue/composition-api'
-// import { ref } from "@vue/composition-api";
-// // 组件
-// import QueLogDialog from "./QueLogDialog"
-// import Paper from "./showQueModule/paper"
-// // 接口
-import {
-    listMaterialConfig
-} from "@/api/questionnaire/questionConfig.js"
+
+
 export default {
     name: 'Handsontable',
     mixins: [mixin],
