@@ -89,20 +89,20 @@ export default {
             }
             this.tableDataMaterial = res.data.records
             this.totalCount = res.data.total
-            this.tableDataMaterial.push({
-                materialId: 666,
-                materialName: '测试图片显示',
-                qnrIsRequired: true,
-                qnrProduceSource: true,
-                ssMaterialQnrPic: `<img src="https://handsontable.com/docs/images/examples/professional-javascript-developers-nicholas-zakas.jpg"  alt="上海鲜花港 - 郁金香" />`,
-            })
-            this.tableDataMaterial.push({
-                materialId: 666,
-                materialName: '测试图片显示',
-                qnrIsRequired: true,
-                qnrProduceSource: true,
-                ssMaterialQnrPic: `<img src="https://handsontable.com/docs/images/examples/professional-javascript-developers-nicholas-zakas.jpg"  alt="上海鲜花港 - 郁金香" />`,
-            })
+            // this.tableDataMaterial.push({
+            //     materialId: 666,
+            //     materialName: '测试图片显示',
+            //     qnrIsRequired: true,
+            //     qnrProduceSource: true,
+            //     ssMaterialQnrPic: `<img src="https://handsontable.com/docs/images/examples/professional-javascript-developers-nicholas-zakas.jpg"  alt="上海鲜花港 - 郁金香" />`,
+            // })
+            // this.tableDataMaterial.push({
+            //     materialId: 666,
+            //     materialName: '测试图片显示',
+            //     qnrIsRequired: true,
+            //     qnrProduceSource: true,
+            //     ssMaterialQnrPic: `<img src="https://handsontable.com/docs/images/examples/professional-javascript-developers-nicholas-zakas.jpg"  alt="上海鲜花港 - 郁金香" />`,
+            // })
             console.log('this.tableDataMaterial')
             console.log(this.tableDataMaterial)
             this.setHotTable()

@@ -2,12 +2,12 @@
     <div class="question-box">
         <div v-if="formConf.type === 1">
             <el-radio-group v-model="formConf.answer" disabled>
-                <el-radio v-for="(item,i) in this.expand.options" :key="i" :label="item.value">{{item.label}}</el-radio>
+                <el-radio v-for="(item,i) in this.formConf.expand.options" :key="i" :label="item.value">{{item.label}}</el-radio>
             </el-radio-group>
         </div>
         <div v-else-if="formConf.type === 2">
             <el-checkbox-group v-model="formConf.answer" disabled>
-                <el-checkbox v-for="(item,i) in this.expand.options" :key="i" :label="item.value">{{item.label}}
+                <el-checkbox v-for="(item,i) in this.formConf.expand.options" :key="i" :label="item.value">{{item.label}}
                 </el-checkbox>
             </el-checkbox-group>
         </div>
@@ -39,9 +39,9 @@ export default {
         };
     },
     computed: {
-        expand() {
-            return JSON.parse(this.formConf.expand)
-        }
+        // expand() {
+        //     return JSON.parse(this.formConf.expand)
+        // }
     },
     async mounted() {
         await this.$nextTick()

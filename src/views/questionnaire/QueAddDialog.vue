@@ -153,7 +153,7 @@ export default {
                 this.$message.warning('新增问题失败,请尝试重新编辑问题。')
                 return;
             }
-            this.$message.warning('新增问题成功,可继续新增或关闭窗口。')
+            this.$message.success('新增问题成功,可继续新增或关闭窗口。')
         },
         // 查询自定义问题匹配的材料或字段下拉列表
         async searchMatch() {

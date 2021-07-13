@@ -8,22 +8,47 @@
                             <h1 style="color:#8B4513;letter-spacing:4px;">
                                 {{questionnaireInfo ? questionnaireInfo.questionnaireName : ''}}</h1>
                         </div>
-                        <div v-if="fatherName === 'QuestionManagement'" class="survey-header-subtitle">{{describe}}</div>
+                        <div v-if="fatherName === 'QuestionManagement'" class="survey-header-subtitle">{{describe}}
+                        </div>
                         <el-divider />
                         <div>
                             <el-form :model="dynamicValidateForm" ref="dynamicValidateForm" label-width="100px"
                                 label-position="top" class="demo-dynamic" size="medium"
                                 :validate-on-rule-change="false">
-                                <div v-for="(question, index) in paperList" :key="question.questionItemId">
-                                    <el-form-item :label="index+1 + ' ' + question.label" :prop="question.formItemId">
-                                        <i v-if="fatherName === 'QuestionManagement' && question.isDefaultDisplay"
-                                            class="el-icon-star-on" style="color:#F56C6C"></i>
-                                        <el-button type="primary" v-if="fatherName === 'QuestionManagement'"
-                                            @click="editQue(question)" style="margin-left: 20px">编辑</el-button>
-                                        <el-button type="danger" v-if="fatherName === 'QuestionManagement'"
-                                            @click="deleteQue(question)" style="margin-left: 20px">删除</el-button>
-                                        <QuestionComponent :form-conf="question" class="question-area" />
-                                    </el-form-item>
+                                <div class="paper-area">
+                                    <!-- <div v-show="groupIndex + 1 === currentPage" -->
+                                    <div v-for="group in paperList" :key="group.groupId">
+                                        <el-divider />
+                                        <div>
+                                            <h1>{{group.label}}</h1>
+                                        </div>
+                                        <div v-if="group.picPath && group.picPath.length > 0" class="demo-image__preview"
+                                            style="margin: 20px">
+                                            <div v-for="(pic, picIndex) in group.picPath" :key="picIndex"
+                                                style="width: 33%; height: 200px;">
+                                                <el-image style="width: 90%; height: 90%;border:1px solid #eeae85;"
+                                                    :src="pic" :preview-src-list="group.picPath">
+                                                </el-image>
+                                            </div>
+                                        </div>
+                                        <div v-for="(question, index) in group.groupItem"
+                                            :key="question.questionItemId">
+                                            <el-form-item
+                                                :label="index+1 + ' ' + question.label" :prop="question.formItemId">
+                                                <!-- :rules="question.expand && JSON.parse(question.expand).rule ? JSON.parse(question.expand).rule[0] : []" -->
+                                                <i v-if="fatherName === 'QuestionManagement' && question.isDefaultDisplay"
+                                                    class="el-icon-star-on" style="color:#F56C6C"></i>
+                                                <el-button type="primary" v-if="fatherName === 'QuestionManagement'"
+                                                    @click="editQue(question)" style="margin-left: 20px">编辑</el-button>
+                                                <el-button type="danger" v-if="fatherName === 'QuestionManagement'"
+                                                    @click="deleteQue(question)" style="margin-left: 20px">删除
+                                                </el-button>
+                                                <QuestionComponent :form-conf="question"
+                                                    class="question-area" />
+                                            </el-form-item>
+                                        </div>
+                                    </div>
+            
                                 </div>
                             </el-form>
                         </div>
@@ -107,17 +132,11 @@ export default {
             console.log('question')
             console.log(question)
             this.editForm = _.cloneDeep(question)
-            if (question.expand) {
-                this.editForm.expand = JSON.parse(question.expand)
-            }
-            console.log('this.editForm')
-            console.log(this.editForm)
             this.dialogVisbleEdit = true
         },
         // 确认编辑
         async editConfirm() {
             let params = this.editForm;
-            params.expand = JSON.stringify(params.expand)
             let res = await updateItem(params)
             if (!res.success) {
                 this.$message.warning('编辑失败')
@@ -139,7 +158,7 @@ export default {
                 this.$message.info('取消了删除')
                 return;
             }
-            let res = await deleteItem({questionItemId : question.questionItemId})
+            let res = await deleteItem({ questionItemId: question.questionItemId })
             if (!res.success) {
                 this.$message.warning('删除失败')
                 return;
@@ -199,6 +218,31 @@ export default {
             justify-content: center;
             align-items: center;
             // background: rgb(245, 252, 237);
+        }
+        // 问卷答题区域样式
+        .paper-area {
+            // background: #e2dddd;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            .demo-image__preview {
+                width: 100%;
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                flex-wrap: wrap;
+            }
+            .pagination {
+                width: 100%;
+                // background: #e2dddd;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
         }
     }
 }
