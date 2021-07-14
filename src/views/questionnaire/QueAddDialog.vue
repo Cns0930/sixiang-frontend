@@ -26,10 +26,10 @@
                             <el-select v-model="matchType" placeholder="问卷类型" style="" @change="searchMatch">
                                 <el-option
                                     v-if="row.questionnaireType === 'material' || row.questionnaireType === 'materialAndField'"
-                                    label="材料问卷" value="material"></el-option>
+                                    label="材料" value="material"></el-option>
                                 <el-option
                                     v-if="row.questionnaireType === 'field' || row.questionnaireType === 'materialAndField'"
-                                    label="字段问卷" value="field"></el-option>
+                                    label="字段" value="field"></el-option>
                                 <el-option label="不关联特定材料和字段" value="none"></el-option>
                             </el-select>
                         </div>
@@ -147,6 +147,7 @@ export default {
                 originId: this.bindItem,
                 questionId: this.row.questionId,
                 type: this.componentType,
+                approvalItemId: this.itemId
             }
             let res = await addCustomItem(params);
             if(!res.success) {
