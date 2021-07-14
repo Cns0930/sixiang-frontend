@@ -33,7 +33,7 @@
                                         </div>
                                         <div v-for="(question, index) in group.groupItem"
                                             :key="question.questionItemId">
-                                            <el-form-item
+                                            <el-form-item v-if="fatherName === 'QueLogDialog'?   question.isDefaultDisplay? true : false     : true "
                                                 :label="index+1 + ' ' + question.label" :prop="question.formItemId">
                                                 <!-- :rules="question.expand && JSON.parse(question.expand).rule ? JSON.parse(question.expand).rule[0] : []" -->
                                                 <i v-if="fatherName === 'QuestionManagement' && question.isDefaultDisplay"

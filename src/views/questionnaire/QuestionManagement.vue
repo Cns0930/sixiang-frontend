@@ -32,6 +32,19 @@
                     </el-table-column>
                     <el-table-column prop="replyCount" label="回答份数" show-overflow-tooltip>
                     </el-table-column>
+                    <el-table-column label="测试问卷">
+                        <template slot-scope="scope">
+                            <a target="_blank" :href="scope.row.testUrl">点击跳转</a>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="是否发布">
+                        <template slot-scope="scope">
+                            <el-switch v-model="scope.row.isRelease" :active-value="Number(1)"
+                                :inactive-value="Number(0)" active-color="#13ce66" inactive-color="#ff4949"
+                                @change="relase(scope.row)">
+                            </el-switch>
+                        </template>
+                    </el-table-column>
                     <el-table-column prop="visitUrl" label="问卷链接" show-overflow-tooltip>
                         <template slot-scope="scope" style="display: flex; flex-direction: column;">
                             <a target="_blank" :href="scope.row.visitUrl">{{scope.row.visitUrl}}</a>
@@ -44,14 +57,6 @@
                     <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" width="180" sortable>
                     </el-table-column>
                     <el-table-column prop="updateTime" label="最后修改时间" :formatter="timeFormatter" width="180" sortable>
-                    </el-table-column>
-                    <el-table-column label="是否发布">
-                        <template slot-scope="scope">
-                            <el-switch v-model="scope.row.isRelease" :active-value="Number(1)"
-                                :inactive-value="Number(0)" active-color="#13ce66" inactive-color="#ff4949"
-                                @change="relase(scope.row)">
-                            </el-switch>
-                        </template>
                     </el-table-column>
                     <el-table-column label="操作" fixed="right" width="300">
                         <template slot-scope="scope">

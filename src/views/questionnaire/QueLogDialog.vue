@@ -22,13 +22,15 @@
                         </el-table-column>
                         <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable>
                         </el-table-column>
+                        <el-table-column prop="isTest" label="是否为测试回答" :formatter="isRequiredFormatter" width="80">
+                        </el-table-column>
                         <el-table-column label="操作" fixed="right" width="300">
                             <template slot-scope="scope">
                                 <el-button type="primary" size="mini" @click="checkQuestionnaire(scope.row)">查看回答
                                 </el-button>
-                                <el-button type="primary" size="mini" @click="backfillQuestionnaire(scope.row)">回填数据
+                                <el-button v-if="!scope.row.isTest" type="primary" size="mini" @click="backfillQuestionnaire(scope.row)">回填数据
                                 </el-button>
-                                <el-button type="plain" size="mini" @click="backfillLog(scope.row)">查看回填日志
+                                <el-button v-if="!scope.row.isTest" type="plain" size="mini" @click="backfillLog(scope.row)">查看回填日志
                                 </el-button>
                             </template>
                         </el-table-column>
@@ -44,7 +46,7 @@
         <!-- 查看问卷答案的dialog -->
         <el-dialog title="问卷回答" :visible.sync="dialogVisiblePaper" width="60%">
             <div>
-                <Paper :paper-list="paperList" />
+                <Paper :paper-list="paperList" father-name="QueLogDialog" />
             </div>
         </el-dialog>
         <!-- 回填日志 -->
