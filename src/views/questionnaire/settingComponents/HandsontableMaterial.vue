@@ -4,8 +4,8 @@
             <el-input placeholder="按材料名称查询" v-model="keyWord" clearable style="width: 200px;" @change="search">
             </el-input>
             <el-button @click="search">搜索</el-button>
-            <el-button @click="load">Load</el-button>
-            <el-button @click="save">Save</el-button>
+            <el-button @click="load">载入数据</el-button>
+            <el-button @click="save">保存数据</el-button>
         </div>
         <div class="workBox">
             <div class="app-container handsontable-container">
@@ -46,7 +46,7 @@ export default {
             tableDataMaterial: [],
             // handsontable
             hot: null,
-            exampleConsole: 'Click "Load" to load data from server',
+            exampleConsole: '点击载入以加载数据',
             autoSave: false,
         }
     },
@@ -84,7 +84,7 @@ export default {
             let res = await listMaterialConfig(params);
             if (!res.success) {
                 this.$message.warning('加载配置数据失败')
-                this.exampleConsole = 'Load error';
+                this.exampleConsole = '加载配置数据失败';
                 return
             }
             this.tableDataMaterial = res.data.records
@@ -107,7 +107,7 @@ export default {
             console.log(this.tableDataMaterial)
             this.setHotTable()
             this.hot.loadData(this.tableDataMaterial);
-            this.exampleConsole = 'Data loaded';
+            this.exampleConsole = '数据已加载，实时保存未开启';
         },
         // load
         load() {
@@ -132,17 +132,17 @@ export default {
             let res = await updateMaterialConfig(changedData);
             if (!res.success) {
                 this.$message.warning('保存配置数据失败')
-                this.exampleConsole = 'Save error';
+                this.exampleConsole = '保存失败';
                 return
             } else {
-                this.exampleConsole = 'Data saved';
+                this.exampleConsole = '数据保存成功';
             }
         },
         autoChange() {
             if (this.autoSave) {
-                this.exampleConsole = 'Changes will be autosaved';
+                this.exampleConsole = '实时保存已开启';
             } else {
-                this.exampleConsole = 'Changes will not be autosaved';
+                this.exampleConsole = '实时保存未开启，请注意及时保存数据';
             }
         },
         // 自动保存
