@@ -4,6 +4,7 @@ import SelectDef from "./SelectDef"
 import SingleCheckboxDef from "./SingleCheckboxDef"
 import QingxingCheckboxDef from "./QingxingCheckboxDef"
 import DatePickerDef from "./DatePickerDef"
+import TimePickerDef from "./TimePickerDef"
 import RadioDef from "./RadioDef"
 import ConstantDef from "./ConstantDef"
 import IdentityCommonDef from "./IdentityCommonDef.js"
@@ -38,6 +39,7 @@ let mapping = [
     {label:"情形多选",value:"qingxingCheckbox",componentDef:QingxingCheckboxDef,isList:false},
     {label:"情形说明",value:"qingxingComment",componentDef:QingxingCommentDef,isList:false},
     {label:"单选",value:"radio",componentDef:RadioDef,isList:false},
+    {label:"时间选择",value:"timePicker",componentDef:TimePickerDef,isList:false},
     {label:"日期选择",value:"datePicker",componentDef:DatePickerDef,isList:false},
     {label:"日期范围选择",value:"dateRangePicker",componentDef:DateRangePickerDef,isList:false},
     {label:"集合",value:"collection",componentDef:CollectionDef,isList:true},

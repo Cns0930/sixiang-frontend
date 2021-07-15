@@ -274,6 +274,13 @@
                 <span>备注填写:</span>
                 <el-input type="textarea" v-model="itemNote" :autosize="{ minRows: 2, maxRows: 6 }"></el-input>
             </div>
+            <div style="margin-top: 20px">
+                <span>本次修改主要所属阶段：</span>
+                <el-select v-model="saveStep"  placeholder="阶段" style="width:400px">
+                    <el-option v-for="item in stepOptions" :key="item.value" :value="item.value">
+                    </el-option>
+                </el-select>
+            </div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogItemConfirmVisible = false">
                     取消
@@ -295,6 +302,13 @@
                     <el-option v-for="item in addressOptions" :key="item.id"
                         :label="'地址:' + item.superformIpPort + ' 说明:' + item.displayNotes + ' 版本:' + item.version"
                         :value="item.id">
+                    </el-option>
+                </el-select>
+            </div>
+            <div style="margin-top: 20px">
+                <span>本次修改主要所属阶段：</span>
+                <el-select v-model="pushStep"  placeholder="阶段" style="width:400px">
+                    <el-option v-for="item in stepOptions" :key="item.value" :value="item.value">
                     </el-option>
                 </el-select>
             </div>
@@ -439,6 +453,17 @@ export default {
             tempItemId: null,
             typeSubItemOptions: [],
             reuseTableData: [],
+            // 阶段统计
+            stepOptions: [
+                {value: '初步调研'},
+                {value: '基于问卷补充信息'},
+                {value: '帮办开发'},
+                {value: '预检开发'},
+                {value: '自测'},
+                {value: 'bug处理'},
+            ],
+            saveStep: '',
+            pushStep: ''
         }
     },
     computed: {
@@ -573,8 +598,12 @@ export default {
                 this.$message.warning("请选择九宫地址再提交");
                 return;
             }
+            if (this.pushStep === '') {
+                this.$message.warning("请选择阶段再提交");
+                return;
+            }
             this.loadingUptoGit = true;
-            let res = await submitItemInfo({ approvalItemId: this.itemId, note: this.gitNote, machineId: this.machineId });
+            let res = await submitItemInfo({ approvalItemId: this.itemId, note: this.gitNote, machineId: this.machineId, stage: this.pushStep });
             if (res.success) {
                 this.$message.success('上传配置到Git成功！');
             } else {
@@ -583,6 +612,7 @@ export default {
             this.loadingUptoGit = false;
             this.dialogGitConfirmVisible = false;
             this.gitNote = '';
+            this.pushStep = '';
         },
 
         // 多版本相关
@@ -591,8 +621,12 @@ export default {
                 this.$message.warning("请填写备注再提交");
                 return;
             }
+            if (this.saveStep === '') {
+                this.$message.warning("请选择阶段再提交");
+                return;
+            }
             this.loadingSaveApprovalItem = true;
-            let res = await addSysVersionItem({ approvalItemId: this.itemId, note: this.itemNote });
+            let res = await addSysVersionItem({ approvalItemId: this.itemId, note: this.itemNote, stage: this.saveStep });
             if (res.success) {
                 this.$message.success('保存当前事项成功！');
             } else {
@@ -601,6 +635,7 @@ export default {
             this.loadingSaveApprovalItem = false;
             this.dialogItemConfirmVisible = false;
             this.itemNote = '';
+            this.saveStep = '';
         },
         downApprovalItem() {
             this.searchVersion();
