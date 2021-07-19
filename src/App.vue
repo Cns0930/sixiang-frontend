@@ -23,7 +23,7 @@ export default {
             'trailing': true
         }))
         window.addEventListener('click', this.handleClick)
-        let timeIntervalId = setInterval(() => this.sendTimeList(), 30000);
+        let timeIntervalId = setInterval(() => this.sendTimeList(), 10 * 60 * 1000);
     },
     methods: {
         // 键盘事件
