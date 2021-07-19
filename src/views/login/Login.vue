@@ -29,6 +29,7 @@
 
 <script>
 import axios from 'axios';
+import store from '@/vuex/store'
 import {login} from '@/api/item/index';
 import {mapMutations} from 'vuex';
 export default {
@@ -50,6 +51,8 @@ export default {
     },
     methods: {
         async login(ruleForm) {
+            // 清空计时
+            store.commit('clearTimeList');
             let { userName, password,rememberMe  } = ruleForm;
             if (!userName) {
                 this.$message.error("请输入用户名");
