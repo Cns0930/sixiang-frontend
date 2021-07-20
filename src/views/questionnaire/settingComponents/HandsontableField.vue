@@ -6,12 +6,14 @@
             <el-button @click="search">搜索</el-button>
             <el-button @click="load">载入数据</el-button>
             <el-button @click="save">保存数据</el-button>
+            <el-button @click="uploadImg">配置上传图片</el-button>
         </div>
         <div class="workBox">
             <div class="app-container handsontable-container">
                 <el-switch v-model="autoSave" active-color="#13ce66" inactive-color="#ff4949" @change="autoChange">
                 </el-switch>
                 <span style="margin-left: 20px">{{exampleConsole}}</span>
+                <!-- handsontable -->
                 <div id="tableField" />
             </div>
             <div class="tablePagination">
@@ -20,6 +22,8 @@
                     layout="total, sizes, prev, pager, next" :total="totalCount"></el-pagination>
             </div>
         </div>
+        <!-- 配置图片的弹框 -->
+        <ImgFieldSettingDialog ref="imgSetting" />
     </div>
 </template>
 
@@ -27,11 +31,22 @@
 <script>
 import Handsontable from 'handsontable'
 import axios from 'axios'
+import VueCompositionAPI from '@vue/composition-api'
+import { ref } from "@vue/composition-api";
+import ImgFieldSettingDialog from "./ImgFieldSettingDialog.vue"
+// 接口
 import {
-    listFieldConfig, updateFieldConfig
+    listFieldConfig, updateFieldConfig, listFieldConfigNoPage
 } from "@/api/questionnaire/questionConfig.js"
 export default {
     name: 'HandsontableField',
+    components: { ImgFieldSettingDialog },
+    setup() {
+        const imgSetting = ref(null);
+        return {
+            imgSetting,
+        }
+    },
     data() {
         return {
             // 初始事项参数
@@ -88,6 +103,12 @@ export default {
                 return
             }
             this.tableDataField = res.data.records
+            this.tableDataField.forEach(item => {
+                item.pictureHtml = ''
+                item.fieldQnrPics.forEach(pic => {
+                    item.pictureHtml += `<img src="${pic.picUrl}" height="100" width="100"  alt="配置预览图" />`
+                })
+            })
             this.totalCount = res.data.total
             this.setHotTable()
             this.hot.loadData(this.tableDataField);
@@ -130,6 +151,16 @@ export default {
                 this.exampleConsole = '数据保存成功';
             }
         },
+        // 配置图片
+        async uploadImg() {
+            this.imgSetting && this.imgSetting.openDialog();
+            this.imgSetting.dialogType = 'field';
+            // 获取下拉选项
+            let res = await listFieldConfigNoPage({ approvalItemId: this.itemId })
+            if (res.success) {
+                this.imgSetting.settingOptions = res.data
+            }
+        },
         autoChange() {
             if (this.autoSave) {
                 this.exampleConsole = '实时保存已开启';
@@ -162,62 +193,77 @@ export default {
                 //     e: null,
                 //     f: null
                 // },
-                colHeaders: ['字段id(read-only)', '所属材料名一级拼二级', '字段名', '是否清楚字段是否必填',
+                colHeaders: ['字段id(read-only)', '所属二级材料名', '字段名', '是否清楚字段是否必填',
                     '是否清楚字段含义', '字段值来源', '前端字段输入类型', '是否清楚校验规则', '是否清楚可以勾选多个',
                     '是否清楚下拉枚举值', '已知的枚举值(英文,隔开)', '是否清楚可以选择多个', '相关图片(read-only)'],
                 columns: [
                     {
                         data: 'fieldId',
                         type: 'numeric',
-                        editor: false
+                        editor: false,
+                        className: "htCenter htMiddle"
                     },
                     {
-                        data: 'materialName'
+                        data: 'documentsubDisplayname',
+                        className: "htCenter htMiddle"
                     },
                     {
-                        data: 'fieldName'
+                        data: 'fieldName',
+                        className: "htCenter htMiddle"
                     },
                     {
                         data: 'qnrIsRequired',
                         type: 'checkbox',
                         // checkedTemplate: 1,
                         // uncheckedTemplate: 0
+                        className: "htCenter htMiddle"
                     },
                     {
                         data: 'qnrFieldMeaning',
-                        type: 'checkbox'
+                        type: 'checkbox',
+                        className: "htCenter htMiddle"
                     },
                     {
                         data: 'valueSource',
                         editor: 'select',
-                        selectOptions: ['企业数据', '默认值', '系统日期', '前端字段']
+                        selectOptions: ['企业数据', '默认值', '系统日期', '前端字段'],
+                        className: "htCenter htMiddle"
                     },
                     {
                         data: 'qnrComponentType',
                         editor: 'select',
-                        selectOptions: ['勾选', '下拉选择', '日期范围', '文本输入框', '否']
+                        selectOptions: ['勾选', '下拉选择', '日期范围', '文本输入框', '否'],
+                        className: "htCenter htMiddle"
                     },
                     {
                         data: 'qnrFrontValidation',
-                        type: 'checkbox'
+                        type: 'checkbox',
+                        className: "htCenter htMiddle"
                     },
                     {
                         data: 'qnrCheckMultiple',
-                        type: 'checkbox'
+                        type: 'checkbox',
+                        className: "htCenter htMiddle"
                     },
                     {
                         data: 'qnrOptionsValue',
-                        type: 'checkbox'
+                        type: 'checkbox',
+                        className: "htCenter htMiddle"
                     },
                     {
                         data: 'qnrOptionsValueDetail',
+                        className: "htCenter htMiddle"
                     },
                     {
                         data: 'qnrSelectMultiple',
-                        type: 'checkbox'
+                        type: 'checkbox',
+                        className: "htCenter htMiddle"
                     },
                     {
-                        data: 'fieldQnrPics',
+                        data: 'pictureHtml',
+                        renderer: "html",
+                        editor: false,
+                        className: "htCenter htMiddle"
                     },
                 ],
                 afterChange: (change, source) => {

@@ -6,12 +6,14 @@
             <el-button @click="search">搜索</el-button>
             <el-button @click="load">载入数据</el-button>
             <el-button @click="save">保存数据</el-button>
+            <el-button @click="uploadImg">配置上传图片</el-button>
         </div>
         <div class="workBox">
             <div class="app-container handsontable-container">
                 <el-switch v-model="autoSave" active-color="#13ce66" inactive-color="#ff4949" @change="autoChange">
                 </el-switch>
                 <span style="margin-left: 20px">{{exampleConsole}}</span>
+                <!-- handsontable -->
                 <div id="tableMaterial" />
             </div>
             <div class="tablePagination">
@@ -20,6 +22,8 @@
                     layout="total, sizes, prev, pager, next" :total="totalCount"></el-pagination>
             </div>
         </div>
+        <!-- 配置图片的弹框 -->
+        <ImgSettingDialog ref="imgSetting" />
     </div>
 </template>
 
@@ -27,11 +31,22 @@
 <script>
 import Handsontable from 'handsontable'
 import axios from 'axios'
+import VueCompositionAPI from '@vue/composition-api'
+import { ref } from "@vue/composition-api";
+import ImgSettingDialog from "./ImgSettingDialog.vue"
+// 接口
 import {
-    listMaterialConfig, updateMaterialConfig
+    listMaterialConfig, updateMaterialConfig, listMaterialConfigNoPage
 } from "@/api/questionnaire/questionConfig.js"
 export default {
     name: 'HandsontableMaterial',
+    components: { ImgSettingDialog },
+    setup() {
+        const imgSetting = ref(null);
+        return {
+            imgSetting,
+        }
+    },
     data() {
         return {
             // 初始事项参数
@@ -89,20 +104,12 @@ export default {
             }
             this.tableDataMaterial = res.data.records
             this.totalCount = res.data.total
-            // this.tableDataMaterial.push({
-            //     materialId: 666,
-            //     materialName: '测试图片显示',
-            //     qnrIsRequired: true,
-            //     qnrProduceSource: true,
-            //     ssMaterialQnrPic: `<img src="https://handsontable.com/docs/images/examples/professional-javascript-developers-nicholas-zakas.jpg"  alt="上海鲜花港 - 郁金香" />`,
-            // })
-            // this.tableDataMaterial.push({
-            //     materialId: 666,
-            //     materialName: '测试图片显示',
-            //     qnrIsRequired: true,
-            //     qnrProduceSource: true,
-            //     ssMaterialQnrPic: `<img src="https://handsontable.com/docs/images/examples/professional-javascript-developers-nicholas-zakas.jpg"  alt="上海鲜花港 - 郁金香" />`,
-            // })
+            this.tableDataMaterial.forEach(item => {
+                item.pictureHtml = ''
+                item.ssMaterialQnrPic.forEach(pic => {
+                    item.pictureHtml += `<img src="${pic.picUrl}" height="100" width="100"  alt="配置预览图" />`
+                })
+            })
             console.log('this.tableDataMaterial')
             console.log(this.tableDataMaterial)
             this.setHotTable()
@@ -136,6 +143,16 @@ export default {
                 return
             } else {
                 this.exampleConsole = '数据保存成功';
+            }
+        },
+        // 配置图片
+        async uploadImg() {
+            this.imgSetting && this.imgSetting.openDialog();
+            this.imgSetting.dialogType = 'material';
+            // 获取下拉选项
+            let res = await listMaterialConfigNoPage({approvalItemId: this.itemId})
+            if (res.success) {
+                this.imgSetting.settingOptions = res.data
             }
         },
         autoChange() {
@@ -175,25 +192,30 @@ export default {
                     {
                         data: 'materialId',
                         type: 'numeric',
-                        editor: false
+                        editor: false,
+                        className: "htCenter htMiddle"
                     },
                     {
-                        data: 'materialName'
+                        data: 'materialName',
+                        className: "htCenter htMiddle"
                     },
                     {
                         data: 'qnrIsRequired',
                         type: 'checkbox',
                         // checkedTemplate: 1,
                         // uncheckedTemplate: 0
+                        className: "htCenter htMiddle"
                     },
                     {
                         data: 'qnrProduceSource',
-                        type: 'checkbox'
+                        type: 'checkbox',
+                        className: "htCenter htMiddle"
                     },
                     {
-                        data: 'ssMaterialQnrPic',
+                        data: 'pictureHtml',
                         renderer: "html",
-                        editor: false
+                        editor: false,
+                        className: "htCenter htMiddle"
                     }
                 ],
                 afterChange: (change, source) => {

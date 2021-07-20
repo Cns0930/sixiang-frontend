@@ -10,7 +10,7 @@
             </el-tab-pane>
             <el-tab-pane label="字段问卷">
                 <h4>字段问卷</h4>
-                <HandsontableFiled />
+                <HandsontableField />
             </el-tab-pane>
         </el-tabs>
 
@@ -21,7 +21,7 @@
 <script>
 import axios from 'axios'
 import HandsontableMaterial from './settingComponents/HandsontableMaterial.vue'
-import HandsontableFiled from './settingComponents/HandsontableFiled.vue'
+import HandsontableField from './settingComponents/HandsontableField.vue'
 import { mixin } from "@/mixin/mixin"
 
 
@@ -30,7 +30,7 @@ export default {
     mixins: [mixin],
     components: {
         HandsontableMaterial,
-        HandsontableFiled
+        HandsontableField
     },
     data() {
         return {
