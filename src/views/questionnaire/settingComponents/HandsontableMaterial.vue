@@ -143,6 +143,7 @@ export default {
                 return
             } else {
                 this.exampleConsole = '数据保存成功';
+                this.$emit('changeMaterialBackConfirm', false) 
             }
         },
         // 配置图片
@@ -219,11 +220,13 @@ export default {
                     }
                 ],
                 afterChange: (change, source) => {
+                    
                     console.log('change cell')
                     console.log(change)
                     if (source === 'loadData') {
                         return; //don't save this change
                     }
+                    this.$emit('changeMaterialBackConfirm', true)
                     if (!this.autoSave) {
                         return;
                     }

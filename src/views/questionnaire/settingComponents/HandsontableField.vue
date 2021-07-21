@@ -149,6 +149,7 @@ export default {
                 return
             } else {
                 this.exampleConsole = '数据保存成功';
+                this.$emit('changeFieldBackConfirm', false)
             }
         },
         // 配置图片
@@ -271,6 +272,7 @@ export default {
                     if (source === 'loadData') {
                         return; //don't save this change
                     }
+                    this.$emit('changeFieldBackConfirm', true)
                     if (!this.autoSave) {
                         return;
                     }
