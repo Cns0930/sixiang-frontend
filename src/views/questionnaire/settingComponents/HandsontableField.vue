@@ -194,7 +194,7 @@ export default {
                 //     e: null,
                 //     f: null
                 // },
-                colHeaders: ['字段id(read-only)', '所属材料名一级拼二级', '字段名', '是否清楚字段是否必填',
+                colHeaders: ['字段id(read-only)', '所属二级材料名', '字段名', '是否清楚字段是否必填',
                     '是否清楚字段含义', '字段值来源', '前端字段输入类型', '是否清楚校验规则', '是否清楚可以勾选多个',
                     '是否清楚下拉枚举值', '已知的枚举值(英文,隔开)', '是否清楚可以选择多个', '相关图片(read-only)'],
                 columns: [
@@ -205,7 +205,7 @@ export default {
                         className: "htCenter htMiddle"
                     },
                     {
-                        data: 'materialName',
+                        data: 'documentsubDisplayname',
                         className: "htCenter htMiddle"
                     },
                     {
