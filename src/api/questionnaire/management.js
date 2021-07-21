@@ -38,3 +38,6 @@ export const deleteItem = params => { return axios.get(`/qnr/question/deleteItem
 // 2021.7.5 新增
 // 查询问卷答案回填日志记录-分页
 export const listReplyFillbackLog = params => { return axios.get(`/qnr/question/listReplyFillbackLog`, {params}).then(res=>res.data); };
+
+// 查询问卷表-不分页 不含回答数 不含测试链接
+export const listQuestionNoPage = params => { return axios.get(`/qnr/question/listQuestionNoPage`, {params}).then(res=>res.data); };

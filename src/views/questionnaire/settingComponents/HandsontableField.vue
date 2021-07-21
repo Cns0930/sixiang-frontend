@@ -185,6 +185,7 @@ export default {
                 manualColumnResize: true,
                 colWidths: [20],
                 colHeaders: true,
+                // columnHeaderHeight: 200,
                 // dataSchema: {
                 //     a: null,
                 //     b: null,
@@ -226,7 +227,7 @@ export default {
                     {
                         data: 'valueSource',
                         editor: 'select',
-                        selectOptions: ['企业数据', '默认值', '系统日期', '前端字段'],
+                        selectOptions: ['企业数据', '默认值', '系统日期', '前端字段', '签字盖章'],
                         className: "htCenter htMiddle"
                     },
                     {
@@ -301,7 +302,9 @@ export default {
     }
 }
 </script>
+<style>
 
+</style>
 <style src="../../../../node_modules/handsontable/dist/handsontable.full.css"></style>
 <style scoped lang="scss">
 @import "../../../assets/css/global.scss";
