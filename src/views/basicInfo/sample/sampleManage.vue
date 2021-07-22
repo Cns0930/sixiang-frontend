@@ -46,7 +46,7 @@
                     @selection-change="handleSelectionChange">
                     <el-table-column type="selection" width="55">
                     </el-table-column>
-                    <el-table-column type="index" label="索引" width="55">
+                    <el-table-column type="index" label="索引" width="70">
                     </el-table-column>
                     <el-table-column label="文件名">
                         <template slot-scope="scope">
