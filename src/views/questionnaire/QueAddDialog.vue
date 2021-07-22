@@ -1,22 +1,21 @@
 <template>
     <div>
         <el-dialog title="问卷自定义问题新增" :visible.sync="dialogVisible" width="50%" :close-on-click-modal="false">
-
-            <!-- <el-row :gutter="20">
-                <el-col :span="8">
-                    <div class="grid-content bg-purple"></div>
-                </el-col>
-                <el-col :span="8">
-                    <div class="grid-content bg-purple"></div>
-                </el-col>
-                <el-col :span="4">
-                    <div class="grid-content bg-purple"></div>
-                </el-col>
-                <el-col :span="4">
-                    <div class="grid-content bg-purple"></div>
-                </el-col>
-            </el-row> -->
-            <div class="chose-relevance">
+            <el-button @click="showCopyArea = !showCopyArea">复制另一个问卷的所有自定义题目</el-button>
+            <div v-if="showCopyArea" class="question-copy">
+                <el-row>
+                    <h3 style="margin-top: 20px;">自定义题目复制</h3>
+                </el-row>
+                <el-row>
+                    <el-select v-model="sourceQuestionId" placeholder="请选择问卷" style="width: 400px">
+                        <el-option v-for="option in paperOptions" :key="option.questionId" :label="option.questionnaireName + ' - ' + option.creator + ' - ' + option.createTime"
+                            :value="option.questionId"></el-option>
+                    </el-select>
+                    <el-button type="primary" @click="copyQuestion">确定复制</el-button>
+                </el-row>
+            </div>
+            <el-divider></el-divider>
+            <div class="chose-relevance" style="margin-top: 20px;">
                 <el-row>
                     <h3>选择要添加的自定义问题的材料/字段</h3>
                 </el-row>
@@ -67,10 +66,12 @@
                     </el-col>
                     <el-col :span="6" v-if="componentType === 1 || componentType === 2">
                         <div class="grid-content bg-purple">
-                            <div v-for="(item,i) in questionOptions" :key="i" style="display:flex; flex-direction: row; margin-bottom: 15px" >
+                            <div v-for="(item,i) in questionOptions" :key="i"
+                                style="display:flex; flex-direction: row; margin-bottom: 15px">
                                 <el-input v-model="questionOptions[i]" placeholder="问题选项"></el-input>
-                                <span><i v-if="questionOptions.length>=1" style="margin-left:10px;color:red;cursor: pointer;"
-                                    class="el-icon-delete" @click="deletOption(i)"></i></span>
+                                <span><i v-if="questionOptions.length>=1"
+                                    style="margin-left:10px;color:red;cursor: pointer;" class="el-icon-delete"
+                                    @click="deletOption(i)"></i></span>
                             </div>
                         </div>
                     </el-col>
@@ -100,7 +101,7 @@ import { mixin } from "@/mixin/mixin"
 import Paper from "./showQueModule/paper"
 // 接口
 import {
-    addCustomItem, listCustomMatchOptions
+    addCustomItem, listCustomMatchOptions, copyCustomItem
 } from "@/api/questionnaire/questionConfig.js"
 
 export default {
@@ -125,6 +126,10 @@ export default {
                 { label: '文件上传', value: 4 },
             ],
             questionOptions: [''],
+            // 复制自定义问题
+            showCopyArea: false,
+            paperOptions: [],
+            sourceQuestionId: '',
         }
     },
     watch: {
@@ -150,7 +155,7 @@ export default {
                 approvalItemId: this.itemId
             }
             let res = await addCustomItem(params);
-            if(!res.success) {
+            if (!res.success) {
                 this.$message.warning('新增问题失败,请尝试重新编辑问题。')
                 return;
             }
@@ -174,6 +179,15 @@ export default {
         addOption() {
             this.questionOptions.push('');
         },
+        // 复制自定义问题
+        async copyQuestion() {
+            let res = await copyCustomItem({targetQuestionId: this.row.questionId, sourceQuestionId: this.sourceQuestionId})
+            if(!res.success) {
+                this.$message.warning('复制自定义问题失败')
+                return
+            }
+            this.$message.success(res.data)
+        }
     }
 }
 </script>

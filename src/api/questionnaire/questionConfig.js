@@ -35,3 +35,6 @@ export const deleteMaterialQnrPicById = params => { return axios.get(`/qnr/confi
 
 // 删除单张材料配置图片
 export const deleteFieldQnrPicById = params => { return axios.get(`/qnr/configure/deleteFieldQnrPicById`, {params}).then(res=>res.data); };
+
+// 复制另一个问卷的自定义问题
+export const copyCustomItem = params => { return axios.post(`/qnr/configure/copyCustomItem`, params).then(res=>res.data); };

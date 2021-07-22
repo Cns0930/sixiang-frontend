@@ -6,11 +6,11 @@
         <el-tabs type="border-card">
             <el-tab-pane label="材料问卷">
                 <h4>材料问卷</h4>
-                <HandsontableMaterial />
+                <HandsontableMaterial v-on:changeMaterialBackConfirm="changeMaterialBackConfirm" />
             </el-tab-pane>
             <el-tab-pane label="字段问卷">
                 <h4>字段问卷</h4>
-                <HandsontableField />
+                <HandsontableField v-on:changeFieldBackConfirm="changeFieldBackConfirm" />
             </el-tab-pane>
         </el-tabs>
 
@@ -38,6 +38,8 @@ export default {
             itemId: this.$route.query.itemId,
             projectId: this.$route.query.projectId,
             activeName: '',
+            materialBackConfirm: false,
+            fieldBackConfirm: false,
         }
     },
     async created() {
@@ -47,7 +49,28 @@ export default {
     },
     mounted() {
     },
+    beforeRouteLeave: function (to, from, next) {
+        if (this.materialBackConfirm || this.fieldBackConfirm) {
+            this.$confirm(`您还有未保存的${this.materialBackConfirm ? ' [材料表] ' : ''}${this.fieldBackConfirm? ' [字段表] ' : ''}配置，确定需要退出吗?`, '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                // 选择确定
+                next(true)
+            })
+        } else {
+            next(true)
+        }
+    },
+
     methods: {
+        changeMaterialBackConfirm(prop) {
+            this.materialBackConfirm = prop
+        },
+        changeFieldBackConfirm(prop) {
+            this.fieldBackConfirm = prop
+        }
     }
 }
 </script>

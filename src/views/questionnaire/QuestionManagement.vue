@@ -88,7 +88,6 @@
                                 <el-col :span="7">
                                 </el-col>
                             </el-row>
-
                         </template>
                     </el-table-column>
                 </el-table>
@@ -157,7 +156,7 @@ import Paper from "./showQueModule/paper"
 // 接口
 import {
     listQuestion, deleteQuestion, generateQuestion, updateQuestion,
-    releaseQuestion, getByQuestionKey
+    releaseQuestion, getByQuestionKey, listQuestionNoPage
 } from "@/api/questionnaire/management"
 
 
@@ -255,9 +254,11 @@ export default {
             this.getQuestionnaireList();
         },
         // 添加自定义题目
-        addQuestionnaireItem(row) {
+        async addQuestionnaireItem(row) {
             this.questionAdd && this.questionAdd.openDialog();
             this.questionAdd.row = row;
+            let res = await listQuestionNoPage({approvalItemId: this.itemId, type: row.questionnaireType})
+            this.questionAdd.paperOptions = res.data
         },
         // 编辑
         async editQuestionnaire(row) {

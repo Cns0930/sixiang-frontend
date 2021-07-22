@@ -7,6 +7,11 @@
             <el-button @click="load">载入数据</el-button>
             <el-button @click="save">保存数据</el-button>
             <el-button @click="uploadImg">配置上传图片</el-button>
+            <div style="margin-left: 15%">
+                <span>提示：</span><br />
+                <span>1. "已知的枚举值" 请务必用英文逗号隔开</span><br />
+                <span>2. "是否确认签字盖章的对象" 如果不清楚，请向你的上级确认，请勿随便选答案</span>
+            </div>
         </div>
         <div class="workBox">
             <div class="app-container handsontable-container">
@@ -149,6 +154,7 @@ export default {
                 return
             } else {
                 this.exampleConsole = '数据保存成功';
+                this.$emit('changeFieldBackConfirm', false)
             }
         },
         // 配置图片
@@ -185,6 +191,7 @@ export default {
                 manualColumnResize: true,
                 colWidths: [20],
                 colHeaders: true,
+                // columnHeaderHeight: 200,
                 // dataSchema: {
                 //     a: null,
                 //     b: null,
@@ -195,7 +202,7 @@ export default {
                 // },
                 colHeaders: ['字段id(read-only)', '所属二级材料名', '字段名', '是否清楚字段是否必填',
                     '是否清楚字段含义', '字段值来源', '前端字段输入类型', '是否清楚校验规则', '是否清楚可以勾选多个',
-                    '是否清楚下拉枚举值', '已知的枚举值(英文,隔开)', '是否清楚可以选择多个', '相关图片(read-only)'],
+                    '是否清楚下拉枚举值', '已知的枚举值(英文,隔开)', '是否清楚可以选择多个', '是否确认签字盖章的对象', '相关图片(read-only)'],
                 columns: [
                     {
                         data: 'fieldId',
@@ -213,20 +220,20 @@ export default {
                     },
                     {
                         data: 'qnrIsRequired',
-                        type: 'checkbox',
-                        // checkedTemplate: 1,
-                        // uncheckedTemplate: 0
+                        editor: 'select',
+                        selectOptions: ['是', '否'],
                         className: "htCenter htMiddle"
                     },
                     {
                         data: 'qnrFieldMeaning',
-                        type: 'checkbox',
+                        editor: 'select',
+                        selectOptions: ['是', '否'],
                         className: "htCenter htMiddle"
                     },
                     {
                         data: 'valueSource',
                         editor: 'select',
-                        selectOptions: ['企业数据', '默认值', '系统日期', '前端字段'],
+                        selectOptions: ['企业数据', '默认值', '系统日期', '前端字段', '签字盖章'],
                         className: "htCenter htMiddle"
                     },
                     {
@@ -237,17 +244,20 @@ export default {
                     },
                     {
                         data: 'qnrFrontValidation',
-                        type: 'checkbox',
+                        editor: 'select',
+                        selectOptions: ['是', '否'],
                         className: "htCenter htMiddle"
                     },
                     {
                         data: 'qnrCheckMultiple',
-                        type: 'checkbox',
+                        editor: 'select',
+                        selectOptions: ['是', '否'],
                         className: "htCenter htMiddle"
                     },
                     {
                         data: 'qnrOptionsValue',
-                        type: 'checkbox',
+                        editor: 'select',
+                        selectOptions: ['是', '否'],
                         className: "htCenter htMiddle"
                     },
                     {
@@ -256,7 +266,14 @@ export default {
                     },
                     {
                         data: 'qnrSelectMultiple',
-                        type: 'checkbox',
+                        editor: 'select',
+                        selectOptions: ['是', '否'],
+                        className: "htCenter htMiddle"
+                    },
+                    {
+                        data: 'qnrSignatureSubject',
+                        editor: 'select',
+                        selectOptions: ['个人', '企业', '企业+个人'],
                         className: "htCenter htMiddle"
                     },
                     {
@@ -270,6 +287,7 @@ export default {
                     if (source === 'loadData') {
                         return; //don't save this change
                     }
+                    this.$emit('changeFieldBackConfirm', true)
                     if (!this.autoSave) {
                         return;
                     }
@@ -301,7 +319,9 @@ export default {
     }
 }
 </script>
+<style>
 
+</style>
 <style src="../../../../node_modules/handsontable/dist/handsontable.full.css"></style>
 <style scoped lang="scss">
 @import "../../../assets/css/global.scss";
@@ -316,7 +336,7 @@ export default {
     width: 100%;
     height: calc(100% - 50px);
     padding: 6px 12px 12px 12px;
-    margin-top: 20px;
+    margin-top: 10px;
     box-sizing: border-box;
     .sampleTable {
         margin: 20px;
