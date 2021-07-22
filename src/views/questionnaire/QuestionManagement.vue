@@ -88,7 +88,6 @@
                                 <el-col :span="7">
                                 </el-col>
                             </el-row>
-
                         </template>
                     </el-table-column>
                 </el-table>
