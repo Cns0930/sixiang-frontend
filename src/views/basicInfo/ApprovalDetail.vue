@@ -64,7 +64,7 @@
                 </div>
                 <div v-if="!itemInfo.isPublic" class="handleBox">
                     <p class="title">保存当前事项版本</p>
-                    <el-button type="primary" icon="el-icon-upload2" @click="dialogItemConfirmVisible = true;">保存事项
+                    <el-button :disabled="itemInfo.itemStage === '验收'" type="primary" icon="el-icon-upload2" @click="dialogItemConfirmVisible = true;">保存事项
                     </el-button>
                 </div>
                 <div v-if="!itemInfo.isPublic" class="handleBox">
@@ -74,7 +74,7 @@
                 </div>
                 <div class="handleBox">
                     <p class="title">上传事项配置到git</p>
-                    <el-button type="primary" icon="el-icon-upload2" @click="dialogGitConfirmVisible = true;">点击上传
+                    <el-button :disabled="itemInfo.itemStage === '验收'" type="primary" icon="el-icon-upload2" @click="dialogGitConfirmVisible = true;">点击上传
                     </el-button>
                 </div>
                 <div class="handleBox">
