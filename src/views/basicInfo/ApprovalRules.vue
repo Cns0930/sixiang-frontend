@@ -481,7 +481,7 @@ import Vue from "vue";
 import basicMixin from "./basicMixin";
 import { mixin } from "@/mixin/mixin"
 // import {listGlobalDcumentSub} from '@/api/basicInfo/publicDocument'
-import { getApprovalSub } from "../../api/basicInfo/approvalSub";
+import { getApprovalSub, listApprovalSubAll } from "../../api/basicInfo/approvalSub";
 // import { listGlobalCheckpoint} from '@/api/basicInfo/examination'
 import { listCheckpoint } from '@/api/basicInfo/field';
 import {
@@ -616,9 +616,9 @@ export default {
         },
         // 情形列表
         async getApprovalList() {
-            let result = await getApprovalSub({ approvalItemId: this.$route.query.itemId });
+            let result = await listApprovalSubAll({ approvalItemId: this.$route.query.itemId });
             if (!result.success) return;
-            this.approvalSubList = result.data.records.map(ele => ele.approvalSubitem)
+            this.approvalSubList = result.data;
         },
 
         // 增加

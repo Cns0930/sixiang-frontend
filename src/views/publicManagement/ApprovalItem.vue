@@ -53,6 +53,8 @@
                     <!-- </el-table-column> -->
                     <el-table-column prop="createBy" label="创建人">
                     </el-table-column>
+                    <el-table-column prop="itemStage" label="事项阶段">
+                    </el-table-column>
                     <!-- <el-table-column prop="itemStatus" label="状态" sortable  width="50">
                     </el-table-column> -->
                     <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable>
@@ -60,7 +62,7 @@
                     <el-table-column prop="updateTime" label="最后修改时间" :formatter="timeFormatter" sortable
                         show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column label="操作" fixed="right" width="300">
+                    <el-table-column label="操作" fixed="right" width="260">
                         <template slot-scope="scope">
                             <el-button-group>
                                 <el-button size="mini" @click="handleClickItem(scope.row)">
@@ -76,6 +78,9 @@
                                 <el-button size="mini" type="danger" @click="handleClose(scope.row)"
                                     :disabled="!hasManagePermission">
                                     关闭
+                                </el-button>
+                                <el-button size="mini" @click="handleItemStage(scope.row)">
+                                    修改事项阶段
                                 </el-button>
                             </el-button-group>
                         </template>
@@ -136,7 +141,7 @@
                         </el-form-item> -->
                         <el-form-item label="办件类型">
                             <el-select v-model="tempItem.sujectType" multiple filterable placeholder="个人/企业"
-                            style="width:300px">
+                                style="width:300px">
                                 <el-option :value="Number(0)" label="个人"></el-option>
                                 <el-option :value="Number(1)" label="企业"></el-option>
                             </el-select>
@@ -191,7 +196,7 @@
                         </el-form-item> -->
                         <el-form-item label="办件类型">
                             <el-select v-model="tempItem.sujectType" multiple filterable placeholder="个人/企业"
-                            style="width:300px">
+                                style="width:300px">
                                 <el-option :value="Number(0)" label="个人"></el-option>
                                 <el-option :value="Number(1)" label="企业"></el-option>
                             </el-select>
@@ -221,7 +226,8 @@
                     <el-table-column label="操作" fixed="right" width="200px">
                         <template slot-scope="scope">
                             <el-button-group>
-                                <el-button type="primary" :loading="scope.row.loadingImport" @click="confirmImport(scope.row)">确认导入</el-button>
+                                <el-button type="primary" :loading="scope.row.loadingImport"
+                                    @click="confirmImport(scope.row)">确认导入</el-button>
                             </el-button-group>
                         </template>
                     </el-table-column>
@@ -237,6 +243,23 @@
                     <el-button @click="dialogVisibleVersion = false">
                         关闭
                     </el-button>
+                </span>
+            </el-dialog>
+            <!-- 修改事项阶段弹窗 -->
+            <el-dialog title="修改事项阶段" :visible.sync="dialogVisibleStage" width="40%" :close-on-click-modal="false">
+                <div>
+                    <el-select v-model="tempStage">
+                        <el-option value="开发中" label="开发中"></el-option>
+                        <el-option value="提测" label="提测"></el-option>
+                        <el-option value="验收" label="验收"></el-option>
+                    </el-select>
+                    
+                </div>
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="dialogVisibleStage = false">
+                        关闭
+                    </el-button>
+                    <el-button type="primary" @click="confirmStage">确认</el-button>
                 </span>
             </el-dialog>
         </section>
@@ -261,7 +284,7 @@ import {
     listApprovalItem,
     exApprovalItem,
     listVersionItem,
-    obtainVersionItem, isNewItemVersion
+    obtainVersionItem, isNewItemVersion,updateItemStage
 } from "../../api/basicInfo/approval";
 
 export default {
@@ -312,6 +335,10 @@ export default {
             versionList: [],
             currentItemInfo: {},
             currentClickButton: '',
+            // 修改事项阶段弹窗
+            dialogVisibleStage: false,
+            tempStage: '',
+            tempRow: {},
         };
     },
     computed: {
@@ -332,6 +359,20 @@ export default {
 
     },
     methods: {
+        // 修改事项阶段
+        handleItemStage(row) {
+            this.dialogVisibleStage = true
+            this.tempStage = row.itemStage
+            this.tempRow = row
+        },
+        // 确认阶段更改
+        async confirmStage() {
+            let res = await updateItemStage({approvalItemLordId: this.tempRow.approvalItemLordId, itemStage: this.tempStage})
+            if(!res.success) return
+            this.$message.success('修改阶段成功')
+            this.list()
+            this.dialogVisibleStage = false
+        },
         getTime(val) {
             console.log(val);
         },
@@ -352,7 +393,7 @@ export default {
             this.tempItem.sujectType ? this.tempItem.sujectType = this.tempItem.sujectType.split(',').map(Number) : [];
             this.dialogUpdateVisible = true;
             // 获取选项
-            let approvalRes = await listApprovalAll({projectId: this.$route.query.projectId});
+            let approvalRes = await listApprovalAll({ projectId: this.$route.query.projectId });
             if (approvalRes.success) {
                 this.approvalOptions = approvalRes.data;
             }
@@ -411,7 +452,7 @@ export default {
             // if (projectRes.success) {
             //     this.projectOptions = projectRes.data;
             // }
-            let approvalRes = await listApprovalAll({projectId: this.$route.query.projectId});
+            let approvalRes = await listApprovalAll({ projectId: this.$route.query.projectId });
             if (approvalRes.success) {
                 this.approvalOptions = approvalRes.data;
             }
@@ -528,7 +569,7 @@ export default {
                     return res.data;
                 }
             } else {
-                let res = await isNewItemVersion({approvalItemId: result.data.approvalItemId})
+                let res = await isNewItemVersion({ approvalItemId: result.data.approvalItemId })
                 if (res.data) {
                     this.$message.warning(res.data)
                 }
@@ -561,7 +602,7 @@ export default {
                 row.loadingImport = false;
                 this.dialogVisibleVersion = false;
                 console.log('导入的id', res.data);
-                if(this.currentClickButton === '事项名') {
+                if (this.currentClickButton === '事项名') {
                     this.handleClickItemDefault(this.currentItemInfo);
                 } else if (this.currentClickButton === '调研信息') {
                     this.handleClickItem(this.currentItemInfo);
