@@ -142,6 +142,7 @@ export default {
                     qnrOptionsValue: item[9],
                     qnrOptionsValueDetail: item[10],
                     qnrSelectMultiple: item[11],
+                    qnrSignatureSubject: item[12]
                 }
                 return objData
             });
