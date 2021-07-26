@@ -58,7 +58,7 @@
             <div class="tableWrap">
                 <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%;" border
                     :row-style="{height:'60px'}" :header-row-style="{height:'50px'}" tooltip-effect="dark"
-                    :default-sort="{prop: 'createTime', order: 'descending'}" :height="tableHeight">
+                    :default-sort="{prop: 'navigationOrder', order: 'ascending'}" :height="tableHeight">
                     <el-table-column label="序号" type="index" width="50px" :index="indexMethod"></el-table-column>
                     <el-table-column prop="materialName" label="材料展示名称" width="200" show-overflow-tooltip>
                     </el-table-column>
@@ -69,7 +69,7 @@
                     </el-table-column>
                     <el-table-column prop="uploadRequired" label="是否必须上传" width="60px" :formatter="isRequiredFormatter">
                     </el-table-column>
-                    <el-table-column prop="navigationOrder" label="材料清单展示顺序" width="50px"></el-table-column>
+                    <el-table-column prop="navigationOrder" label="材料清单展示顺序" width="50px" sortable></el-table-column>
                     <el-table-column prop="descriptionInfo" label="材料逻辑" show-overflow-tooltip width="200">
                     </el-table-column>
                     <el-table-column prop="produceSource" label="产生方式" show-overflow-tooltip>
