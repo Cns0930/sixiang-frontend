@@ -27,8 +27,8 @@
             <div class="cardBox">
                 <div class="cardItem" v-for="item in projectList" :key="item.projectId">
                     <div class="itemHeader">
-                        <el-button type="text" class="itemTitle" @click="goApproval(item)">{{ item.projectName }}
-                        </el-button>
+                        <div class="itemTitle" @click="goApproval(item)">{{ item.projectName }}
+                        </div>
                         <!-- <span class="itemText">状态：{{ item.projectStatus }}</span> -->
                         <span class="itemTexttwo">{{ item.projectDetails }}</span>
                     </div>
@@ -263,11 +263,11 @@ export default {
             let projectRes = await listProjectAll({ keyword: this.filterKeyword, itemNoKeyword: this.itemNoKeyword });
             if (!projectRes.success) return;
             if (projectRes.success) {
-                if(this.roles.includes('intern')) {
+                if (this.roles.includes('intern')) {
                     this.projectList = projectRes.data.filter(item => item.projectId === 2);
                 } else {
                     this.projectList = projectRes.data;
-                }     
+                }
             }
         },
         handleClickItemDefault(item) {
@@ -409,10 +409,18 @@ export default {
                 justify-content: center;
                 width: 90%;
                 height: 70%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: normal;
                 .itemTitle {
                     color: #3397ff;
                     font-size: 25px;
                     font-weight: bold;
+                    z-index: 1;
+                    overflow: hidden;
+                }
+                .itemTitle:hover {
+                    cursor: pointer;
                 }
                 .itemText {
                     font-size: 20px;
