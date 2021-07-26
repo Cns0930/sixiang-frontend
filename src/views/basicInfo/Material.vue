@@ -69,7 +69,7 @@
                     </el-table-column>
                     <el-table-column prop="uploadRequired" label="是否必须上传" width="60px" :formatter="isRequiredFormatter">
                     </el-table-column>
-                    <el-table-column prop="navigationOrder" label="导航顺序" width="50px"></el-table-column>
+                    <el-table-column prop="navigationOrder" label="材料清单展示顺序" width="50px"></el-table-column>
                     <el-table-column prop="descriptionInfo" label="材料逻辑" show-overflow-tooltip width="200">
                     </el-table-column>
                     <el-table-column prop="produceSource" label="产生方式" show-overflow-tooltip>
@@ -160,7 +160,7 @@
                             <el-option label="否" :value="Number(0)"></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="导航顺序">
+                    <el-form-item label="材料清单展示顺序">
                         <el-input v-model="materialT.navigationOrder" placeholder="请输入数字"></el-input>
                     </el-form-item>
                     <el-form-item label="是否必须上传">
@@ -229,7 +229,7 @@
                             <el-option label="否" :value="Number(0)"></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="导航顺序">
+                    <el-form-item label="材料清单展示顺序">
                         <el-input v-model="materialTEdit.navigationOrder" placeholder="请输入数字"></el-input>
                     </el-form-item>
                     <el-form-item label="材料逻辑">

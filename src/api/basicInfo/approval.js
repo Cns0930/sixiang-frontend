@@ -101,3 +101,12 @@ export const listHistoryRecord = params => {return axios.get('/account/SysVersio
 
 // 判断当前事项版本是否最新
 export const isNewItemVersion = params => {return axios.get('/ss/approvalItem/isNewItemVersion',{params}).then(res => res.data)}
+
+// 修改事项阶段
+export const updateItemStage = params => {return axios.get('/ss/approvalItem/updateItemStage',{params}).then(res => res.data)}
+
+// 根据项目下的事项阶段筛选事项列表-级联列表
+export const listApprovalItemByStage = params => {return axios.get('/ss/approvalItem/listApprovalItemByStage',{params}).then(res => res.data)}
+
+// 查询下载git压缩包清单 
+export const gitZipchecklistByLordId = params => {return axios.post('/ss/Import/gitZipchecklistByLordId',params).then(res => res.data)}
