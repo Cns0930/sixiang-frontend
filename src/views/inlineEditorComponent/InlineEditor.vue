@@ -52,7 +52,7 @@
             <!-- <iframe id="print-data-container" tabindex="-1" :class="ifShow?'iframe-show':'iframe-off'"></iframe> -->
         </div>
         <el-dialog class="monaco" :fullscreen="true" :visible.sync="dialogVisible" :before-close="syncCode">
-            <div ref="dialog_container" style="width:100%;height:800px"></div>
+            <div ref="dialog_container" style="width:100%;height: 890px"></div>
         </el-dialog>
     </div>
 </template>

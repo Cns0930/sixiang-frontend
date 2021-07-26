@@ -127,6 +127,10 @@
     max-height: 560px;
     overflow-y: auto;
 }
+.el-dialog.is-fullscreen .el-dialog__body {
+    max-height: 900px;
+    overflow-y: auto;
+}
 
 p.trip {
     font-size: 14px;
