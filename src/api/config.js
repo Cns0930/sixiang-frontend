@@ -21,9 +21,10 @@ const source = CancelToken.source();
     return Promise.reject(error);
   }); */
 const throttleMessage = _.debounce((msg) => {
-    Message({
+    Notification({
         type: 'warning',
         message: msg,
+        duration: 0
     });
 }, 500);
 

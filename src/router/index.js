@@ -319,6 +319,11 @@ const routes = [
                         name: 'QuestionManagement',
                         component: resolve => require(['@/views/questionnaire/QuestionManagement.vue'],resolve),
                     },
+                    {
+                        path: '/questionnaire/questionsetting',
+                        name: 'QuestionSetting',
+                        component: resolve => require(['@/views/questionnaire/QuestionSetting.vue'],resolve),
+                    },
                 ]
             }, 
         ]
