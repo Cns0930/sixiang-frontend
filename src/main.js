@@ -25,9 +25,9 @@ import _ from 'lodash';
 Vue.prototype._ = _;
 
 Vue.config.productionTip = false
-Vue.use(ElementUI, { size: 'mini' })
-Vue.config.errorHandler = function (err, vm, info) {
-    console.error(err, vm, info)
+Vue.use(ElementUI ,{ size: 'mini', zIndex: 1000})
+Vue.config.errorHandler=function(err,vm,info){
+    console.error(err,vm,info)
 }
 
 Vue.use(VueCompositionAPI)

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-dialog title="问卷自定义问题新增" :visible.sync="dialogVisible" width="50%" :close-on-click-modal="false">
+        <el-dialog title="问卷自定义问题新增" :visible.sync="dialogVisible" width="50%" :close-on-click-modal="false" :append-to-body="true">
             <el-button @click="showCopyArea = !showCopyArea">复制另一个问卷的所有自定义题目</el-button>
             <div v-if="showCopyArea" class="question-copy">
                 <el-row>
@@ -8,7 +8,8 @@
                 </el-row>
                 <el-row>
                     <el-select v-model="sourceQuestionId" placeholder="请选择问卷" style="width: 400px">
-                        <el-option v-for="option in paperOptions" :key="option.questionId" :label="option.questionnaireName + ' - ' + option.creator + ' - ' + option.createTime"
+                        <el-option v-for="option in paperOptions" :key="option.questionId"
+                            :label="option.questionnaireName + ' - ' + option.creator + ' - ' + option.createTime"
                             :value="option.questionId"></el-option>
                     </el-select>
                     <el-button type="primary" @click="copyQuestion">确定复制</el-button>
@@ -70,8 +71,8 @@
                                 style="display:flex; flex-direction: row; margin-bottom: 15px">
                                 <el-input v-model="questionOptions[i]" placeholder="问题选项"></el-input>
                                 <span><i v-if="questionOptions.length>=1"
-                                    style="margin-left:10px;color:red;cursor: pointer;" class="el-icon-delete"
-                                    @click="deletOption(i)"></i></span>
+                                        style="margin-left:10px;color:red;cursor: pointer;" class="el-icon-delete"
+                                        @click="deletOption(i)"></i></span>
                             </div>
                         </div>
                     </el-col>
@@ -80,13 +81,30 @@
                     </el-col>
                 </el-row>
             </div>
-            <!-- <div class="question-picture">
+            <div class="question-picture">
                 <el-row>
                     <h3 style="margin-top: 20px;">是否有相关图片，上传（可传0~多张）</h3>
                 </el-row>
                 <div>
+                    <div style="margin: 20px 0">
+                        <span>上传区域：</span>
+                        <el-input type="textarea" :rows="3" placeholder="粘贴图片到此处上传（截图或图片文件）" v-model="inputFile"
+                            @paste.native.capture.prevent="handlePaste" style="width: 400px">
+                        </el-input>
+                    </div>
                 </div>
-            </div> -->
+                <div v-for="(pic, picIndex) in pictureList" :key="picIndex" style="width: 80%;display:flex;flex-direction: column;margin-bottom: 20px;">
+                    <div>
+                        <el-image style="width: 100%;border:1px solid #eeae85;" :src="pic.previewPath"
+                            :preview-src-list="[pic.previewPath]">
+                        </el-image>
+                    </div>
+                    <div>
+                        <el-button  @click="imgOpen(pic.previewPath)">打开图片</el-button>
+                        <el-button type="danger" @click="deletePic(picIndex)">删除</el-button>
+                    </div>
+                </div>
+            </div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogVisible = false">关 闭</el-button>
                 <el-button type="primary" @click="addConfirm">确定添加</el-button>
@@ -97,6 +115,7 @@
 
 <script>
 import { mixin } from "@/mixin/mixin"
+import axios from 'axios'
 // 组件
 import Paper from "./showQueModule/paper"
 // 接口
@@ -130,6 +149,10 @@ export default {
             showCopyArea: false,
             paperOptions: [],
             sourceQuestionId: '',
+            // 图片上传和展示
+            // 上传
+            inputFile: null,
+            pictureList: [],
         }
     },
     watch: {
@@ -152,7 +175,8 @@ export default {
                 originId: this.bindItem,
                 questionId: this.row.questionId,
                 type: this.componentType,
-                approvalItemId: this.itemId
+                approvalItemId: this.itemId,
+                picPath: this.pictureList
             }
             let res = await addCustomItem(params);
             if (!res.success) {
@@ -181,12 +205,42 @@ export default {
         },
         // 复制自定义问题
         async copyQuestion() {
-            let res = await copyCustomItem({targetQuestionId: this.row.questionId, sourceQuestionId: this.sourceQuestionId})
-            if(!res.success) {
+            let res = await copyCustomItem({ targetQuestionId: this.row.questionId, sourceQuestionId: this.sourceQuestionId })
+            if (!res.success) {
                 this.$message.warning('复制自定义问题失败')
                 return
             }
             this.$message.success(res.data)
+        },
+        // 复制粘贴上传
+        async handlePaste(event) {
+            let items = event.clipboardData && event.clipboardData.items;
+            let formData = new FormData();
+            if (items && items.length) {
+                // 检索剪切板items
+                for (let i = 0; i < items.length; i++) {
+                    if (items[i].type.indexOf('image') !== -1) {
+                        console.log(items[i].getAsFile())
+                        formData.append('file', items[i].getAsFile());
+                    }
+                }
+            }
+            let pictureTempList = await axios.post(process.env.VUE_APP_BASE_IP + '/qnr/configure/uploadFile', formData).then(res => res.data.data);
+            pictureTempList.forEach(item => this.pictureList.push(item))
+            console.log('this.pictureList')
+            console.log(this.pictureList)
+        },
+        imgOpen(valueUrl) {
+            const a = document.createElement("a");
+            a.href = valueUrl
+            a.target = "_blank";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        },
+        // 删除
+        deletePic(i) {
+            this.pictureList.splice(i, 1)
         }
     }
 }
