@@ -132,7 +132,7 @@
         <!-- 查看记录弹框 -->
         <QueLogDialog ref="questionLog" />
         <!-- 查看问卷答案的dialog -->
-        <el-dialog title="问卷描述编辑" :visible.sync="dialogVisiblePaper" width="60%">
+        <el-dialog title="问卷描述编辑" :visible.sync="dialogVisiblePaper" width="60%" :modal-append-to-body='false'>
             <div>
                 <Paper :paper-list="paperList" :questionnaire-info="questionnaireInfo" father-name="QuestionManagement"
                     @getQuestionnaireItem="getQuestionnaireItem" />
