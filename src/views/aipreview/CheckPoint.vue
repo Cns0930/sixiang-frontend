@@ -524,13 +524,13 @@ export default {
         // 确认新增
         async addConfirm() {
             console.log(this.cutImgTagList);
-            this.addForm.cutImgTag = this.cutImgTagList.map(item => item.value);
-            this.addForm.initPosition = this.addForm.initPosition === null || this.addForm.initPosition === '' ? null : JSON.parse('[' + this.addForm.initPosition + ']');
-            this.addForm.valueField = this.valueFieldList.map(item => item.value);
-            this.addForm.valuePattern = this.valuePatternList.map(item => item.value);
-            this.addForm.approvalItemId = this.itemId;
-            console.log('this.addForm', this.addForm);
-            let res = await addCheckpoint(this.addForm);
+            let updateAddForm = _.cloneDeep(this.addForm)
+            updateAddForm.cutImgTag = this.cutImgTagList.map(item => item.value);
+            updateAddForm.initPosition = this.addForm.initPosition === null || this.addForm.initPosition === '' ? null : JSON.parse('[' + this.addForm.initPosition + ']');
+            updateAddForm.valueField = this.valueFieldList.map(item => item.value);
+            updateAddForm.valuePattern = this.valuePatternList.map(item => item.value);
+            updateAddForm.approvalItemId = this.itemId;
+            let res = await addCheckpoint(updateAddForm);
             if (!res.success) return;
             this.dialogVisbleAdd = false;
             this.getListCheckpoint();
@@ -557,12 +557,13 @@ export default {
         },
         // 确认编辑
         async editConfirm() {
-            this.editForm.cutImgTag = this.cutImgTagList.map(item => item.value);
-            this.editForm.initPosition = this.editForm.initPosition === null ? null : JSON.parse('[' + this.editForm.initPosition + ']');
-            this.editForm.valueField = this.valueFieldList.map(item => item.value);
-            this.editForm.valuePattern = this.valuePatternList.map(item => item.value);
-            this.editForm.approvalItemId = this.itemId;
-            let res = await updateCheckpoint(this.editForm);
+            let updateEditForm = _.cloneDeep(this.editForm);
+            updateEditForm.cutImgTag = this.cutImgTagList.map(item => item.value);
+            updateEditForm.initPosition = this.editForm.initPosition === null ? null : JSON.parse('[' + this.editForm.initPosition + ']');
+            updateEditForm.valueField = this.valueFieldList.map(item => item.value);
+            updateEditForm.valuePattern = this.valuePatternList.map(item => item.value);
+            updateEditForm.approvalItemId = this.itemId;
+            let res = await updateCheckpoint(updateEditForm);
             if (!res.success) return;
             this.dialogVisbleEdit = false;
             this.getListCheckpoint();

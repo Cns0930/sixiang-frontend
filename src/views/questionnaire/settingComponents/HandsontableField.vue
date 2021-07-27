@@ -4,7 +4,7 @@
             <el-input placeholder="按字段名称查询" v-model="keyWord" clearable style="width: 200px;" @change="search">
             </el-input>
             <el-button @click="search">搜索</el-button>
-            <el-button @click="load">载入数据</el-button>
+            <el-button @click="load">重新加载数据</el-button>
             <el-button @click="save">保存数据</el-button>
             <el-button @click="uploadImg">配置上传图片</el-button>
             <div style="margin-left: 15%">
@@ -202,7 +202,7 @@ export default {
                 //     f: null
                 // },
                 colHeaders: ['字段id(read-only)', '所属二级材料名', '字段名', '是否清楚字段是否必填',
-                    '是否清楚字段含义', '字段值来源', '前端字段输入类型', '是否清楚校验规则', '是否清楚可以勾选多个',
+                    '是否清楚字段含义', '字段值来源', '是否清楚前端字段输入类型', '是否清楚校验规则', '是否清楚可以勾选多个',
                     '是否清楚下拉枚举值', '已知的枚举值(英文,隔开)', '是否清楚可以选择多个', '是否确认签字盖章的对象', '相关图片(read-only)'],
                 columns: [
                     {
