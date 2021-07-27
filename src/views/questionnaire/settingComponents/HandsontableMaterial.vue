@@ -4,7 +4,7 @@
             <el-input placeholder="按材料名称查询" v-model="keyWord" clearable style="width: 200px;" @change="search">
             </el-input>
             <el-button @click="search">搜索</el-button>
-            <el-button @click="load">载入数据</el-button>
+            <el-button @click="load">重新加载数据</el-button>
             <el-button @click="save">保存数据</el-button>
             <el-button @click="uploadImg">配置上传图片</el-button>
             <div style="margin-left: 15%">
