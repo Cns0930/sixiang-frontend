@@ -60,7 +60,7 @@ export default {
             serchType: '',
             keyWord: '',
             // 分页
-            pageSize: 10,
+            pageSize: 100,
             currentPage: 1,
             totalCount: 0,
             tableDataField: [],
