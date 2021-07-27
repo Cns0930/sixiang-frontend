@@ -1,5 +1,6 @@
 <template>
-    <el-dialog title="全局操作-Dialog" :visible.sync="dialogVisible" width="60%" :close-on-click-modal="false" @closed="closedFn">
+    <el-dialog title="全局操作-Dialog" :visible.sync="dialogVisible" width="60%" :close-on-click-modal="false"
+        @closed="closedFn">
         <div class="workHandleBoxContent">
             <!-- <div class="handleBox">
                 <p class="title">批量下载事项配置</p>
@@ -10,15 +11,7 @@
                     </el-button>
                 </el-upload>
             </div> -->
-            <div class="block">
-                <span class="demonstration">请选择事项: </span>
-                <el-cascader v-model="idList" placeholder="试试搜索：项目名称/阶段/事项名称" :options="approvalItemOptions"
-                    :props="{ multiple: true }" filterable clearable style="width: 500px">
-                </el-cascader>
-                <el-button type="primary" :loading="loading" @click="downLoad('/ss/Import/downloadGitZipByLordId')"
-                    style="margin-left: 20px">下载</el-button>
-            </div>
-            <div class="block">
+            <div class="block" v-show="tableVisible">
                 <el-table ref="multipleTable" border :data="tableData" tooltip-effect="dark" highlight-current-row
                     style="width: 100%"
                     :header-cell-style="{background: '#f9faff',color:'#333',fontFamily:'MicrosoftYaHeiUI',fontSize:'15px',fontWeight:900}"
@@ -37,6 +30,18 @@
                     </el-table-column>
                 </el-table>
             </div>
+            <div class="block">
+                <span class="demonstration">请选择事项: </span>
+                <el-button type="primary" :loading="loading" @click="downLoad('/ss/Import/downloadGitZipByLordId')"
+                    style="margin-left: 20px; margin-bottom: 10px">下载</el-button>
+                <span style="margin-left: 20px">已选择事项数量: </span>
+                <span style="font-size: 18px; color: #2b3b65">{{itemCount}}</span>
+                <!-- <el-progress :percentage="progress" status="success"></el-progress> -->
+                <br />
+                <el-cascader v-model="idList" placeholder="试试搜索：项目名称/阶段/事项名称" :options="approvalItemOptions"
+                    :props="{ multiple: true }" filterable clearable style="width: 500px" @change="getCount">
+                </el-cascader>
+            </div>
         </div>
     </el-dialog>
 </template>
@@ -54,10 +59,15 @@ export default {
             approvalItemOptions: [],
             idList: [],
             tableData: [],
+            itemCount: 0,
+            // progress: 0,
+            tableVisible: false,
         }
     },
     methods: {
         async openDialog() {
+            this.tableVisible = false;
+            this.itemCount = 0,
             this.dialogVisible = true;
             let res = await listApprovalItemByStage()
             if (!res.success) return
@@ -70,12 +80,16 @@ export default {
             this.idList = []
             this.tableData = []
         },
+        getCount() {
+            this.itemCount = this.idList.length
+        },
         // 下载 Post接口方法
         async downLoad(url) {
             if (!this.idList.length) {
                 this.$message.warning('请先选择事项')
                 return
             }
+            // this.progress = 0;
             this.loading = true;
             let newIdList = this.idList.map(item => { return Number(item[2]) })
             console.log('newIdList');
@@ -86,8 +100,13 @@ export default {
                 data: {
                     idList: newIdList,
                 },
-                timeout: 1000 * 60,
+                timeout: 1000 * 60 * 10,
                 responseType: "arraybuffer",
+                // onDownloadProgress: (evt) => {
+                //     console.log("progressEvent===",evt )
+                //     // 对原生进度事件的处理
+                //     this.progress = parseInt((evt.loaded / evt.total) * 100)
+                // }
             });
             if (res.data.byteLength === 0) {
                 this.$message.warning("没有需要下载的文件");
@@ -113,7 +132,8 @@ export default {
             document.body.removeChild(a);
             window.URL.revokeObjectURL(href);
             this.loading = false;
-            this.getTableData(newIdList);
+            await this.getTableData(newIdList);
+            this.tableVisible = true;
         },
         async getTableData(ids) {
             let res = await gitZipchecklistByLordId({ idList: ids })
