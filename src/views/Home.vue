@@ -142,7 +142,8 @@ export default {
             });
         },
         isShowProject() {
-            if (this.$route.path === '/user' || this.$route.path === '/project' || this.$route.path === '/document') {
+            if (this.$route.path === '/user' || this.$route.path === '/project' || this.$route.path === '/document'
+            || this.$route.path === '/timeconsume') {
                 return false;
             } else {
                 return true;
@@ -153,7 +154,7 @@ export default {
             || this.$route.path === '/publicdocument' || this.$route.path === '/publicsubdocument'
             || this.$route.path === '/examination' || this.$route.path === '/readme'
             || this.$route.path === '/public' || this.$route.path === '/allEdit' || this.$route.path === '/document'
-            || this.$route.path === '/approval') {
+            || this.$route.path === '/approval' || this.$route.path === '/timeconsume') {
                 return false;
             } else {
                 return true;

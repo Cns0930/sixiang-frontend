@@ -164,6 +164,11 @@ const routes = [
                 component: resolve => require(['@/views/WeiBanJu/index.vue'],resolve),
             },
             {
+                path: '/timeconsume',
+                name: 'TimeConsume',
+                component: resolve => require(['@/views/timeStatistics/index.vue'],resolve),
+            },
+            {
                 path: '/approval',
                 name: 'ApprovalManagement',
                 component: resolve => require(['@/views/publicManagement/ApprovalManagement.vue'],resolve),

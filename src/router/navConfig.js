@@ -143,6 +143,17 @@ const topMenuList = [
         ],
         order: 7
     },
+    {
+        label: "汇总统计",
+        authKey: ["admin", "developer", "researcher", "test"],
+        children: [
+            {
+                path: "/timeconsume",
+                label: "用时统计",
+            },
+        ],
+        order: 8
+    },
     // {
     //     label: "批量编辑",
     //     authKey: ["admin","developer","researcher","test"],
