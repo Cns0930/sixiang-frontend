@@ -104,14 +104,14 @@
                         sortable
                         show-overflow-tooltip
                     ></el-table-column>
-                    <el-table-column label="操作" fixed="right" width="300">
-                        <template slot-scope="scope">
+                    <!-- <el-table-column label="操作" fixed="right" width="300"> -->
+                        <!-- <template slot-scope="scope"> -->
                             <!-- <el-button size="mini" @click="handleClickItem(scope.row)">调研信息</el-button> -->
-                            <el-button size="mini" @click="handleClickItemBangBan(scope.row)">帮办工具</el-button>
-                            <el-button size="mini" @click="handleEdit(scope.$index, scope.row)" :disabled="!hasManagePermission()">编辑</el-button>
+                            <!-- <el-button size="mini" @click="handleClickItemBangBan(scope.row)">帮办工具</el-button>
+                            <el-button size="mini" @click="handleEdit(scope.$index, scope.row)" :disabled="!hasManagePermission()">编辑</el-button> -->
                             <!-- <el-button size="mini" type="danger" @click="handleClose(scope.row)" :disabled="!hasManagePermission()">关闭</el-button> -->
-                        </template>
-                    </el-table-column>
+                        <!-- </template> -->
+                    <!-- </el-table-column> -->
                 </el-table>
             </div>
             <div class="tablePagination">
@@ -237,7 +237,7 @@ import {
     listApprovalAll,
     listProjectAll,
     addApprovalItem,
-    updateApprovalItem,
+    // updateApprovalItem,
     getByApprovalItemId,
     shutApprovalItem,
 } from "../../api/basicInfo/approval";
@@ -271,7 +271,7 @@ export default {
         // 获取项目信息
         await this.initProject();
         await this.searchItem();
-        await this.loadOptions();
+        // await this.loadOptions();
         
         let itemInfo = this.$store.state.home.item;
         itemInfo.approvalItemId = null;
@@ -325,16 +325,16 @@ export default {
                 await this.list();
             }
         },
-        async updateItem() {
-            let res = await updateApprovalItem(this.tempItem);
-            console.log(res);
-            if (res.success) {
-                this.$message.success("事项修改成功!");
-                this.tempItem = {};
-                this.dialogUpdateVisible = false;
-                await this.list();
-            }
-        },
+        // async updateItem() {
+        //     let res = await updateApprovalItem(this.tempItem);
+        //     console.log(res);
+        //     if (res.success) {
+        //         this.$message.success("事项修改成功!");
+        //         this.tempItem = {};
+        //         this.dialogUpdateVisible = false;
+        //         await this.list();
+        //     }
+        // },
         async loadOptions() {
             // 获取选项
             // let projectRes = await listProjectAll();

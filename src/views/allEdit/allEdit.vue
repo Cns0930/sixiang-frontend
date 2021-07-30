@@ -206,7 +206,6 @@ import {
     listApprovalAll,
     listProjectAll,
     addApprovalItem,
-    updateApprovalItem,
     getByApprovalItemId,
     shutApprovalItem,
     listApprovalItem,
@@ -297,22 +296,6 @@ export default {
             sessionStorage.setItem('editAll',JSON.stringify(lists))
             this.$router.push('/changeEdit')
         },
-        async handleEdit(index, row) {
-         
-            let res = await getByApprovalItemId({
-                approvalItemId: row.approvalItemId,
-            });
-            if (!res.success) {
-                return;
-            }
-            this.tempItem = res.data;
-            this.dialogUpdateVisible = true;
-            // 获取选项
-            let approvalRes = await listApprovalAll({projectId: this.$route.query.projectId});
-            if (approvalRes.success) {
-                this.approvalOptions = approvalRes.data;
-            }
-        },
         async handleClickAdd() {
             this.dialogAddVisible = true;
             this.tempItem = {};
@@ -325,16 +308,6 @@ export default {
                 this.$message.success("事项保存成功!");
                 this.tempItem = {};
                 this.dialogAddVisible = false;
-                await this.list();
-            }
-        },
-        async updateItem() {
-            let res = await updateApprovalItem(this.tempItem);
-            
-            if (res.success) {
-                this.$message.success("事项修改成功!");
-                this.tempItem = {};
-                this.dialogUpdateVisible = false;
                 await this.list();
             }
         },
