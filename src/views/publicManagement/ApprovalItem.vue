@@ -65,12 +65,12 @@
                     <el-table-column label="操作" fixed="right" width="260">
                         <template slot-scope="scope">
                             <el-button-group>
-                                <el-button size="mini" @click="handleClickItem(scope.row)">
+                                <!-- <el-button size="mini" @click="handleClickItem(scope.row)">
                                     调研信息
                                 </el-button>
                                 <el-button size="mini" @click="handleClickItemBangBan(scope.row)">
                                     帮办工具
-                                </el-button>
+                                </el-button> -->
                                 <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
                                     :disabled="!hasManagePermission">
                                     编辑
