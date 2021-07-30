@@ -3,7 +3,7 @@
         <el-dialog title="配置图片管理" :visible.sync="dialogVisible" width="50%" :close-on-click-modal="false">
             <div>
                 <span>配置选择：</span>
-                <el-select v-model="fieldId" style="width: 700px" @change="getTableData">
+                <el-select v-model="fieldId" style="width: 700px" @change="getTableData" filterable>
                     <el-option v-for="option in settingOptions" :key="option.fieldId" :label="option.documentsubDisplayname + ' - ' +option.fieldName"
                         :value="option.fieldId"></el-option>
                 </el-select>

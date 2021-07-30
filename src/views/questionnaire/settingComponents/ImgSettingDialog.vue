@@ -3,7 +3,7 @@
         <el-dialog title="配置图片管理" :visible.sync="dialogVisible" width="50%" :close-on-click-modal="false">
             <div>
                 <span>配置选择：</span>
-                <el-select v-model="materialId" style="width: 400px" @change="getTableData">
+                <el-select v-model="materialId" style="width: 400px" @change="getTableData" filterable>
                     <el-option v-for="option in settingOptions" :key="option.materialId" :label="option.materialName"
                         :value="option.materialId"></el-option>
                 </el-select>

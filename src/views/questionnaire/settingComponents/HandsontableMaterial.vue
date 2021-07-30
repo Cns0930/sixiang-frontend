@@ -193,7 +193,7 @@ export default {
                 //     e: null,
                 //     f: null
                 // },
-                colHeaders: ['材料id(read-only)', '材料名', '是否清楚材料是否必须上传', '是否清楚产生方式', '相关图片(read-only)'],
+                colHeaders: ['[只读]材料id', '材料名', '是否清楚材料是否必须上传', '是否清楚产生方式', '[只读]相关图片'],
                 columns: [
                     {
                         data: 'materialId',
