@@ -71,7 +71,7 @@ const mutations = {
         state.timeList = {
             startTime: new Date().getTime()
         }
-        console.log('222222 clearTimeList', state.timeList)
+        console.log('clearTimeList', state.timeList)
     },
     // 点击 滚动滑轮 键盘敲击 更新对应路由对应事项id的closureTime
     updateClosureTime(state, payload) {
@@ -91,7 +91,7 @@ const mutations = {
                 }
             ]
         }
-        console.log('333333333 updateTimeList', state.timeList)
+        console.log('updateTimeList', state.timeList)
     }
 }
 
