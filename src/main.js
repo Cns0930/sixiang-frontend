@@ -42,7 +42,7 @@ Object.keys(CustomComponents).forEach(name => {
 
 //所有未登录会话重定向到 /login
 router.beforeEach((to, from, next) => {
-    console.log(to, from);
+    // console.log(to, from);
     store.commit('recordTimeList', {to, from});
     let timeList = store.getters.getTimeList
     console.log('timeList', timeList);

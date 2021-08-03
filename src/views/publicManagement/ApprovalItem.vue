@@ -159,59 +159,7 @@
             </el-dialog>
 
             <!-- 编辑窗口 -->
-            <el-dialog title="事项属性填写" :visible.sync="dialogUpdateVisible" width="80%" :close-on-click-modal="false">
-                <div class="attribute-content">
-                    <el-form :model='tempItem' ref="tempItem" :rules="rules" :inline="false" label-position="left"
-                        class="demo-form-inline">
-                        <el-form-item label="大项" prop="approvalId">
-                            <el-select v-model="tempItem.approvalId" filterable>
-                                <el-option v-for="(v,i) in approvalOptions" :key="i" :label="v.approvalName"
-                                    :value="v.approvalId">
-                                </el-option>
-                            </el-select>
-                        </el-form-item>
-                        <el-form-item label="事项编号" prop="itemNo">
-                            <el-input v-model="tempItem.itemNo">
-                            </el-input>
-                        </el-form-item>
-                        <!-- <el-form-item label="事项内部编号">
-                            <el-input v-model="tempItem.itemInternalNo">
-                            </el-input>
-                        </el-form-item> -->
-                        <!-- <el-form-item label="事项实施编码" prop="itemCode">
-                            <el-input v-model="tempItem.itemCode">
-                            </el-input>
-                        </el-form-item> -->
-                        <el-form-item label="事项名称" prop="itemName">
-                            <el-input v-model="tempItem.itemName">
-                            </el-input>
-                        </el-form-item>
-                        <el-form-item label="事项类型(如新增/变更)" prop="itemType">
-                            <el-input v-model="tempItem.itemType">
-                            </el-input>
-                        </el-form-item>
-                        <!-- <el-form-item label="排序">
-                            <el-input v-model="tempItem.sort">
-                            </el-input>
-                        </el-form-item> -->
-                        <el-form-item label="办件类型">
-                            <el-select v-model="tempItem.sujectType" multiple filterable placeholder="个人/企业"
-                                style="width:300px">
-                                <el-option :value="Number(0)" label="个人"></el-option>
-                                <el-option :value="Number(1)" label="企业"></el-option>
-                            </el-select>
-                        </el-form-item>
-                    </el-form>
-                </div>
-                <span slot="footer" class="dialog-footer">
-                    <el-button @click="dialogUpdateVisible = false">
-                        取消
-                    </el-button>
-                    <el-button type="primary" @click="updateItem">
-                        确定
-                    </el-button>
-                </span>
-            </el-dialog>
+            <EditItemInfoDialog ref="editDialog" @changeMain="updateItem"/>
 
             <!-- 事项多版本查看导入 -->
             <el-dialog title="版本列表" :visible.sync="dialogVisibleVersion" width="80%" :close-on-click-modal="false">
@@ -232,12 +180,6 @@
                         </template>
                     </el-table-column>
                 </el-table>
-
-                <!-- <el-pagination style="margin: 40px auto 30px 500px;" background layout="total, sizes, prev, pager, next"
-                    :page-size="searchPageSize" :current-page="searchCurrentPage" :total="searchTotal"
-                    @current-change="tablePageChange" @size-change="handleSearchSizeChange"
-                    :page-sizes="[10, 15, 30, 50, 100, 200, 300]">
-                </el-pagination> -->
 
                 <span slot="footer" class="dialog-footer">
                     <el-button @click="dialogVisibleVersion = false">
@@ -272,13 +214,15 @@
 
 import { mixin } from "@/mixin/mixin"
 import Vue from "vue";
+import VueCompositionAPI from '@vue/composition-api'
+import { ref } from "@vue/composition-api";
+// 组件
+import EditItemInfoDialog from "@/views/basicInfo/basicInfoComponents/EditItemInfoDialog"
 
 import { mapGetters } from "vuex"
 import {
     listApprovalAll,
-    getByProjectId,
     addApprovalItem,
-    updateApprovalItem,
     getByApprovalItemId,
     shutApprovalItem,
     listApprovalItem,
@@ -290,6 +234,13 @@ import {
 export default {
     name: "ApprovalItem",
     mixins: [mixin],
+    components: { EditItemInfoDialog },
+    setup() {
+        const editDialog = ref(null);
+        return {
+            editDialog,
+        }
+    },
     data() {
         return {
             // 页面信息
@@ -303,7 +254,6 @@ export default {
             tableData: [],
             // 弹窗
             dialogAddVisible: false,
-            dialogUpdateVisible: false,
             tempItem: {},
             projectOptions: [],
             approvalOptions: [],
@@ -376,9 +326,6 @@ export default {
         getTime(val) {
             console.log(val);
         },
-        // handleSelectionChange(val) {
-        //     this.multipleSelection = val;
-        // },
         async handleEdit(index, row) {
 
             let res = await getByApprovalItemId({
@@ -391,12 +338,8 @@ export default {
             this.tempItem = res.data;
             this.tempItem.approvalItemId = row.approvalItemLordId;
             this.tempItem.sujectType ? this.tempItem.sujectType = this.tempItem.sujectType.split(',').map(Number) : [];
-            this.dialogUpdateVisible = true;
-            // 获取选项
-            let approvalRes = await listApprovalAll({ projectId: this.$route.query.projectId });
-            if (approvalRes.success) {
-                this.approvalOptions = approvalRes.data;
-            }
+            this.editDialog && this.editDialog.openDialog();
+            this.editDialog.tempItem = this.tempItem
         },
         async handleClickAdd() {
             this.dialogAddVisible = true;
@@ -430,21 +373,7 @@ export default {
 
         },
         async updateItem() {
-            this.tempItem.sujectType = this.tempItem.sujectType.toString();
-            this.$refs.tempItem.validate(async (valid) => {
-                if (valid) {
-                    let res = await updateApprovalItem(this.tempItem);
-                    if (res.success) {
-                        this.$message.success("事项修改成功!");
-                        this.tempItem = {};
-                        this.dialogUpdateVisible = false;
-                        await this.list();
-                    }
-                } else {
-                    console.log('error submit!!');
-                    return false;
-                }
-            });
+            await this.list();
         },
         async loadOptions() {
             // 获取选项

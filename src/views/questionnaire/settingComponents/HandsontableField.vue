@@ -213,10 +213,12 @@ export default {
                     },
                     {
                         data: 'documentsubDisplayname',
+                        editor: false,
                         className: "htCenter htMiddle"
                     },
                     {
                         data: 'fieldName',
+                        editor: false,
                         className: "htCenter htMiddle"
                     },
                     {

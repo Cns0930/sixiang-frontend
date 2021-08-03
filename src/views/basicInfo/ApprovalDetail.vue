@@ -64,7 +64,8 @@
                 </div>
                 <div v-if="!itemInfo.isPublic" class="handleBox">
                     <p class="title">保存当前事项版本</p>
-                    <el-button :disabled="itemInfo.itemStage === '验收'" type="primary" icon="el-icon-upload2" @click="dialogItemConfirmVisible = true;">保存事项
+                    <el-button :disabled="itemInfo.itemStage === '验收'" type="primary" icon="el-icon-upload2"
+                        @click="dialogItemConfirmVisible = true;">保存事项
                     </el-button>
                 </div>
                 <div v-if="!itemInfo.isPublic" class="handleBox">
@@ -74,7 +75,8 @@
                 </div>
                 <div class="handleBox">
                     <p class="title">上传事项配置到git</p>
-                    <el-button :disabled="itemInfo.itemStage === '验收'" type="primary" icon="el-icon-upload2" @click="dialogGitConfirmVisible = true;">点击上传
+                    <el-button :disabled="itemInfo.itemStage === '验收'" type="primary" icon="el-icon-upload2"
+                        @click="dialogGitConfirmVisible = true;">点击上传
                     </el-button>
                 </div>
                 <div class="handleBox">
@@ -90,89 +92,19 @@
             </div>
         </div>
         <!-- 事项编辑弹窗 -->
-        <el-dialog title="事项属性填写" :visible.sync="dialogUpdateVisible" width="50%" :close-on-click-modal="false">
-            <div class="attribute-content">
-                <el-form :model="tempItem" ref="tempItem" :inline="false" label-position="left"
-                    class="demo-form-inline">
-                    <el-form-item label="大项" prop="approvalId">
-                        <el-select v-model="tempItem.approvalId" filterable>
-                            <el-option v-for="(v,i) in approvalOptions" :key="i" :label="v.approvalName"
-                                :value="v.approvalId">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="事项编号" prop="itemNo">
-                        <el-input v-model="tempItem.itemNo">
-                        </el-input>
-                    </el-form-item>
-                    <el-form-item label="事项名称" prop="itemName">
-                        <el-input v-model="tempItem.itemName">
-                        </el-input>
-                    </el-form-item>
-                    <!-- <el-form-item label="补充业务信息描述" prop="extraInfo">
-                        <el-input v-model="tempItem.extraInfo">
-                        </el-input>
-                    </el-form-item> -->
-                    <el-form-item label="补充业务信息描述" class="ruleItem">
-                        <div v-for="(item,i) in extraInfoList" :key="i" class="ruleItems">
-                            <el-input v-model="item.keyValue" placeholder="请填入业务信息key值" clearable style="width:45%">
-                            </el-input>
-                            <el-input v-model="item.labelValue" placeholder="请填入业务信息value值" style="width:45%" clearable>
-                            </el-input>
-                            <i v-if="extraInfoList.length>1" style="margin-left:10px;color:red;cursor: pointer;"
-                                class="el-icon-delete" @click="deletInputs(i)"></i>
-                        </div>
-                        <i class="el-icon-plus" style="margin-left:10px;color:#409EFF;cursor: pointer;"
-                            @click="addExtraInfoList()"></i>
-                    </el-form-item>
-                    <el-form-item label="事项类型(如新增/变更)" prop="itemType">
-                        <el-input v-model="tempItem.itemType">
-                        </el-input>
-                    </el-form-item>
-                    <el-form-item label="排序">
-                        <el-input v-model="tempItem.sort">
-                        </el-input>
-                    </el-form-item>
-                    <el-form-item label="办件类型">
-                        <el-select v-model="tempItem.sujectType" multiple filterable placeholder="个人/企业"
-                            style="width:300px">
-                            <el-option :value="Number(0)" label="个人"></el-option>
-                            <el-option :value="Number(1)" label="企业"></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="是否制件">
-                        <el-select v-model="tempItem.isPart" placeholder="否/是" style="width:300px">
-                            <el-option :value="Number(0)" label="否"></el-option>
-                            <el-option :value="Number(1)" label="是"></el-option>
-                        </el-select>
-                        <span v-if="tempItem.isPart">制件方式：</span>
-                        <el-radio-group v-if="tempItem.isPart" v-model="tempItem.partMode">
-                            <el-radio label="邮寄">邮寄</el-radio>
-                            <el-radio label="自取">自取</el-radio>
-                            <el-radio label="邮寄or自取">邮寄or自取</el-radio>
-                        </el-radio-group>
-                    </el-form-item>
-                </el-form>
-            </div>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogUpdateVisible = false">
-                    取消
-                </el-button>
-                <el-button type="primary" @click="updateItem">
-                    确定
-                </el-button>
-            </span>
-        </el-dialog>
+        <EditItemInfoDialog ref="editDialog" @changeDetil="updateEdit" />
         <!-- 事项多版本查看导入 -->
         <el-dialog title="版本列表" :visible.sync="dialogVisibleVersion" width="80%" :close-on-click-modal="false">
             <div>
                 <h3 style="color:#606266">当前事项数据来源:</h3>
-                <i v-if="itemInfo.versionInfo" class="itemInfo-text">提交人：<i class="itemInfo-text-in">{{ itemInfo.versionInfo.userName }}</i> </i>
-                <i v-if="itemInfo.versionInfo" class="itemInfo-text">版本号：<i class="itemInfo-text-in">{{ itemInfo.versionInfo.version }}</i> </i>
+                <i v-if="itemInfo.versionInfo" class="itemInfo-text">提交人：<i
+                        class="itemInfo-text-in">{{ itemInfo.versionInfo.userName }}</i> </i>
+                <i v-if="itemInfo.versionInfo" class="itemInfo-text">版本号：<i
+                        class="itemInfo-text-in">{{ itemInfo.versionInfo.version }}</i> </i>
             </div>
             <div style="margin:10px 0px">
-                <el-input placeholder="按版本号或者用户名查询" v-model="versionorUserName" clearable style="width: 200px;margin-right:10px"
-                @change="searchVersion"></el-input>
+                <el-input placeholder="按版本号或者用户名查询" v-model="versionorUserName" clearable
+                    style="width: 200px;margin-right:10px" @change="searchVersion"></el-input>
                 <el-button icon="el-icon-search" @change="searchVersion"></el-button>
             </div>
             <el-table ref="versionTable" v-loading="loadingTable" element-loading-text="拼命加载中"
@@ -194,8 +126,7 @@
                         <el-button-group>
                             <el-button type="primary" :loading="scope.row.loadingImport"
                                 @click="confirmImport(scope.row)">确认导入</el-button>
-                            <el-button type="primary"
-                                @click="showVersionHistory(scope.row)">溯源版本</el-button>
+                            <el-button type="primary" @click="showVersionHistory(scope.row)">溯源版本</el-button>
                         </el-button-group>
                     </template>
                 </el-table-column>
@@ -276,7 +207,7 @@
             </div>
             <div style="margin-top: 20px">
                 <span>本次修改主要所属阶段：</span>
-                <el-select v-model="saveStep"  placeholder="阶段" style="width:400px">
+                <el-select v-model="saveStep" placeholder="阶段" style="width:400px">
                     <el-option v-for="item in stepOptions" :key="item.value" :value="item.value">
                     </el-option>
                 </el-select>
@@ -307,7 +238,7 @@
             </div>
             <div style="margin-top: 20px">
                 <span>本次修改主要所属阶段：</span>
-                <el-select v-model="pushStep"  placeholder="阶段" style="width:400px">
+                <el-select v-model="pushStep" placeholder="阶段" style="width:400px">
                     <el-option v-for="item in stepOptions" :key="item.value" :value="item.value">
                     </el-option>
                 </el-select>
@@ -391,9 +322,13 @@ import { mapGetters, mapState } from "vuex"
 import state from '@/vuex/home/state';
 import dayjs from "dayjs";
 import _ from "lodash"
+import VueCompositionAPI from '@vue/composition-api'
+import { ref } from "@vue/composition-api";
+// 组件
+import EditItemInfoDialog from "./basicInfoComponents/EditItemInfoDialog"
 // 接口
 import {
-    getByApprovalItemId, listApprovalAll, updateApprovalItem, submitItemInfo,
+    getByApprovalItemId, submitItemInfo,
     listVersionItem, obtainVersionItem, addSysVersionItem, listSysGitVersionLog,
     deleteSysGitVersion, listMachines, listHistoryRecord
 } from "@/api/basicInfo/approval"
@@ -403,6 +338,13 @@ import {
 export default {
     name: "ApprovalDetail",
     mixins: [mixin],
+    components: { EditItemInfoDialog },
+    setup() {
+        const editDialog = ref(null);
+        return {
+            editDialog,
+        }
+    },
     data() {
         return {
             itemId: this.$route.query.itemId,
@@ -455,12 +397,12 @@ export default {
             reuseTableData: [],
             // 阶段统计
             stepOptions: [
-                {value: '初步调研'},
-                {value: '基于问卷补充信息'},
-                {value: '帮办开发'},
-                {value: '预检开发'},
-                {value: '自测'},
-                {value: 'bug处理'},
+                { value: '初步调研' },
+                { value: '基于问卷补充信息' },
+                { value: '帮办开发' },
+                { value: '预检开发' },
+                { value: '自测' },
+                { value: 'bug处理' },
             ],
             saveStep: '',
             pushStep: ''
@@ -473,17 +415,12 @@ export default {
         ...mapState({
             itemInfo: state => state.home.item
         })
-        // formInline() {
-        //     let form =  Object.assign(this.formInline, this.itemInfo);
-        //     return form;
-        // }
     },
     async created() {
         // 获取项目信息
         await this.initProject();
         await this.init();
         await this.getApprovalDetailInfo();
-        // await this.search();
         console.log('this.itemInfo', this.itemInfo)
     },
     async mounted() {
@@ -496,8 +433,6 @@ export default {
             this.addressOptions = data;
         },
         getApprovalDetailInfo() {
-            // Object.assign(this.formInline, this.itemInfo);
-            // dayjs(cellValue).format("YYYY-MM-DD HH:mm:ss")
             this.itemInfo.createTime = dayjs(this.itemInfo.createTime).format("YYYY-MM-DD HH:mm:ss");
             this.itemInfo.updateTime = dayjs(this.itemInfo.updateTime).format("YYYY-MM-DD HH:mm:ss");
             if (this.itemInfo.extraInfo) {
@@ -509,8 +444,6 @@ export default {
                 }];
             }
             this.formInline = Object.assign({}, this.formInline, this.itemInfo)
-            // console.log('this.formInline');
-            // console.log(this.formInline);
         },
         async downLoad(url) {
             let res = await axios({
@@ -533,7 +466,6 @@ export default {
             a.href = href;
             console.log('res');
             console.log(res);
-            // let _fileName = _res.headers['Content-disposition'].split(';')[1].split('=')[1].split('.')[0]
             let _fileName = res.headers["content-disposition"]
                 .split(";")[1]
                 .split("=")[1];
@@ -545,48 +477,21 @@ export default {
             document.body.removeChild(a);
             window.URL.revokeObjectURL(href);
         },
-        // 编辑事项相关
-        addExtraInfoList() {
-            this.extraInfoList.push({
-                keyValue: '',
-                labelValue: '',
-            })
-        },
-        deletInputs(i) {
-            this.extraInfoList.splice(i, 1);
-        },
         async edit() {
-            // 获取选项
-            let approvalRes = await listApprovalAll({ projectId: this.$route.query.projectId });
-            if (approvalRes.success) {
-                this.approvalOptions = approvalRes.data;
-            }
+            this.formInline.sujectType ? this.formInline.sujectType = this.formInline.sujectType.split(',').map(Number) : [];
             this.tempItem = _.cloneDeep(this.formInline);
-            this.tempItem.approvalItemId = this.tempItem.approvalItemLordId;
-            this.extraInfoList = this.tempItem.extraInfoList;
-            this.tempItem.sujectType ? this.tempItem.sujectType = this.tempItem.sujectType.split(',').map(Number) : [];
-            this.dialogUpdateVisible = true;
+            this.editDialog && this.editDialog.openDialog();
+            this.editDialog.tempItem = this.tempItem
         },
-        async updateItem() {
-            this.tempItem.extraInfo = JSON.stringify(this.extraInfoList);
-            this.tempItem.sujectType = this.tempItem.sujectType.toString();
-            if (!this.tempItem.isPart) {
-                this.tempItem.partMode = ''
+        // 页面更新编辑结果
+        async updateEdit() {
+            let result = await getByApprovalItemId({ approvalItemId: this.itemId });
+            if (!result.success) {
+                this.$message({ type: "warning", message: "事项信息更新失败" });
+                return;
             }
-            let res = await updateApprovalItem(this.tempItem);
-            if (res.success) {
-                this.$message.success("事项修改成功!");
-                this.dialogUpdateVisible = false;
-                let result = await getByApprovalItemId({ approvalItemId: this.itemId });
-                if (!result.success) {
-                    this.$message({ type: "warning", message: "事项信息更新失败" });
-                    return;
-                }
-                this.$store.commit("changeItem", result.data);
-                this.getApprovalDetailInfo();
-            } else {
-                this.$message.success("事项修改失败!");
-            }
+            this.$store.commit("changeItem", result.data);
+            this.getApprovalDetailInfo();
         },
         // 上传事项配置到git
         async upToGit() {
@@ -712,7 +617,7 @@ export default {
         async showVersionHistory(row) {
             console.log('row')
             console.log(row)
-            let res = await listHistoryRecord({versionItemId: row.id})
+            let res = await listHistoryRecord({ versionItemId: row.id })
             if (!res.success) return
             this.versionHistoryTableData = res.data
             this.versionHistoryDialogVisible = true
@@ -777,7 +682,7 @@ export default {
                 this.reuseTableData = [];
                 this.tempItemId = null;
                 this.tempProjectId = null,
-                this.reuseDialogVisible = false
+                    this.reuseDialogVisible = false
             }
         },
         async selectProject() {

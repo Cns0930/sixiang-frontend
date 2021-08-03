@@ -31,24 +31,24 @@ export default {
             const e = event || window.event || arguments.callee.caller.arguments[0]
             if (!e) return
             const { key, keyCode } = e
-            console.log(`键入了${key}在页面：`, this.$route.path)
+            // console.log(`键入了${key}在页面：`, this.$route.path)
             this.updateTimeList()
         },
         //  滑轮事件
         handleScroll() {
             let e = document.body.scrollTop || document.documentElement.scrollTop
             if (!e) return
-            console.log('滑动了，在页面：', this.$route.path)
+            // console.log('滑动了，在页面：', this.$route.path)
             this.updateTimeList()
         },
         // 点击事件
         handleClick() {
-            console.log('点击了，在页面：', this.$route.path)
+            // console.log('点击了，在页面：', this.$route.path)
             this.updateTimeList()
         },
         // 更新事件统计list
         updateTimeList() {
-            console.log('route', this.$route);
+            // console.log('route', this.$route);
             store.commit('updateClosureTime', { route: this.$route });
         },
         // 发送timeList
@@ -61,7 +61,7 @@ export default {
                 return
             }
             store.commit('clearTimeList');
-            console.log('发送了')
+            console.log('发送了timeList', timeList)
         }
     }
 }

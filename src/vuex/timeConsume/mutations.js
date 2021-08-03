@@ -71,13 +71,13 @@ const mutations = {
         state.timeList = {
             startTime: new Date().getTime()
         }
-        console.log('222222 clearTimeList', state.timeList)
+        // console.log('222222 clearTimeList', state.timeList)
     },
     // 点击 滚动滑轮 键盘敲击 更新对应路由对应事项id的closureTime
     updateClosureTime(state, payload) {
         let timestamp = new Date().getTime()
         let { path, query } = payload.route
-        console.log('path query', path, query)
+        // console.log('path query', path, query)
         let itemId = query.hasOwnProperty('itemId') ? query.itemId : '-1'
         if (state.timeList.hasOwnProperty(path)) {
             let len = state.timeList[path][itemId].length
@@ -91,7 +91,7 @@ const mutations = {
                 }
             ]
         }
-        console.log('333333333 updateTimeList', state.timeList)
+        // console.log('333333333 updateTimeList', state.timeList)
     }
 }
 
