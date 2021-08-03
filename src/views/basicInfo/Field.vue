@@ -76,7 +76,7 @@
             <el-table-column prop="isRequired" label="是否必填" :formatter="isRequiredFormatter"></el-table-column>
             <el-table-column prop="isFront" label="是否前端字段" :formatter="isRequiredFormatter" show-overflow-tooltip>
             </el-table-column>
-            <el-table-column prop="label" label="设计稿字段名称" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="label" label="产品前端字段名称" show-overflow-tooltip></el-table-column>
             <el-table-column prop="fieldNo" label="字段编号" show-overflow-tooltip></el-table-column>
             <el-table-column prop="valueSource" label="字段值来源" show-overflow-tooltip></el-table-column>
             <el-table-column prop="defaultValue" label="默认值" show-overflow-tooltip></el-table-column>
@@ -90,13 +90,13 @@
             <el-table-column prop="isScreenshot" label="是否为截图" :formatter="isRequiredFormatter" show-overflow-tooltip>
             </el-table-column>
             <el-table-column prop="screenshotInfo" label="截图信息" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="sort" label="4W分类" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="classify" label="4W归类" show-overflow-tooltip></el-table-column>
+            <!-- <el-table-column prop="sort" label="4W分类" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="classify" label="4W归类" show-overflow-tooltip></el-table-column> -->
             <el-table-column prop="checkpointSource" label="来源" show-overflow-tooltip></el-table-column>
             <el-table-column prop="checkpointSourceField" label="来源字段" show-overflow-tooltip></el-table-column>
             <el-table-column prop="isOcr" label="是否OCR" :formatter="isRequiredFormatter" show-overflow-tooltip>
             </el-table-column>
-            <el-table-column prop="fieldComponentType" label="字段格式" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="fieldComponentType" label="前端组件" show-overflow-tooltip></el-table-column>
             <el-table-column prop="optionsValue" label="枚举值" show-overflow-tooltip></el-table-column>
             <el-table-column prop="frontDescriptionInfo" label="前端字段填写逻辑" show-overflow-tooltip></el-table-column>
             <el-table-column prop="checkpointFieldMeaning" label="关联公共信息点" show-overflow-tooltip></el-table-column>
@@ -172,13 +172,13 @@
                         <el-option label="否" :value="Number(0)"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="设计稿字段名称">
+                <el-form-item label="产品前端字段名称">
                     <el-input v-model="addForm.label"></el-input>
                 </el-form-item>
                 <el-form-item label="前端模块">
                     <el-input v-model="addForm.module" placeholder="只允许填入纯数字"></el-input>
                 </el-form-item>
-                <el-form-item label="字段格式">
+                <el-form-item label="前端组件">
                     <el-input v-model="addForm.fieldComponentType"></el-input>
                 </el-form-item>
                 <el-form-item label="枚举值">
@@ -207,12 +207,12 @@
                             :value="v.value"> </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="4W分类">
+                <!-- <el-form-item label="4W分类">
                     <el-input v-model="addForm.sort"></el-input>
                 </el-form-item>
                 <el-form-item label="4W归类">
                     <el-input v-model="addForm.classify"></el-input>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="来源">
                     <el-select v-model="addForm.checkpointSource" clearable placeholder="来源（客户自带/帮办生成）">
                         <el-option label="客户自带" value="客户自带"></el-option>
@@ -298,13 +298,13 @@
                         <el-option label="否" :value="Number(0)"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="设计稿字段名称">
+                <el-form-item label="产品前端字段名称">
                     <el-input v-model="editForm.label"></el-input>
                 </el-form-item>
                 <el-form-item label="前端模块">
                     <el-input v-model="editForm.module" placeholder="只允许填入纯数字"></el-input>
                 </el-form-item>
-                <el-form-item label="字段格式">
+                <el-form-item label="前端组件">
                     <el-input v-model="editForm.fieldComponentType"></el-input>
                 </el-form-item>
                 <el-form-item label="枚举值">
@@ -339,12 +339,12 @@
                             :value="v.value"> </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="4W分类">
+                <!-- <el-form-item label="4W分类">
                     <el-input v-model="editForm.sort"></el-input>
                 </el-form-item>
                 <el-form-item label="4W归类">
                     <el-input v-model="editForm.classify"></el-input>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="来源">
                     <el-select v-model="editForm.checkpointSource" clearable placeholder="来源（客户自带/帮办生成）">
                         <el-option label="客户自带" value="客户自带"></el-option>
@@ -393,7 +393,7 @@
             <el-table class="workTable" :data="tableDataDown" style="width:95%;" border tooltip-effect="dark">
                 <el-table-column label="序号" type="index" width="60" :index="indexMethod"></el-table-column>
                 <el-table-column prop="fieldNo" label="字段编号" width="200"></el-table-column>
-                <el-table-column prop="label" label="设计稿字段名称"></el-table-column>
+                <el-table-column prop="label" label="产品前端字段名称"></el-table-column>
                 <el-table-column prop="fieldComponentName" label="组件类型" fixed="right">
                     <template slot-scope="scope">
                         <el-select v-model="scope.row.fieldComponentName" clearable placeholder="请选择组件类型"

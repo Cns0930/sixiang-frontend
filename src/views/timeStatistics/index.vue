@@ -61,7 +61,7 @@
                 <div id="type" style="width: 600px;height:400px;"></div>
                 <div id="group" style="width: 600px;height:400px;"></div>
             </div>
-            <div class="sampleTable">
+            <!-- <div class="sampleTable">
                 <el-table ref="multipleTable" border :data="tableData" tooltip-effect="dark" highlight-current-row
                     style="width: 100%"
                     :header-cell-style="{background: '#f9faff',color:'#333',fontFamily:'MicrosoftYaHeiUI',fontSize:'15px',fontWeight:900}"
@@ -83,7 +83,7 @@
                     <el-table-column prop="operatingTime" label="时长（单位 秒）">
                     </el-table-column>
                 </el-table>
-            </div>
+            </div> -->
         </div>
     </div>
 </template>
