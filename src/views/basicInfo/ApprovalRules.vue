@@ -486,7 +486,7 @@ import { getApprovalSub, listApprovalSubAll } from "../../api/basicInfo/approval
 import { listCheckpoint } from '@/api/basicInfo/field';
 import {
     listRule, addRule, getByRuleId, updateRule, deleteGlobalCheckpoint, AddSubitemAndRule, UpdateSubitemAndRule, saveSubitemAndRuleBatch,
-    listSubitemNameByRuleId, listDocumentSubNameByCode, listDocumentSubByItemId, listGlobalDcumentSub
+    listSubitemNameByRuleId, listDocumentSubNameByCode, listDocumentSubByItemId, listGlobalDcumentSub, listRuleType
 } from '@/api/basicInfo/ApprovalRules'
 import { mapGetters } from "vuex"
 export default {
@@ -811,6 +811,7 @@ export default {
             }
             this.editDialogVisible = true;
             this.checkpointList = []
+            await this.initJudgeList();
             this.approvalSubTextChange = true
         },
         // 多选
@@ -850,8 +851,9 @@ export default {
                 this.ruleArgsList = [{ ruleArgs: '' }]
             this.approvalSubTextChange = true
         },
-        handleAdd() {
+        async handleAdd() {
             this.addDialogVisible = true;
+            await this.initJudgeList();
             this.checkpointList = []
         },
         async add() {
@@ -932,6 +934,14 @@ export default {
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
+        },
+        // 加载判断方式选项
+        async initJudgeList(){
+            let res = await listRuleType();
+            console.log(res);
+            if(res.success){
+                this.sortList = Array.from(new Set(res.data));
+            }
         }
     },
 
