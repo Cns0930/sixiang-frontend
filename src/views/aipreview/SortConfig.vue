@@ -79,6 +79,16 @@
                     <el-input v-model="addForm.assistKeyword"></el-input>
                 </el-form-item>
                 <el-form-item label="排除关键字">
+                    <span slot="label">
+                        排除关键字
+		                <el-tooltip placement="top">
+                            <div slot="content">
+                            只能有两种格式:  {***}|{***}|{***} 或者 x_****** <br/>
+                            其中***为材料名称关键字
+                            </div>
+			             <i class="el-icon-question"></i>
+                        </el-tooltip>
+                     </span>
                     <el-input v-model="addForm.excludeKeyword"></el-input>
                 </el-form-item>
                 <el-form-item label="多页编号">
@@ -106,6 +116,16 @@
                     <el-input v-model="editForm.assistKeyword"></el-input>
                 </el-form-item>
                 <el-form-item label="排除关键字">
+                    <span slot="label">
+                        排除关键字
+		                <el-tooltip placement="top">
+                            <div slot="content">
+                            只能有两种格式:  {***}|{***}|{***} 或者 x_****** <br/>
+                            其中***为材料名称关键字
+                            </div>
+			             <i class="el-icon-question"></i>
+                        </el-tooltip>
+                     </span>
                     <el-input v-model="editForm.excludeKeyword"></el-input>
                 </el-form-item>
                 <el-form-item label="多页编号">
