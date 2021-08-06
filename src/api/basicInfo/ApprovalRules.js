@@ -36,5 +36,6 @@ export const listDocumentSubByItemId = params => { return axios.get(`/ss/globalD
 //  查询所有子文档-分页-可根据子材料编号,子材料名称(模糊),归类(模糊)查询
 export const listGlobalDcumentSub = params => { return axios.get(`/ss/globalDocumentSubList/listGlobalDcumentSub`, {params}).then(res=>res.data); };
 
-
+// 获取判断方式列表
+export const listRuleType = params => { return axios.get(`/ss/rule/listRuleType`, {params}).then(res=>res.data); };
 

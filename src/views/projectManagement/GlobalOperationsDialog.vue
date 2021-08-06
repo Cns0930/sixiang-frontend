@@ -12,10 +12,12 @@
                 </el-upload>
             </div> -->
             <div class="block" v-show="tableVisible">
+                <span>*如有标红数据，表示该事项没有对应git提交</span>
                 <el-table ref="multipleTable" border :data="tableData" tooltip-effect="dark" highlight-current-row
                     style="width: 100%"
                     :header-cell-style="{background: '#f9faff',color:'#333',fontFamily:'MicrosoftYaHeiUI',fontSize:'15px',fontWeight:900}"
-                    :row-style="{fontSize:'14px',color:'#666',fontFamily:'MicrosoftYaHeiUI'}">
+                    :row-style="{fontSize:'14px',color:'#666',fontFamily:'MicrosoftYaHeiUI'}"
+                    :row-class-name="tableRowClassName">
                     <el-table-column type="index" label="序号" :index="indexMethod" width="60">
                     </el-table-column>
                     <el-table-column prop="projectName" label="项目名称">
@@ -194,6 +196,16 @@ export default {
         //     this.loading = false;
         //     return false;
         // },
+
+        tableRowClassName({ row, rowIndex }) {
+            if (row) {
+                if (row.developer === null || row.developer === '') {
+                    return 'red-row'
+                } else {
+                    return ''
+                }
+            }
+        }
     }
 }
 </script>
@@ -224,5 +236,9 @@ export default {
             margin: 20px;
         }
     }
+    .el-table .red-row {
+         color:#ff5160;
+        background:#ffeaea;
+    }   
 }
 </style>
