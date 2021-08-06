@@ -26,3 +26,6 @@ export const updateCheckpoint = params => { return axios.post(`/ai/aiCheckpoint/
 
 //  删除ai_checkpoint
 export const deleteCheckpoint = params => { return axios.delete(`/ai/aiCheckpoint/deleteCheckpoint`, {params}).then(res=>res.data); };
+
+// 批量删除ai_checkpoint
+export const deleteCheckpointBatch = params => { return axios.post(`/ai/aiCheckpoint/deleteCheckpointBatch`, params).then(res=>res.data); };

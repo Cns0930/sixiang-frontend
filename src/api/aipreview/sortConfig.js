@@ -26,3 +26,6 @@ export const updateSortconfig = params => { return axios.post(`/ai/aiSortconfig/
 
 // 删除ai_sortconfig
 export const deleteSortconfig = params => { return axios.delete(`/ai/aiSortconfig/deleteSortconfig`, {params}).then(res=>res.data); };
+
+// 批量删除ai_sortconfig
+export const deleteSortconfigBatch = params => { return axios.post(`/ai/aiSortconfig/deleteSortconfigBatch`, params).then(res=>res.data); };

@@ -11,6 +11,7 @@
                             <div class="case-content">
                                 <div class="case-header">
                                     <div class="case-header-left">材料选择</div>
+                                    <el-button @click="updataAll(item)" :loading="loadingOcr" class="case-header-right">批量更新ocr</el-button>
                                 </div>
                                 <div class="case-rows">
                                     <div class="history-navigation">
@@ -583,7 +584,7 @@ import VueCompositionAPI from '@vue/composition-api'
 import { ref } from "@vue/composition-api";
 import ResultsPresentationDialog from "./ResultsPresentationDialog"
 // 接口
-import { getFileList, uploadOcrById } from "@/api/basicInfo/sample/document"
+import { getFileList, uploadOcrById, uploadOcrByIdsBatch } from "@/api/basicInfo/sample/document"
 import {
     listCheckpoint, updateCheckpoint, addCheckpoint
 } from "@/api/aipreview/checkPoint.js"
@@ -615,6 +616,7 @@ export default {
             // 文件表格相关
             tableData: [],
             multipleSelection: [],
+            tempIds: [],
             filePath: this.$route.query.filePath ? this.$route.query.filePath : '/',
             filePathQueue: this.$route.query.filePathQueue ? JSON.parse(this.$route.query.filePathQueue) : [{ path: '/', name: '根目录', index: 0 }],
             // 图片预览相关
@@ -678,6 +680,9 @@ export default {
             // 抽屉
             showDrawer: false,
             drawerRowInfo: {},
+
+            // ocr loading
+            loadingOcr: false,
         }
     },
     computed: {
@@ -705,7 +710,7 @@ export default {
                 item.valueUrl = process.env.VUE_APP_BASE_IP + `/docInfo/getPic?fileId=${item.fileId}`;
                 item.imgWidth = '100%';
             })
-            console.log('multipleSelection', this.multipleSelection);
+            console.log('multipleSelection33', this.multipleSelection);
         },
         // 加载下拉框选项
         async getOptions() {
@@ -790,6 +795,31 @@ export default {
             if (!result.success) return;
             result.data.unshift('- - - - - OCR结果已更新 - - - - - - ');
             item.ocrResultShow = result.data;
+        },
+
+        // 批量更新ocr结果
+        async updataAll() {
+            if (this.multipleSelection.length === 0) {
+                this.$message.warning('请先选择材料再更新')
+                return
+            }
+            this.loadingOcr = true;
+            let ids = this.multipleSelection.map( item => {return item.id});
+            this.tempIds = ids; // 恢复选项用
+            let res = await uploadOcrByIdsBatch({idList: ids});
+            if(!res.success) {
+                this.$message.warning('ocr更新失败')
+                this.loadingOcr = false;
+                return
+            }
+            this.$message.success('ocr更新成功')
+            await this.getFileListTable()
+            this.loadingOcr = false;
+            this.tableData.forEach( row => {
+                if(this.tempIds.includes(row.id)) {
+                    this.$refs.fileTable.toggleRowSelection(row);
+                }
+            })
         },
 
 
@@ -1159,6 +1189,10 @@ export default {
                             }
                             .case-header-mid {
                                 width: 70%;
+                                margin-bottom: 10px;
+                            }
+                            .case-header-right {
+                                margin-left: 12px;
                                 margin-bottom: 10px;
                             }
                         }

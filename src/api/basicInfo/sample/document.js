@@ -21,3 +21,5 @@ export const uploadOcrById = params => { return axios.get(`/docInfo/uploadOcrByI
 // 导入标定数据
 export const importTag = params => { return axios.get(`/docInfo/importTag`, {params}).then(res=>res.data); };
 
+// 批量更新样例图片ocr
+export const uploadOcrByIdsBatch = params => { return axios.post(`/docInfo/uploadOcrByIdsBatch`, params).then(res=>res.data); };

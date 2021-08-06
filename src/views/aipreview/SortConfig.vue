@@ -18,6 +18,9 @@
                         @click="upLoad()" style="margin-left: 20px;">Excel上传
                     </el-button>
                 </el-upload>
+                <el-button type="danger" style="margin-left: 20px" @click="deleteSortConfigAll">
+                    批量删除
+                </el-button>
             </div>
             <div class="sampleTable">
                 <el-table ref="multipleTable" border :data="tableData" tooltip-effect="dark" highlight-current-row
@@ -127,7 +130,7 @@ import { mixin } from "@/mixin/mixin"
 // 接口
 import {
     listSortconfig, getBySortconfigId, getSortconfig, getSortconfigJson,
-    addSortconfig, updateSortconfig, deleteSortconfig
+    addSortconfig, updateSortconfig, deleteSortconfig, deleteSortconfigBatch
 } from "@/api/aipreview/sortConfig"
 import { listItemAndDocumentSub } from '@/api/basicInfo/approvalSub'
 
@@ -286,6 +289,22 @@ export default {
             let res = await deleteSortconfig({ sortconfigId: row.sortconfigId  });
             if (!res.success) return;
             this.getSortConfigList();
+        },
+        // 批量删除
+        async deleteSortConfigAll() {
+            if(this.multipleSelection.length === 0) {
+                this.$message.warning('请先选择要删除的sortConfig')
+                return
+            }
+            console.log('this.multipleSelection')
+            console.log(this.multipleSelection)
+            let ids = this.multipleSelection.map( item => {return item.sortconfigId})
+            console.log('ids')
+            console.log(ids)
+            let res = await deleteSortconfigBatch({idList: ids})
+            if(!res.success) return
+            this.$message.success('批量删除成功')
+            this.getSortConfigList()
         },
         // 生成Json
         async downLoadJson(url) {

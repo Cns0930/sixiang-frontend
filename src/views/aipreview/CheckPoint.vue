@@ -23,6 +23,9 @@
                         @click="upLoad()" style="margin-left: 20px;">Excel上传
                     </el-button>
                 </el-upload>
+                <el-button type="danger" style="margin-left: 20px" @click="deleteCheckPointAll">
+                    批量删除
+                </el-button>
             </div>
             <div class="sampleTable">
                 <el-table ref="multipleTable" border :data="tableData" tooltip-effect="dark" highlight-current-row
@@ -347,7 +350,7 @@ import { mixin } from "@/mixin/mixin"
 // 接口
 import {
     listCheckpoint, getByCheckpointIdid, getCheckpoint, getCheckpointJson,
-    addCheckpoint, updateCheckpoint, deleteCheckpoint
+    addCheckpoint, updateCheckpoint, deleteCheckpoint, deleteCheckpointBatch
 } from "@/api/aipreview/checkPoint.js"
 import { listItemAndDocumentSub } from '@/api/basicInfo/approvalSub'
 import { listFieldUnionMaterial } from '@/api/basicInfo/field'
@@ -573,6 +576,22 @@ export default {
             let res = await deleteCheckpoint({ checkpointId: row.checkpointId });
             if (!res.success) return;
             this.getListCheckpoint();
+        },
+        // 批量删除
+        async deleteCheckPointAll() {
+            if(this.multipleSelection.length === 0) {
+                this.$message.warning('请先选择要删除的checkpoint')
+                return
+            }
+            console.log('this.multipleSelection')
+            console.log(this.multipleSelection)
+            let ids = this.multipleSelection.map( item => {return item.checkpointId})
+            console.log('ids')
+            console.log(ids)
+            let res = await deleteCheckpointBatch({idList: ids})
+            if(!res.success) return
+            this.$message.success('批量删除成功')
+            this.getListCheckpoint()
         },
         // 生成Json
         async downLoadJson(url) {
