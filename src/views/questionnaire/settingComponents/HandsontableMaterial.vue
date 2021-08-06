@@ -67,7 +67,7 @@ export default {
             // handsontable
             hot: null,
             exampleConsole: '点击载入以加载数据',
-            autoSave: false,
+            autoSave: true,
         }
     },
     async created() {
@@ -119,7 +119,7 @@ export default {
             console.log(this.tableDataMaterial)
             this.setHotTable()
             this.hot.loadData(this.tableDataMaterial);
-            this.exampleConsole = '数据已加载，实时保存未开启';
+            this.exampleConsole = '数据已加载，实时保存已开启';
         },
         // load
         load() {
