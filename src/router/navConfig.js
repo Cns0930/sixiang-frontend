@@ -76,6 +76,10 @@ const topMenuList = [
                 path: "/approval",
                 label: "大项管理",
             },
+            {
+                path: "/tagsmanage",
+                label: "标签管理",
+            },
         ],
         order: 2
     },

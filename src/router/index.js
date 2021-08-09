@@ -174,6 +174,11 @@ const routes = [
                 component: resolve => require(['@/views/publicManagement/ApprovalManagement.vue'],resolve),
             },
             {
+                path: '/tagsmanage',
+                name: 'TagsManage',
+                component: resolve => require(['@/views/publicManagement/tagsManagement/TagsManage.vue'],resolve),
+            },
+            {
                 path: '/document',
                 name: 'SecondaryDocument',
                 component: SecondaryDocument,

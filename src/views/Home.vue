@@ -15,8 +15,7 @@
                     v-model="menu.visible">
                     <div class="dropdown-btn -center" slot="reference">{{menu.label}}<i class="el-icon-arrow-down"></i></div>
                     <ul class="dropdown-list">
-                        <li v-for="item,k in menu.children" @click="handleJump(item.path)" :key="k">{{item.label}}</li>
-                       
+                        <li v-for="item,k in menu.children" @click="handleJump(item.path)" :key="k" v-show="canItShow(item.label)">{{item.label}}</li>
                     </ul>
                 </el-popover>
                 <!-- <el-popover
@@ -168,6 +167,18 @@ export default {
                 path: path,
                 query: { projectId: this.$route.query.projectId || this.projectInfo.projectId }
             });
+        },
+        // 校验下拉项目是否展示
+        canItShow(label) {
+            if (label === '标签管理') {
+                if (this.roles.includes('admin') || this.roles.includes('test') ) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return true;
+            }
         }
     }
 };

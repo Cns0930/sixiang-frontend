@@ -55,6 +55,21 @@
                     </el-table-column>
                     <el-table-column prop="itemStage" label="事项阶段">
                     </el-table-column>
+                    <el-table-column prop="projecLabelList" label="事项标签" width="220">
+                        <template slot-scope="scope">
+                            <div v-for="(item,i) in scope.row.projectLabelNameList" :key="i">
+                                <el-tag>{{item}}</el-tag>
+                            </div>
+                            <div>
+                                <el-select v-model="scope.row.projectLabelIdList" multiple collapse-tags style=""
+                                    placeholder="请选择" @change="changeTags(scope.row)">
+                                    <el-option v-for="item in tagOptions" :key="item.projecLabelId" :label="item.labelName"
+                                        :value="item.projecLabelId">
+                                    </el-option>
+                                </el-select>
+                            </div>
+                        </template>
+                    </el-table-column>
                     <!-- <el-table-column prop="itemStatus" label="状态" sortable  width="50">
                     </el-table-column> -->
                     <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable>
@@ -159,7 +174,7 @@
             </el-dialog>
 
             <!-- 编辑窗口 -->
-            <EditItemInfoDialog ref="editDialog" @changeMain="updateItem"/>
+            <EditItemInfoDialog ref="editDialog" @changeMain="updateItem" />
 
             <!-- 事项多版本查看导入 -->
             <el-dialog title="版本列表" :visible.sync="dialogVisibleVersion" width="80%" :close-on-click-modal="false">
@@ -195,7 +210,7 @@
                         <el-option value="提测" label="提测"></el-option>
                         <el-option value="验收" label="验收"></el-option>
                     </el-select>
-                    
+
                 </div>
                 <span slot="footer" class="dialog-footer">
                     <el-button @click="dialogVisibleStage = false">
@@ -228,8 +243,10 @@ import {
     listApprovalItem,
     exApprovalItem,
     listVersionItem,
-    obtainVersionItem, isNewItemVersion,updateItemStage
+    obtainVersionItem, isNewItemVersion, updateItemStage
 } from "../../api/basicInfo/approval";
+
+import { listProjecLabel, saveOrUpdateLabelAndApprovalitem } from "@/api/basicInfo/tags"
 
 export default {
     name: "ApprovalItem",
@@ -252,6 +269,7 @@ export default {
             timeRange: [],
             // 表格
             tableData: [],
+            tagOptions: [],
             // 弹窗
             dialogAddVisible: false,
             tempItem: {},
@@ -317,8 +335,8 @@ export default {
         },
         // 确认阶段更改
         async confirmStage() {
-            let res = await updateItemStage({approvalItemLordId: this.tempRow.approvalItemLordId, itemStage: this.tempStage})
-            if(!res.success) return
+            let res = await updateItemStage({ approvalItemLordId: this.tempRow.approvalItemLordId, itemStage: this.tempStage })
+            if (!res.success) return
             this.$message.success('修改阶段成功')
             this.list()
             this.dialogVisibleStage = false
@@ -385,6 +403,22 @@ export default {
             if (approvalRes.success) {
                 this.approvalOptions = approvalRes.data;
             }
+            let tagRes = await listProjecLabel({ projectId: this.$route.query.projectId });
+            if (tagRes.success) {
+                this.tagOptions = tagRes.data;
+            }
+        },
+        // 给事项分配标签
+        async changeTags(row) {
+            let params = {
+                approvalItemLordId: row.approvalItemLordId,
+                projecLabelList: row.projectLabelIdList
+            }
+            let res = await saveOrUpdateLabelAndApprovalitem(params)
+            if(!res.success) return;
+            this.$message.success('编辑成功')
+            await this.list()
+
         },
         async searchItem() {
             this.currentPage = 1;
