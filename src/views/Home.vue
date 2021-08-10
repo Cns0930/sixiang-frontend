@@ -105,18 +105,13 @@ export default {
         },
         topMenuList() {
             let topMenuList = generaterTopMenuList(this.roles);
-            if (this.$route.path === '/project' || this.$route.path === '/document'){
-                topMenuList = topMenuList.filter(item => 
-                    item.label !== '事项管理' && item.label !== '文档管理' && item.label !== '说明'
-                )
-            }
-            else if (this.$route.path === '/user'){
+            if (this.$route.path === '/project' || this.$route.path === '/document' || this.$route.path === '/user'
+                || this.$route.path === '/timeconsume' || this.$route.path === '/weibanju'){
                 topMenuList = topMenuList.filter(item => 
                     item.label !== '事项管理' && item.label !== '文档管理' && item.label !== '说明'
                 )
             }
             return topMenuList
-
         }
          
     },
