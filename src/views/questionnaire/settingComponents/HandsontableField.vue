@@ -23,7 +23,7 @@
             </div>
             <div class="tablePagination">
                 <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                    :current-page.sync="currentPage" :page-size="pageSize" :page-sizes="[5, 10, 20, 50, 100]"
+                    :current-page.sync="currentPage" :page-size="pageSize" :page-sizes="[10, 20, 50, 100, 200]"
                     layout="total, sizes, prev, pager, next" :total="totalCount"></el-pagination>
             </div>
         </div>
@@ -60,7 +60,7 @@ export default {
             serchType: '',
             keyWord: '',
             // 分页
-            pageSize: 100,
+            pageSize: JSON.parse(localStorage.getItem('defaultPageSize'))?.hasOwnProperty('HandsontableField') ? JSON.parse(localStorage.getItem('defaultPageSize')).HandsontableField : 100,
             currentPage: 1,
             totalCount: 0,
             tableDataField: [],
@@ -80,6 +80,10 @@ export default {
         async handleSizeChange(val) {
             // console.log(`每页 ${val} 条`);
             this.pageSize = val;
+            // 更新页面条数的缓存
+            let temp = JSON.parse(localStorage.getItem('defaultPageSize'));
+            temp.HandsontableField = val
+            localStorage.setItem("defaultPageSize", JSON.stringify(temp));
             this.currentPage = 1;
             await this.getFieldSettingList();
         },

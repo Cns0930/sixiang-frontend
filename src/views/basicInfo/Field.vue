@@ -113,7 +113,7 @@
             </el-table-column>
         </el-table>
         <div class="tablePagination">
-            <el-pagination @current-change="handleCurrentChange" @size-change="handleSizeChange"
+            <el-pagination @current-change="handleCurrentChange" @size-change="handleSizeChange" :page-sizes="[10, 20, 50, 100, 200]"
                 :current-page.sync="currentPage" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
                 :total="total"></el-pagination>
         </div>
@@ -536,7 +536,7 @@ export default {
             isCheckpoint: '',
             tableData: [],
             material_change: "",
-            pageSize: 50,
+            pageSize: JSON.parse(localStorage.getItem('defaultPageSize'))?.hasOwnProperty('FieldItem') ? JSON.parse(localStorage.getItem('defaultPageSize')).FieldItem : 100,
             currentPage: 1,
             typeMaterialOptions: [],
             globalCheckpointOptions: [],
@@ -659,6 +659,9 @@ export default {
         },
         handleSizeChange(val) {
             this.pageSize = val;
+            let temp = JSON.parse(localStorage.getItem('defaultPageSize'));
+            temp.FieldItem = val
+            localStorage.setItem("defaultPageSize", JSON.stringify(temp));
             this.reloadTable();
         },
         // 查询当前事项下的所有材料 

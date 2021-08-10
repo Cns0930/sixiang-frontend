@@ -16,6 +16,12 @@ export default {
             localTimestamp: null,
         }
     },
+    created() {
+        if (!localStorage.getItem('defaultPageSize')) {
+            let temp = {};
+            localStorage.setItem("defaultPageSize", JSON.stringify(temp));
+        }
+    },
     mounted() {
         window.addEventListener('keyup', this.handleKeyup)
         window.addEventListener('scroll', _.debounce(this.handleScroll, 100, {
