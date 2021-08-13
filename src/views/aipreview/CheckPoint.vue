@@ -387,7 +387,8 @@ export default {
             screenshotInfoOptions: [
                 { value: '是否签字', label: '是否签字' }, { value: '是否盖章', label: '是否盖章' }, { value: '是否填写日期', label: '是否填写日期' }, { value: '是否粘贴身份证', label: '是否粘贴身份证' }, { value: '提取身份证姓名', label: '提取身份证姓名' }, { value: '提取身份证有效期限', label: '提取身份证有效期限' },
                 { value: '是否已填写', label: '是否已填写' }, { value: '提取身份证住址', label: '提取身份证住址' }, { value: '提取身份证公民身份号码', label: '提取身份证公民身份号码' }, { value: '提取身份证性别', label: '提取身份证性别' }, { value: '提取身份证民族', label: '提取身份证民族' },
-                { value: '提取身份证出生', label: '提取身份证出生' }, { value: '是否勾选', label: '是否勾选' }, { value: '勾选内容_right', label: '勾选内容_right' }, { value: '勾选内容_left', label: '勾选内容_left' }, { value: '是否粘贴证件照片', label: '是否粘贴证件照片' }, { value: '是否盖红章', label: '是否盖红章' }
+                { value: '提取身份证出生', label: '提取身份证出生' }, { value: '是否勾选', label: '是否勾选' }, { value: '勾选内容_right', label: '勾选内容_right' }, { value: '勾选内容_left', label: '勾选内容_left' }, { value: '是否粘贴证件照片', label: '是否粘贴证件照片' }, { value: '是否盖红章', label: '是否盖红章' },
+                { value: 'NER', label: 'NER' } ,{ value: '打印或手写', label: '打印或手写' }
             ],
             sortOptions: [
                 { value: 'WHO', label: 'WHO' }, { value: 'WHERE', label: 'WHERE' }, { value: 'WHAT', label: 'WHAT' },
