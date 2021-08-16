@@ -110,3 +110,6 @@ export const listApprovalItemByStage = params => {return axios.get('/ss/approval
 
 // 查询下载git压缩包清单 
 export const gitZipchecklistByLordId = params => {return axios.post('/ss/Import/gitZipchecklistByLordId',params).then(res => res.data)}
+
+// 全局查找事项
+export const listApprovalItemOverall = params => {return axios.get('/ss/approvalItem/listApprovalItemOverall',{params}).then(res => res.data)}

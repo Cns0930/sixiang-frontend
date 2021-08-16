@@ -6,9 +6,9 @@
                 <el-input placeholder="搜索项目" v-model="filterKeyword" clearable style="width: 200px;"
                     @change="loadProjects">
                 </el-input>
-                <el-input placeholder="搜索事项编号" v-model="itemNoKeyword" clearable style="width: 200px;"
+                <!-- <el-input placeholder="搜索事项编号" v-model="itemNoKeyword" clearable style="width: 200px;"
                     @change="loadProjects">
-                </el-input>
+                </el-input> -->
                 <el-button @click="loadProjects">
                     搜索
                 </el-button>
@@ -20,6 +20,13 @@
                         全局操作
                     </el-button>
                 </div>
+            </div>
+            <div class="searchBox">
+                <el-input placeholder="大项名称|事项名称|内部事项编号|委办局名称" v-model="keyword" clearable style="width: 310px;">
+                </el-input>
+                <el-button @click="loadApprovalItemTable">
+                    搜索事项列表
+                </el-button>
             </div>
             <div class="titleBox">
                 <span class="titleText">项目列表</span>
@@ -127,6 +134,8 @@
         </section>
         <!-- 全局操作弹框 -->
         <GlobalOperationsDialog ref="globalOperations" />
+        <!-- 事项搜索表格 -->
+        <ApprovaItemSearchDialog ref="approvaItemSearch" />
     </div>
 </template>
 
@@ -142,6 +151,7 @@ import { ref } from "@vue/composition-api";
 import { mapGetters, mapState } from "vuex"
 // 组件
 import GlobalOperationsDialog from "./GlobalOperationsDialog"
+import ApprovaItemSearchDialog from "./ApprovaItemSearchDialog"
 // 接口
 import {
     listProjectAll,
@@ -154,12 +164,15 @@ export default {
     name: "ProjectList",
     mixins: [mixin],
     components: {
-        GlobalOperationsDialog
+        GlobalOperationsDialog,
+        ApprovaItemSearchDialog
     },
     setup() {
         const globalOperations = ref(null);
+        const approvaItemSearch = ref(null);
         return {
             globalOperations,
+            approvaItemSearch
         }
     },
     data() {
@@ -171,6 +184,7 @@ export default {
             filterApprovalId: null,
             itemNoKeyword: '',
             filterKeyword: "",
+            keyword: '',
             // 弹窗
             dialogAddVisible: false,
             dialogUpdateVisible: false,
@@ -192,7 +206,7 @@ export default {
                 projectName: [
                     { required: true, message: '请输入项目名称', trigger: 'blur' },
                 ]
-            }
+            },
         };
     },
     computed: {
@@ -328,6 +342,12 @@ export default {
         // 打开全局操作弹框
         openDialog() {
             this.globalOperations && this.globalOperations.openDialog();
+        },
+        // 打开搜索事项弹框
+        loadApprovalItemTable() {
+            console.log('this.keyword');
+            console.log(this.keyword);
+            this.approvaItemSearch && this.approvaItemSearch.openDialog(this.keyword);
         }
     },
 };
