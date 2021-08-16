@@ -63,6 +63,11 @@
                             <el-radio label="邮寄or自取">邮寄or自取</el-radio>
                         </el-radio-group>
                     </el-form-item>
+                    <el-form-item label="支持的功能">
+                        <el-checkbox v-model="tempItem.featureScope.bangban">帮办</el-checkbox>
+                        <el-checkbox v-model="tempItem.featureScope.yujian">预检</el-checkbox>
+                        <el-checkbox v-model="tempItem.featureScope.submit">提交</el-checkbox>
+                    </el-form-item>
                 </el-form>
             </div>
             <span slot="footer" class="dialog-footer">
@@ -116,7 +121,6 @@ export default {
             this.extraInfoList = this.tempItem.extraInfoList;
             console.log('this.tempItem')
             console.log(this.tempItem)
-            // this.tempItem.sujectType ? this.tempItem.sujectType = this.tempItem.sujectType.split(',').map(Number) : [];
         },
         closeDialog() {
             this.dialogVisible = false;
