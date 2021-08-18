@@ -72,7 +72,7 @@
             <el-table-column prop="materialName" label="展示清单材料名称（一级）" show-overflow-tooltip width="180"></el-table-column>
             <el-table-column prop="documentsubDisplayname" label="展示材料名称（二级）" show-overflow-tooltip width="180">
             </el-table-column>
-            
+            <el-table-column prop="isBangban" label="是否涉及帮办" :formatter="isRequiredFormatter"></el-table-column>
             <el-table-column prop="isRequired" label="是否必填" :formatter="isRequiredFormatter"></el-table-column>
             <el-table-column prop="isFront" label="是否前端字段" :formatter="isRequiredFormatter" show-overflow-tooltip>
             </el-table-column>
@@ -81,6 +81,7 @@
             <el-table-column prop="valueSource" label="字段值来源" show-overflow-tooltip></el-table-column>
             <el-table-column prop="defaultValue" label="默认值" show-overflow-tooltip></el-table-column>
             <el-table-column prop="descriptionInfo" label="字段逻辑描述" show-overflow-tooltip width="200"></el-table-column>
+            <el-table-column prop="signatureInfo" label="签章说明" show-overflow-tooltip></el-table-column>
             <!-- <el-table-column prop="note" label="备注"></el-table-column> -->
             <el-table-column prop="fieldMeaning" label="定义字段名称" show-overflow-tooltip></el-table-column>
             <el-table-column prop="module" label="前端模块" show-overflow-tooltip></el-table-column>
@@ -144,6 +145,12 @@
                     <el-input v-model="addForm.fieldMeaning"></el-input>
                 </el-form-item>
                 <span class="dialogTitle">帮办生成材料需填写:</span>
+                <el-form-item label="是否涉及帮办">
+                    <el-select v-model="addForm.isBangban" clearable placeholder="是否涉及帮办">
+                        <el-option label="是" :value="Number(1)"></el-option>
+                        <el-option label="否" :value="Number(0)"></el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item label="是否必填">
                     <el-select v-model="addForm.isRequired" clearable placeholder="是否必填">
                         <el-option label="是" :value="Number(1)"></el-option>
@@ -157,13 +164,17 @@
                         <el-option label="票号数据" value="票号数据"></el-option>
                         <el-option label="默认值" value="默认值"></el-option>
                         <el-option label="系统日期" value="系统日期"></el-option>
+                        <el-option label="签字盖章" value="签字盖章"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="默认值">
                     <el-input v-model="addForm.defaultValue"></el-input>
                 </el-form-item>
                 <el-form-item label="字段逻辑描述">
-                    <el-input v-model="addForm.descriptionInfo"></el-input>
+                    <el-input type="textarea" v-model="addForm.descriptionInfo"></el-input>
+                </el-form-item>
+                <el-form-item label="签章说明">
+                    <el-input type="textarea" v-model="addForm.signatureInfo"></el-input>
                 </el-form-item>
                 <span class="dialogTitle">帮办前端字段逻辑填写:</span>
                 <el-form-item label="是否前端字段">
@@ -270,6 +281,12 @@
                     <el-input v-model="editForm.fieldMeaning"></el-input>
                 </el-form-item>
                 <span class="dialogTitle">帮办生成材料需填写:</span>
+                <el-form-item label="是否涉及帮办">
+                    <el-select v-model="editForm.isBangban" clearable placeholder="是否涉及帮办">
+                        <el-option label="是" :value="Number(1)"></el-option>
+                        <el-option label="否" :value="Number(0)"></el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item label="是否必填">
                     <el-select v-model="editForm.isRequired" clearable placeholder="是否必填">
                         <el-option label="是" :value="Number(1)"></el-option>
@@ -283,6 +300,7 @@
                         <el-option label="票号数据" value="票号数据"></el-option>
                         <el-option label="默认值" value="默认值"></el-option>
                         <el-option label="系统日期" value="系统日期"></el-option>
+                        <el-option label="签字盖章" value="签字盖章"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="默认值">
@@ -290,6 +308,9 @@
                 </el-form-item>
                 <el-form-item label="字段逻辑描述">
                     <el-input type="textarea" v-model="editForm.descriptionInfo"></el-input>
+                </el-form-item>
+                <el-form-item label="签章说明">
+                    <el-input type="textarea" v-model="editForm.signatureInfo"></el-input>
                 </el-form-item>
                 <span class="dialogTitle">帮办前端字段逻辑填写:</span>
                 <el-form-item label="是否前端字段">
@@ -1197,7 +1218,7 @@ export default {
             if(type === 'oldExcel') {
                 a.href = 'http://10.0.101.18/template/事项材料及具体字段信息-旧模板.xlsx'
             } else {
-                a.href = 'http://10.0.101.18/template/事项材料及具体字段信息-新模板.xlsx'
+                a.href = 'http://10.0.101.18/template/事项材料及具体字段信息-新模板-修改.xlsx'
             }
             a.target = "_blank";
             document.body.appendChild(a);

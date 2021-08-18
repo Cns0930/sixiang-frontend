@@ -205,13 +205,13 @@
                 <span>备注填写:</span>
                 <el-input type="textarea" v-model="itemNote" :autosize="{ minRows: 2, maxRows: 6 }"></el-input>
             </div>
-            <div style="margin-top: 20px">
+            <!-- <div style="margin-top: 20px">
                 <span>本次修改主要所属阶段：</span>
                 <el-select v-model="saveStep" placeholder="阶段" style="width:400px">
                     <el-option v-for="item in stepOptions" :key="item.value" :value="item.value">
                     </el-option>
                 </el-select>
-            </div>
+            </div> -->
             <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogItemConfirmVisible = false">
                     取消
@@ -236,13 +236,13 @@
                     </el-option>
                 </el-select>
             </div>
-            <div style="margin-top: 20px">
+            <!-- <div style="margin-top: 20px">
                 <span>本次修改主要所属阶段：</span>
                 <el-select v-model="pushStep" placeholder="阶段" style="width:400px">
                     <el-option v-for="item in stepOptions" :key="item.value" :value="item.value">
                     </el-option>
                 </el-select>
-            </div>
+            </div> -->
             <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogGitConfirmVisible = false">
                     取消
@@ -503,12 +503,12 @@ export default {
                 this.$message.warning("请选择九宫地址再提交");
                 return;
             }
-            if (this.pushStep === '') {
-                this.$message.warning("请选择阶段再提交");
-                return;
-            }
+            // if (this.pushStep === '') {
+            //     this.$message.warning("请选择阶段再提交");
+            //     return;
+            // }
             this.loadingUptoGit = true;
-            let res = await submitItemInfo({ approvalItemId: this.itemId, note: this.gitNote, machineId: this.machineId, stage: this.pushStep });
+            let res = await submitItemInfo({ approvalItemId: this.itemId, note: this.gitNote, machineId: this.machineId });
             if (res.success) {
                 this.$message.success('上传配置到Git成功！');
             } else {
@@ -526,12 +526,12 @@ export default {
                 this.$message.warning("请填写备注再提交");
                 return;
             }
-            if (this.saveStep === '') {
-                this.$message.warning("请选择阶段再提交");
-                return;
-            }
+            // if (this.saveStep === '') {
+            //     this.$message.warning("请选择阶段再提交");
+            //     return;
+            // }
             this.loadingSaveApprovalItem = true;
-            let res = await addSysVersionItem({ approvalItemId: this.itemId, note: this.itemNote, stage: this.saveStep });
+            let res = await addSysVersionItem({ approvalItemId: this.itemId, note: this.itemNote });
             if (res.success) {
                 this.$message.success('保存当前事项成功！');
             } else {
