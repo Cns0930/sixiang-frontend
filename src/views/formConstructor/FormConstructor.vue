@@ -309,7 +309,7 @@
 
             <p>已选中{{selected_public_fields.length}}个字段</p>
 
-            <el-button type="primary" @click="forkPublic">确认导入</el-button>
+            <el-button type="primary" :loading="btnLoading" @click="forkPublic">确认导入</el-button>
             <el-button type="text" @click="clearPublic">清除所有选择</el-button>
 
         </el-dialog>
@@ -413,6 +413,7 @@ export default {
             tempFieldNo: '',
             // 下载
             loadingDownFile: false,
+            btnLoading:false,
         };
     },
     computed: {
@@ -1121,11 +1122,13 @@ export default {
             if (this.selected_public_fields.length > 0) {
                 let selectIds = this.selected_public_fields.map(f => f.id);
                 let params = { approvalItemId: this.itemId, sourceFieldIds: selectIds };
+                this.btnLoading = true;
                 let result = await forkPublic(params);
                 if (result.success) {
                     this.$message({ type: "success", message: "导入成功" });
                     this.clearPublic();
                     this.load();
+                    this.btnLoading = false;
                     this.dialogPublicVisible = false;
                 }
             }

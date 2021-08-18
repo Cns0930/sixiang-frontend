@@ -427,7 +427,7 @@
             </el-table>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="close">取 消</el-button>
-                <el-button type='primary' @click="submitDown">确认导出</el-button>
+                <el-button type='primary' :loading="btnLoading" @click="submitDown">确认导出</el-button>
             </span>
         </el-dialog>
 
@@ -624,6 +624,7 @@ export default {
             typeOptions: defs.map(v => ({ value: v.value, label: v.label })),
             // 批量删除loading
             loadingDelete: false,
+            btnLoading:false
         };
     },
     computed: {
@@ -983,11 +984,13 @@ export default {
                     vm.subdownList.push(param)
                 }
             })
+            this.btnLoading = true;
             let res = await saveBatch({ fieldsList: this.subdownList })
             console.log(res)
             if (res.success) {
                 this.$refs.multipleTables.clearSelection();
                 await this.close()
+                this.btnLoading = false;
                 this.$message.success('导出字段成功')
             }
 
