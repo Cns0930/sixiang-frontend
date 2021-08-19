@@ -17,6 +17,7 @@ import ChuzifangshiDef from "./ChuzifangshiDef"
 import OriginJingyingfanweiDef from "./OriginJingyingfanweiDef"
 import JingyingfanweiDef from "./JingyingfanweiDef"
 import JingyingqixianDef from "./JingyingqixianDef"
+import IdcardValidDef from "./IdcardValidDef"
 import AutocompleteDef from "./AutocompleteDef"
 import CascaderDef from "./CascaderDef"
 import RegionCascaderDef from "./RegionCascaderDef"
@@ -47,6 +48,7 @@ let mapping = [
     {label:"分类经营范围",value:"originJingyingfanwein",componentDef:OriginJingyingfanweiDef,isList:false},
     {label:"经营范围",value:"jingyingfanwei",componentDef:JingyingfanweiDef,isList:false},
     {label:"经营期限",value:"jingyingqixian",componentDef:JingyingqixianDef,isList:false},
+    {label:"身份证有效期",value:"idcardValid",componentDef:IdcardValidDef,isList:false},
     {label:"股东集合",value:"gudongCommon",componentDef:GudongCommonDef,isList:true},
     {label:"出资方式",value:"chuzifangshi",componentDef:ChuzifangshiDef,isList:false},
     {label:"合成属性",value:"computed",componentDef:ComputedDef,isList:false},
