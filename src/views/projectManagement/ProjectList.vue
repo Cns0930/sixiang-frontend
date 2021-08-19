@@ -1,6 +1,10 @@
 <template>
     <div class="workWrap">
         <header>项目管理</header>
+        <span class="intro">
+                <el-link type="success" class="el-icon-magic-stick"
+                :href="`https://w95cre6dti.feishu.cn/docs/doccnCQ04UEY74oMv9UvN73eTKd`" target="_blank">还不会用四象？点这里！</el-link>
+            </span>
         <section class="workBox">
             <div class="searchBox">
                 <el-input placeholder="搜索项目" v-model="filterKeyword" clearable style="width: 200px;"
