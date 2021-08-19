@@ -113,3 +113,13 @@ export const gitZipchecklistByLordId = params => {return axios.post('/ss/Import/
 
 // 全局查找事项
 export const listApprovalItemOverall = params => {return axios.get('/ss/approvalItem/listApprovalItemOverall',{params}).then(res => res.data)}
+
+
+// 全局操作-上传upload压缩包获取需要下载的事项信息列表
+export const apiGetItemListByUploadZip = params => { return axios.post('/ss/Import/getItemListByUploadZip', params).then(res => res.data) }
+
+// 全局操作-打包事项压缩包根据文件名称
+export const apidownloadUploadZipByFileName = params => { return axios.post('/ss/Import/downloadUploadZipByFileName', params).then(res => res.data) }
+
+// 全局操作-删除文件,可多个文件路径
+export const apidelectFileByPath = params => { return axios.post('/ss/Import/delectFileByPath', params).then(res => res.data) }

@@ -19,6 +19,9 @@
                     <el-button type="primary" @click="openDialog">
                         全局操作
                     </el-button>
+                    <el-button type="primary" @click="openAddDialog">
+                        全局操作2
+                    </el-button>
                 </div>
             </div>
             <div class="searchBox">
@@ -136,6 +139,8 @@
         <GlobalOperationsDialog ref="globalOperations" />
         <!-- 事项搜索表格 -->
         <ApprovaItemSearchDialog ref="approvaItemSearch" />
+
+        <AddDialog ref="addDialog"></AddDialog>
     </div>
 </template>
 
@@ -145,13 +150,13 @@
 
 import { mixin } from "@/mixin/mixin"
 import _ from "lodash"
-import Vue from "vue";
 import { ref } from "@vue/composition-api";
 
 import { mapGetters, mapState } from "vuex"
 // 组件
-import GlobalOperationsDialog from "./GlobalOperationsDialog"
-import ApprovaItemSearchDialog from "./ApprovaItemSearchDialog"
+import GlobalOperationsDialog from "./GlobalOperationsDialog";
+import ApprovaItemSearchDialog from "./ApprovaItemSearchDialog";
+import AddDialog from "./AddDialog.vue";
 // 接口
 import {
     listProjectAll,
@@ -165,7 +170,8 @@ export default {
     mixins: [mixin],
     components: {
         GlobalOperationsDialog,
-        ApprovaItemSearchDialog
+        ApprovaItemSearchDialog,
+        AddDialog
     },
     setup() {
         const globalOperations = ref(null);
@@ -348,6 +354,11 @@ export default {
             console.log('this.keyword');
             console.log(this.keyword);
             this.approvaItemSearch && this.approvaItemSearch.openDialog(this.keyword);
+        },
+        openAddDialog() {
+            this.$refs.addDialog.tableData = [];
+            this.$refs.addDialog.fileList = []
+            this.$refs.addDialog.dialogVisible = true;
         }
     },
 };
