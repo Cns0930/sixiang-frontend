@@ -1,13 +1,13 @@
 <template>
     <div class="dialog-content">
-        <el-dialog title="提示" :visible.sync="dialogVisible" width="1000px" :before-close="handleClose">
+        <el-dialog title="提示: 退出窗口会重置操作" :visible.sync="dialogVisible" width="1000px" :before-close="handleClose">
             <div class="btn-list">
                 <el-upload class="upload-demo" accept=".zip" multiple action="1" :before-remove="()=>false"
                     :file-list="fileList" :auto-upload="true" :http-request="change">
                     <el-button size="small" type="primary">点击上传</el-button>
                     <div slot="tip" class="el-upload__tip">只能上传.zip文件</div>
                 </el-upload>
-                <el-button type="primary" @click="download()" style="margin-left:200px">下载</el-button>
+                <el-button type="primary" @click="download()" style="margin-left:200px">下载所选</el-button>
             </div>
             <el-table :data="tableData" style="width: 100%" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="50" align="center">
@@ -25,7 +25,7 @@
             </el-table>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="cancel()">取 消</el-button>
-                <el-button type="primary" @click="sure()">确 定</el-button>
+                <el-button type="primary" @click="sure()">完成并退出</el-button>
             </span>
         </el-dialog>
     </div>

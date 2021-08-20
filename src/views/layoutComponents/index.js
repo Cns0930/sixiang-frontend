@@ -8,6 +8,7 @@ import LayoutComponentMixin from "./LayoutComponentMixin"
 import OriginJingyingfanwei from "./OriginJingyingfanwei/OriginJingyingfanwei"
 import Jingyingfanwei from "./Jingyingfanwei/Jingyingfanwei"
 import Jingyingqixian from "./Jingyingqixian/Jingyingqixian"
+import IdcardValid from "./IdcardValid/IdcardValid"
 import QingxingComment from "./QingxingComment/QingxingComment"
 import QRCodeUpload from "./QRCodeUpload/QRCodeUpload"
 import TipsCommon from "./TipsCommon/TipsCommon"
@@ -112,5 +113,6 @@ export default {
     QRCodeUpload,
     TipsCommon,
     TitleCommon,
-    CollapseCommon
+    CollapseCommon,
+    IdcardValid
 }
