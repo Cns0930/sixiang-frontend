@@ -55,7 +55,7 @@ const routes = [
     {
         path: '/',
         component: Home,
-        redirect: to=> {
+        redirect: to => {
             // let hasAdmin = store.state['config'].roles.includes('admin');
             // let hasResearcher = store.state['config'].roles.includes('researcher');
             // if(hasAdmin || hasResearcher) {
@@ -68,38 +68,39 @@ const routes = [
         children: [
             {
                 path: '/user',
-                component: User,
+                component: () => import('@/views/userInfo/user'),
+
             },
             {
                 path: '/allEdit',
-                component: AllEdit,
-                name:'AllEdit'
+                component: () => import("../views/allEdit/allEdit"),
+                name: 'AllEdit'
             },
             {
                 path: '/changeEdit',
-                component: ChangeEdit,
-                name:'ChangeEdit'
+                component: () => import('../views/allEdit/changeEdit.vue'),
+                name: 'ChangeEdit'
             },
             {
                 path: '/subhome',
-                component: SubHome,
-                meta:{
-                    showLeftMenu:true,
+                component: () => import("../views/SubHome.vue"),
+                meta: {
+                    showLeftMenu: true,
                 },
                 children: [
                     {
                         path: '/field',
-                        component: Field
+                        component: () => import("@/views/basicInfo/Field")
                     },
                     {
-                        path:"/formconstructor",
-                        name:"FormConstructor",
-                        component:FormConstructor
+                        path: "/formconstructor",
+                        name: "FormConstructor",
+                        component: () => import('@/views/formConstructor/FormConstructor')
                     },
                     {
                         path: '/editor',
                         name: 'Editor',
-                        component: Editor,
+                        component: () => import('../views/editor/Editor'),
                     },
                     // {
                     //     path: '/inlineeditor',
@@ -107,34 +108,34 @@ const routes = [
                     //     component: InlineEditor,
                     // },
                     {
-                        path:"/preview",
-                        name:"Preview",
-                        component:Preview
+                        path: "/preview",
+                        name: "Preview",
+                        component: () => import("@/views/formConstructor/PreviewLayout")
                     },
                     {
-                        path:"/pageconfigure",
-                        name:"PageConfigure",
-                        component:PageConfigure
+                        path: "/pageconfigure",
+                        name: "PageConfigure",
+                        component: () => import("@/views/formConstructor/PageConfigure")
                     },
                     {
-                        path:"/pageconfigureresearcher",
-                        name:"PageConfigureResearcher",
-                        component:PageConfigureResearcher
+                        path: "/pageconfigureresearcher",
+                        name: "PageConfigureResearcher",
+                        component: () => ("@/views/formConstructor/PageConfigureResearcher")
                     },
                     {
-                        path:"/templatemanager",
-                        name:"templateManager",
-                        component:TemplateManager
+                        path: "/templatemanager",
+                        name: "templateManager",
+                        component: () => ("@/views/formConstructor/TemplateManager")
                     },
                     {
-                        path:"/materialmanager",
-                        name:"materialManager",
-                        component:MaterialManager
+                        path: "/materialmanager",
+                        name: "materialManager",
+                        component: MaterialManager
                     },
                     {
-                        path:"/run",
-                        name:"run",
-                        component:Run
+                        path: "/run",
+                        name: "run",
+                        component: Run
                     },
                     {
                         path: "/testcase",
@@ -147,9 +148,9 @@ const routes = [
                         component: TestManager
                     },
                     {
-                        path:"/setting",
-                        name:"setting",
-                        component:Setting,
+                        path: "/setting",
+                        name: "setting",
+                        component: Setting,
                     }
                 ]
             },
@@ -161,22 +162,22 @@ const routes = [
             {
                 path: '/weibanju',
                 name: 'WeiBanJu',
-                component: resolve => require(['@/views/WeiBanJu/index.vue'],resolve),
+                component: resolve => require(['@/views/WeiBanJu/index.vue'], resolve),
             },
             {
                 path: '/timeconsume',
                 name: 'TimeConsume',
-                component: resolve => require(['@/views/timeStatistics/index.vue'],resolve),
+                component: resolve => require(['@/views/timeStatistics/index.vue'], resolve),
             },
             {
                 path: '/approval',
                 name: 'ApprovalManagement',
-                component: resolve => require(['@/views/publicManagement/ApprovalManagement.vue'],resolve),
+                component: resolve => require(['@/views/publicManagement/ApprovalManagement.vue'], resolve),
             },
             {
                 path: '/tagsmanage',
                 name: 'TagsManage',
-                component: resolve => require(['@/views/publicManagement/tagsManagement/TagsManage.vue'],resolve),
+                component: resolve => require(['@/views/publicManagement/tagsManagement/TagsManage.vue'], resolve),
             },
             {
                 path: '/document',
@@ -191,8 +192,8 @@ const routes = [
             {
                 path: '/basic/subitem',
                 component: BasicHome,
-                meta:{
-                    showLeftMenu:true,
+                meta: {
+                    showLeftMenu: true,
                 },
                 children: [
                     {
@@ -221,7 +222,7 @@ const routes = [
                         path: '/basic/ApprovalSubItemText',
                         component: ApprovalSubItemText
                     },
-                    
+
                     {
                         path: '/basic/singleWindow',
                         component: singleWindow
@@ -230,7 +231,7 @@ const routes = [
                         path: '/basic/approvalRules',
                         component: ApprovalRules
                     },
-                    
+
                     {
                         path: '/basic/onlineDocumentEditor',
                         name: 'OnlineDocumentEditor',
@@ -262,12 +263,12 @@ const routes = [
                         component: FormConstructor
                     }
                 ]
-            }, 
+            },
             {
                 path: '/public',
                 name: 'PublicApprovalItem',
                 component: PublicApprovalItem,
-            },  
+            },
             {
                 path: '/publicdocument',
                 name: 'PublicDocument',
@@ -284,58 +285,58 @@ const routes = [
                 component: Examination,
             },
             {
-                path:"/readme",
-                name:"ReadMe",
-                component:ReadMe,
+                path: "/readme",
+                name: "ReadMe",
+                component: ReadMe,
             },
             {
                 path: '/aipreview',
-                component: resolve => require(['@/views/aipreview/AiHome.vue'],resolve),
-                meta:{
-                    showLeftMenu:true,
+                component: resolve => require(['@/views/aipreview/AiHome.vue'], resolve),
+                meta: {
+                    showLeftMenu: true,
                 },
                 children: [
                     {
                         path: '/aipreview/checkpoint',
                         name: 'CheckPoint',
-                        component: resolve => require(['@/views/aipreview/CheckPoint.vue'],resolve),
+                        component: resolve => require(['@/views/aipreview/CheckPoint.vue'], resolve),
                     },
                     {
                         path: '/aipreview/sortconfig',
                         name: 'SortCongfig',
-                        component: resolve => require(['@/views/aipreview/SortConfig.vue'],resolve),
+                        component: resolve => require(['@/views/aipreview/SortConfig.vue'], resolve),
                     },
                     {
                         path: '/aipreview/aidevelopment',
                         name: 'AiDevelopment',
-                        component: resolve => require(['@/views/aipreview/AiDevelopment.vue'],resolve),
+                        component: resolve => require(['@/views/aipreview/AiDevelopment.vue'], resolve),
                     },
                     {
                         path: '/aipreview/regulation',
                         name: 'Regulation',
-                        component: resolve => require(['@/views/aipreview/Regulation.vue'],resolve),
+                        component: resolve => require(['@/views/aipreview/Regulation.vue'], resolve),
                     },
                 ]
-            }, 
+            },
             {
                 path: '/questionnaire',
-                component: resolve => require(['@/views/questionnaire/QuestionHome.vue'],resolve),
-                meta:{
-                    showLeftMenu:true,
+                component: resolve => require(['@/views/questionnaire/QuestionHome.vue'], resolve),
+                meta: {
+                    showLeftMenu: true,
                 },
                 children: [
                     {
                         path: '/questionnaire/questionmanagement',
                         name: 'QuestionManagement',
-                        component: resolve => require(['@/views/questionnaire/QuestionManagement.vue'],resolve),
+                        component: resolve => require(['@/views/questionnaire/QuestionManagement.vue'], resolve),
                     },
                     {
                         path: '/questionnaire/questionsetting',
                         name: 'QuestionSetting',
-                        component: resolve => require(['@/views/questionnaire/QuestionSetting.vue'],resolve),
+                        component: resolve => require(['@/views/questionnaire/QuestionSetting.vue'], resolve),
                     },
                 ]
-            }, 
+            },
         ]
     },
     {

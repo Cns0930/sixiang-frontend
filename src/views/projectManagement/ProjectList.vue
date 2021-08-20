@@ -139,7 +139,7 @@
         <GlobalOperationsDialog ref="globalOperations" />
         <!-- 事项搜索表格 -->
         <ApprovaItemSearchDialog ref="approvaItemSearch" />
-
+        <!-- 全局操作2 -->
         <AddDialog ref="addDialog"></AddDialog>
     </div>
 </template>
@@ -347,6 +347,9 @@ export default {
         },
         // 打开全局操作弹框
         openDialog() {
+            this.$refs.globalOperations.multipleSelection = [];
+            this.$refs.globalOperations.init();
+            this.$refs.globalOperations.clearSelectionList();
             this.globalOperations && this.globalOperations.openDialog();
         },
         // 打开搜索事项弹框

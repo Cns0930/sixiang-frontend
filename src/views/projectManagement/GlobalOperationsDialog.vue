@@ -2,6 +2,52 @@
     <el-dialog title="全局操作-Dialog" :visible.sync="dialogVisible" width="60%" :close-on-click-modal="false"
         @closed="closedFn">
         <div class="workHandleBoxContent">
+            <div class="block">
+                <span class="demonstration">请选择事项: </span>
+                <el-button type="primary" :loading="loading" @click="downLoad('/ss/Import/downloadGitZipByLordId')"
+                    style="margin-left: 20px; margin-bottom: 10px">下载</el-button>
+                <span style="margin-left: 20px">已选择事项数量: </span>
+                <span style="font-size: 18px; color: #2b3b65">{{itemCount}}</span>
+                <!-- <el-progress :percentage="progress" status="success"></el-progress> -->
+                <!-- <br />
+                <el-cascader v-model="idList" placeholder="试试搜索：项目名称/阶段/事项名称" :options="approvalItemOptions"
+                    :props="{ multiple: true }" filterable clearable style="width: 500px" @change="getCount">
+                </el-cascader> -->
+            </div>
+            <div class="search-list">
+                <el-input placeholder="请搜素项目" v-model="params.projectName" clearable @change="init()">
+                </el-input>
+                <el-input placeholder="请搜索事项" v-model="params.itemName" clearable @change="init()">
+                </el-input>
+                <el-select placeholder="筛选开发阶段" v-model="params.itemStage" clearable @change="init()">
+                    <el-option value="开发中" label="开发中"></el-option>
+                    <el-option value="提测" label="提测"></el-option>
+                    <el-option value="验收" label="验收"></el-option>
+                    <el-option value="停用" label="停用"></el-option>
+                    <el-option value="demo" label="demo"></el-option>
+                </el-select>
+                <el-input placeholder="搜索标签" v-model="params.itemLabel" clearable @change="init()">
+                </el-input>
+                <el-button type="success" @click="search()">搜索</el-button>
+            </div>
+            <div style="width:1060px">
+                <el-table ref="multipleTables" :data="tableList" border style="width: 100%" max-height="300"
+                    @selection-change="handleSelectionChange" :row-key="getRowKeys" tooltip-effect="dark"
+                    @clearSelection="clearSelectionList">
+                    <el-table-column type="selection" width="50" :reserve-selection="true">
+                    </el-table-column>
+                    <el-table-column prop="projectName" label="项目名" width="180" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="approvalName" label="事项名" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="itemStage" label="开发阶段" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="projectLabelNameList" label="标签" show-overflow-tooltip>
+                    </el-table-column>
+                </el-table>
+                <Pagination v-show="total>0" :total="total" :page.sync="params.pageNum" :limit.sync="params.pageSize"
+                    @pagination="init()" style="float:right" />
+            </div>
             <!-- <div class="handleBox">
                 <p class="title">批量下载事项配置</p>
                 <el-upload class="upload-demo" ref="upload" action="111" :multiple="true" :limit="50"
@@ -32,18 +78,7 @@
                     </el-table-column>
                 </el-table>
             </div>
-            <div class="block">
-                <span class="demonstration">请选择事项: </span>
-                <el-button type="primary" :loading="loading" @click="downLoad('/ss/Import/downloadGitZipByLordId')"
-                    style="margin-left: 20px; margin-bottom: 10px">下载</el-button>
-                <span style="margin-left: 20px">已选择事项数量: </span>
-                <span style="font-size: 18px; color: #2b3b65">{{itemCount}}</span>
-                <!-- <el-progress :percentage="progress" status="success"></el-progress> -->
-                <br />
-                <el-cascader v-model="idList" placeholder="试试搜索：项目名称/阶段/事项名称" :options="approvalItemOptions"
-                    :props="{ multiple: true }" filterable clearable style="width: 500px" @change="getCount">
-                </el-cascader>
-            </div>
+
         </div>
     </el-dialog>
 </template>
@@ -51,8 +86,9 @@
 <script>
 import axios from 'axios'
 import {
-    listApprovalItemByStage, gitZipchecklistByLordId
+    listApprovalItemByStage, gitZipchecklistByLordId, apilistAllApprovalItem
 } from "@/api/basicInfo/approval";
+import Pagination from "@/components/Pagintion.vue";
 export default {
     data() {
         return {
@@ -64,16 +100,59 @@ export default {
             itemCount: 0,
             // progress: 0,
             tableVisible: false,
+            tableList: [],
+            input: "",
+            params: {
+                itemLabel: "",
+                itemName: "",
+                itemStage: "",
+                pageNum: 1,
+                pageSize: 10,
+                projectName: ""
+            },
+            multipleSelection: [],
+            total: 0,
+            timer: null
         }
     },
+    components: {
+        Pagination,
+    },
     methods: {
+        clearSelectionList(e) {
+            this.$nextTick(() => {
+                this.timer = setTimeout(() => {
+                    this.$refs.multipleTables.clearSelection();
+                }, 20)
+            })
+        },
+        getRowKeys(row) {
+            return row.approvalItemLordId
+        },
+        search() {
+            this.init();
+        },
+        handleSelectionChange(val) {
+            this.multipleSelection = val;
+        },
+        async init() {
+            // this.multipleSelection = [];
+            console.log(this.multipleSelection, '=')
+            const result = await apilistAllApprovalItem(this.params);
+            if (result.code === 200) {
+                this.tableList = result.data.records;
+                this.total = result.data.total;
+            } else {
+                this.$message.error(result.msg)
+            }
+        },
         async openDialog() {
             this.tableVisible = false;
             this.itemCount = 0,
-            this.dialogVisible = true;
-            let res = await listApprovalItemByStage()
-            if (!res.success) return
-            this.approvalItemOptions = res.data;
+                this.dialogVisible = true;
+            // let res = await listApprovalItemByStage()
+            // if (!res.success) return
+            // this.approvalItemOptions = res.data;
         },
         closeDialog() {
             this.dialogVisible = false;
@@ -81,19 +160,24 @@ export default {
         closedFn() {
             this.idList = []
             this.tableData = []
+            clearInterval(this.timer);
+            this.timer = null;
         },
-        getCount() {
-            this.itemCount = this.idList.length
-        },
+        // getCount() {
+        //     this.itemCount = this.idList.length
+        // },
         // 下载 Post接口方法
         async downLoad(url) {
-            if (!this.idList.length) {
+            console.log(this.multipleSelection)
+            this.itemCount = this.multipleSelection.length;
+            // return
+            if (!this.multipleSelection.length) {
                 this.$message.warning('请先选择事项')
                 return
             }
             // this.progress = 0;
             this.loading = true;
-            let newIdList = this.idList.map(item => { return Number(item[2]) })
+            let newIdList = this.multipleSelection.map(item => { return Number(item.approvalItemLordId) })
             console.log('newIdList');
             console.log(newIdList)
             let res = await axios({
@@ -206,13 +290,23 @@ export default {
                 }
             }
         }
-    }
+    },
 }
 </script>
 
 <style scoped lang="scss">
 @import "../../assets/css/global.scss";
 .workHandleBoxContent {
+    .search-list {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        margin-bottom: 20px;
+        /deep/.el-input {
+            width: 200px;
+        }
+    }
     display: flex;
     // align-items: center;
     flex-wrap: wrap;
@@ -237,8 +331,8 @@ export default {
         }
     }
     .el-table .red-row {
-         color:#ff5160;
-        background:#ffeaea;
-    }   
+        color: #ff5160;
+        background: #ffeaea;
+    }
 }
 </style>
