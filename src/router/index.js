@@ -120,12 +120,12 @@ const routes = [
                     {
                         path: "/pageconfigureresearcher",
                         name: "PageConfigureResearcher",
-                        component: () => ("@/views/formConstructor/PageConfigureResearcher")
+                        component: () => import("@/views/formConstructor/PageConfigureResearcher")
                     },
                     {
                         path: "/templatemanager",
                         name: "templateManager",
-                        component: () => ("@/views/formConstructor/TemplateManager")
+                        component: () => import("@/views/formConstructor/TemplateManager")
                     },
                     {
                         path: "/materialmanager",
@@ -168,6 +168,11 @@ const routes = [
                 path: '/timeconsume',
                 name: 'TimeConsume',
                 component: resolve => require(['@/views/timeStatistics/index.vue'], resolve),
+            },
+            {
+                path: '/datum',
+                name: 'Datum',
+                component: () => import("@/views/timeStatistics/Datum.vue")
             },
             {
                 path: '/approval',
