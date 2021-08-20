@@ -91,7 +91,8 @@
                             <span v-else>{{scope.row.requiredDescription}}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="isMultiplePage" label="是否多页" :formatter="isRequiredFormatter" width="100"></el-table-column>
+                      <el-table-column prop="isMultiplePage" label="是否多页" :formatter="multipageFormatter"
+                    show-overflow-tooltip></el-table-column>
                     <el-table-column prop="displayNotes" label="补充说明信息">
                         <template slot-scope="scope">
                             <el-input v-if="scope.row.flag" v-model="scope.row.displayNotes"></el-input>
@@ -478,7 +479,10 @@ export default {
             if (!result.success) return;
             await this.search();
         },
+  multipageFormatter(row, column, cellValue) {
 
+            return cellValue == 1 ? "是" : "否"
+        },
         // 改变有冲突的数据的行样式
         tableRowClassName({ row, rowIndex }) {
             if (row) {
