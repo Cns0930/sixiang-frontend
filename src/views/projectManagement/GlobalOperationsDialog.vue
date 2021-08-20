@@ -1,5 +1,5 @@
 <template>
-    <el-dialog title="全局操作-Dialog" :visible.sync="dialogVisible" width="60%" :close-on-click-modal="false"
+    <el-dialog title="全局操作-Dialog" :visible.sync="dialogVisible" width="1200px" :close-on-click-modal="false"
         @closed="closedFn">
         <div class="workHandleBoxContent">
             <div class="block">
@@ -38,11 +38,16 @@
                     </el-table-column>
                     <el-table-column prop="projectName" label="项目名" width="180" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="approvalName" label="事项名" show-overflow-tooltip>
+                    <el-table-column prop="itemName" label="事项名" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="itemStage" label="开发阶段" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="projectLabelNameList" label="标签" show-overflow-tooltip>
+                        <template slot-scope="scope">
+                            <span>
+                                {{scope.row.projectLabelNameList}}
+                            </span>
+                        </template>
                     </el-table-column>
                 </el-table>
                 <Pagination v-show="total>0" :total="total" :page.sync="params.pageNum" :limit.sync="params.pageSize"
@@ -134,10 +139,9 @@ export default {
         },
         handleSelectionChange(val) {
             this.multipleSelection = val;
+            this.itemCount = this.multipleSelection.length;
         },
         async init() {
-            // this.multipleSelection = [];
-            console.log(this.multipleSelection, '=')
             const result = await apilistAllApprovalItem(this.params);
             if (result.code === 200) {
                 this.tableList = result.data.records;
@@ -168,9 +172,6 @@ export default {
         // },
         // 下载 Post接口方法
         async downLoad(url) {
-            console.log(this.multipleSelection)
-            this.itemCount = this.multipleSelection.length;
-            // return
             if (!this.multipleSelection.length) {
                 this.$message.warning('请先选择事项')
                 return
@@ -204,8 +205,6 @@ export default {
             // 生成文件路径
             let href = window.URL.createObjectURL(blob);
             a.href = href;
-            console.log('res');
-            console.log(res);
             // let _fileName = _res.headers['Content-disposition'].split(';')[1].split('=')[1].split('.')[0]
             let _fileName = res.headers["content-disposition"]
                 .split(";")[1]
