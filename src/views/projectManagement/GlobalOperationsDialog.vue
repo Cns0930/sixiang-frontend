@@ -23,8 +23,8 @@
                     <el-option value="开发中" label="开发中"></el-option>
                     <el-option value="提测" label="提测"></el-option>
                     <el-option value="验收" label="验收"></el-option>
-                    <el-option value="停用" label="停用"></el-option>
-                    <el-option value="demo" label="demo"></el-option>
+                    <!-- <el-option value="停用" label="停用"></el-option>
+                    <el-option value="demo" label="demo"></el-option> -->
                 </el-select>
                 <el-input placeholder="搜索标签" v-model="params.itemLabel" clearable @change="init()">
                 </el-input>
