@@ -102,7 +102,7 @@ export default {
                 this.$message.warning("你还没有选择要下载的文件")
                 return
             };
-            batchDownload(this.multipleSelection)
+            batchDownload(this.multipleSelection, '/ss/Import/downloadUploadZipByFileName')
         }
     }
 }

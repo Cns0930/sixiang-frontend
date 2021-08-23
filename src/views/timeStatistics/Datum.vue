@@ -5,7 +5,7 @@
         </div>
         <div class="line">
             <div class="line-item">
-                <el-select v-model="value" placeholder="请选择">
+                <el-select v-model="materParams.idList" placeholder="请选择" multiple clearable>
                     <el-option v-for="item in parjectList" :key="item.projectId" :label="item.projectName"
                         :value="item.projectId">
                     </el-option>
@@ -15,7 +15,7 @@
                 <span>
                     选择导出的数据
                 </span>
-                <el-select v-model="value" placeholder="请选择">
+                <el-select v-model="materParams.featureDataList" placeholder="请选择" multiple clearable>
                     <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
                     </el-option>
                 </el-select>
@@ -44,12 +44,12 @@
                 <span>
                     选择导出的数据
                 </span>
-                <el-select v-model="value" placeholder="请选择">
-                    <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                <el-select v-model="matterParams.featureDataList" placeholder="请选择" multiple clearable>
+                    <el-option v-for="item in materials" :key="item.value" :label="item.label" :value="item.value">
                     </el-option>
                 </el-select>
             </div>
-            <el-button type="success" @click="dowoload()">下载</el-button>
+            <el-button type="success" @click="matterDownload()">下载</el-button>
         </div>
 
         <el-table ref="multipleTables" :data="tableList" border style="width: 100%"
@@ -82,27 +82,21 @@ import {
     apilistAllApprovalItem, listProjectAll
 } from "@/api/basicInfo/approval";
 import Pagination from "@/components/Pagintion.vue";
+import { batchDownload } from "@/utils/download"
 export default {
     name: 'Datum',
     data() {
         return {
-            options: [{
-                value: '选项1',
-                label: '黄金糕'
-            }, {
-                value: '选项2',
-                label: '双皮奶'
-            }, {
-                value: '选项3',
-                label: '蚵仔煎'
-            }, {
-                value: '选项4',
-                label: '龙须面'
-            }, {
-                value: '选项5',
-                label: '北京烤鸭'
-            }],
-            value: '',
+            options: [
+                {
+                    label: "公共一级材料信息",
+                    value: 1
+                },
+                {
+                    label: "公共二级材料信息",
+                    value: 2
+                }
+            ],
             params: {
                 itemLabel: "",
                 itemName: "",
@@ -113,7 +107,43 @@ export default {
             },
             tableList: [],
             total: null,
-            parjectList: []
+            parjectList: [],
+            materials: [
+                {
+                    label: "一级材料信息",
+                    value: 1
+                },
+                {
+                    label: "情形信息",
+                    value: 2
+                },
+                {
+                    label: "二级材料信息",
+                    value: 3
+                },
+                {
+                    label: "材料字段信息",
+                    value: 4
+                },
+                {
+                    label: "审批规则",
+                    value: 5
+                }
+            ],
+            // 项目资料导出入参
+            materParams: {
+                featureDataList: [],
+                idList: [],
+            },
+            // 事项资料导出入参
+            matterParams: {
+                featureDataList: [
+                ],
+                idList: [
+                ]
+            },
+            multipleSelection: []
+
         }
     },
     components: {
@@ -148,14 +178,32 @@ export default {
         getRowKeys(row) {
             return row.approvalItemLordId
         },
-        handleSelectionChange() {
-
+        handleSelectionChange(val) {
+            this.matterParams.idList = val.map(item => {
+                return item.projectId
+            });
         },
         clearSelectionList() {
-
+            this.$refs.multipleTables.clearSelection();
         },
-        async download() {
-            const result = await aa()
+        async dowoload() {
+            if (this.materParams.featureDataList.length === 0 || this.materParams.idList.length === 0) {
+                this.$message.warning("请选择要下载的数据");
+                return
+            }
+            await batchDownload(this.materParams, '/ss/Import/downloadGlobalMaterialData');
+            this.materParams.featureDataList = [];
+            this.materParams.idList = [];
+        },
+        async matterDownload() {
+            if (this.matterParams.featureDataList.length === 0 || this.matterParams.idList.length === 0) {
+                this.$message.warning("请选择要下载的数据");
+                return
+            }
+            await batchDownload(this.matterParams, '/ss/Import/downloadFeatureData');
+            this.matterParams.featureDataList = [];
+            this.matterParams.idList = [];
+            this.clearSelectionList();
         }
     }
 }
