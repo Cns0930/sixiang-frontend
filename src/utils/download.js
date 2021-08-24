@@ -2,10 +2,10 @@ import axios from 'axios'
 import { Message } from 'element-ui';
 
 // 批量下载
-export function batchDownload(data, zipName) {
+export function batchDownload(data, url) {
   axios({
     method: 'POST',
-    url: `${process.env.VUE_APP_BASE_IP}/ss/Import/downloadUploadZipByFileName`,
+    url: `${process.env.VUE_APP_BASE_IP}${url}`,
     responseType: 'arraybuffer',
     xsrfHeaderName: 'Authorization',
     headers: {
@@ -14,7 +14,6 @@ export function batchDownload(data, zipName) {
     },
     data: data
   }).then((res) => {
-    console.log(res)
     const blob = new Blob([res.data], {
       type: 'application/zip'
     })

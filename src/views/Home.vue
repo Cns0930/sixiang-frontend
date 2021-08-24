@@ -106,7 +106,7 @@ export default {
         topMenuList() {
             let topMenuList = generaterTopMenuList(this.roles);
             if (this.$route.path === '/project' || this.$route.path === '/document' || this.$route.path === '/user'
-                || this.$route.path === '/timeconsume' || this.$route.path === '/weibanju'){
+                || this.$route.path === '/timeconsume' || this.$route.path === '/weibanju' || this.$route.path === '/datum'){
                 topMenuList = topMenuList.filter(item => 
                     item.label !== '事项管理' && item.label !== '文档管理' && item.label !== '说明'
                 )
