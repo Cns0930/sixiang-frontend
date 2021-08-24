@@ -180,7 +180,7 @@ export default {
         },
         handleSelectionChange(val) {
             this.matterParams.idList = val.map(item => {
-                return item.projectId
+                return item.approvalItemLordId
             });
         },
         clearSelectionList() {
