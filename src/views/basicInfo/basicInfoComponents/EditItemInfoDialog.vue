@@ -64,9 +64,14 @@
                         </el-radio-group>
                     </el-form-item>
                     <el-form-item label="支持的功能">
+                        <div>
                         <el-checkbox v-model="tempItem.featureScope.bangban">帮办</el-checkbox>
                         <el-checkbox v-model="tempItem.featureScope.yujian">预检</el-checkbox>
                         <el-checkbox v-model="tempItem.featureScope.submit">提交</el-checkbox>
+                        </div>
+                        <div style="margin-left:82px"> 
+                        <el-checkbox v-model="tempItem.featureScope.enquiry">查询</el-checkbox>
+                        </div>
                     </el-form-item>
                 </el-form>
             </div>
