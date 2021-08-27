@@ -66,6 +66,13 @@
                 <el-form-item label="题目描述">
                     <el-input v-model="editForm.label"></el-input>
                 </el-form-item>
+                <el-form-item label="是否默认出现" v-if="editForm.isCustom === 1">
+                    <el-select v-model="editForm.isDefaultDisplay" placeholder="请选择">
+                    <el-option
+                        v-for="item in dualOptions" :key="item.value" :label="item.label" :value="item.value">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
                 <div v-if="editForm.expand">
                     <el-form-item v-for="(item, i) in editForm.expand.options" :key="i" :label="'选项' + String(i)">
                         <el-input v-model="item.label"></el-input>
@@ -193,6 +200,13 @@ export default {
             titleArr: [],
             newTitleArr: [],
             i:null,
+            dualOptions:[{
+                value: 1,
+                label: "是"
+                }, {
+                value: 0,
+                label: "否"
+            }],
         };
     },
     mounted() {
