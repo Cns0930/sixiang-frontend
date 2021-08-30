@@ -16,6 +16,9 @@ export const updateGlobalDcument = params => { return axios.post(`/ss/globalDocu
 //  获取全局文档列表
 export const listGlobalDcument = params => { return axios.get(`/ss/globalDocumentList/listGlobalDcument`, {params}).then(res=>res.data); };
 
+// 查询公共一级材料及对应公共二级材料列表
+export const api_AndSubDocument = params => {return axios.get('/ss/globalDocumentList/listGlobalDcumentAndSubDocument', {params}).then(res => res.data)}
+
 /* 材料子文档 */
 // 添加子文档
 export const addGlobalDcumentSub = params => { return axios.post(`/ss/globalDocumentSubList/addGlobalDcumentSub`, params).then(res=>res.data); };
