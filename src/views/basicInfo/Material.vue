@@ -270,6 +270,7 @@
                       <el-radio-group  v-model="materialTEdit.materialType">
                             <el-radio label="原件">原件</el-radio>
                             <el-radio label="复印件">复印件</el-radio>
+                            
                             <el-radio label="原件或复印件">原件或复印件</el-radio>
                       </el-radio-group>
                      </el-form-item>
