@@ -24,40 +24,46 @@
                 <el-table-column type="expand">
                     <template slot-scope="scope">
                         <div>
-                            <div>
+                            <div class="flex">
                                 <span>对应公共二级</span>
-                                <el-button>
+                                <el-button style="margin-left:20px" type="primary" @click="toAddDialog()">
                                     新增
                                 </el-button>
                             </div>
                             <el-table :data="scope.row.documentSubList" border>
-                                <el-table-column prop="globalDocumentSubName" label="材料名称">
+                                <el-table-column prop="globalDocumentName" label="材料名称" show-overflow-tooltip>
                                 </el-table-column>
-                                <el-table-column prop="globalDocumentSubCode" label="子文档编号">
+                                <el-table-column prop="globalDocumentSubCode" label="子文档编号" show-overflow-tooltip>
                                 </el-table-column>
-                                <el-table-column prop="" label="子文档名称">
+                                <el-table-column prop="globalDocumentSubName" label="子文档名称" show-overflow-tooltip>
                                 </el-table-column>
-                                <el-table-column prop="" label="标记(唯一字段)">
+                                <el-table-column prop="description" label="标记(唯一字段)" show-overflow-tooltip>
                                 </el-table-column>
-                                <el-table-column prop="isMultiplePage" label="是否多页">
-                                </el-table-column>
-                                <el-table-column prop="" label="归类">
-                                </el-table-column>
-                                <el-table-column prop="pageLocation" label="标准格式下的页码">
-                                </el-table-column>
-                                <el-table-column prop="" label="关联全局二级文档">
-                                </el-table-column>
-                                <el-table-column prop="updateTime" label="更新时间">
-                                </el-table-column>
-                                <el-table-column prop="" label="操作">
+                                <el-table-column prop="isMultiplePage" label="是否多页" show-overflow-tooltip>
                                     <template slot-scope="scope">
-                                        <el-button>
+                                        {{ scope.row.isMultiplePage ===1 ? "是" : "否" }}
+                                    </template>
+                                </el-table-column>
+                                <el-table-column prop="category" label="归类" show-overflow-tooltip>
+                                </el-table-column>
+                                <el-table-column prop="pageLocation" label="标准格式下的页码" show-overflow-tooltip>
+                                </el-table-column>
+                                <el-table-column prop="catalogDocumentSubName" label="关联全局二级文档" show-overflow-tooltip>
+                                </el-table-column>
+                                <el-table-column prop="updateTime" label="更新时间" :formatter="timeFormatterTwo"
+                                    show-overflow-tooltip>
+                                </el-table-column>
+                                <el-table-column prop="" label="操作" width="250px">
+                                    <template slot-scope="scope">
+                                        <el-button type="primary" :disabled="!hasManagePermission"
+                                            @click="toedit(scope.row)">
                                             编辑
                                         </el-button>
-                                        <el-button>
+                                        <el-button @click="toDelete(scope.row)" type="danger"
+                                            :disabled="!hasManagePermission">
                                             删除
                                         </el-button>
-                                        <el-button>
+                                        <el-button type="primary" @click="toInfo(scope.row)">
                                             对应样本信息
                                         </el-button>
                                     </template>
@@ -97,6 +103,7 @@
                                 :disabled="!hasManagePermission">
                                 删除
                             </el-button>
+                            <el-button @click="toTransfer(scope.row.globalDocumentList)">转移材料</el-button>
                         </el-button-group>
                     </template>
                 </el-table-column>
@@ -171,14 +178,62 @@
                 <el-button type="primary" @click="edit" :loading="editBtnLoading">确定</el-button>
             </span>
         </el-dialog>
+
+        <!-- fen -->
+        <div>
+            <el-dialog title="样本信息" :visible.sync="dialogVisible" width="50%">
+                <div style="margin-bottom: 10px">
+                    <el-input placeholder="请输入事项二级材料名称" v-model="gloparams.documentsubDisplayname" style="width: 200px"
+                        clearable></el-input>
+                    <el-button @click="getListDocumentInfoBy()" style="margin-left: 10px">搜索</el-button>
+                    <el-button @click="download()" :disabled="multipleSelection.length === 0">下载</el-button>
+                </div>
+                <el-table :data="globalDocumentList" style="width: 100%" border max-height="400"
+                    @selection-change="handleSelectionChange">
+                    <el-table-column type="selection" width="50">
+                    </el-table-column>
+                    <el-table-column prop="globalDocumentSubName" label="公共二级材料名称">
+                    </el-table-column>
+                    <el-table-column prop="itemName" label="事项名称">
+                    </el-table-column>
+                    <el-table-column prop="documentsubDisplayname" label="事项二级材料名称">
+                    </el-table-column>
+                    <el-table-column prop="address" label="样本图片">
+                        <template slot-scope="scope">
+                            <div class="demo-image__preview">
+                                <el-image style="width: 100px; height: 100px" :src="scope.row.fileUrl"
+                                    :preview-src-list="[scope.row.fileUrl]">
+                                </el-image>
+                            </div>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <Pagination v-show="globalDocumentTotal>0" :total="globalDocumentTotal" :page.sync="gloparams.pageNum"
+                    :limit.sync="gloparams.pageSize" style="float:right" @pagination="getListDocumentInfoBy()" />
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="dialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+                </span>
+            </el-dialog>
+        </div>
+
+        <AddMaterialDialog ref="addDialog" :allGlobalDocuments="allGlobalDocuments" @update="search">
+        </AddMaterialDialog>
+        <EditMateralDialog ref="editDialog" @update="search()"></EditMateralDialog>
+        <Transfer ref="transferDialog"></Transfer>
     </div>
 </template>
 
 <script>
 import { mixin } from "@/mixin/mixin"
-import { addGlobalDcument, deleteDcument, getByGlobalDcumentId, updateGlobalDcument, listGlobalDcument, api_AndSubDocument } from '@/api/basicInfo/publicDocument'
-import { mapGetters } from "vuex"
-import dayjs from "dayjs"
+import { addGlobalDcument, deleteDcument, getByGlobalDcumentId, updateGlobalDcument, listGlobalDcument, api_AndSubDocument, api_ListDocumentInfoBySubDocument, delDcumentSub, ape_listTransferSubDocument } from '@/api/basicInfo/publicDocument'
+import { mapGetters } from "vuex";
+import dayjs from "dayjs";
+import AddMaterialDialog from "./components/AddMaterialDialog.vue";
+import EditMateralDialog from "./components/EditMateralDialog.vue";
+import Pagination from "@/components/Pagintion.vue";
+import Transfer from "./components/Transfer.vue"
+import { singleDownload } from "@/utils/download.js";
 export default {
     name: "PublicDocument",
     mixins: [mixin],
@@ -229,8 +284,25 @@ export default {
                 projectId: "",
                 pageNum: 1,
                 pageSize: 10
-            }
+            },
+            dialogVisible: false,
+            allGlobalDocuments: [],
+            globalDocumentList: [],
+            globalDocumentTotal: 0,
+            gloparams: {
+                documentsubDisplayname: "",
+                globalDocumentSubId: "",
+                pageNum: 1,
+                pagesize: 10
+            },
+            multipleSelection: [],
         }
+    },
+    components: {
+        AddMaterialDialog,
+        Pagination,
+        EditMateralDialog,
+        Transfer,
     },
     computed: {
         ...mapGetters({ hasManagePermission: 'config/hasManagePermission' })
@@ -239,6 +311,16 @@ export default {
         // 获取项目信息
         await this.initProject();
         this.search();
+        let result = await listGlobalDcument({
+            projectId: this.$route.query.projectId,
+            pageNum: 1,
+            pageSize: 99999,
+        });
+        if (!result.success) {
+            this.$message.error("获取材料失败");
+            return;
+        }
+        this.allGlobalDocuments = result.data.records.map(v => ({ label: v.globalDocumentName, value: v.globalDocumentId }));
     },
     methods: {
         async search() {
@@ -257,6 +339,9 @@ export default {
         },
         timeFormatter(row, column, cellValue, index) {
             return dayjs(row.globalDocumentList.updateTime).format("YYYY-MM-DD HH:mm:ss")
+        },
+        timeFormatterTwo(row, column, cellValue, index) {
+            return dayjs(cellValue).format("YYYY-MM-DD HH:mm:ss")
         },
         standardFormatter(row, column, cellValue) {
             return row.globalDocumentList.isStandard == 1 ? "标准文档" : "非标文档"
@@ -316,6 +401,76 @@ export default {
             this.addDialogVisible = false;
             this.produceSource = [];
             this.search();
+        },
+        async toDelete(row) {
+            try {
+                await this.$confirm("是否确定删除",)
+                let result = await delDcumentSub({ globalDocumentSubId: row.globalDocumentSubId });
+                if (!result.success) {
+                    this.$message.warning("删除失败");
+                } else {
+                    this.$message.success("删除成功");
+                }
+                this.search();
+                return;
+            } catch (e) {
+                return;
+            }
+
+        },
+        toedit(row) {
+            this.$refs.editDialog.handleEdit()
+            this.$refs.editDialog.editForm = _.cloneDeep(row);
+            this.$refs.editDialog.editDialogVisible = true;
+        },
+        toAddDialog() {
+            this.$refs.addDialog.handleEdit()
+            this.$refs.addDialog.addDialogVisible = true;
+        },
+        toInfo(e) {
+            console.log(e);
+            // this.gloparams.documentsubDisplayname = e.globalDocumentSubName;
+            this.gloparams.globalDocumentSubId = e.globalDocumentSubId;
+            this.gloparams.pageNum = 1;
+            this.gloparams.pagesize = 10;
+            this.dialogVisible = true;
+            this.getListDocumentInfoBy();
+        },
+        async getListDocumentInfoBy() {
+            const result = await api_ListDocumentInfoBySubDocument(this.gloparams);
+            if (result.code === 200) {
+                console.log(result);
+                this.globalDocumentList = result.data && result.data.records;
+                this.globalDocumentTotal = result.data && result.data.total;
+            } else {
+                this.$message.error(result.msg)
+            }
+        },
+
+        handleSelectionChange(val) {
+            this.multipleSelection = val;
+        },
+        async download() {
+            const resut = this.multipleSelection.map(item => {
+                return item.documentId.toString()
+            })
+            singleDownload({ ids: resut.toString() }, "/docInfo/downloadDocFile")
+        },
+        async toTransfer(e) {
+            console.log(e);
+            return
+            const params = {
+                aimsGlobalDocumentId: null,
+                sourceGlobalDocumentId: null,
+            };
+            const result = await ape_listTransferSubDocument();
+            if (result.code === 200) {
+
+            } else {
+                this.$message.error(result.msg)
+            }
+
+            this.$refs.transferDialog.dialogVisible = true;
         }
     },
 
@@ -367,5 +522,10 @@ export default {
     .workTable {
         width: 100%;
     }
+}
+.flex {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
 }
 </style>

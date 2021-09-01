@@ -19,6 +19,15 @@ export const listGlobalDcument = params => { return axios.get(`/ss/globalDocumen
 // 查询公共一级材料及对应公共二级材料列表
 export const api_AndSubDocument = params => {return axios.get('/ss/globalDocumentList/listGlobalDcumentAndSubDocument', {params}).then(res => res.data)}
 
+//查询公共二级材料下样本信息
+export const api_ListDocumentInfoBySubDocument = params => {return axios.get('/ss/globalDocumentList/listDocumentInfoBySubDocument', {params}).then(res => res.data)}
+
+// 查询全局二级材料关联样本
+export const api_ListDocumentInfoByCatalogDocumentSub = params => { return axios.get('/ss/CatalogDocumentSub/listDocumentInfoByCatalogDocumentSub', {params}).then(res => res.data)}
+
+// 待转移公共材料列表
+export const ape_listTransferSubDocument = params => { return axios.get("/ss/globalDocumentList/listTransferSubDocument"), (params).then(res =>res.data)}
+
 /* 材料子文档 */
 // 添加子文档
 export const addGlobalDcumentSub = params => { return axios.post(`/ss/globalDocumentSubList/addGlobalDcumentSub`, params).then(res=>res.data); };

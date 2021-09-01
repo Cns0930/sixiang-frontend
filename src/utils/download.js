@@ -1,3 +1,4 @@
+import result from '@/assets/result';
 import axios from 'axios'
 import { Message } from 'element-ui';
 
@@ -36,25 +37,25 @@ export function batchDownload(data, url) {
 // application/application/vnd.openxmlformats-officedocument.wordprocessingml.document
 // application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
 
-export function singleDownload(type, fileName) {
-  let _type = ''
+export function singleDownload(data, url) {
   axios({
     method: "GET",
-    url: `${process.env.VUE_APP_BASE_IP}/dictionary-file/downloadTemplate`,
+    url: `${process.env.VUE_APP_BASE_IP}${url}`,
     responseType: "blob",
     headers: {
-      "Content-Type": "application/octet-stream;charset=UTF-8",
-      Authorization: sessionStorage.getItem("token"),
+      Authorization: localStorage.getItem('ticket'),
     },
+    params: data
   })
     .then((res) => {
       const blob = new Blob([res.data]);
       const reader = new FileReader();
       reader.readAsDataURL(blob);
       reader.onload = (e) => {
-        console.log(e.target);
         const a = document.createElement("a");
-        a.download = 'demo.xlsx'
+        a.download = decodeURIComponent(res.headers["content-disposition"])
+          .split(";")[1]
+          .split("=")[1]
         a.href = e.target.result;
         document.body.appendChild(a);
         a.click();
