@@ -26,7 +26,7 @@
                         <div>
                             <div class="flex">
                                 <span>对应公共二级</span>
-                                <el-button style="margin-left:20px" type="primary" @click="toAddDialog()">
+                                <el-button style="margin-left:20px" type="primary" @click="toAddDialog(scope.row)">
                                     新增
                                 </el-button>
                             </div>
@@ -110,7 +110,7 @@
             </el-table>
         </div>
         <div class="tablePagination">
-            <el-pagination @current-change="search" :current-page.sync="currentPage" :page-size="pagesize"
+            <el-pagination @current-change="search" :current-page.sync="params.pageNum" :page-size="params.pagesize"
                 layout="total, prev, pager, next" :total="totalCount">
             </el-pagination>
         </div>
@@ -188,9 +188,9 @@
                     <el-button @click="getListDocumentInfoBy()" style="margin-left: 10px">搜索</el-button>
                     <el-button @click="download()" :disabled="multipleSelection.length === 0">下载</el-button>
                 </div>
-                <el-table :data="globalDocumentList" style="width: 100%" border max-height="400"
-                    @selection-change="handleSelectionChange">
-                    <el-table-column type="selection" width="50">
+                <el-table ref="globalDocument" :data="globalDocumentList" style="width: 100%" border max-height="400"
+                    @selection-change="handleSelectionChange" :row-key="getRowKeys">
+                    <el-table-column type="selection" width="50" :reserve-selection='true'>
                     </el-table-column>
                     <el-table-column prop="globalDocumentSubName" label="公共二级材料名称">
                     </el-table-column>
@@ -207,6 +207,10 @@
                             </div>
                         </template>
                     </el-table-column>
+                    <el-table-column prop="username" label="用户名">
+                    </el-table-column>
+                    <el-table-column prop="filePath" label="样本路径">
+                    </el-table-column>
                 </el-table>
                 <Pagination v-show="globalDocumentTotal>0" :total="globalDocumentTotal" :page.sync="gloparams.pageNum"
                     :limit.sync="gloparams.pageSize" style="float:right" @pagination="getListDocumentInfoBy()" />
@@ -217,16 +221,17 @@
             </el-dialog>
         </div>
 
-        <AddMaterialDialog ref="addDialog" :allGlobalDocuments="allGlobalDocuments" @update="search">
+        <AddMaterialDialog ref="addDialog" :allGlobalDocuments="allGlobalDocuments" @update="search"
+            :globalDocumentId="globalDocumentId">
         </AddMaterialDialog>
         <EditMateralDialog ref="editDialog" @update="search()"></EditMateralDialog>
-        <Transfer ref="transferDialog"></Transfer>
+        <Transfer ref="transferDialog" :primaryMaterialList="primaryMaterialList" @update="search()"></Transfer>
     </div>
 </template>
 
 <script>
 import { mixin } from "@/mixin/mixin"
-import { addGlobalDcument, deleteDcument, getByGlobalDcumentId, updateGlobalDcument, listGlobalDcument, api_AndSubDocument, api_ListDocumentInfoBySubDocument, delDcumentSub, ape_listTransferSubDocument } from '@/api/basicInfo/publicDocument'
+import { addGlobalDcument, deleteDcument, getByGlobalDcumentId, updateGlobalDcument, listGlobalDcument, api_AndSubDocument, api_ListDocumentInfoBySubDocument, delDcumentSub, ape_listTransferSubDocument, api_listGlobalDcumentAll } from '@/api/basicInfo/publicDocument'
 import { mapGetters } from "vuex";
 import dayjs from "dayjs";
 import AddMaterialDialog from "./components/AddMaterialDialog.vue";
@@ -296,6 +301,8 @@ export default {
                 pagesize: 10
             },
             multipleSelection: [],
+            primaryMaterialList: [],
+            globalDocumentId: null
         }
     },
     components: {
@@ -423,23 +430,25 @@ export default {
             this.$refs.editDialog.editForm = _.cloneDeep(row);
             this.$refs.editDialog.editDialogVisible = true;
         },
-        toAddDialog() {
+        toAddDialog(e) {
+            this.globalDocumentId = e.globalDocumentId;
             this.$refs.addDialog.handleEdit()
             this.$refs.addDialog.addDialogVisible = true;
+            this.$refs.addDialog.addForm.catalogDocumentSubId = e.globalDocumentList.globalDocumentId;
         },
         toInfo(e) {
-            console.log(e);
-            // this.gloparams.documentsubDisplayname = e.globalDocumentSubName;
             this.gloparams.globalDocumentSubId = e.globalDocumentSubId;
             this.gloparams.pageNum = 1;
             this.gloparams.pagesize = 10;
             this.dialogVisible = true;
             this.getListDocumentInfoBy();
+            this.$nextTick(() => {
+                this.$refs.globalDocument.clearSelection();
+            })
         },
         async getListDocumentInfoBy() {
             const result = await api_ListDocumentInfoBySubDocument(this.gloparams);
             if (result.code === 200) {
-                console.log(result);
                 this.globalDocumentList = result.data && result.data.records;
                 this.globalDocumentTotal = result.data && result.data.total;
             } else {
@@ -457,21 +466,24 @@ export default {
             singleDownload({ ids: resut.toString() }, "/docInfo/downloadDocFile")
         },
         async toTransfer(e) {
-            console.log(e);
-            return
             const params = {
-                aimsGlobalDocumentId: null,
-                sourceGlobalDocumentId: null,
+                projectId: e.projectId,
             };
-            const result = await ape_listTransferSubDocument();
+            const result = await api_listGlobalDcumentAll(params);
             if (result.code === 200) {
-
+                this.primaryMaterialList = result.data;
             } else {
                 this.$message.error(result.msg)
             }
-
+            this.$refs.transferDialog.transferParams.aimsGlobalDocumentId = "";
+            this.$refs.transferDialog.tableData = [];
+            this.$refs.transferDialog.transferParams.sourceGlobalDocumentId = e.globalDocumentId;
             this.$refs.transferDialog.dialogVisible = true;
+        },
+        getRowKeys(e) {
+            return e.documentId;
         }
+
     },
 
 }

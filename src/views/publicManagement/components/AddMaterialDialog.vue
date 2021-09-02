@@ -1,7 +1,7 @@
 <template>
     <el-dialog title="新增子文档" :visible.sync="addDialogVisible" width="50%" :close-on-click-modal="false">
         <div class="form-content">
-            <el-form :model="addForm" label-width="120px" ref="addForm" :rules="rules">
+            <el-form :model="addForm" label-width="200px" ref="addForm" :rules="rules">
                 <el-form-item label="子文档名称" prop="globalDocumentSubName">
                     <el-input v-model="addForm.globalDocumentSubName"></el-input>
                 </el-form-item>
@@ -32,7 +32,7 @@
                     <el-input v-model="addForm.pageLocation"></el-input>
                 </el-form-item>
                 <el-form-item label="关联全局二级文档">
-                    <el-select placeholder="请选择关联全局二级文档名称" v-model="addForm.catalogDocumentSubId" filterable clearable>
+                    <el-select placeholder="请选择关联全局二级文档名称" v-model="addForm.catalogDocumentSubId" filterable clearable disabled>
                         <el-option v-for="(v,i) in globalDocumentsSubOption" :label="v.catalogDocumentSubName"
                             :value="v.catalogDocumentSubId" :key="i">
                         </el-option>
@@ -55,7 +55,8 @@ import { listCatalogDocumentSub } from '@/api/basicInfo/catalogDocumentSub'
 export default {
     name: "AddMaterialDialog",
     props: [
-        "allGlobalDocuments"
+        "allGlobalDocuments",
+        "globalDocumentId"
     ],
     data() {
         return {
