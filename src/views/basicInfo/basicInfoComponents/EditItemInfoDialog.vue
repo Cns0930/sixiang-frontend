@@ -1,7 +1,8 @@
 <template>
     <div>
         <!-- 事项编辑弹窗 -->
-        <el-dialog title="事项属性填写" :visible.sync="dialogVisible" width="50%" :close-on-click-modal="false">
+        <el-dialog title="事项属性填写" :visible.sync="dialogVisible" width="50%" :close-on-click-modal="false"
+        :before-close="closeDialog">
             <div class="attribute-content">
                 <el-form :model="tempItem" ref="tempItem" :inline="false" label-position="left"
                     class="demo-form-inline">
@@ -64,9 +65,15 @@
                         </el-radio-group>
                     </el-form-item>
                     <el-form-item label="支持的功能">
-                        <el-checkbox v-model="tempItem.featureScope.bangban">帮办</el-checkbox>
-                        <el-checkbox v-model="tempItem.featureScope.yujian">预检</el-checkbox>
-                        <el-checkbox v-model="tempItem.featureScope.submit">提交</el-checkbox>
+                        <div> 非查询类事项：
+                        <el-checkbox v-model="tempItem.featureScope.bangban" @change="checkConflict">帮办</el-checkbox>
+                        <el-checkbox v-model="tempItem.featureScope.yujian" @change="checkConflict">预检</el-checkbox>
+                        <el-checkbox v-model="tempItem.featureScope.submit" @change="checkConflict">提交</el-checkbox>
+                        </div> 
+                        <div style="margin-left:82px"> 
+                            查询类事项：
+                        <el-checkbox v-model="tempItem.featureScope.enquiry" @change="handleEnquiry">查询</el-checkbox>
+                        </div>
                     </el-form-item>
                 </el-form>
             </div>
@@ -123,6 +130,8 @@ export default {
             console.log(this.tempItem)
         },
         closeDialog() {
+            this.$emit('changeDetil');
+            this.$emit('changeMain');
             this.dialogVisible = false;
         },
         async updateItem() {
@@ -134,8 +143,8 @@ export default {
             let res = await updateApprovalItem(this.tempItem);
             if (res.success) {
                 this.$message.success("事项修改成功!");
-                this.$emit('changeDetil');
-                this.$emit('changeMain');
+                // this.$emit('changeDetil');
+                // this.$emit('changeMain');
                 this.closeDialog();
             } else {
                 this.$message.success("事项修改失败!");
@@ -151,6 +160,18 @@ export default {
         deletInputs(i) {
             this.extraInfoList.splice(i, 1);
         },
+        handleEnquiry(v){
+            if(v){
+                this.tempItem.featureScope.bangban = false;
+                this.tempItem.featureScope.yujian = false;
+                this.tempItem.featureScope.submit = false;
+            }
+        },
+        checkConflict(v){
+            if(v){
+                this.tempItem.featureScope.enquiry = false;
+            }
+        }
     }
 }
 </script>
