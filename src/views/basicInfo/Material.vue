@@ -181,6 +181,7 @@
                                 <el-option label="用户自带" value="用户自带"></el-option>
                                 <el-option label="现场制作" value="现场制作"></el-option>
                                 <el-option label="电子证照" value="电子证照"></el-option>
+                                <el-option label="电子材料" value="电子材料"></el-option>
                             </el-select>
                         </el-form-item>
                     </div>
@@ -241,6 +242,7 @@
                                 <el-option label="用户自带" value="用户自带"></el-option>
                                 <el-option label="现场制作" value="现场制作"></el-option>
                                 <el-option label="电子证照" value="电子证照"></el-option>
+                                <el-option label="电子材料" value="电子材料"></el-option>
                             </el-select>
                         </el-form-item>
                     </div>
@@ -260,6 +262,23 @@
                     <el-form-item label="备注">
                         <el-input v-model="materialTEdit.note"></el-input>
                     </el-form-item>
+                    <el-form-item label="材料形式">
+                     <el-radio-group  v-model="materialTEdit.materialForm">
+                            <el-radio label="纸质">纸质</el-radio>
+                            <el-radio label="电子">电子</el-radio>
+                      </el-radio-group>
+                    </el-form-item>
+                     <el-form-item label="材料类别">
+                      <el-radio-group  v-model="materialTEdit.materialType">
+                            <el-radio label="原件">原件</el-radio>
+                            <el-radio label="复印件">复印件</el-radio>
+                            
+                            <el-radio label="原件或复印件">原件或复印件</el-radio>
+                      </el-radio-group>
+                     </el-form-item>
+                     <el-form-item label="材料份数">
+                           <el-input-number v-model="materialTEdit.materialShare"></el-input-number>
+                       </el-form-item>
                     <!-- <el-form-item label="排序">
                         <el-input v-model="materialTEdit.sort"></el-input>
                     </el-form-item> -->
@@ -402,6 +421,7 @@ import { listApprovalItemByUser, listProjectAll } from "@/api/basicInfo/approval
 import { listGlobalDcument } from '@/api/basicInfo/publicDocument';
 import { listAccessory } from "@/api/basicInfo/accessory"
 import axios from "axios";
+import { logger } from 'handlebars';
 export default {
     name: "Material",
     mixins: [basicMixin, mixin],
@@ -430,7 +450,8 @@ export default {
             materialTEdit: {
                 materialName: '',
                 documentSeq: '',
-                docxTemplateName: '',
+                docxTemplateName: '',   
+                materialShare:undefined,
             },
             materialWriteVisible: false,
             editMaterialWriteVisible: false,
@@ -742,6 +763,9 @@ export default {
             let id = item.materialId;
             item = await getByMaterialId({ materialId: id });
             item = item.data;
+            if(item.materialShare==null){
+                item.materialShare=undefined
+            }
             this.materialTEdit = item;
             this.produceSource = item.produceSource === null ? [] : item.produceSource.split(',');
             console.log('this.materialTEdit');
@@ -850,6 +874,11 @@ export default {
         // 编辑材料
         async editMaterial() {
             this.materialTEdit.produceSource = this.produceSource.toString();
+            console.log(this.materialTEdit.materialShare)
+            if(this.materialTEdit.materialShare==undefined){
+                this.materialTEdit.materialShare=null
+            }
+             console.log(this.materialTEdit.materialShare)
             let res = await updateMaterial(this.materialTEdit);
             if (!res.success) return;
 

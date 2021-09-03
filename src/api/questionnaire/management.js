@@ -41,3 +41,7 @@ export const listReplyFillbackLog = params => { return axios.get(`/qnr/question/
 
 // 查询问卷表-不分页 不含回答数 不含测试链接
 export const listQuestionNoPage = params => { return axios.get(`/qnr/question/listQuestionNoPage`, {params}).then(res=>res.data); };
+
+// 修改组的表述和顺序
+export const apiUpdateGroup = params => { return axios.post(`/qnr/question/updateGroup`, params).then(res => res.data)};
+

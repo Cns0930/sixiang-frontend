@@ -26,7 +26,7 @@
                 <el-tab-pane label="帮办字段" name="formconstructor"></el-tab-pane>
                 <el-tab-pane label="模板管理" name="materialmanager"></el-tab-pane>
                 <el-tab-pane label="步骤页面" name="pageconfigure"></el-tab-pane>
-                <el-tab-pane label="步骤页面-调研" name="pageconfigure2"></el-tab-pane>
+                <el-tab-pane label="条件预检步骤" name="pageconfigureCondition"></el-tab-pane>
                 <el-tab-pane label="测试用例" name="testcase"></el-tab-pane>
                 <el-tab-pane label="单元测试管理" name="testManager"></el-tab-pane>
                 <el-tab-pane label="设置" name="setting"></el-tab-pane>
@@ -85,12 +85,12 @@ export default {
                 sessionStorage.setItem('activeTab', 'pageconfigure');
                 // this.$store.commit("config/setCrumbList", [{ path: "/formconstructor", label: '帮办工具' }])
                 // this.$store.commit("config/setCrumbListSecond", [{ path: "/pageconfigure", label: '步骤页面管理' }])
-            } else if (this.activeTab === "pageconfigure2") {
+            } else if (this.activeTab === "pageconfigureCondition") {
                 this.$router.push({
-                    path: "/pageconfigureresearcher",
+                    path: "/pageconfigurecondition",
                     query: { itemId: this.$route.query.itemId, projectId: this.$route.query.projectId },
                 });
-                sessionStorage.setItem('activeTab', 'pageconfigure2');
+                sessionStorage.setItem('activeTab', 'pageconfigureCondition');
                 // this.$store.commit("config/setCrumbList", [{ path: "/formconstructor", label: '帮办工具' }])
                 // this.$store.commit("config/setCrumbListSecond", [{ path: "/pageconfigureresearcher", label: '步骤页面-调研' }])
             } else if (this.activeTab === "testcase") {

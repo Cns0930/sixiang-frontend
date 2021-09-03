@@ -89,15 +89,34 @@ let ElCheckboxC = {
 }
 
 
-
+let TextRadioLike = {
+    name: 'TextRadioLike',
+    data() {
+        return {
+            succ: require("./IdentityCommon/succ.png"),
+            error: require("./IdentityCommon/error.png"),
+        }
+    },
+    props: ['value','tipName'],
+    render() {
+        return <p class="radio-like">
+            {
+                this.value? <span class="succ" style="color:#3fbf6c"><img src={this.succ} />{this.tipName}</span> : <span class="error" style="color: #f56c6c"><img src={this.error} />不{this.tipName}</span>
+            }
+        </p>
+    }
+}
 
 
 
 let TextInputLike = ({ props }) => <span class="el-input__inner-like">{props.value}</span>
 
+
+
 export default {
     ElSelectC,
     ElCheckboxC,
+    TextRadioLike,
     ElRadioC,
     IdentityCommon,
     InputList,

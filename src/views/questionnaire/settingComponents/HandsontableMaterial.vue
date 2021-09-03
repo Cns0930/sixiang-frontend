@@ -7,11 +7,11 @@
             <el-button @click="load">重新加载数据</el-button>
             <el-button @click="save">保存数据</el-button>
             <el-button @click="uploadImg">配置上传图片</el-button>
-            <div style="margin-left: 15%">
+            <!-- <div style="margin-left: 15%">
                 <span>提示：</span><br />
                 <span>1. "已知的枚举值" 请务必用英文逗号隔开</span><br />
                 <span>2. "是否确认签字盖章的对象" 如果不清楚，请向你的上级确认，请勿随便选答案</span>
-            </div>
+            </div> -->
         </div>
         <div class="workBox">
             <div class="app-container handsontable-container">
@@ -135,7 +135,8 @@ export default {
                     materialId: item[0],
                     materialName: item[1],
                     qnrIsRequired: item[2],
-                    qnrProduceSource: item[3]
+                    qnrMuchSubMaterial: item[3],
+                    qnrContactSubMaterial: item[4]
                 }
                 return objData
             });
@@ -193,7 +194,7 @@ export default {
                 //     e: null,
                 //     f: null
                 // },
-                colHeaders: ['[只读]材料id', '[只读]材料名', '是否清楚材料是否必须上传', '是否清楚产生方式', '[只读]相关图片'],
+                colHeaders: ['[只读]材料id', '[只读]材料名', '是否清楚材料是否必须上传', '是否由多个二级材料组成', '是否清楚二级材料是需要全部还是只需一个', '[只读]相关图片'],
                 columns: [
                     {
                         data: 'materialId',
@@ -213,7 +214,13 @@ export default {
                         className: "htCenter htMiddle"
                     },
                     {
-                        data: 'qnrProduceSource',
+                        data: 'qnrMuchSubMaterial',
+                        editor: 'select',
+                        selectOptions: ['是', '否'],
+                        className: "htCenter htMiddle"
+                    },
+                    {
+                        data: 'qnrContactSubMaterial',
                         editor: 'select',
                         selectOptions: ['是', '否'],
                         className: "htCenter htMiddle"

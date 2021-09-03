@@ -19,8 +19,9 @@
                                     <!-- <div v-show="groupIndex + 1 === currentPage" -->
                                     <div v-for="group in paperList" :key="group.groupId">
                                         <el-divider />
-                                        <div>
+                                        <div class="title">
                                             <h1>{{group.label}}</h1>
+                                            <el-button type="primary" style="margin-left: 20px" @click="editTitle(group)">编辑</el-button>
                                         </div>
                                         <div v-if="group.picPath && group.picPath.length > 0" class="demo-image__preview"
                                             style="margin: 20px">
@@ -39,7 +40,7 @@
                                                 <i v-if="fatherName === 'QuestionManagement' && question.isDefaultDisplay"
                                                     class="el-icon-star-on" style="color:#F56C6C"></i>
                                                 <el-button type="primary" v-if="fatherName === 'QuestionManagement'"
-                                                    @click="editQue(question)" style="margin-left: 20px">编辑</el-button>
+                                                    @click="editQue(question, group.groupItem)" style="margin-left: 20px">编辑</el-button>
                                                 <el-button type="danger" v-if="fatherName === 'QuestionManagement'"
                                                     @click="deleteQue(question)" style="margin-left: 20px">删除
                                                 </el-button>
@@ -48,7 +49,6 @@
                                             </el-form-item>
                                         </div>
                                     </div>
-            
                                 </div>
                             </el-form>
                         </div>
@@ -60,29 +60,83 @@
         <el-dialog title="编辑问卷题目" :visible.sync="dialogVisbleEdit" width="50%" append-to-body
             :close-on-click-modal="false">
             <el-form label-width="120px" :model="editForm">
+                <el-form-item label="排序">
+                    <el-input v-model="editForm.sort"></el-input>
+                </el-form-item>
                 <el-form-item label="题目描述">
                     <el-input v-model="editForm.label"></el-input>
+                </el-form-item>
+                <el-form-item label="是否默认出现" v-if="editForm.isCustom === 1">
+                    <el-select v-model="editForm.isDefaultDisplay" placeholder="请选择">
+                    <el-option
+                        v-for="item in dualOptions" :key="item.value" :label="item.label" :value="item.value">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <div v-if="editForm.expand">
                     <el-form-item v-for="(item, i) in editForm.expand.options" :key="i" :label="'选项' + String(i)">
                         <el-input v-model="item.label"></el-input>
+                        <el-button @click="removeDomain(i)" v-if="editForm.isCustom === 1">删除</el-button>
+                        <el-button @click="toConfigure(item, editForm, i)" v-if="editForm.isCustom === 1">触发配置逻辑</el-button>
                     </el-form-item>
                 </div>
             </el-form>
+            <el-button @click="addDomain()" v-if="editForm.isCustom === 1" type="primary">新增</el-button>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogVisbleEdit = false">取 消</el-button>
                 <el-button type="primary" @click="editConfirm">确 定</el-button>
             </span>
         </el-dialog>
+        <!-- 编辑标题 -->
+        <el-dialog :visible.sync="editTitleShow" width="50%" append-to-body>
+            <el-form>
+                <el-form-item label="标题">
+                    <el-input v-model="params.groupLabel">
+                        
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="排序">
+                    <el-input v-model="params.sort"></el-input>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="editTitleShow = false">取 消</el-button>
+                <el-button type="primary" @click="sure">确 定</el-button>
+            </span>
+        </el-dialog>
+
+        <!--配置逻辑 -->
+        <el-dialog title="触发配置逻辑" :visible.sync = "showConfigure" width="40%" append-to-body>
+            <div v-for="(item, index ) in newTitleArr" :key="index" style="margin-bottom:20px">
+                <span style="margin-right:20px">
+                    {{item.label}}
+                </span>
+                <el-select v-model="item.display" placeholder="请选择" clearable>
+                    <el-option v-for="(item, index) in options" :key="index" :label="item.label" :value="item.value">
+                    </el-option>
+                </el-select>
+            </div>
+            <div style="line-height:35px;font-weight:900">
+                <div>
+                    配置效果说明
+                </div>
+                <div>
+                    代表选择此选项后，哪些题目会出现，哪些题目会消失</br>需要考虑切换选项可能会出现的各种神奇情况，并自己调整配置直至逻辑通顺
+                </div>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="showConfigure = false">取 消</el-button>
+                <el-button type="primary" @click="modifyTrigger()">确 定</el-button>
+            </span>
+        </el-dialog> 
     </div>
 </template>
 
 <script>
-import axios from 'axios';
 // 组件
 import QuestionComponent from './components/QuestionComponent'
 // 接口
-import { updateItem, deleteItem } from '@/api/questionnaire/management';
+import { updateItem, deleteItem, apiUpdateGroup } from '@/api/questionnaire/management';
 export default {
     name: "paper",
     props: {
@@ -122,15 +176,47 @@ export default {
                     options: []
                 }
             },
+            editTitleShow: false,
+            params: {
+                groupId: "",
+                groupLabel: "",
+                questionId: 0,
+                sort: 0
+            },
+            showConfigure: false,
+            options: [
+                {
+                    label: "触发题目出现",
+                    value: true,
+                },
+                {
+                    label: "触发题目消失",
+                    value: false
+                }
+            ],
+            value:"",
+            optionsArr: [],
+            // 取题目列表
+            titleArr: [],
+            newTitleArr: [],
+            i:null,
+            dualOptions:[{
+                value: 1,
+                label: "是"
+                }, {
+                value: 0,
+                label: "否"
+            }],
         };
     },
     mounted() {
     },
     methods: {
         // 编辑题目和选项描述
-        editQue(question) {
-            console.log('question')
+        editQue(question, groupItem) {
+            console.log('question', groupItem)
             console.log(question)
+            this.titleArr = groupItem;
             this.editForm = _.cloneDeep(question)
             this.dialogVisbleEdit = true
         },
@@ -165,6 +251,73 @@ export default {
             }
             this.$message.success('删除成功')
             this.$emit('getQuestionnaireItem', this.questionnaireInfo.questionKey)
+        },
+        editTitle(e) {
+            this.params.groupLabel = e.label;
+            this.params.groupId = e.groupId;
+            this.params.sort = e.sort;
+            this.params.questionId = this.questionnaireInfo.questionId;
+            this.editTitleShow = true;
+        },
+        async sure() {
+            const result = await apiUpdateGroup(this.params);
+            if(result.code === 200) {
+                this.editTitleShow = false
+                this.$emit('getQuestionnaireItem', this.questionnaireInfo.questionKey)
+            }else {
+                this.$message.error(result.msg)
+            }
+        },
+        // 新增表单
+        addDomain() {
+            let index = + this.editForm.expand.options.length + 1;
+            let obj = {
+                label: '',
+                trigger: [],
+                value: new Date().getTime()
+            };
+            console.log(index)
+            console.log(this.editForm.expand.options)
+            this.editForm.expand.options.push(obj);
+        },
+        // 删除表单
+        removeDomain(i) {
+            console.log(i)
+            this.editForm.expand.options.splice(i,1);
+        },
+        // 配置触发逻辑
+        toConfigure(e, options ,i ) {
+            this.i = i;
+            let newArr = this.titleArr.filter(item => {
+                return item.label !== options.label
+            });
+            console.log(newArr);
+            let newTrigger = []
+            newArr.forEach(item => {
+                let obj ={};
+                obj.label = item.label;
+                obj.formItemId = item.formItemId;
+                obj.display = "";
+                newTrigger.push(obj)
+            })
+            newTrigger.forEach( ele => {
+                e.trigger.forEach( e => {
+                    if(ele.formItemId === e.formItemId){
+                        ele.display = e.display
+                    }
+                })
+            })
+            this.newTitleArr = newTrigger;
+            this.showConfigure = true;            
+        },
+        modifyTrigger() {
+            console.log(this.newTitleArr, '---');
+            const arr = this.newTitleArr.filter( (item) =>{
+                return item.display !==""
+            })
+            console.log(arr, '----')
+            this.$set(this.editForm.expand.options[this.i],'trigger',arr)
+            this.showConfigure = false;
         }
     }
 };
@@ -227,6 +380,9 @@ export default {
             flex-direction: column;
             justify-content: flex-start;
             align-items: flex-start;
+            .title {
+                display: flex;
+            }
             .demo-image__preview {
                 width: 100%;
                 display: flex;
