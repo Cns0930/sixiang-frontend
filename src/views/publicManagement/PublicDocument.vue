@@ -339,6 +339,7 @@ export default {
             //     pageSize: this.pagesize,
             //     produceSource: this.sourceFilter,
             // }
+            this.params.projectId = this.$route.query.projectId;
             let result = await api_AndSubDocument(this.params);
 
             this.tableData = result.data.records;
