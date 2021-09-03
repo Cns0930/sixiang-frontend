@@ -15,6 +15,7 @@
                 <el-option label="现场制作" value="现场制作"></el-option>
                 <el-option label="用户自带" value="用户自带"></el-option>
                 <el-option label="电子证照" value="电子证照"></el-option>
+                <el-option label="电子材料" value="电子材料"></el-option>
             </el-select>
             <el-button @click="search" type="primary">搜索</el-button>
         </div>
@@ -132,6 +133,7 @@
                             <el-option label="现场制作" value="现场制作"></el-option>
                             <el-option label="用户自带" value="用户自带"></el-option>
                             <el-option label="电子证照" value="电子证照"></el-option>
+                            <el-option label="电子材料" value="电子材料"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="材料编码">
@@ -165,6 +167,7 @@
                             <el-option label="现场制作" value="现场制作"></el-option>
                             <el-option label="用户自带" value="用户自带"></el-option>
                             <el-option label="电子证照" value="电子证照"></el-option>
+                            <el-option label="电子材料" value="电子材料"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="材料编码">

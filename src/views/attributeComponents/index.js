@@ -13,6 +13,7 @@ import DateRangePickerDef from "./DateRangePickerDef"
 import CollectionDef from "./CollectionDef"
 import GudongCommonDef from "./GudongCommonDef"
 import TextInputLikeDef from "./TextInputLikeDef"
+import TextRadioLikeDef from "./TextRadioLikeDef"
 import ChuzifangshiDef from "./ChuzifangshiDef"
 import OriginJingyingfanweiDef from "./OriginJingyingfanweiDef"
 import JingyingfanweiDef from "./JingyingfanweiDef"
@@ -29,6 +30,7 @@ import TitleCommonDef from './TitleCommonDef'
 import CollapseCommonDef from './CollapseCommonDef'
 let mapping = [
     {label:"文本",value:"text",componentDef:TextInputLikeDef,isList:false},
+    {label:"条件预检",value:"textRadioLike",componentDef:TextRadioLikeDef,isList:false},
     {label:"文本计算值",value:"computedText",componentDef:ComputedTextDef,isList:false},
     {label:"输入框",value:"input",componentDef:InputDef,isList:false},
     {label:"输入框带建议",value:"autocomplete",componentDef:AutocompleteDef,isList:false},
