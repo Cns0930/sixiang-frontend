@@ -14,3 +14,6 @@ export const listCatalogDocumentSubPage = params => { return axios.get(`/ss/Cata
 
 // 修改全局二级文档
 export const updateCatalogDocumentSub = params => { return axios.post(`/ss/CatalogDocumentSub/updateCatalogDocumentSub`, params).then(res=>res.data); };
+
+// 查询全局二级材料关联样本
+export const api_listDocumentInfoByCatalogDocumentSub = params => { return axios.get('/ss/CatalogDocumentSub/listDocumentInfoByCatalogDocumentSub', {params}).then(res=> res.data)}

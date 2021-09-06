@@ -21,7 +21,8 @@
                     tooltip-effect="dark">
                     <el-table-column label="二级文档名称" show-overflow-tooltip>
                         <template slot-scope="scope">
-                            <el-button @click="handleShowPoint(scope.$index, scope.row)" type="text" style="color: orange;">
+                            <el-button @click="handleShowPoint(scope.$index, scope.row)" type="text"
+                                style="color: orange;">
                                 {{scope.row.catalogDocumentSubName}}
                             </el-button>
                         </template>
@@ -45,6 +46,7 @@
                                 <el-button size="mini" type="danger" @click="handleClose(scope.row)">
                                     删除
                                 </el-button>
+                                <el-button size="mini" @click="seeSample(scope.row)">查看对应样本</el-button>
                             </el-button-group>
                         </template>
                     </el-table-column>
@@ -118,7 +120,8 @@
                         tooltip-effect="dark">
                         <el-table-column prop="catalogPointName" label="信息点名称" show-overflow-tooltip>
                         </el-table-column>
-                        <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable show-overflow-tooltip>
+                        <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable
+                            show-overflow-tooltip>
                         </el-table-column>
                         <el-table-column prop="updateTime" label="最后修改时间" :formatter="timeFormatter" sortable
                             show-overflow-tooltip>
@@ -191,6 +194,57 @@
                     </el-button>
                 </span>
             </el-dialog>
+
+            <div>
+                <el-dialog title="提示" :visible.sync="dialogVisible" width="80%">
+                    <div class="search-input">
+                        <el-input style="width:200px;margin-right: 20px" v-model="params.globalDocumentSubName"
+                            placeholder="文档名称" clearable></el-input>
+                        <el-input style="width:200px; margin-right:20px" v-model="params.projectName" placeholder="项目名称"
+                            clearable></el-input>
+                        <el-input style="width:200px; margin-right: 20px" v-model="params.itemName" placeholder="事项名称"
+                            clearable>
+                        </el-input>
+                        <el-button type="success" @click="getListDocumentInfoBy()">搜索</el-button>
+                        <el-button @click="download()">下载</el-button>
+                    </div>
+                    <div>
+                        <el-table ref="sample" :data="sampleList" style="width: 100%" border max-height="400px"
+                            @selection-change="handleSelectionChange" :row-key="getRowKeys">
+                            <el-table-column type="selection" width="50" :reserve-selection='true'></el-table-column>
+                            <el-table-column prop="catalogDocumentSubName" label="全局二级文档名称" width="180">
+                            </el-table-column>
+                            <el-table-column prop="projectName" label="项目名称" width="180">
+                            </el-table-column>
+                            <el-table-column prop="globalDocumentSubName" label="公共二级材料名称" width="180">
+                            </el-table-column>
+                            <el-table-column prop="itemName" label="事项名称">
+                            </el-table-column>
+                            <el-table-column prop="globalDocumentSubName" label="事项二级材料名称" width="180">
+                            </el-table-column>
+                            <el-table-column prop="fileUrl" label="样本图片" width="180">
+                                <template slot-scope="scope">
+                                    <div class="demo-image__preview">
+                                        <el-image style="width: 100px; height: 100px" :src="scope.row.fileUrl"
+                                            :preview-src-list="[scope.row.fileUrl]">
+                                        </el-image>
+                                    </div>
+                                </template>
+                            </el-table-column>
+                            <el-table-column prop="username" label="用户名" width="180">
+                            </el-table-column>
+                            <el-table-column prop="filePath" label="样本路径" width="180">
+                            </el-table-column>
+                        </el-table>
+                    </div>
+                    <Pagination v-show="globalDocumentTotal>0" :total="globalDocumentTotal" :page.sync="params.pageNum"
+                        :limit.sync="params.pageSize" style="float:right" @pagination="getListDocumentInfoBy()" />
+                    <span slot="footer" class="dialog-footer">
+                        <el-button @click="dialogVisible = false">取 消</el-button>
+                        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+                    </span>
+                </el-dialog>
+            </div>
         </section>
     </div>
 </template>
@@ -200,7 +254,6 @@
 <script>
 
 import { mixin } from "@/mixin/mixin"
-import Vue from "vue";
 import _ from "lodash"
 
 import { mapGetters } from "vuex"
@@ -209,8 +262,11 @@ import {
     listCatalogDocumentSubPage,
     addCatalogDocumentSub,
     deleteCatalogDocumentSub,
-    updateCatalogDocumentSub
+    updateCatalogDocumentSub,
+    api_listDocumentInfoByCatalogDocumentSub
 } from "@/api/basicInfo/catalogDocumentSub";
+import Pagination from "@/components/Pagintion.vue";
+import { singleDownload } from "@/utils/download.js";
 
 import {
     listCatalogPointById,
@@ -251,10 +307,30 @@ export default {
             pagesizePoint: 10,
             totalCountPoint: 0,
             currentCatalogDocumentSubId: null,
+
+            params: {
+                // 全局二级文档id
+                catalogDocumentSubId: "",
+                // 事项内二级材料名称
+                globalDocumentSubName: "",
+                // 事项名称
+                itemName: "",
+                // 项目名称
+                projectName: "",
+                pageNum: 1,
+                pageSize: 10,
+            },
+            globalDocumentTotal: null,
+            dialogVisible: false,
+            sampleList: [],
+            multipleSelection: []
         };
     },
     computed: {
         // ...mapGetters({ hasManagePermission: 'config/hasManagePermission' })
+    },
+    components: {
+        Pagination
     },
     async created() {
         // 获取项目信息
@@ -413,13 +489,48 @@ export default {
         async handleClosePoint(row) {
             try {
                 await this.$confirm("是否删除改信息点", "确认删除",);
-                let result = await deleteCatalogPoint({ id : row.catalogPointId  });
+                let result = await deleteCatalogPoint({ id: row.catalogPointId });
                 if (!result.success) return;
                 await this.catalogPointlist();
                 this.$message({ type: "success", message: "删除成功" })
             } catch (e) {
                 this.$message({ type: "warning", message: "取消删除" })
             }
+        },
+        // 对应样本信息
+        async seeSample(e) {
+            this.params.catalogDocumentSubId = e.catalogDocumentSubId;
+            this.params.globalDocumentSubName = "";
+            this.params.itemName = "";
+            this.params.projectName = "";
+            this.params.pageNum = 1;
+            this.dialogVisible = true;
+            this.getListDocumentInfoBy();
+            this.$nextTick(() => {
+                this.$refs.sample.clearSelection();
+            })
+        },
+        async getListDocumentInfoBy() {
+            const result = await api_listDocumentInfoByCatalogDocumentSub(this.params);
+            if (result.code === 200) {
+                this.sampleList = result.data && result.data.records || [];
+                this.globalDocumentTotal = result.data && result.data.total;
+            } else {
+                this.$message.error(result.msg)
+            }
+        },
+        handleSelectionChange(val) {
+            this.multipleSelection = val;
+        },
+        // 下载
+        async download() {
+            const resut = this.multipleSelection.map(item => {
+                return item.documentId.toString()
+            })
+            singleDownload({ ids: resut.toString() }, "/docInfo/downloadDocFile")
+        },
+        getRowKeys(e) {
+            return e.documentId;
         }
     }
 }
@@ -463,6 +574,11 @@ export default {
         .workTable {
             width: 100%;
         }
+    }
+    .search-input {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
     }
 }
 </style>
