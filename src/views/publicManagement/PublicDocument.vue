@@ -140,7 +140,9 @@
                         <el-input v-model="addForm.globalDocumentCode"></el-input><span
                             style="font-size:50%;color:orange"> 非必填, 系统会自动生成</span>
                     </el-form-item>
-
+                   <el-form-item label="是否创建同名二级材料">
+                       <el-switch active-color="#13ce66" inactive-color="#ff4949"  v-model="addForm.isAddSubDocument"></el-switch>
+                   </el-form-item>
                 </el-form>
             </div>
             <span slot="footer" class="dialog-footer">
@@ -266,7 +268,9 @@ export default {
             editBtnLoading: false,
             // dialog add
             addDialogVisible: false,
-            addForm: {},
+            addForm: {
+                isAddSubDocument: true
+            },
             addBtnLoading: false,
 
             // 产生来源编辑
