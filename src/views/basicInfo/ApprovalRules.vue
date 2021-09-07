@@ -38,7 +38,7 @@
                 v-loading="loadings" element-loading-text="Excel上传中...." element-loading-spinner="el-icon-loading"
                 tooltip-effect="dark"
                 :row-style="{height:'40px'}" :header-row-style="{height:'50px'}"
-                @selection-change="handleSelectionChange">
+                @selection-change="handleSelectionChange" :height="tableHeight">
                 <el-table-column type="selection" width="55">
                 </el-table-column>
                 <el-table-column prop="ruleCode" label="规则编号" width="90" show-overflow-tooltip sortable>
@@ -593,6 +593,7 @@ export default {
             totalAim: 0,
             loading: false,
             loadings: false,
+            tableHeight:500,
         }
     },
     computed: {
@@ -604,8 +605,31 @@ export default {
         await this.search();
         await this.getApprovalSubText()
         await this.getApprovalList()
+        await this.getTableHeight()
+    },
+    mounted() {
+        let _this = this
+        window.onresize = () => {
+            if (_this.resizeFlag) {
+                clearTimeout(_this.resizeFlag)
+            }
+            _this.resizeFlag = setTimeout(() => {
+                _this.getTableHeight()
+                _this.resizeFlag = null
+            }, 100)
+        }
     },
     methods: {
+
+        getTableHeight() {
+            let tableH = 276
+            let tableHeightDetil = window.innerHeight - tableH
+            if (tableHeightDetil <= 300) {
+                this.tableHeight = 300
+            } else {
+                this.tableHeight = window.innerHeight - tableH
+            }
+        },
 
         resetForm(val) {
             this.$refs[val].resetFields()
