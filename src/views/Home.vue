@@ -165,7 +165,7 @@ export default {
         },
         // 校验下拉项目是否展示
         canItShow(label) {
-            if (label === '标签管理') {
+            if (label === '标签管理' || label === '测试环境管理') {
                 if (this.roles.includes('admin') || this.roles.includes('test') ) {
                     return true;
                 } else {
