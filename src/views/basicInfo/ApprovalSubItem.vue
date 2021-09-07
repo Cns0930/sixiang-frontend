@@ -336,7 +336,8 @@ export default {
             bangBanOptions: [],
             isExpand: true,
             // AI材料关联
-            AIMOptions: []
+            AIMOptions: [],
+            flagCount: 0,
         };
     },
     computed: {
@@ -368,6 +369,7 @@ export default {
                 // }     
             });
             this.tableData = result.data.records;
+            this.flagCount = 0; 
         },
         //  切页
         handleCurrentChange() {
@@ -547,6 +549,11 @@ export default {
         },
         // 新增
         async addText(item, index, rows) {
+            if(this.checkFlagCount()){
+                this.$message({ type: "warning", message: "不能同时编辑多条数据，请先保存" })
+                return;
+            }
+            this.flagCount++;
             console.log(item, index, rows)
             if (item == 0) {
                 rows.splice(index + 1, 0, {
@@ -610,6 +617,11 @@ export default {
         },
         // 修改
         Edit(item, index, rows) {
+            if(this.checkFlagCount()){
+                this.$message({ type: "warning", message: "不能同时编辑多条数据，请先保存" })
+                return;
+            }
+            this.flagCount++;
             this.$set(item, 'flag', true)
             this.$set(item, 'edits', true)
         },
@@ -639,6 +651,11 @@ export default {
         },
         // 新增
         async addTextAI(item, index, rows) {
+            if(this.checkFlagCount()){
+                this.$message({ type: "warning", message: "不能同时编辑多条数据，请先保存" })
+                return;
+            }
+            this.flagCount++;
             console.log(item, index, rows)
             if (item == 0) {
                 rows.splice(index + 1, 0, {
@@ -670,6 +687,7 @@ export default {
         },
         // 保存
         async saveTextAI(item, index, rows, approvalSubitemId) {
+            console.log(item)
             if (item.editsAI) {
                 delete item.edits
                 delete item.flag
@@ -702,6 +720,11 @@ export default {
         },
         // 修改
         EditAI(item, index, rows) {
+            if(this.checkFlagCount()){
+                this.$message({ type: "warning", message: "不能同时编辑多条数据，请先保存或取消" })
+                return;
+            }
+            this.flagCount++;
             this.$set(item, 'flagAI', true)
             this.$set(item, 'editsAI', true)
         },
@@ -720,6 +743,12 @@ export default {
             let result = await deleteSubitemAndDocumentNew({ SubitemAndDocumentNewId: item.id });
             if (!result.success) return;
             await this.reloadTable();
+        },
+        checkFlagCount(){
+            if(this.flagCount >= 1){
+                return true;
+            }
+            return false;
         }
     }
 };
