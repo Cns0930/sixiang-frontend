@@ -442,7 +442,7 @@ export default {
             this.globalDocumentId = e.globalDocumentId;
             this.$refs.addDialog.handleEdit()
             this.$refs.addDialog.addDialogVisible = true;
-            this.$refs.addDialog.addForm.catalogDocumentSubId = e.globalDocumentList.globalDocumentId;
+            this.$refs.addDialog.addForm.globalDocumentId = e.globalDocumentList.globalDocumentId;
         },
         toInfo(e) {
             this.gloparams.globalDocumentSubId = e.globalDocumentSubId;

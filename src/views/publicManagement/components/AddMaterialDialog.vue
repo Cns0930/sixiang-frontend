@@ -6,7 +6,7 @@
                     <el-input v-model="addForm.globalDocumentSubName"></el-input>
                 </el-form-item>
                 <el-form-item label="所属材料" prop="globalDocumentId">
-                    <el-select placeholder="所属材料" v-model="addForm.globalDocumentId" filterable clearable>
+                    <el-select placeholder="所属材料" v-model="addForm.globalDocumentId" filterable clearable disabled>
                         <el-option v-for="(v,i) in allGlobalDocuments" :label="v.label" :value="v.value" :key="i">
                         </el-option>
                     </el-select>
@@ -32,7 +32,7 @@
                     <el-input v-model="addForm.pageLocation"></el-input>
                 </el-form-item>
                 <el-form-item label="关联全局二级文档">
-                    <el-select placeholder="请选择关联全局二级文档名称" v-model="addForm.catalogDocumentSubId" filterable clearable disabled>
+                    <el-select placeholder="请选择关联全局二级文档名称" v-model="addForm.catalogDocumentSubId" filterable clearable>
                         <el-option v-for="(v,i) in globalDocumentsSubOption" :label="v.catalogDocumentSubName"
                             :value="v.catalogDocumentSubId" :key="i">
                         </el-option>
