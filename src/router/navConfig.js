@@ -115,12 +115,12 @@ const topMenuList = [
         children: [
             {
                 path: "/publicdocument",
-                label: "公共一级材料",
+                label: "公共材料",
             },
-            {
-                path: "/publicsubdocument",
-                label: "公共二级材料",
-            },
+            // {
+            //     path: "/publicsubdocument",
+            //     label: "公共二级材料",
+            // },
             {
                 path: "/examination",
                 label: "信息点管理",
