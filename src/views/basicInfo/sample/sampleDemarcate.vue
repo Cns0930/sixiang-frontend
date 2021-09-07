@@ -191,9 +191,12 @@
                                                     </el-popover>
                                                 </span>
                                                 <el-button type="plain" @click="showRectangles()"
-                                                    style="margin-left: 10px;" round>显示坐标框图</el-button>
+                                                    style="margin-left: 5px;" round>显示坐标框图</el-button>
                                                 <el-button type="plain" @click="importTruthData(sampleTruthTable)"
-                                                    style="margin-left: 10px;" round>一键导入最新提取结果</el-button>
+                                                    style="margin-left: 5px;" round>一键导入最新提取结果</el-button>
+                                                <el-button type="plain" @click="save()" round>
+                                                    一键保存
+                                                </el-button>
                                             </span>
                                             <span v-show="imgUrl" class="truth-table">截取展示:</span>
                                             <img :src="imgUrl" alt="" width="100%">
@@ -681,7 +684,7 @@ export default {
             console.log('真值item');
             console.log(item);
             item.documentId = this.rowInfo.id;
-            let result = await addSampleResultField(item);
+            let result = await addSampleResultField([item]);
             if (!result.success) {
                 this.$message.warning('真值保存失败');
                 return;
@@ -718,6 +721,7 @@ export default {
             this.$nextTick(() => {
                 let canvas = document.querySelector("#canvas");
                 let ctx = canvas.getContext('2d');
+                console.log(ctx, 'ctx');
 
                 // 绘制图片对象 ctx.drawImage(图片对象， x位置， y位置)
                 let img = new Image();
@@ -732,6 +736,7 @@ export default {
                     this.sampleTruthTable.forEach(item => {
                         if (item.fieldLocation !== null) {
                             let coordinate = JSON.parse(item.fieldLocation);
+                            console.log(coordinate, 'coordinate')
                             let x = coordinate[0][1];
                             let y = coordinate[0][0];
                             let width = coordinate[1][1] - x;
@@ -755,6 +760,14 @@ export default {
                 }
 
             })
+        },
+        async save() {
+            const result = await addSampleResultField(this.sampleTruthTable);
+            if (result.code === 200) {
+                this.$message.success("保存成功")
+            } else {
+                this.$message.error(result.msg)
+            }
         }
     },
 
