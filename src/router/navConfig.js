@@ -52,6 +52,10 @@ const topMenuList = [
             {
                 path: "/project",
                 label: "项目管理",
+            },
+            {
+                path: "/testService",
+                label: "测试环境管理",
             }
         ],
         order: 1
