@@ -165,6 +165,11 @@ const routes = [
                 component: ProjectList,
             },
             {
+                path: '/testService',
+                name: 'TestService',
+                component: resolve => require(['@/views/projectManagement/TestService.vue'], resolve),
+            },
+            {
                 path: '/weibanju',
                 name: 'WeiBanJu',
                 component: resolve => require(['@/views/WeiBanJu/index.vue'], resolve),
