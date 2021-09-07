@@ -762,6 +762,9 @@ export default {
             })
         },
         async save() {
+            this.sampleTruthTable.forEach( item => {
+                item.documentId = this.rowInfo.id;
+            });
             const result = await addSampleResultField(this.sampleTruthTable);
             if (result.code === 200) {
                 this.$message.success("保存成功")
