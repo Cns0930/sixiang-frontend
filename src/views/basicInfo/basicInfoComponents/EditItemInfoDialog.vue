@@ -104,7 +104,10 @@ export default {
             // 初始事项参数
             itemId: this.$route.query.itemId,
             dialogVisible: false,
-            tempItem: {},
+            tempItem: {
+                featureScope:{
+                }
+            },
             approvalOptions: [],
             extraInfoList: [{
                 keyValue: '',
