@@ -67,7 +67,7 @@
                                                     <el-button icon="el-icon-plus" @click="sizeUp(item)" circle>
                                                     </el-button>
                                                     <el-button round @click="imgOpen(item.valueUrl)">打开图片</el-button>
-                                                    <el-button @click="updateOcr(item)">更新ocr</el-button>
+                                                    <!-- <el-button @click="updateOcr(item)">更新ocr</el-button> -->
                                                     <span style="color: green; margin: 0px 10px;">{{item.documentsubDisplayname}}</span>
                                                     <span style="color: #409EFF">{{item.fileName}}</span>
                                                 </div>
@@ -810,12 +810,12 @@ export default {
             document.body.removeChild(a);
         },
         // 更新OCR结果
-        async updateOcr(item) {
-            let result = await uploadOcrById({ documentId: item.id });
-            if (!result.success) return;
-            result.data.unshift('- - - - - OCR结果已更新 - - - - - - ');
-            item.ocrResultShow = result.data;
-        },
+        // async updateOcr(item) {
+        //     let result = await uploadOcrById({ documentId: item.id });
+        //     if (!result.success) return;
+        //     result.data.unshift('- - - - - OCR结果已更新 - - - - - - ');
+        //     item.ocrResultShow = result.data;
+        // },
 
         // 批量更新ocr结果
         async updataAll() {
