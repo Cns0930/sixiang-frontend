@@ -17,3 +17,15 @@ export const updateCatalogDocumentSub = params => { return axios.post(`/ss/Catal
 
 // 查询全局二级材料关联样本
 export const api_listDocumentInfoByCatalogDocumentSub = params => { return axios.get('/ss/CatalogDocumentSub/listDocumentInfoByCatalogDocumentSub', {params}).then(res=> res.data)}
+
+// 查询字段验证代码库
+export const api_listFieldsValidate = params => { return axios.get('/superform/FieldsValidate/listFieldsValidate', {params}).then(res => res.data)}
+
+// 删除
+export const api_deleteFieldsValidate = params => { return axios.get('/superform/FieldsValidate/deleteFieldsValidate', {params} ).then(res => res.data)}
+
+// 新增字段验证代码库
+export const api_addFieldsValidate = params => {return axios.post('/superform​/FieldsValidate​/addFieldsValidate', params ).then(res => res.data)}
+
+//修改字段验证代码库
+export const api_updateFieldsValidate = params => {return axios.post('/superform/FieldsValidate/updateFieldsValidate', params).then(res => res.data)}

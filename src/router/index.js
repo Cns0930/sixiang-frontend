@@ -200,6 +200,11 @@ const routes = [
                 component: SecondaryDocument,
             },
             {
+                path: '/validatejs',
+                name: 'ValidateJs',
+                component: () => import("@/views/globaldocument/ValidateJs.vue")
+            },
+            {
                 path: '/basic',
                 name: 'ApprovalItem',
                 component: ApprovalItem,

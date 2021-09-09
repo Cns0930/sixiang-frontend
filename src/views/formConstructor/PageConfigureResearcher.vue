@@ -26,7 +26,7 @@
                 <p v-if="!stepPages.length" style="color: #606266;text-align:center;margin-top:20px">暂无数据</p>
             </div>
 
-            <!-- 页面属性填写 -->
+            <!-- 页面属性填写 --> 
             <!-- 注意和temp_page关联 -->
             <div class="attribute-content" v-if="temp_page.id" style="padding:10px">
                 <el-button @click="save" type="primary">保存</el-button>

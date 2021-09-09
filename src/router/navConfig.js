@@ -106,6 +106,10 @@ const topMenuList = [
                 path: "/document",
                 label: "全局二级文档管理",
             },
+            {
+                path: "/validatejs",
+                label: "验证方式js管理"
+            }
         ],
         order: 6
     },
