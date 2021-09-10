@@ -44,7 +44,8 @@
                     <template slot-scope="scope">
                         <el-button @click="toEdit(scope.row)" :disabled="(scope.row.isCustom === 0)">编辑</el-button>
                         <el-button @click="toDelete(scope.row)" :disabled="(scope.row.isCustom === 0)">删除</el-button>
-                        <el-button @click="toCopy(scope.row.validateScript)">
+                        <el-button @click="toCopy('.table-read')" :data-clipboard-text="scope.row.validateScript"
+                            class="table-read">
                             复制
                         </el-button>
                     </template>
@@ -89,7 +90,6 @@ export default {
                     label: '非必填'
                 },
             ],
-            value: '',
             tableData: [],
             params: {
                 pageNum: 1,
@@ -122,6 +122,9 @@ export default {
             this.$refs.addJsDialog.ruleForm = {};
             this.$refs.addJsDialog.ruleForm.isCustom = 1;
             this.$refs.addJsDialog.dialogVisible = true;
+            // this.$nextTick(()=>{
+            //     this.$refs.addJsDialog.initEditForConfig();
+            // })
         },
         toEdit(e) {
             console.log(e)
@@ -131,19 +134,18 @@ export default {
             })
         },
         async toCopy(item) {
-            console.log(item)
-            // let clipboard = new Clipboard(item)
-            // clipboard.on('success', e => {
-            //     this.$message.success('复制成功')
-            //     // 释放内存
-            //     clipboard.destroy()
-            // })
-            // clipboard.on('error', e => {
-            //     // 不支持复制
-            //     this.$message.error('该浏览器不支持自动复制')
-            //     // 释放内存
-            //     clipboard.destroy()
-            // })
+            let clipboard = new Clipboard(item)
+            clipboard.on('success', e => {
+                this.$message.success('复制成功')
+                // 释放内存
+                clipboard.destroy()
+            })
+            clipboard.on('error', e => {
+                // 不支持复制
+                this.$message.error('该浏览器不支持自动复制')
+                // 释放内存
+                clipboard.destroy()
+            })
         },
         toDelete(e) {
             console.log(e)
@@ -167,8 +169,9 @@ export default {
         },
         async addUpdate(e) {
             console.log(e)
-            const result = await api_addFieldsValidate();
+            const result = await api_addFieldsValidate(e);
             if (result.code === 200) {
+                this.$refs.addJsDialog.dialogVisible = false;
                 this.init();
             } else {
                 this.$message.error(result.msg)

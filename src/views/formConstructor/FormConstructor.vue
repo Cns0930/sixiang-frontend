@@ -93,7 +93,9 @@
                     <div class="attribute">前端验证信息: {{temp_field_info.validationInfo}}</div>
                 </div>
                 <el-divider></el-divider>
-
+                <el-button @click="tovalidate()">
+                    查看验证方法
+                </el-button>
                 <div v-if="temp_fieldObj && editDialogVisible">
                     <div class="attribute">
                         <span class="attribute-key">fieldNo</span>
@@ -313,6 +315,42 @@
             <el-button type="text" @click="clearPublic">清除所有选择</el-button>
 
         </el-dialog>
+        <el-dialog title="验证方法库" width="80%"  :visible.sync = "validateShow">
+            <div class="search-content">
+               <el-input class="distance" placeholder="请输入名称" v-model="valiParams.keyword" clearable style="width: 200px">
+
+                </el-input>
+                <el-select class="distance" v-model="valiParams.isCustom" placeholder="请选择" clearable>
+                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+                </el-select>
+                <el-select class="distance" v-model="valiParams.isRequired" placeholder="请选择" clearable>
+                <el-option v-for="item in requiredList" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+                </el-select>
+                <el-button @click="getValidateList()">搜索</el-button>
+            </div>
+            <div>
+                <el-table :data="valiDate" style="width: 100%" border max-height="450">
+                    <el-table-column type="index" width="50" align="center"></el-table-column>
+                    <el-table-column prop="validateName" label="验证名称" width="180">
+                    </el-table-column>
+                    <el-table-column prop="validateDescription" label="补充描述" width="180">
+                    </el-table-column>
+                    <el-table-column prop="validateScript" label="验证代码">
+                    </el-table-column>
+                    <el-table-column width="100">
+                        <template slot-scope="scope">
+                            <el-button class="table-read" :data-clipboard-text="scope.row.validateScript"  @click="toCopy('.table-read')">
+                                复制
+                            </el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <Pagination v-show="valiTotal>0" :total="valiTotal" :page.sync="valiParams.pageNum" :limit.sync="valiParams.pageSize"
+                @pagination="getValidateList()" style="float:right" />
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -340,11 +378,15 @@ import { functionReviverEventRuntime, convertDefToConfigEventRuntime, functionRe
 import { log } from 'handlebars';
 import { mixin } from "@/mixin/mixin"
 var pinyin = require("pinyin");
+import { api_listFieldsValidate } from "@/api/basicInfo/catalogDocumentSub.js";
+import Pagination from "@/components/Pagintion.vue";
+import Clipboard from "clipboard";
 export default {
     name: "FormConstructor",
     components: {
         ...defRenderers,
         draggable,
+        Pagination
     },
     mixins: [mixin],
     data() {
@@ -414,6 +456,36 @@ export default {
             // 下载
             loadingDownFile: false,
             btnLoading:false,
+            validateShow: false,
+            options: [
+                {
+                    value: '0',
+                    label: "内置",
+                },
+                {
+                    value: 1,
+                    label: "自定义",
+                }
+            ],
+            requiredList: [
+                {
+                    value: '1',
+                    label: '必填',
+                },
+                {
+                    value: '0',
+                    label: '非必填'
+                },
+            ],
+            valiParams: {
+                pageNum: 1,
+                pageSize: 10,
+                isCustom: "",
+                isRequired: "",
+                keyword: "",
+            },
+            valiTotal: null,
+            valiDate: []
         };
     },
     computed: {
@@ -611,7 +683,7 @@ export default {
             } else {
                 return true;
             }
-        },
+        },  
         // 添加子项
         handleClickAddChild(row) {
             this.temp_parent = row;
@@ -1157,7 +1229,7 @@ export default {
             try {
                 await this.$confirm('确定要把子字段转为基本字段吗?', '提示', {
                     confirmButtonText: '确定',
-                    cancelButtonText: '取消',
+                    cancelButtonText: '取消',   
                     type: 'warning'
                 })
             } catch (e) {
@@ -1173,7 +1245,36 @@ export default {
             }
             this.$message({ type: "success", message: "修改成功" });
             this.load();
-        }
+        },
+        async tovalidate() {
+            this.getValidateList();
+            this.validateShow = true;
+        },
+        async getValidateList() {
+            const result = await api_listFieldsValidate(this.valiParams);
+            console.log(result)
+            if (result.code === 200) {
+                console.log(result);
+                this.valiDate = result.data.records;
+                this.valiTotal = result.data.total;
+            } else {
+                this.$message.error(result.msg);
+            }
+        },
+        async toCopy(item) {
+            let clipboard = new Clipboard(item)
+            clipboard.on('success', e => {
+                this.$message.success('复制成功')
+                // 释放内存
+                clipboard.destroy()
+            })
+            clipboard.on('error', e => {
+                // 不支持复制
+                this.$message.error('该浏览器不支持自动复制')
+                // 释放内存
+                clipboard.destroy()
+            })
+        },
     }
 };
 </script>
@@ -1268,5 +1369,12 @@ export default {
             flex: 1;
         }
     }
+}
+.search-content {
+    display: flex;
+    margin-bottom: 20px;
+}
+.distance {
+    margin-right: 20px;
 }
 </style>

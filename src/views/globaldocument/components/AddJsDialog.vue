@@ -20,7 +20,7 @@
                 <el-form-item label="验证代码">
                     <el-button @click="initEditForConfig()">修改</el-button>
                 </el-form-item>
-                <div ref="configEdit" style="width:100%;height:300px"></div>
+                <div ref="configEdit" style="width:100%;height:300px" v-show="open"></div>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogVisible = false">取 消</el-button>
@@ -62,23 +62,52 @@ export default {
             },
             rules: {
 
-            }
+            },
+            open: false
 
+        }
+    },
+    watch: {
+        dialogVisible: {
+            handler(v) {
+                if (!v) {
+                    this.open = false
+                }
+            }
         }
     },
     created() {
 
     },
     methods: {
-        initEditForConfig() {
-            this.aceForConfig = ace.edit(this.$refs.configEdit);
-            this.aceForConfig.setTheme("ace/theme/monokai");
-            this.aceForConfig.session.setMode("ace/mode/javascript");
-            this.aceForConfig.setOption("wrap", "free")
-            this.aceForConfig.setValue(this.ruleForm.validateScript);
-            beautify.beautify(this.aceForConfig.session)
+        async initEditForConfig() {
+            // this.aceForConfig = ace.edit(this.$refs.configEdit);
+            // this.aceForConfig.setTheme("ace/theme/monokai");
+            // this.aceForConfig.session.setMode("ace/mode/javascript");
+            // this.aceForConfig.setOption("wrap", "free")
+            // if (this.ruleForm.validateScript) {
+            //     this.aceForConfig.setValue(this.ruleForm.validateScript);
+            // }
+            // beautify.beautify(this.aceForConfig.session)
+
+            this.open = !this.open;
+            if (this.open) {
+                await this.$nextTick();
+                this.editor = ace.edit(this.$refs.configEdit);
+                this.editor.setTheme("ace/theme/monokai");
+                this.editor.session.setMode("ace/mode/javascript");
+                this.editor.setOption("wrap", "free")
+                if (this.ruleForm.validateScript) {
+                    this.editor.setValue(this.ruleForm.validateScript)
+                }
+                beautify.beautify(this.editor.session);
+            } else {
+                this.editor.destroy();
+            }
         },
         sure() {
+            this.ruleForm.validateScript = this.editor.getValue();
+            console.log(this.ruleForm, '===')
             this.$refs.ruleForm.validate((valid) => {
                 if (valid) {
                     this.$emit("update", this.ruleForm)
