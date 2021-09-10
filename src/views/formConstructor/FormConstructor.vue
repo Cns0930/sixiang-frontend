@@ -22,7 +22,8 @@
         </div>
         <div class="searchBox">
             <div class="left">
-                <el-input placeholder="筛选字段名称或者字段编号" v-model="valueF" clearable style="width:240px"></el-input>
+                <el-input placeholder="筛选字段名称或者字段编号" v-model="valueF" clearable style="width:240px"
+                @change="fieldSearch"></el-input>
                 <el-select v-model="temp_type_search" clearable filterable placeholder="筛选组件类型" style="width:240px">
                     <el-option v-for="(v,i) in typeOptions" :key="i" :label="v.label" :value="v.value"></el-option>
                 </el-select>
