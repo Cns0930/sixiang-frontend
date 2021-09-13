@@ -80,6 +80,12 @@
                     </el-table-column>
                     <el-table-column prop="logicType" label="子材料逻辑" show-overflow-tooltip>
                     </el-table-column>
+                    <el-table-column prop="materialForm" label="材料形式" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="materialType" label="材料类别" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="materialShare" label="材料份数" show-overflow-tooltip>
+                    </el-table-column>
                     <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable width="160">
                     </el-table-column>
                     <el-table-column prop="updateTime" label="最后修改时间" :formatter="timeFormatter" sortable
@@ -198,6 +204,23 @@
                     <el-form-item label="备注">
                         <el-input v-model="materialT.note"></el-input>
                     </el-form-item>
+                    <el-form-item label="材料形式">
+                     <el-radio-group  v-model="materialT.materialForm">
+                            <el-radio label="纸质">纸质</el-radio>
+                            <el-radio label="电子">电子</el-radio>
+                            <el-radio label="纸质或电子">纸质或电子</el-radio>
+                      </el-radio-group>
+                    </el-form-item>
+                     <el-form-item label="材料类别">
+                      <el-radio-group  v-model="materialT.materialType">
+                            <el-radio label="原件">原件</el-radio>
+                            <el-radio label="复印件">复印件</el-radio>                            
+                            <el-radio label="原件或复印件">原件或复印件</el-radio>
+                      </el-radio-group>
+                     </el-form-item>
+                     <el-form-item label="材料份数">
+                           <el-input-number v-model="materialT.materialShare"></el-input-number>
+                       </el-form-item>
                     <!-- <el-form-item label="排序">
                         <el-input v-model="materialT.sort"></el-input>
                     </el-form-item> -->
@@ -266,13 +289,13 @@
                      <el-radio-group  v-model="materialTEdit.materialForm">
                             <el-radio label="纸质">纸质</el-radio>
                             <el-radio label="电子">电子</el-radio>
+                            <el-radio label="纸质或电子">纸质或电子</el-radio>
                       </el-radio-group>
                     </el-form-item>
                      <el-form-item label="材料类别">
                       <el-radio-group  v-model="materialTEdit.materialType">
                             <el-radio label="原件">原件</el-radio>
-                            <el-radio label="复印件">复印件</el-radio>
-                            
+                            <el-radio label="复印件">复印件</el-radio>                            
                             <el-radio label="原件或复印件">原件或复印件</el-radio>
                       </el-radio-group>
                      </el-form-item>
