@@ -161,7 +161,7 @@
             </el-table-column>
         </el-table>
         <div class="tablePagination">
-            <el-pagination @current-change="handleCurrentChange" :current-page.sync="currentPage" :page-size="pageSize"
+            <el-pagination @current-change="handleCurrentChange"  @size-change="handleSizeChange" :current-page.sync="currentPage" :page-size="tablePageSize"
                 layout="total, sizes, prev, pager, next" :total="total" :page-sizes="[10, 20, 50, 100, 200]"></el-pagination>
         </div>
         <el-dialog title="添加情形" :visible.sync="addDialogVisible" width="50%" :close-on-click-modal="false">
@@ -296,6 +296,7 @@ export default {
             tableData: [],
             tableDataSS: [],
             pageSize: 10,
+            tablePageSize: 10,
             currentPage: 1,
             total: 0,
             totalAim: 0,
@@ -356,7 +357,7 @@ export default {
     methods: {
         // 查询表格
         async reloadTable() {
-            let result = await listApprovalSubAndMaterial({ pageNum: this.currentPage, approvalItemId: this.itemId });
+            let result = await listApprovalSubAndMaterial({ pageNum: this.currentPage, approvalItemId: this.itemId, pageSize: this.tablePageSize });
 
             if (!result.success) return;
             this.total = result.data.total;
@@ -370,6 +371,11 @@ export default {
             });
             this.tableData = result.data.records;
             this.flagCount = 0; 
+        },
+        handleSizeChange(e) {
+            console.log(e, '===');
+            this.tablePageSize = e;
+            this.reloadTable();
         },
         //  切页
         handleCurrentChange() {

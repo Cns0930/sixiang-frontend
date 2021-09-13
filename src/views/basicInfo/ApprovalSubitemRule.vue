@@ -48,8 +48,8 @@
             </el-table>
         </div>
         <div class="tablePagination">
-            <el-pagination @current-change="search()" :current-page.sync="currentPage" :page-size="pagesize" :page-sizes="[10, 20, 50, 100, 200]"
-                layout="total, sizes, prev, pager, next" :total="totalCount">
+            <el-pagination @current-change="search()"  @size-change="handleSizeChange" :current-page.sync="currentPage" :page-size="pagesize" :page-sizes="[10, 20, 50, 100, 200]"
+                layout="total, prev, pager, next" :total="totalCount">
             </el-pagination>
         </div>
         <!-- 新建窗口 -->
@@ -218,7 +218,6 @@
 
 <script>
 import axios from 'axios'
-import Vue from "vue";
 import {mixin} from "@/mixin/mixin"
 // import { listGlobalCheckpoint} from '@/api/basicInfo/examination'
 import {listCheckpoint} from '@/api/basicInfo/field';
@@ -240,7 +239,7 @@ export default {
 
             // 分页
             currentPage: 1,
-            pagesize: 15,
+            pagesize: 10,
             totalCount: 0,
             // dialog edit
             editDialogVisible:false,
@@ -299,7 +298,10 @@ export default {
         await this.getApprovalList()
     },
     methods: {
-        
+        handleSizeChange(e) {
+            console.log(e)
+            this.pageSize = e;
+        },
         resetForm(val) {
             this.$refs[val].resetFields()
             this.addDialogVisible = false
