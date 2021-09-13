@@ -415,6 +415,7 @@
                 <el-table-column label="序号" type="index" width="60" :index="indexMethod"></el-table-column>
                 <el-table-column prop="fieldNo" label="字段编号" width="200"></el-table-column>
                 <el-table-column prop="label" label="产品前端字段名称"></el-table-column>
+                <el-table-column prop="fieldComponentType" label="组件名称"></el-table-column>
                 <el-table-column prop="fieldComponentName" label="组件类型" fixed="right">
                     <template slot-scope="scope">
                         <el-select v-model="scope.row.fieldComponentName" clearable placeholder="请选择组件类型"
