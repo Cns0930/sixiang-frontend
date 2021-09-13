@@ -106,7 +106,7 @@ export default {
         topMenuList() {
             let topMenuList = generaterTopMenuList(this.roles);
             if (this.$route.path === '/project' || this.$route.path === '/document' || this.$route.path === '/user'
-                || this.$route.path === '/timeconsume' || this.$route.path === '/weibanju' || this.$route.path === '/datum'){
+                || this.$route.path === '/timeconsume' || this.$route.path === '/weibanju' || this.$route.path === '/datum' || this.$route.path === '/validatejs'){
                 topMenuList = topMenuList.filter(item => 
                     item.label !== '事项管理' && item.label !== '文档管理' && item.label !== '说明'
                 )
@@ -137,7 +137,7 @@ export default {
         },
         isShowProject() {
             if (this.$route.path === '/user' || this.$route.path === '/project' || this.$route.path === '/document'
-            || this.$route.path === '/timeconsume') {
+            || this.$route.path === '/timeconsume' ) {
                 return false;
             } else {
                 return true;
@@ -148,7 +148,7 @@ export default {
             || this.$route.path === '/publicdocument' || this.$route.path === '/publicsubdocument'
             || this.$route.path === '/examination' || this.$route.path === '/readme'
             || this.$route.path === '/public' || this.$route.path === '/allEdit' || this.$route.path === '/document'
-            || this.$route.path === '/approval' || this.$route.path === '/timeconsume') {
+            || this.$route.path === '/approval' || this.$route.path === '/timeconsume' || this.$route.path === '/validatejs') {
                 return false;
             } else {
                 return true;
@@ -165,7 +165,7 @@ export default {
         },
         // 校验下拉项目是否展示
         canItShow(label) {
-            if (label === '标签管理' || label === '测试环境管理' || label === '验证方式js管理') {
+            if (label === '标签管理' || label === '测试环境管理') {
                 if (this.roles.includes('admin') || this.roles.includes('test') ) {
                     return true;
                 } else {

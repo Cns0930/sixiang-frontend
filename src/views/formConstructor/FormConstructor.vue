@@ -93,7 +93,7 @@
                     <div class="attribute">前端验证信息: {{temp_field_info.validationInfo}}</div>
                 </div>
                 <el-divider></el-divider>
-                <el-button @click="tovalidate()">
+                <el-button @click="tovalidate()" v-if="editDialogVisible&&temp_fieldObj.componentDefs.hasOwnProperty('ruleKey')">
                     查看验证方法
                 </el-button>
                 <div v-if="temp_fieldObj && editDialogVisible">
@@ -317,16 +317,16 @@
         </el-dialog>
         <el-dialog title="验证方法库" width="80%"  :visible.sync = "validateShow">
             <div class="search-content">
-               <el-input class="distance" placeholder="请输入名称" v-model="valiParams.keyword" clearable style="width: 200px">
+                <el-input class="distance" placeholder="请输入名称" v-model="valiParams.keyword" clearable style="width: 200px" @change="getValidateList()">
 
                 </el-input>
-                <el-select class="distance" v-model="valiParams.isCustom" placeholder="请选择" clearable>
-                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
+                <el-select class="distance" v-model="valiParams.isCustom" placeholder="请选择" clearable @change="getValidateList()">
+                    <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                    </el-option>
                 </el-select>
-                <el-select class="distance" v-model="valiParams.isRequired" placeholder="请选择" clearable>
-                <el-option v-for="item in requiredList" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
+                <el-select class="distance" v-model="valiParams.isRequired" placeholder="请选择" clearable @change="getValidateList()">
+                    <el-option v-for="item in requiredList" :key="item.value" :label="item.label" :value="item.value">
+                    </el-option>
                 </el-select>
                 <el-button @click="getValidateList()">搜索</el-button>
             </div>
@@ -875,7 +875,7 @@ export default {
                 children: result.data.children
             });
             this.temp_fieldObj = newFieldObj;
-            console.log(this.temp_fieldObj)
+            console.log(this.temp_fieldObj.componentDefs, "====")
             delete this.temp_fieldObj.list;
             this.editDialogVisible = true;
         },

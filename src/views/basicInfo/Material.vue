@@ -115,8 +115,8 @@
                 </el-table>
             </div>
             <div class="tablePagination">
-                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                    :current-page.sync="currentPage" :page-size="pagesize" layout="total, prev, pager, next"
+                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="[10, 20, 50, 100, 200]"
+                    :current-page.sync="currentPage" :page-size="pagesize" layout="total, prev, pager, next, sizes"
                     :total="totalCount"></el-pagination>
             </div>
         </section>

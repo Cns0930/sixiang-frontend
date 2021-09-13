@@ -162,7 +162,7 @@
         </el-table>
         <div class="tablePagination">
             <el-pagination @current-change="handleCurrentChange" :current-page.sync="currentPage" :page-size="pageSize"
-                layout="total, prev, pager, next" :total="total"></el-pagination>
+                layout="total, sizes, prev, pager, next" :total="total" :page-sizes="[10, 20, 50, 100, 200]"></el-pagination>
         </div>
         <el-dialog title="添加情形" :visible.sync="addDialogVisible" width="50%" :close-on-click-modal="false">
 

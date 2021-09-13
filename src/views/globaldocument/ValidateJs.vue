@@ -1,18 +1,18 @@
 <template>
     <div class="vialidate">
         <div class="search-content">
-            <el-input class="distance" placeholder="请输入名称" v-model="params.keyword" clearable style="width: 200px">
+            <el-input class="distance" placeholder="请输入名称" v-model="params.keyword" clearable style="width: 200px" @change="init()">
 
             </el-input>
-            <el-select class="distance" v-model="params.isCustom" placeholder="请选择" clearable>
+            <el-select class="distance" v-model="params.isCustom" placeholder="请选择" clearable @change="init()">
                 <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
             </el-select>
-            <el-select class="distance" v-model="params.isRequired" placeholder="请选择" clearable>
+            <el-select class="distance" v-model="params.isRequired" placeholder="请选择" clearable @change="init()">
                 <el-option v-for="item in requiredList" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
             </el-select>
-            <el-button @click="init()">搜索</el-button>
+            <!-- <el-button @click="init()">搜索</el-button> -->
         </div>
         <div style="margin-bottom: 20px">
             <el-button @click="toAdd()">新增</el-button>
