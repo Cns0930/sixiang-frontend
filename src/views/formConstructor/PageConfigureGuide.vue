@@ -9,7 +9,7 @@
         <div class="op-bar">
             <!-- <el-button @click="importDefault">导入默认步骤</el-button> -->
             <!-- <el-button @click="importPreview">导入自选步骤</el-button> -->
-            <el-button @click="createStepPage">创建条件预检步骤</el-button>
+            <el-button @click="createStepPage">创建专属指南步骤</el-button>
             <!-- <el-button @click="handlePreview">预览页面</el-button>-->
             <!-- <el-button @click="showInit">页面Init方法</el-button> -->
             <el-button @click="loadAll">刷新列表</el-button>
@@ -270,12 +270,7 @@ export default {
             //  添加字段dialog用
             addFieldDialogVisible: false,
             temp_chosen_fields: [],
-            componentOptions:  [
-            {
-                name:"ConditionalCheck",
-                label:"条件预检步骤",
-                type:"field"
-            }],
+            componentOptions:  pageComponents,
             temp_page_component: null,
             temp_configType: "",
             // 导入字段
@@ -337,7 +332,7 @@ export default {
             addressOptions: [],
             loadingPalace: false,
             isActive: 0,
-            switchType: 'conditionalCheck',
+            switchType: 'guide',
         };
     },
     computed: {
