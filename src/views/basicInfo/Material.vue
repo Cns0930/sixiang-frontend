@@ -86,6 +86,8 @@
                     </el-table-column>
                     <el-table-column prop="materialShare" label="材料份数" show-overflow-tooltip>
                     </el-table-column>
+                    <el-table-column prop="materialSource" label="材料来源" show-overflow-tooltip>
+                    </el-table-column>
                     <el-table-column prop="createTime" label="创建时间" :formatter="timeFormatter" sortable width="160">
                     </el-table-column>
                     <el-table-column prop="updateTime" label="最后修改时间" :formatter="timeFormatter" sortable
@@ -217,10 +219,13 @@
                             <el-radio label="复印件">复印件</el-radio>                            
                             <el-radio label="原件或复印件">原件或复印件</el-radio>
                       </el-radio-group>
-                     </el-form-item>
-                     <el-form-item label="材料份数">
+                    </el-form-item>
+                    <el-form-item label="材料份数">
                            <el-input-number v-model="materialT.materialShare"></el-input-number>
-                       </el-form-item>
+                    </el-form-item>
+                    <el-form-item label="材料来源">
+                           <el-input v-model="materialT.materialSource"></el-input>
+                    </el-form-item>
                     <!-- <el-form-item label="排序">
                         <el-input v-model="materialT.sort"></el-input>
                     </el-form-item> -->
@@ -305,6 +310,12 @@
                     <!-- <el-form-item label="排序">
                         <el-input v-model="materialTEdit.sort"></el-input>
                     </el-form-item> -->
+                    <el-form-item label="材料来源">
+                           <el-input v-model="materialTEdit.materialSource"></el-input>
+                    </el-form-item>
+                    <el-form-item label="专属指南产生方式js">
+                        <CodeEditor v-model="materialTEdit.guideProduceScript" ref="guideEditor"></CodeEditor>
+                    </el-form-item>
                     <el-form-item label="关联公共一级材料">
                         <el-select v-model="materialTEdit.globalDocumentId" placeholder="请选择关联的公共一级材料" clearable
                             filterable remote reserve-keyword :remote-method="remoteMethodBang" :loading="loadingBang">
@@ -445,10 +456,11 @@ import { listGlobalDcument } from '@/api/basicInfo/publicDocument';
 import { listAccessory } from "@/api/basicInfo/accessory"
 import axios from "axios";
 import { logger } from 'handlebars';
+import { CodeEditor } from "@/views/attributeComponents/defRendererComponents/defRendererComponents";
 export default {
     name: "Material",
     mixins: [basicMixin, mixin],
-    components: {Preview},
+    components: {Preview, CodeEditor},
     data() {
         return {
             // model: {
@@ -795,6 +807,7 @@ export default {
             console.log(this.materialTEdit);
             this.getApprovalTextList();
             this.editMaterialWriteVisible = true;
+            this.$refs.guideEditor.open = false;
         },
         //导入材料
         async handleImport() {
@@ -901,11 +914,12 @@ export default {
             if(this.materialTEdit.materialShare==undefined){
                 this.materialTEdit.materialShare=null
             }
-             console.log(this.materialTEdit.materialShare)
+            console.log(this.materialTEdit.materialShare)
             let res = await updateMaterial(this.materialTEdit);
             if (!res.success) return;
 
             this.$message.success(res.data);
+            this.$refs.guideEditor.open = false;
             this.editMaterialWriteVisible = false;
             // this.materialT_item_id = '';
             // if (!this.materialTEdit.materialId) {
@@ -1100,8 +1114,8 @@ export default {
             document.body.removeChild(a);
             window.URL.revokeObjectURL(href);
             row.loadingFile = false
-        }
-    },
+        },
+    }
 };
 </script>
 
