@@ -123,6 +123,11 @@ const routes = [
                         component: () => import("@/views/formConstructor/PageConfigureCondition")
                     },
                     {
+                        path: "/pageconfigureguide",
+                        name: "PageConfigureGuide",
+                        component: () => import("@/views/formConstructor/PageConfigureGuide")
+                    },
+                    {
                         path: "/pageconfigureresearcher",
                         name: "PageConfigureResearcher",
                         component: () => import("@/views/formConstructor/PageConfigureResearcher")

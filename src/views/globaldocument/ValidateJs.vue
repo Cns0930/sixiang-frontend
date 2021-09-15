@@ -121,13 +121,13 @@ export default {
         toAdd() {
             this.$refs.addJsDialog.ruleForm = {};
             this.$refs.addJsDialog.ruleForm.isCustom = 1;
+            this.$refs.addJsDialog.ruleForm.validateScript = "";
             this.$refs.addJsDialog.dialogVisible = true;
             // this.$nextTick(()=>{
             //     this.$refs.addJsDialog.initEditForConfig();
             // })
         },
         toEdit(e) {
-            console.log(e)
             this.$refs.editJsDialog.ruleForm = JSON.parse(JSON.stringify(e));
             this.$nextTick(() => {
                 this.$refs.editJsDialog.dialogVisible = true;
@@ -148,7 +148,6 @@ export default {
             })
         },
         toDelete(e) {
-            console.log(e)
             this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
