@@ -8,3 +8,6 @@ export const downloadFile = params => { return axios.get(`/superform/additional/
 
 // 材料附件上传
 export const uploadFile = params => { return axios.post(`/superform/additional/uploadWord`, params ).then(res=>res.data); };
+
+// 查询事项下所有情形
+export const api_listApprovalSubAll = params => { return axios.get('/ss/approvalSub/listApprovalSubAll', { params }).then( res => res.data )}

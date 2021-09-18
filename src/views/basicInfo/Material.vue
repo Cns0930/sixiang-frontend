@@ -435,7 +435,7 @@
             </span>
         </el-dialog>
         <Preview ref="previewRef"></Preview>
-        <MainPointsDialog ref="mainDialog"></MainPointsDialog>
+        <MainPointsDialog ref="mainDialog" :itemId="itemId" :listApproval="listApproval"></MainPointsDialog>
     </div>
 </template>
 
@@ -455,7 +455,7 @@ import {
 } from "../../api/basicInfo/material";
 import { listApprovalItemByUser, listProjectAll } from "@/api/basicInfo/approval";
 import { listGlobalDcument } from '@/api/basicInfo/publicDocument';
-import { listAccessory } from "@/api/basicInfo/accessory"
+import { listAccessory, api_listApprovalSubAll } from "@/api/basicInfo/accessory"
 import axios from "axios";
 import { CodeEditor } from "@/views/attributeComponents/defRendererComponents/defRendererComponents";
 import MainPointsDialog from "./components/MainPointsDialog.vue";
@@ -538,6 +538,7 @@ export default {
             tableDataTemplate: [],
             currentMaterialId: null,
             downloadFileUrl: process.env.VUE_APP_BASE_IP + "/ss/material/downloadFile",
+            listApproval: []
         };
     },
     computed: {
@@ -1117,8 +1118,15 @@ export default {
             window.URL.revokeObjectURL(href);
             row.loadingFile = false
         },
-        mainPoints() {
-            this.$refs.mainDialog.dialogVisible = true;
+        async mainPoints() {
+            const result = await api_listApprovalSubAll({approvalItemId: this.itemId});
+            if (result.code === 200) {
+                this.listApproval  = result.data;
+            }
+            this.$nextTick(() => {
+                this.$refs.mainDialog.dialogVisible = true;
+                this.$refs.mainDialog.init();
+            })
         }
     }
 };

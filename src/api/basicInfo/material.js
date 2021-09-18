@@ -1,4 +1,4 @@
-import axios from '../config'
+import axios from '../config';
 
 // 事项管理查询
 export const listApprovalItem = params => { return axios.get(`/ss/approvalItem/listApprovalItem`, params).then(res=>res.data); };
@@ -72,3 +72,12 @@ export const addMaterialFigureSignature = params => { return axios.post(`/ss/Mat
 
 // 修改预览图签章
 export const updateMaterialFigureSignature = params => { return axios.post(`/ss/MaterialAndFigure/updateMaterialFigureSignature`, params).then(res=>res.data); };
+
+// 查看所有自备一级材料的审批规则和预览图
+export const api_listSelfMaterialRule = params => { return axios.get(`/ss/material/listSelfMaterialRule`, { params }).then(res => res.data)}
+
+// 查看图片信息
+export const api_getMaterialFigure = params => { return axios.get(`/ss/MaterialAndFigure/getMaterialFigure`, { params }).then(res => res.data)}
+
+// 事项下所有一级材料预览图提取
+export const api_extractMaterialFigure = params => { return axios.get(`/ss/MaterialAndFigure/extractMaterialFigure`, { params } ).then(res => res.data)}
