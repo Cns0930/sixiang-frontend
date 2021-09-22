@@ -116,23 +116,12 @@ export default {
                     }
                 }
             })
-            // const result = await api_listSelfMaterialRule(this.params);
-            // if (result.code === 200) {
-            //     this.list = result.data;
-            //     console.log(this.list, '---');
-            //     if (this.list.length !== 0) {
-            //         this.toImgItem(this.list[0], 0);
-            //     }
-            // } else {
-            //     this.$message.error(result.msg)
-            // }
         },
         async getImageInfo(e) {
             let img = "";
             let arr = [];
             if (e) {
                 img = process.env.VUE_APP_BASE_IP + `/ss/MaterialAndFigure/getMaterialFigure?figureId=${e}`;
-                // console.log(this.figureList, this.leftRight, '-----')
                 this.figureList[this.leftRight].kvInfo !== null && this.figureList[this.leftRight].kvInfo.forEach((element, index) => {
                     const ib = this.findIndex1(element.approvalPointId);
                     element.documentAndFields.forEach((ele, index) => {
@@ -186,7 +175,6 @@ export default {
             if ((this.leftRight + 2) <= this.figureList.length) {
                 this.leftRight = this.leftRight + 1;
                 this.getImageInfo(this.figureList[this.leftRight].id);
-                // this.getImageInfo()
             }
         },
         toBig() {
