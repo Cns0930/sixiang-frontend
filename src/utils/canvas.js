@@ -29,7 +29,6 @@ export class CanvasBox {
   zoom = 1
 
   constructor(canvasId, imageUrl, coordinates, groupFieldLocation, config, useWidth) {
-    console.log(imageUrl, coordinates, groupFieldLocation, '======')
     this.canvasId = canvasId
     this.imageUrl = imageUrl
     this.coordinates = coordinates
@@ -160,7 +159,6 @@ export class CanvasBox {
 
   checkCoordinates(customCoordinates) {
     return customCoordinates.map(coordinate => {
-      console.log(coordinate, coordinate.length)
       // 存在 coordinate 为null的情况
       if (coordinate === null) {
         return null
@@ -312,7 +310,6 @@ const getPixelRatio = (ctx) => {
 
 // 处理配置参数
 const handleConfig = (config) => {
-  console.log(config, 'config')
   if (!config) {
     return {
       width: 766,

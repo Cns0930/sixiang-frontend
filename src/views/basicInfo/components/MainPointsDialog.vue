@@ -3,7 +3,7 @@
         <el-dialog title="预览自备材料审查要点" :visible.sync="dialogVisible" width="1200px">
             <el-select v-model="params.subitemIdList" multiple placeholder="请选择" style="margin-bottom: 10px"
                 @change="check()" clearable>
-                <el-option v-for="(item, i) in listApproval" :key="i" :label="item.subitemName"
+                <el-option v-for="(item, i) in listApproval" :key="item.approvalSubitemId" :label="item.subitemName"
                     :value="item.approvalSubitemId">
                 </el-option>
             </el-select>
@@ -13,13 +13,13 @@
                         <span>审批要点说明</span>
                     </div>
                     <div class="left-list">
-                        <div class="item" v-for="(item, index) in list" :key="index">
+                        <div class="item" v-for="(item, index) in list" :key="item.id">
                             <div class="one-item" @click="toImgItem( item, index)"
                                 :class="materialName === item.material.materialName?'active':''">
                                 <span>{{index+1}}. </span><span>{{item.material.materialName }}</span>
                             </div>
                             <div class="two-content">
-                                <div class="two-item" v-for="(ele, index) in item.ruleList" :key="index">
+                                <div class="two-item" v-for="(ele, index) in item.ruleList" :key="ele.ruleId">
                                     <span class="index-content">{{index+1}}</span><span>{{ele.rulePoint}}</span>
                                 </div>
                             </div>
@@ -33,7 +33,7 @@
                         </span>
                     </div>
                     <div class="right-list">
-                        <div class="right-center">
+                        <div class="right-center" id="right-center">
                             <canvas id="myCanvas" width="200" height="100"></canvas>
                         </div>
                         <div class="right-bottom">
@@ -54,7 +54,7 @@
                             <div class="enlarge-png" @click="toBig()">
 
                             </div> -->
-                            <el-button type="primary" class="btn" @click="again()">重新跑提取</el-button>
+                            <el-button type="primary" class="btn" :loading="loading" @click="again()">重新跑提取</el-button>
                         </div>
                     </div>
                 </div>
@@ -66,6 +66,8 @@
 <script>
 import { api_listSelfMaterialRule, api_getMaterialFigure, api_extractMaterialFigure } from "@/api/basicInfo/material.js";
 import { CanvasBox } from "@/utils/canvas";
+import axios from 'axios'
+import qs from 'qs'
 export default {
     name: 'MainPointsDialog',
     props: ["itemId", "listApproval"],
@@ -82,6 +84,16 @@ export default {
             figureList: [],
             materialName: "",
             indexNum: 1,
+            loading: false,
+        }
+    },
+    watch: {
+        dialogVisible: {
+            handler(v) {
+                if (v) {
+                    this.params.subitemIdList = [];
+                }
+            }
         }
     },
     created() {
@@ -91,16 +103,29 @@ export default {
             this.init()
         },
         async init() {
-            const result = await api_listSelfMaterialRule(this.params);
-            if (result.code === 200) {
-                this.list = result.data;
-                console.log(this.list, '---');
-                if (this.list.length !== 0) {
-                    this.toImgItem(this.list[0], 0);
+            axios.get(process.env.VUE_APP_BASE_IP + `/ss/material/listSelfMaterialRule`, {
+                params: this.params,
+                paramsSerializer: params => {
+                    return qs.stringify(params, { indices: false })
                 }
-            } else {
-                this.$message.error(result.msg)
-            }
+            }).then(res => {
+                if (res.data.code === 200) {
+                    this.list = res.data.data;
+                    if (this.list.length !== 0) {
+                        this.toImgItem(this.list[0], 0);
+                    }
+                }
+            })
+            // const result = await api_listSelfMaterialRule(this.params);
+            // if (result.code === 200) {
+            //     this.list = result.data;
+            //     console.log(this.list, '---');
+            //     if (this.list.length !== 0) {
+            //         this.toImgItem(this.list[0], 0);
+            //     }
+            // } else {
+            //     this.$message.error(result.msg)
+            // }
         },
         async getImageInfo(e) {
             let img = "";
@@ -109,19 +134,18 @@ export default {
                 img = process.env.VUE_APP_BASE_IP + `/ss/MaterialAndFigure/getMaterialFigure?figureId=${e}`;
                 // console.log(this.figureList, this.leftRight, '-----')
                 this.figureList[this.leftRight].kvInfo !== null && this.figureList[this.leftRight].kvInfo.forEach((element, index) => {
-                    const ib = this.findIndex1(element.approval_point_id);
-                    element.document_and_field.forEach((ele, index) => {
-                        ele.rule_filter_value_info.forEach((item, i) => {
+                    const ib = this.findIndex1(element.approvalPointId);
+                    element.documentAndFields.forEach((ele, index) => {
+                        ele.valueInfoList.forEach((item, i) => {
                             let info = {};
                             info.index = ib;
-                            info.locations = [item.field_location];
+                            info.locations = [item.fieldLocation];
                             arr.push(info)
                         })
                     })
                 })
             }
-            console.log(arr, "arr")
-            this.canvasBox = new CanvasBox("#myCanvas", img, [], arr)
+            this.canvasBox = new CanvasBox("#myCanvas", img, [], arr,)
             await this.canvasBox.renderImg();
         },
         findIndex1(e) {
@@ -142,7 +166,9 @@ export default {
             ele.figureList.length === 0 ? this.getImageInfo("") : this.getImageInfo(ele.figureList[this.leftRight].id);
         },
         async again() {
+            this.loading = true;
             const result = await api_extractMaterialFigure({ approvalItemId: this.itemId });
+            this.loading = false;
             if (result.code === 200) {
                 this.$message.success("提取成功")
             } else {

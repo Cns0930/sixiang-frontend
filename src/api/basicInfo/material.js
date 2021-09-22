@@ -74,7 +74,7 @@ export const addMaterialFigureSignature = params => { return axios.post(`/ss/Mat
 export const updateMaterialFigureSignature = params => { return axios.post(`/ss/MaterialAndFigure/updateMaterialFigureSignature`, params).then(res=>res.data); };
 
 // 查看所有自备一级材料的审批规则和预览图
-export const api_listSelfMaterialRule = params => { return axios.get(`/ss/material/listSelfMaterialRule`, { params }).then(res => res.data)}
+export const api_listSelfMaterialRule = params => { return axios.get(`/ss/material/listSelfMaterialRule`, { params }, ).then(res => res.data)}
 
 // 查看图片信息
 export const api_getMaterialFigure = params => { return axios.get(`/ss/MaterialAndFigure/getMaterialFigure`, { params }).then(res => res.data)}
