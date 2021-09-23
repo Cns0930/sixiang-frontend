@@ -1,4 +1,5 @@
 import axios from 'axios';
+import qs from 'qs'
 import { Message,Notification  } from 'element-ui';
 import _ from 'lodash';
 import router from '../router';

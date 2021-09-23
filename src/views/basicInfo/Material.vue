@@ -12,8 +12,9 @@
                     <el-button type="primary" @click="handleImport()">导入材料</el-button>
                     <el-button @click="handleClickWordDialog" type="primary" style="margin-bottom:10px">上传模板压缩包
                     </el-button>
-
+                    <el-button type="primary" @click="mainPoints()">预览自备材料审查要点</el-button>
                 </div>
+              
             </div>
             <el-dialog title="上传word压缩包" :visible.sync="addWordDialogVisible" width="50%" :close-on-click-modal="false">
                 历史上传记录
@@ -434,6 +435,7 @@
             </span>
         </el-dialog>
         <Preview ref="previewRef"></Preview>
+        <MainPointsDialog ref="mainDialog" :itemId="itemId" :listApproval="listApproval"></MainPointsDialog>
     </div>
 </template>
 
@@ -453,14 +455,14 @@ import {
 } from "../../api/basicInfo/material";
 import { listApprovalItemByUser, listProjectAll } from "@/api/basicInfo/approval";
 import { listGlobalDcument } from '@/api/basicInfo/publicDocument';
-import { listAccessory } from "@/api/basicInfo/accessory"
+import { listAccessory, api_listApprovalSubAll } from "@/api/basicInfo/accessory"
 import axios from "axios";
-import { logger } from 'handlebars';
 import { CodeEditor } from "@/views/attributeComponents/defRendererComponents/defRendererComponents";
+import MainPointsDialog from "./components/MainPointsDialog.vue";
 export default {
     name: "Material",
     mixins: [basicMixin, mixin],
-    components: {Preview, CodeEditor},
+    components: {Preview, CodeEditor, MainPointsDialog},
     data() {
         return {
             // model: {
@@ -536,6 +538,7 @@ export default {
             tableDataTemplate: [],
             currentMaterialId: null,
             downloadFileUrl: process.env.VUE_APP_BASE_IP + "/ss/material/downloadFile",
+            listApproval: []
         };
     },
     computed: {
@@ -1115,6 +1118,16 @@ export default {
             window.URL.revokeObjectURL(href);
             row.loadingFile = false
         },
+        async mainPoints() {
+            const result = await api_listApprovalSubAll({approvalItemId: this.itemId});
+            if (result.code === 200) {
+                this.listApproval  = result.data;
+            }
+            this.$nextTick(() => {
+                this.$refs.mainDialog.dialogVisible = true;
+                this.$refs.mainDialog.init();
+            })
+        }
     }
 };
 </script>
