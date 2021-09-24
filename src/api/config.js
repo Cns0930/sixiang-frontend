@@ -6,7 +6,7 @@ import router from '../router';
 // axios.defaults.baseURL = process.env.API_ROOT;
 axios.defaults.baseURL = process.env.VUE_APP_BASE_IP;
 // axios.defaults.serviceURL = process.env.VUE_APP_SERVICE_IP;
-axios.defaults.timeout = 1000 * 60;
+axios.defaults.timeout = 1000 * 100;
 axios.defaults.headers['Content-Type'] = 'application/json';
 // axios.defaults.headers.AUTHORIZTION_FLAG = '';
 axios.defaults.headers.Authorization = localStorage.getItem('ticket') || '';
