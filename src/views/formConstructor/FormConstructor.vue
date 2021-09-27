@@ -1408,4 +1408,7 @@ export default {
 .distance {
     margin-right: 20px;
 }
+/deep/ .el-select {
+    width: 100%
+}
 </style>
