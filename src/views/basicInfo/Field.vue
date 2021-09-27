@@ -928,8 +928,8 @@ export default {
             if (!result.success) {
                 this.$message.warning('转到帮办字段失败')
             } else {
-                this.$message.success('转到帮办字段成功')
-                if (result.data.length === 0) return;
+                this.$message.success('转到帮办字段成功, 新写入数据'+result.data.count+'条')
+                if (result.data.resultList.length === 0) return;
                 const h = this.$createElement;
                 this.$notify({
                     title: '以下字段缺少二级材料未导出提取点',
