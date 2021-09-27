@@ -21,7 +21,7 @@
         </div>
         <div class="tableWrap">
             <el-table ref="multipleTable" class="workTable" :data="tableData" style="width: 100%;" border
-                tooltip-effect="dark" :default-sort="{prop: 'createTime', order: 'descending'}">
+                tooltip-effect="dark" :default-sort="{prop: 'createTime', order: 'descending'}" default-expand-all>
                 <el-table-column type="expand">
                     <template slot-scope="scope">
                         <div>

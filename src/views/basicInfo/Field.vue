@@ -851,13 +851,15 @@ export default {
             let vm = this
             let fieldIdList = this.multipleSelection.map(e => e.fieldId)
             let result = await listFieldNosByIds({ fieldIdList })
+            // 在帮办中fieldNo已经存在的fieldName-fieldNo列表
             this.taglists = result.data
             console.log(result)
             let preTableData = [];
+            // 如果有要去除的帮办字段重复项
             if (result.data.length) {
                 let lists = _.cloneDeep(vm.multipleSelection)
                 result.data.forEach(e => {
-                    lists = lists.filter(ele => ele.fieldNo != e);
+                    lists = lists.filter(ele => ele.fieldName + '-' + ele.fieldNo != e);
                 })
                 // 选择去重
                 let filList = [];
@@ -926,8 +928,8 @@ export default {
             if (!result.success) {
                 this.$message.warning('转到帮办字段失败')
             } else {
-                this.$message.success('转到帮办字段成功')
-                if (result.data.length === 0) return;
+                this.$message.success('转到帮办字段成功, 新写入数据'+result.data.count+'条')
+                if (result.data.resultList.length === 0) return;
                 const h = this.$createElement;
                 this.$notify({
                     title: '以下字段缺少二级材料未导出提取点',
@@ -975,6 +977,7 @@ export default {
                         approvalItemId: vm.itemId,
                         descriptionInfo: ele.descriptionInfo,
                         fieldType,
+                        isRequired: ele.isRequired,
                         object: v,
                     }
                     if (vm.roles.includes("admin") || vm.roles.includes("developer")) {
