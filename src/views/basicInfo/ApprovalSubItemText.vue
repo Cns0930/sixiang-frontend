@@ -6,10 +6,13 @@
         </header>
         <section class="workBox">
             <div class="searchBox">
+                <el-select v-model= "searchMaterId" placeholder="请选择一级材料名称" clearable @change="textSearch">
+                    <el-option  v-for="item in firstMaterialOption" :key="item.materialId" :label="item.materialName" :value="item.materialId" />
+                </el-select>
                 <!-- <el-input placeholder="按情形名称查询" v-model="approvalName" clearable style="width: 200px"></el-input> -->
                 <el-input placeholder="子文档名称/编号查询" v-model="subitemNameAndDocumentSubName" clearable
                     style="width: 200px;" @change="textSearch"></el-input>
-                <el-button @click="textSearch">搜索</el-button>
+                <!-- <el-button @click="textSearch">搜索</el-button> -->
                 <!-- <el-button v-if="tableData.length < 1" type="primary" @click="addFirst">新增</el-button> -->
             </div>
             <div class="tableWrap">
@@ -141,7 +144,7 @@
 import basicMixin from "./basicMixin";
 import { mixin } from "@/mixin/mixin"
 import Vue from "vue";
-import { listMaterial, getTemplateByMaterialId, listGlobalSubAllByMaterial, getAllByApprovalItemId } from "../../api/basicInfo/material";
+import { listMaterial, getTemplateByMaterialId, listGlobalSubAllByMaterial, getAllByApprovalItemId, } from "../../api/basicInfo/material";
 import { listGlobalDcumentSub, listGlobalDcumentSubByCascade } from "../../api/basicInfo/publicDocument";
 import {
     getApprovalSub, addItemAndDocumentSub, deleItemAndDocumentSub, updateItemAndDocumentSub
@@ -185,6 +188,7 @@ export default {
             firstMaterialOption: [],
             secondMaterialOption: [],
             materialId: '',
+            searchMaterId: ''
         };
     },
     computed: {},
