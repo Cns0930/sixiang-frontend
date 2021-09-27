@@ -57,6 +57,7 @@
                     <el-table-column prop="fieldType" label="类型" :formatter="formatFieldType" width="100"
                         show-overflow-tooltip>
                     </el-table-column>
+                    <el-table-column prop="isRequired" label="是否必填" width="80" :formatter="isRequiredFormatter"> </el-table-column>
                     <el-table-column prop="validationInfo" label="前端验证信息" show-overflow-tooltip> </el-table-column>
                     <el-table-column prop="descriptionInfo" label="字段描述信息" show-overflow-tooltip> </el-table-column>
                     <el-table-column prop="remark" label="备注" show-overflow-tooltip width="150"> </el-table-column>
@@ -147,6 +148,13 @@
                         <span class="attribute-key">前端信息验证</span>
                         <el-input type="textarea" v-model="temp_fieldObj.validationInfo" autosize></el-input>
                     </div>
+                    <div class="attribute">
+                        <span class="attribute-key">是否必填</span>
+                        <el-select v-model="temp_fieldObj.isRequired" clearable placeholder="是否必填">
+                            <el-option label="是" :value="Number(1)"></el-option>
+                            <el-option label="否" :value="Number(0)"></el-option>
+                        </el-select>
+                    </div>
                     <!-- <div class="attribute" v-for="(v,i) in temp_fieldObj.componentDefs" :key="i">
                         <span class="attribute-key">{{v.label || i}} </span>
                         <component class="attribute-value" :is="v.renderTemplateName" v-model="v.value"
@@ -191,6 +199,12 @@
                         <el-option v-for="(v,i) in typeOptions" :key="i" :label="v.label" :value="v.value"></el-option>
                     </el-select>
                 </div>
+                <div>
+                    <el-select v-model="temp_required" clearable placeholder="是否必填" v-if="temp_type !='computed' && temp_type != 'checkpoint'">
+                        <el-option label="是" :value="Number(1)"></el-option>
+                        <el-option label="否" :value="Number(0)"></el-option>
+                    </el-select>
+                </div>
 
             </div>
             <span slot="footer" class="dialog-footer">
@@ -217,6 +231,12 @@
                     <el-option v-for="(v,i) in typeOptions" :key="i" :label="v.label" :value="v.value"></el-option>
                 </el-select>
             </div>
+             <div>
+                <el-select v-model="temp_required" clearable placeholder="是否必填" v-if="temp_type !='computed' && temp_type != 'checkpoint'">
+                        <el-option label="是" :value="Number(1)"></el-option>
+                        <el-option label="否" :value="Number(0)"></el-option>
+                    </el-select>
+                </div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogChildVisible = false">取 消</el-button>
                 <el-button type="primary" @click="addChildFieldConfirm">确 定</el-button>
@@ -407,6 +427,7 @@ export default {
             temp_type: "",
             temp_label: "",
             temp_fieldName: "",
+            temp_required: null,
             // 添加 合成fieldNo的dialog 用
             dialogComputedVisible: false,
             temp_computed_fieldNo: "",
@@ -616,6 +637,7 @@ export default {
         },
         // 创建 基本字段
         handleAddBaseField() {
+            this.temp_required = null;
             this.dialogVisible = true;
         },
         changeLable() {
@@ -719,7 +741,8 @@ export default {
                 fieldType: 3,
                 object: v,
                 approvalItemId: this.itemId,
-                parentId: this.temp_parent.id
+                parentId: this.temp_parent.id,
+                isRequired: this.temp_required,
             }
 
             let result = await saveOne(param);
@@ -753,6 +776,7 @@ export default {
                         fieldName: this.temp_fieldObj.fieldName,
                         descriptionInfo: this.temp_fieldObj.descriptionInfo,
                         validationInfo: this.temp_fieldObj.validation_info,
+                        isRequired: this.temp_fieldObj.isRequired,
                         type: this.temp_change_type,
                         label: this.temp_fieldObj.label,
                         fieldType: 2,
@@ -764,6 +788,7 @@ export default {
                         fieldName: this.temp_fieldObj.fieldName,
                         descriptionInfo: this.temp_fieldObj.descriptionInfo,
                         validationInfo: this.temp_fieldObj.validation_info,
+                        isRequired: this.temp_fieldObj.isRequired,
                         type: this.temp_change_type,
                         label: this.temp_fieldObj.label,
                         fieldComponentName: this.temp_change_type,
@@ -811,6 +836,7 @@ export default {
                 approvalItemId: this.itemId,
                 fieldType,
                 object: v,
+                isRequired: this.temp_required,
             }
             if (this.roles.includes("admin") || this.roles.includes("developer")) {
                 param.createRole = "developer";
@@ -868,7 +894,7 @@ export default {
             if (!result.success) return;
 
             // 处理调研备注信息的展示
-            this.temp_field_info = { descriptionInfo: result.data.descriptionInfo, validationInfo: result.data.validationInfo };
+            this.temp_field_info = { descriptionInfo: result.data.descriptionInfo, validationInfo: result.data.validationInfo, isRequired: result.data.isRequired };
 
             let newFieldObj = deserializeTableData({
                 ...result.data.object, id: result.data.id, fieldType: result.data.fieldType, remark: result.data.remark,
@@ -892,6 +918,7 @@ export default {
                 fieldName: result.data.fieldName,
                 descriptionInfo: result.data.descriptionInfo,
                 validationInfo: result.data.validationInfo,
+                isRequired: result.data.isRequired,
                 children: result.data.children
 
             });
@@ -1009,6 +1036,7 @@ export default {
             let vsimple = _.cloneDeep(v)
             delete vsimple.descriptionInfo
             delete vsimple.validationInfo
+            delete vsimple.isRequired
             delete vsimple.parentId
             let param = {
                 id: v.id,
@@ -1036,12 +1064,14 @@ export default {
             let vsimple = _.cloneDeep(v)
             delete vsimple.descriptionInfo
             delete vsimple.validationInfo
+            delete vsimple.isRequired
             let param = {
                 id: v.id,
                 fieldNo: v.fieldNo,
                 fieldName: v.fieldName,
                 descriptionInfo: v.descriptionInfo,
                 validationInfo: v.validationInfo,
+                isRequired: v.isRequired,
                 label: v.label,
                 // fieldComponentName: v.componentDefs?.type?.value,
                 // fieldType: v.fieldType,
@@ -1074,7 +1104,7 @@ export default {
             let tableData = result.data.records.map(v => ({
                 ...v.object, id: v.id, fieldType: v.fieldType, fieldName: v.fieldName,
                 remark: v.remark,
-                descriptionInfo: v.descriptionInfo,
+                descriptionInfo: v.descriptionInfo, isRequired: v.isRequired,
                 validationInfo: v.validationInfo, children: v.children
             })).map(deserializeTableData);
             console.log("tableData:", tableData)

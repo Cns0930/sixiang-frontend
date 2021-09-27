@@ -94,7 +94,8 @@ export function deserializeBaseField(fieldJSON) {
         fieldName: fieldJSON.fieldName,
         parentId: fieldJSON.parentId,
         descriptionInfo: fieldJSON.descriptionInfo,
-        validationInfo: fieldJSON.validationInfo, 
+        validationInfo: fieldJSON.validationInfo,
+        isRequired:fieldJSON.isRequired,
         remark: fieldJSON.remark,
         createRole: fieldJSON.createRole,
         componentDefs: actualComponentDefs
@@ -122,7 +123,8 @@ export function deserializeComputedField(fieldJSON){
         fieldType: 2,
         fieldName: fieldJSON.fieldName,
         descriptionInfo: fieldJSON.descriptionInfo,
-        validationInfo: fieldJSON.validationInfo, 
+        validationInfo: fieldJSON.validationInfo,
+        isRequired:fieldJSON.isRequired,
         remark: fieldJSON.remark,
         createRole: fieldJSON.createRole,
         label: fieldJSON.label,
@@ -144,8 +146,8 @@ export function deserializeTableData(fieldJSON){
         if(fieldJSON.children != null){
            
             
-            if(fieldJSON.children.some(e=>e.validationInfo)||fieldJSON.children.some(e=>e.descriptionInfo)) {
-                let children = fieldJSON.children.map(v => ({...v.object, id: v.id, fieldType: v.fieldType,validationInfo:v.validationInfo,descriptionInfo:v.descriptionInfo })).map(deserializeBaseField)
+            if(fieldJSON.children.some(e=>e.validationInfo)||fieldJSON.children.some(e=>e.descriptionInfo)||fieldJSON.children.some(e=>e.isRequired)) {
+                let children = fieldJSON.children.map(v => ({...v.object, id: v.id, fieldType: v.fieldType,validationInfo:v.validationInfo,descriptionInfo:v.descriptionInfo, isRequired:v.isRequired})).map(deserializeBaseField)
                 if (output.componentDefs.meta) {
                     output.componentDefs.meta.value = children
                 }

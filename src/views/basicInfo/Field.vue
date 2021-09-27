@@ -851,13 +851,15 @@ export default {
             let vm = this
             let fieldIdList = this.multipleSelection.map(e => e.fieldId)
             let result = await listFieldNosByIds({ fieldIdList })
+            // 在帮办中fieldNo已经存在的fieldName-fieldNo列表
             this.taglists = result.data
             console.log(result)
             let preTableData = [];
+            // 如果有要去除的帮办字段重复项
             if (result.data.length) {
                 let lists = _.cloneDeep(vm.multipleSelection)
                 result.data.forEach(e => {
-                    lists = lists.filter(ele => ele.fieldNo != e);
+                    lists = lists.filter(ele => ele.fieldName + '-' + ele.fieldNo != e);
                 })
                 // 选择去重
                 let filList = [];
@@ -975,6 +977,7 @@ export default {
                         approvalItemId: vm.itemId,
                         descriptionInfo: ele.descriptionInfo,
                         fieldType,
+                        isRequired: ele.isRequired,
                         object: v,
                     }
                     if (vm.roles.includes("admin") || vm.roles.includes("developer")) {
