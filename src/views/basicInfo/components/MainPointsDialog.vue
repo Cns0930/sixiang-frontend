@@ -189,6 +189,7 @@ export default {
     /deep/.el-dialog__body {
         padding: 10px;
         max-height: none;
+        overflow: hidden;
     }
     .content {
         display: flex;
@@ -208,7 +209,7 @@ export default {
                 }
             }
             .left-list {
-                // height: 524px;
+                height: 100%;
                 width: 100%;
                 line-height: 46px;
                 font-weight: 600;
