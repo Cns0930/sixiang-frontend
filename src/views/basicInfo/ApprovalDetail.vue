@@ -73,7 +73,7 @@
                     <el-button type="primary" icon="el-icon-upload2" @click="downApprovalItem">载入事项
                     </el-button>
                 </div>
-                <div class="handleBox">
+                <div class="handleBox" v-btn>
                     <p class="title">上传事项配置到git</p>
                     <el-button :disabled="itemInfo.itemStage === '验收'" type="primary" icon="el-icon-upload2"
                         @click="dialogGitConfirmVisible = true;">点击上传

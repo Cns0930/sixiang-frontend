@@ -17,7 +17,7 @@
                     搜索
                 </el-button>
                 <div class="handle">
-                    <el-button type="primary" @click="handleClickAdd">
+                    <el-button type="primary" @click="handleClickAdd" v-btn>
                         新增项目
                     </el-button>
                     <el-button type="primary" @click="openDialog">
@@ -47,7 +47,7 @@
                         <span class="itemTexttwo">{{ item.projectDetails }}</span>
                     </div>
                     <div class="itemFooter">
-                        <el-button type="plain" @click="handleClickEdit(item)">编辑项目</el-button>
+                        <el-button type="plain" @click="handleClickEdit(item)" v-btn>编辑项目</el-button>
                         <el-button type="primary" @click="goApproval(item)">事项管理</el-button>
                         <el-popover placement="bottom" width="120" trigger="click">
                             <el-button type="danger" icon="el-icon-delete" @click="deleteProject(item)"

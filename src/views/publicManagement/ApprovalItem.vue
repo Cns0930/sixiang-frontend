@@ -21,7 +21,7 @@
                     搜索
                 </el-button>
                 <div class="handle">
-                    <el-button type="primary" @click="handleClickAdd">
+                    <el-button type="primary" @click="handleClickAdd" v-btn>
                         新增
                     </el-button>
                     <!-- <el-button type="primary">导出</el-button>

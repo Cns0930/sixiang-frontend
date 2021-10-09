@@ -701,7 +701,7 @@ export default {
             }
         },
         handleDisabledKF() {
-            if (this.roles.includes("admin") || this.roles.includes("developer")) {
+            if (this.roles.includes("admin") || this.roles.includes("project-sales")) {
                 return false;
             } else {
                 return true;
@@ -838,7 +838,7 @@ export default {
                 object: v,
                 isRequired: this.temp_required,
             }
-            if (this.roles.includes("admin") || this.roles.includes("developer")) {
+            if (this.roles.includes("admin") || this.roles.includes("project-sales")) {
                 param.createRole = "developer";
             } else {
                 param.createRole = "researcher";
@@ -871,7 +871,7 @@ export default {
                 fieldType: 2,
                 object: v
             }
-            if (this.roles.includes("admin") || this.roles.includes("developer")) {
+            if (this.roles.includes("admin") || this.roles.includes("project-sales")) {
                 param.createRole = "developer";
             } else {
                 param.createRole = "researcher";

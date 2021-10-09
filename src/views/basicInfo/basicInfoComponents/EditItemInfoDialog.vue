@@ -26,16 +26,20 @@
                         </el-input>
                     </el-form-item> -->
                     <el-form-item label="补充业务信息描述" class="ruleItem">
-                        <div v-for="(item,i) in extraInfoList" :key="i" class="ruleItems">
-                            <el-input v-model="item.keyValue" placeholder="请填入业务信息key值" clearable style="width:45%">
-                            </el-input>
-                            <el-input v-model="item.labelValue" placeholder="请填入业务信息value值" style="width:45%" clearable>
-                            </el-input>
-                            <i v-if="extraInfoList.length>1" style="margin-left:10px;color:red;cursor: pointer;"
+                        <div style="display:flex;align-items:flex-end">
+                            <div>
+                            <div v-for="(item,i) in extraInfoList" :key="i" class="ruleItems">
+                                <el-input v-model="item.keyValue" placeholder="请填入业务信息key值" clearable style="width:40%">
+                                </el-input>
+                                <el-input v-model="item.labelValue" placeholder="请填入业务信息value值" style="width:40%" clearable>
+                                </el-input>
+                                <i v-if="extraInfoList.length>1" style="margin-left:10px;color:red;cursor: pointer;"
                                 class="el-icon-delete" @click="deletInputs(i)"></i>
+                            </div>
                         </div>
                         <i class="el-icon-plus" style="margin-left:10px;color:#409EFF;cursor: pointer;"
                             @click="addExtraInfoList()"></i>
+                        </div>
                     </el-form-item>
                     <el-form-item label="事项类型(如新增/变更)" prop="itemType">
                         <el-input v-model="tempItem.itemType">
@@ -128,7 +132,7 @@ export default {
                 this.approvalOptions = approvalRes.data;
             }
             this.tempItem.approvalItemId = this.tempItem.approvalItemLordId;
-            this.extraInfoList = this.tempItem.extraInfoList;
+            this.extraInfoList = JSON.parse(this.tempItem.extraInfo);
             console.log('this.tempItem')
             console.log(this.tempItem)
         },

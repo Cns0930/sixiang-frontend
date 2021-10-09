@@ -282,7 +282,7 @@ export default {
 
         tableRowClassName({ row, rowIndex }) {
             if (row) {
-                if (row.developer === null || row.developer === '') {
+                if (row.project-sales === null || row.project-sales === '') {
                     return 'red-row'
                 } else {
                     return ''

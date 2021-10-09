@@ -25,13 +25,20 @@ import _ from 'lodash';
 Vue.prototype._ = _;
 
 Vue.config.productionTip = false
-Vue.use(ElementUI ,{ size: 'mini', zIndex: 1000})
-Vue.config.errorHandler=function(err,vm,info){
-    console.error(err,vm,info)
+Vue.use(ElementUI, { size: 'mini', zIndex: 1000 })
+Vue.config.errorHandler = function (err, vm, info) {
+    console.error(err, vm, info)
 }
 
 Vue.use(VueCompositionAPI)
-
+Vue.directive('btn', {
+    inserted: function (el, binding) {
+        if(store.state.config.roles.includes('admin')) return
+        if(store.state.config.roles.includes('project-sales')) {
+            el.style = "display:none"
+        }
+    }
+})
 //  全局组件
 import CustomComponents from "@/views/layoutComponents/index"
 Object.keys(CustomComponents).forEach(name => {
@@ -43,7 +50,7 @@ Object.keys(CustomComponents).forEach(name => {
 //所有未登录会话重定向到 /login
 router.beforeEach((to, from, next) => {
     // console.log(to, from);
-    store.commit('recordTimeList', {to, from});
+    store.commit('recordTimeList', { to, from });
     let timeList = store.getters.getTimeList
     console.log('timeList', timeList);
 

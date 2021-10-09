@@ -980,7 +980,7 @@ export default {
                         isRequired: ele.isRequired,
                         object: v,
                     }
-                    if (vm.roles.includes("admin") || vm.roles.includes("developer")) {
+                    if (vm.roles.includes("admin") || vm.roles.includes("project-sales")) {
                         param.createRole = "developer";
                     } else {
                         param.createRole = "researcher";

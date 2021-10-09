@@ -7,7 +7,7 @@ const originList = [
     {
         path: "/basic/subitem",
         label: "调研信息管理",
-        authKey: ["admin", "developer", "researcher", "test"],
+        authKey: ["admin", "project-sales", "researcher", "developer-manage"],
 
         iconClass: "el-icon-camera",
 
@@ -16,7 +16,7 @@ const originList = [
     {
         path: "/formconstructor",
         label: "超级帮办开发管理",
-        authKey: ["admin", "developer", "researcher", "test"],
+        authKey: ["admin", "project-sales", "researcher", "developer-manage"],
 
         iconClass: "el-icon-monitor",
 
@@ -25,7 +25,7 @@ const originList = [
     {
         path: "/aipreview/checkpoint",
         label: "AI预检开发管理",
-        authKey: ["admin", "developer", "researcher", "test"],
+        authKey: ["admin", "project-sales", "researcher", "developer-manage"],
 
         iconClass: "el-icon-view",
 
@@ -34,7 +34,7 @@ const originList = [
     {
         path: "/questionnaire/questionmanagement",
         label: "问卷管理",
-        authKey: ["admin", "developer", "researcher", "test"],
+        authKey: ["admin", "project-sales", "researcher", "developer-manage"],
 
         iconClass: "el-icon-document",
 
@@ -47,7 +47,7 @@ const originList = [
 const topMenuList = [
     {
         label: "项目管理",
-        authKey: ["admin", "developer", "researcher", "test"],
+        authKey: ["admin", "project-sales", "researcher", "developer-manage"],
         children: [
             {
                 path: "/project",
@@ -62,7 +62,7 @@ const topMenuList = [
     },
     {
         label: "事项管理",
-        authKey: ["admin", "developer", "researcher", "test"],
+        authKey: ["admin", "project-sales", "researcher", "developer-manage"],
         children: [
             {
                 path: "/basic",
@@ -100,7 +100,7 @@ const topMenuList = [
     },
     {
         label: "全局文档",
-        authKey: ["admin", "developer", "researcher", "test"],
+        authKey: ["admin", "project-sales", "researcher", "developer-manage"],
         children: [
             {
                 path: "/document",
@@ -115,7 +115,7 @@ const topMenuList = [
     },
     {
         label: "文档管理",
-        authKey: ["admin", "developer", "researcher", "test"],
+        authKey: ["admin", "project-sales", "researcher", "developer-manage"],
         children: [
             {
                 path: "/publicdocument",
@@ -135,7 +135,7 @@ const topMenuList = [
     },
     {
         label: "说明",
-        authKey: ["admin", "developer", "researcher", "test"],
+        authKey: ["admin", "project-sales", "researcher", "developer-manage"],
         children: [
             {
                 path: "/readme",
@@ -146,7 +146,7 @@ const topMenuList = [
     },
     {
         label: "委办局",
-        authKey: ["admin", "developer", "researcher", "test"],
+        authKey: ["admin", "project-sales", "researcher", "developer-manage"],
         children: [
             {
                 path: "/weibanju",
@@ -157,7 +157,7 @@ const topMenuList = [
     },
     {
         label: "汇总统计",
-        authKey: ["admin", "developer", "researcher", "test"],
+        authKey: ["admin", "project-sales", "researcher", "developer-manage"],
         children: [
             {
                 path: "/timeconsume",
@@ -172,7 +172,7 @@ const topMenuList = [
     },
     // {
     //     label: "批量编辑",
-    //     authKey: ["admin","developer","researcher","test"],
+    //     authKey: ["admin","project-sales","researcher","developer-manage"],
     //     children:[
     //         {
     //             path: "/allEdit",

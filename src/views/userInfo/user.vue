@@ -106,6 +106,9 @@
                 <el-button
                   size="mini"
                   @click="handleEdit(scope.$index, scope.row)">修改角色</el-button>
+                <el-button
+                  size="mini"
+                  @click="toLimit(scope.$index, scope.row)">项目限制</el-button>
                 <!-- <el-button
                   size="mini"
                   type="danger"
@@ -245,6 +248,10 @@ export default {
       } else {
         this.$message({ type: "fail", message: "修改失败" });
       }
+    },
+    // 项目限制
+    toLimit() {
+
     }
   }
 };
