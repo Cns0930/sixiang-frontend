@@ -5,7 +5,7 @@
             <div class="searchBox">
                 <!-- <el-select placeholder="筛选项目" v-model="filterProjectId" filterable clearable style="width: 200px;">
                     <el-option v-for="(v,i) in projectOptions" :key="i" :label="v.projectName" :value="v.projectId">
-                    </el-option>
+                    </el-option>    
                 </el-select> -->
                 <el-select placeholder="筛选大项" v-model="filterApprovalId" filterable clearable style="width: 200px;">
                     <el-option v-for="(v,i) in approvalOptions" :key="i" :label="v.approvalName" :value="v.approvalId">
@@ -60,7 +60,7 @@
                             <div v-for="(item,i) in scope.row.projectLabelNameList" :key="i">
                                 <el-tag>{{item}}</el-tag>
                             </div>
-                            <div>
+                            <div v-btn>
                                 <el-select v-model="scope.row.projectLabelIdList" multiple collapse-tags style=""
                                     placeholder="请选择" @change="changeTags(scope.row)">
                                     <el-option v-for="item in tagOptions" :key="item.projecLabelId" :label="item.labelName"
