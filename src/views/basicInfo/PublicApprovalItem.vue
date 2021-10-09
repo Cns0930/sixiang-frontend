@@ -104,14 +104,7 @@
                         sortable
                         show-overflow-tooltip
                     ></el-table-column>
-                    <!-- <el-table-column label="操作" fixed="right" width="300"> -->
-                        <!-- <template slot-scope="scope"> -->
-                            <!-- <el-button size="mini" @click="handleClickItem(scope.row)">调研信息</el-button> -->
-                            <!-- <el-button size="mini" @click="handleClickItemBangBan(scope.row)">帮办工具</el-button>
-                            <el-button size="mini" @click="handleEdit(scope.$index, scope.row)" :disabled="!hasManagePermission()">编辑</el-button> -->
-                            <!-- <el-button size="mini" type="danger" @click="handleClose(scope.row)" :disabled="!hasManagePermission()">关闭</el-button> -->
-                        <!-- </template> -->
-                    <!-- </el-table-column> -->
+                    
                 </el-table>
             </div>
             <div class="tablePagination">

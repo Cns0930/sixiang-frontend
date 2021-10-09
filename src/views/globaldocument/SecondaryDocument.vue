@@ -327,7 +327,6 @@ export default {
         };
     },
     computed: {
-        // ...mapGetters({ hasManagePermission: 'config/hasManagePermission' })
     },
     components: {
         Pagination

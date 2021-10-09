@@ -99,7 +99,7 @@
                 <el-table-column label="操作" fixed="right" width="100">
                     <template slot-scope="scope">
                         <el-button-group>
-                            <el-button @click="handleEdit(scope.row)" :disabled="!hasManagePermission">
+                            <el-button @click="handleEdit(scope.row)" >
                                 编辑
                             </el-button>
                         </el-button-group>

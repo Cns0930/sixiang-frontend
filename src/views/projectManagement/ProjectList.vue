@@ -52,7 +52,7 @@
                         <el-popover placement="bottom" width="120" trigger="click">
                             <el-button type="danger" icon="el-icon-delete" @click="deleteProject(item)"
                                 style="margin-left:20px">删除项目</el-button>
-                            <el-button slot="reference">更多...</el-button>
+                            <el-button slot="reference" v-btn>更多...</el-button>
                         </el-popover>
                     </div>
                 </div>

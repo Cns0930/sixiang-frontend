@@ -147,6 +147,17 @@
           <el-button type="primary" @click="submitRole">提 交</el-button>
         </span>
       </el-dialog>
+      <div>
+        <el-dialog title="提示" :visible.sync="show">
+            <el-checkbox-group v-model="checkboxGroup2">
+              <el-checkbox class="checkbox-item" v-for="item in projectAll" :key="item.projectId" :label="item.projectId" border  @change="handleCheckedCitiesChange" >{{item.projectName}}</el-checkbox>
+            </el-checkbox-group>
+            <span slot="footer" class="dialog-footer">
+              <el-button @click="show = false">取 消</el-button>
+              <el-button type="primary" @click="sure()">确 定</el-button>
+            </span>
+        </el-dialog>
+      </div>
     </div>
 </template>
 
@@ -154,8 +165,10 @@
 
 <script>
 import basicMixin from './basicMixin';
-import { getRolelist,editUserrole } from "@/api/item/index";
+import { getRolelist,editUserrole, apieditSysUserProject } from "@/api/item/index";
+import { listProjectAll } from "@/api/basicInfo/approval"
 import Vue from "vue";
+import result from '@/assets/result';
 
 export default {
   name: "User",
@@ -172,6 +185,9 @@ export default {
       roleOptions: [],
       roleList: [],
       showMask: false,
+      show: false,
+      projectAll: [],
+      checkboxGroup2: []
     };
   },
   computed: {
@@ -250,8 +266,28 @@ export default {
       }
     },
     // 项目限制
-    toLimit() {
-
+    async toLimit(index, row) {
+      this.userId = row.userId;
+      const result = await listProjectAll();
+      if (result.code === 200) {
+        console.log(result);
+        this.projectAll = result.data;
+      }
+      this.checkboxGroup2 = [];
+      this.show = true;
+    },
+    async sure() {
+      console.log(this.checkboxGroup2, '----')
+      const result = await apieditSysUserProject({projectIds:this.checkboxGroup2,userId:this.userId});
+      if (result.code === 200) {
+        this.$message.success("设置成功");
+        this.show = false;
+      } else {
+        this.$message.error(result.message);
+      }      
+    },
+    handleCheckedCitiesChange(e) {
+      console.log(e)
     }
   }
 };
@@ -307,6 +343,9 @@ export default {
       flex-direction: row;
       justify-content: center;
     }
+  }
+  .checkbox-item {
+    margin-bottom: 5px;
   }
 }
 </style>

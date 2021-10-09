@@ -35,10 +35,10 @@
                 <el-table-column label="操作" fixed="right" width="180">
                     <template slot-scope="scope">
                         <el-button-group>
-                            <el-button  @click="handleEdit(scope.row)" :disabled="!hasManagePermission">
+                            <el-button  @click="handleEdit(scope.row)" >
                                 编辑
                             </el-button>
-                            <el-button  @click="handleDelete(scope.row)" type="danger" :disabled="!hasManagePermission">
+                            <el-button  @click="handleDelete(scope.row)" type="danger" >
                                 删除
                             </el-button>
                             

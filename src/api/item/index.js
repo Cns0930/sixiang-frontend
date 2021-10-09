@@ -34,3 +34,6 @@ export const addSysTransferLog = params => axios.post("/account/sys-transfer-log
 
 // 查询最新传输记录
 export const getUptoDateSysTransferLog = params => axios.get("/account/sys-transfer-log/getUptoDateSysTransferLog", {params}).then(res => res.data);
+
+// 编辑用户访问项目
+export const apieditSysUserProject = params => axios.post('/account/SysUserProject/editSysUserProject', params).then( res => res.data)

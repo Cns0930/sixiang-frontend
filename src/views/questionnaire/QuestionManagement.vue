@@ -62,22 +62,22 @@
                         <template slot-scope="scope">
                             <el-row :gutter="10" type="flex" justify="space-between">
                                 <el-col :span="6">
-                                    <el-button type="primary" size="mini" @click="editQuestionnaire(scope.row)">编辑
+                                    <el-button type="primary" size="mini" @click="editQuestionnaire(scope.row)" v-btn>编辑
                                     </el-button>
                                 </el-col>
                                 <el-col :span="11">
-                                    <el-button type="primary" size="mini" @click="addQuestionnaireItem(scope.row)">
+                                    <el-button type="primary" size="mini" @click="addQuestionnaireItem(scope.row)" v-btn>
                                         添加自定义题目
                                     </el-button>
                                 </el-col>
                                 <el-col :span="7">
-                                    <el-button type="primary" size="mini" @click="editQuestionnaireItem(scope.row)">编辑题目
+                                    <el-button type="primary" size="mini" @click="editQuestionnaireItem(scope.row)" v-btn>编辑题目
                                     </el-button>
                                 </el-col>
                             </el-row>
                             <el-row :gutter="10" type="flex" justify="space-between" style="margin-top: 5px;">
                                 <el-col :span="6">
-                                    <el-button type="danger" size="mini" @click="deleteQuestionnaireButton(scope.row)">
+                                    <el-button type="danger" size="mini" @click="deleteQuestionnaireButton(scope.row)" v-btn>
                                         删除
                                     </el-button>
                                 </el-col>

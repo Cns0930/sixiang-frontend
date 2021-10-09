@@ -3,19 +3,15 @@
         <header>
             <!-- <span class="left">四象2.0</span> -->
             <div class="-center left">
-                <img  src="~@/assets/png/logo.png" />
+                <img src="~@/assets/png/logo.png" />
 
-                <el-popover
-                    v-for=" menu,i in topMenuList"
-                    :key="i"
-                    placement="bottom-start"
-                    width="150"
-                    trigger="click" 
-                    popper-class="dropdown-menu-top"
-                    v-model="menu.visible">
-                    <div class="dropdown-btn -center" slot="reference">{{menu.label}}<i class="el-icon-arrow-down"></i></div>
+                <el-popover v-for=" menu,i in topMenuList" :key="i" placement="bottom-start" width="150" trigger="click"
+                    popper-class="dropdown-menu-top" v-model="menu.visible">
+                    <div class="dropdown-btn -center" slot="reference">{{menu.label}}<i class="el-icon-arrow-down"></i>
+                    </div>
                     <ul class="dropdown-list">
-                        <li v-for="item,k in menu.children" @click="handleJump(item.path)" :key="k" v-show="canItShow(item.label)">{{item.label}}</li>
+                        <li v-for="item,k in menu.children" @click="handleJump(item.path)" :key="k"
+                            v-show="canItShow(item.label)">{{item.label}}</li>
                     </ul>
                 </el-popover>
                 <!-- <el-popover
@@ -32,11 +28,14 @@
                 </el-popover> -->
             </div>
             <div class="right">
-                <div class="itemInfo-box" >
+                <div class="itemInfo-box">
                     <!-- <span class="itemInfo-title">事项信息<i class="el-icon-document"></i> </span> -->
-                    <i v-show="isShowProject()" class="itemInfo-text">项目名称：<i class="itemInfo-text-in">{{ projectInfo.projectName }}</i> </i>
-                    <i v-show="isShowItem()" class="itemInfo-text">事项名称：<i class="itemInfo-text-in">{{ itemInfo.itemName }}</i> </i>
-                    <i v-show="isShowItem()" class="itemInfo-text">事项编号：<i class="itemInfo-text-in">{{ itemInfo.itemNo }}</i> </i>
+                    <i v-show="isShowProject()" class="itemInfo-text">项目名称：<i
+                            class="itemInfo-text-in">{{ projectInfo.projectName }}</i> </i>
+                    <i v-show="isShowItem()" class="itemInfo-text">事项名称：<i
+                            class="itemInfo-text-in">{{ itemInfo.itemName }}</i> </i>
+                    <i v-show="isShowItem()" class="itemInfo-text">事项编号：<i
+                            class="itemInfo-text-in">{{ itemInfo.itemNo }}</i> </i>
                 </div>
 
                 <el-dropdown @command="handleCommand" style="cursor: pointer;padding: 0 8px;" class="avatar">
@@ -53,13 +52,13 @@
         </header>
         <section class="main">
             <div class="mainLeft" @click="handleCollapse(false)" v-if="showList">
-                <leftside :showList="showList" ></leftside>
+                <leftside :showList="showList"></leftside>
             </div>
             <div class="mianRight" :class="{'chosen': isCollapse}">
                 <div class="routerView" :class="{bigContent:showList,smallContent:!showList}">
-                  
+
                     <router-view></router-view>
-                   
+
                 </div>
             </div>
         </section>
@@ -91,29 +90,29 @@ export default {
             isCollapse: state => state.config.isCollapse,
             itemInfo: state => state.home.item,
             projectInfo: state => state.home.project,
-            roles:state=>state.config.roles,
+            roles: state => state.config.roles,
         }),
-        showList(){
-           
-            return this.$route.matched.reduce((result,r)=>{
-                if(r.meta.hasOwnProperty('showLeftMenu')){
+        showList() {
+
+            return this.$route.matched.reduce((result, r) => {
+                if (r.meta.hasOwnProperty('showLeftMenu')) {
                     result = r.meta.showLeftMenu;
                 }
                 return result;
-            },false)
-          
+            }, false)
+
         },
         topMenuList() {
             let topMenuList = generaterTopMenuList(this.roles);
             if (this.$route.path === '/project' || this.$route.path === '/document' || this.$route.path === '/user'
-                || this.$route.path === '/timeconsume' || this.$route.path === '/weibanju' || this.$route.path === '/datum' || this.$route.path === '/validatejs'){
-                topMenuList = topMenuList.filter(item => 
+                || this.$route.path === '/timeconsume' || this.$route.path === '/weibanju' || this.$route.path === '/datum' || this.$route.path === '/validatejs') {
+                topMenuList = topMenuList.filter(item =>
                     item.label !== '事项管理' && item.label !== '文档管理' && item.label !== '说明'
                 )
             }
             return topMenuList
         }
-         
+
     },
     mounted() {
     },
@@ -137,7 +136,7 @@ export default {
         },
         isShowProject() {
             if (this.$route.path === '/user' || this.$route.path === '/project' || this.$route.path === '/document'
-            || this.$route.path === '/timeconsume' ) {
+                || this.$route.path === '/timeconsume') {
                 return false;
             } else {
                 return true;
@@ -145,18 +144,18 @@ export default {
         },
         isShowItem() {
             if (this.$route.path === '/user' || this.$route.path === '/basic' || this.$route.path === '/project'
-            || this.$route.path === '/publicdocument' || this.$route.path === '/publicsubdocument'
-            || this.$route.path === '/examination' || this.$route.path === '/readme'
-            || this.$route.path === '/public' || this.$route.path === '/allEdit' || this.$route.path === '/document'
-            || this.$route.path === '/approval' || this.$route.path === '/timeconsume' || this.$route.path === '/validatejs') {
+                || this.$route.path === '/publicdocument' || this.$route.path === '/publicsubdocument'
+                || this.$route.path === '/examination' || this.$route.path === '/readme'
+                || this.$route.path === '/public' || this.$route.path === '/allEdit' || this.$route.path === '/document'
+                || this.$route.path === '/approval' || this.$route.path === '/timeconsume' || this.$route.path === '/validatejs') {
                 return false;
             } else {
                 return true;
             }
         },
-        handleJump (path) {
-            this.topMenuList.forEach(v=>{
-                this.$set(v,"visible",false)
+        handleJump(path) {
+            this.topMenuList.forEach(v => {
+                this.$set(v, "visible", false)
             })
             this.$router.push({
                 path: path,
@@ -165,12 +164,15 @@ export default {
         },
         // 校验下拉项目是否展示
         canItShow(label) {
-            if (label === '标签管理' || label === '测试环境管理' || label === '验证方式js管理') {
-                if (this.roles.includes('admin') || this.roles.includes('developer-manage') ) {
+            if (label === '标签管理' || label === '测试环境管理' || label === '验证方式js管理' || label === '委办局管理' || label === '全局二级文档管理'
+                || label === '用时统计' || label === '大项管理' || label === '公共事项' || label === '测试环境管理') {
+                if (this.roles.includes('admin') || this.roles.includes('developer-manage')) {
                     return true;
                 } else {
                     return false;
                 }
+            } else if ((label === '信息点管理' || label === '公共材料') && this.roles.includes('project-sales')) {
+                return false
             } else {
                 return true;
             }
@@ -199,31 +201,28 @@ export default {
         align-items: center;
         color: #fff;
         .left {
-            
             margin-left: 20px;
             height: 30px;
-           
-            img{
-                margin-right:120px;
+
+            img {
+                margin-right: 120px;
             }
-            .dropdown-btn{
-                color:#fff;
-                cursor:pointer;
-                font-size:12px;
+            .dropdown-btn {
+                color: #fff;
+                cursor: pointer;
+                font-size: 12px;
                 height: 32px;
                 border-radius: 4px;
                 padding: 6px 8px;
                 font-weight: bold;
-                i{
-                    margin-left:10px;
-                    font-size:12px;
+                i {
+                    margin-left: 10px;
+                    font-size: 12px;
                 }
-                &:hover{
-                    background-color: rgba(235,202,197,0.2);
+                &:hover {
+                    background-color: rgba(235, 202, 197, 0.2);
                 }
-                
             }
-            
         }
         .right {
             display: flex;
