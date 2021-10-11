@@ -2,10 +2,10 @@
     <el-dialog title="全局操作-Dialog" :visible.sync="dialogVisible" width="1200px" :close-on-click-modal="false"
         @closed="closedFn">
         <div class="workHandleBoxContent">
-            <div class="block">
+            <div class="block top-content">
                 <span class="demonstration">请选择事项: </span>
                 <el-button type="primary" :loading="loading" @click="downLoad('/ss/Import/downloadGitZipByLordId')"
-                    style="margin-left: 20px; margin-bottom: 10px">下载</el-button>
+                    style="margin-left: 20px;">下载</el-button>
                 <span style="margin-left: 20px">已选择事项数量: </span>
                 <span style="font-size: 18px; color: #2b3b65">{{itemCount}}</span>
                 <!-- <el-progress :percentage="progress" status="success"></el-progress> -->
@@ -13,6 +13,11 @@
                 <el-cascader v-model="idList" placeholder="试试搜索：项目名称/阶段/事项名称" :options="approvalItemOptions"
                     :props="{ multiple: true }" filterable clearable style="width: 500px" @change="getCount">
                 </el-cascader> -->
+                <div style="margin-left: 40px">
+                    <el-date-picker type="date" v-model="startTimeValue" range-separator="至" start-placeholder="开始日期"
+                        end-placeholder="结束日期" value-format="yyyy-MM-dd">
+                    </el-date-picker>
+                </div>
             </div>
             <div class="search-list">
                 <el-input placeholder="请搜素项目" v-model="params.projectName" clearable @change="init()">
@@ -83,7 +88,6 @@
                     </el-table-column>
                 </el-table>
             </div>
-
         </div>
     </el-dialog>
 </template>
@@ -117,7 +121,8 @@ export default {
             },
             multipleSelection: [],
             total: 0,
-            timer: null
+            timer: null,
+            startTimeValue: ''
         }
     },
     components: {
@@ -154,6 +159,7 @@ export default {
             this.tableVisible = false;
             this.itemCount = 0,
                 this.dialogVisible = true;
+            this.startTimeValue = '';
             // let res = await listApprovalItemByStage()
             // if (!res.success) return
             // this.approvalItemOptions = res.data;
@@ -221,7 +227,7 @@ export default {
             this.tableVisible = true;
         },
         async getTableData(ids) {
-            let res = await gitZipchecklistByLordId({ idList: ids })
+            let res = await gitZipchecklistByLordId({ idList: ids, startTime: this.startTimeValue === '' ? '' : `${this.startTimeValue} 00:00:00` })
             if (!res.success) return
             this.tableData = res.data
         },
@@ -316,6 +322,11 @@ export default {
         width: 95%;
         margin: 20px;
     }
+    .top-content {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
     .handleBox {
         width: 300px;
         margin: 20px;
@@ -333,5 +344,11 @@ export default {
         color: #ff5160;
         background: #ffeaea;
     }
+}
+.card {
+    height: 100px;
+    width: 100px;
+    border: 1px solid rebeccapurple;
+    position: relative;
 }
 </style>
