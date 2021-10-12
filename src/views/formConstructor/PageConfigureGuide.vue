@@ -1,6 +1,6 @@
 <template>
     <div class="page-configure">
-        <el-switch
+        <el-switch style="width:10%"
             v-model="isActive" @change="changeSwitch"
             active-color="#13ce66" active-text="开启" :active-value=1
             inactive-color="#ff4949" inactive-text="关闭" :inactive-value=0>
