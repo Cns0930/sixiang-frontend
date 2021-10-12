@@ -17,6 +17,9 @@
                     <el-date-picker type="date" v-model="startTimeValue" range-separator="至" start-placeholder="开始日期"
                         end-placeholder="结束日期" value-format="yyyy-MM-dd">
                     </el-date-picker>
+                    <div style="font-weight: 800">
+                        请选择此次更新事项包的起始时间，提交说明会合并到下方表格里(只更新最近一次提交则可以不选)
+                    </div>
                 </div>
             </div>
             <div class="search-list">
@@ -227,7 +230,7 @@ export default {
             this.tableVisible = true;
         },
         async getTableData(ids) {
-            let res = await gitZipchecklistByLordId({ idList: ids, startTime: this.startTimeValue === '' ? '' : `${this.startTimeValue} 00:00:00` })
+            let res = await gitZipchecklistByLordId({ idList: ids, startTime: (this.startTimeValue === ''|| this.startTimeValue === null) ? '' : `${this.startTimeValue} 00:00:00` })
             if (!res.success) return
             this.tableData = res.data
         },
