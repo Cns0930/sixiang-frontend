@@ -259,7 +259,7 @@ export default {
       });
       if(result.success) {
         this.$message({ type: "success", message: "修改成功" });
-        this.search(this.value);
+        this.search();
         this.showMask = false;
       } else {
         this.$message({ type: "fail", message: "修改失败" });
@@ -267,21 +267,21 @@ export default {
     },
     // 项目限制
     async toLimit(index, row) {
+      console.log(row)
       this.userId = row.userId;
       const result = await listProjectAll();
       if (result.code === 200) {
-        console.log(result);
         this.projectAll = result.data;
       }
-      this.checkboxGroup2 = [];
+      this.checkboxGroup2 = row.projectId;
       this.show = true;
     },
     async sure() {
-      console.log(this.checkboxGroup2, '----')
       const result = await apieditSysUserProject({projectIds:this.checkboxGroup2,userId:this.userId});
       if (result.code === 200) {
         this.$message.success("设置成功");
         this.show = false;
+        this.search(this.value);
       } else {
         this.$message.error(result.message);
       }      

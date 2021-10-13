@@ -24,7 +24,7 @@ export default {
             this.totalCount = result.data.total;
             this.tableData = result.data.records;
             
-            this.$message({ type: "success", message: "查询成功" });
+            // this.$message({ type: "success", message: "查询成功" });
         },
         indexMethod(index) {
             return (this.currentPage - 1) * this.pagesize + (index + 1);
