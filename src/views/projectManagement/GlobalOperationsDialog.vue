@@ -15,7 +15,7 @@
                 </el-cascader> -->
                 <div style="margin-left: 40px">
                     <el-date-picker type="date" v-model="startTimeValue" range-separator="至" start-placeholder="开始日期"
-                        end-placeholder="结束日期" value-format="yyyy-MM-dd">
+                        end-placeholder="结束日期" value-format="yyyy-MM-dd" :picker-options="pickerOptions">
                     </el-date-picker>
                     <div style="font-weight: 800">
                         请选择此次更新事项包的起始时间，提交说明会合并到下方表格里(只更新最近一次提交则可以不选)
@@ -125,7 +125,8 @@ export default {
             multipleSelection: [],
             total: 0,
             timer: null,
-            startTimeValue: ''
+            startTimeValue: '',
+            pickerOptions: this.limitDate(),
         }
     },
     components: {
@@ -297,7 +298,11 @@ export default {
                     return ''
                 }
             }
-        }
+        },
+
+        limitDate(){
+            return { disabledDate(time) { return time.getTime() > (new Date()).getTime() - 8.64e6; } }
+        },
     },
 }
 </script>
