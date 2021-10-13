@@ -190,7 +190,11 @@
                     <el-input v-model="addForm.module" placeholder="只允许填入纯数字"></el-input>
                 </el-form-item>
                 <el-form-item label="前端组件">
-                    <el-input v-model="addForm.fieldComponentType"></el-input>
+                    <!-- <el-input v-model="addForm.fieldComponentType"></el-input> -->
+                    <el-select v-model="addForm.fieldComponentType" filterable allow-create default-first-option>
+                        <el-option v-for="item in options" :key="item.label" :label="item.label" :value="item.label"> 
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="枚举值">
                     <el-input v-model="addForm.optionsValue"></el-input>
@@ -326,7 +330,11 @@
                     <el-input v-model="editForm.module" placeholder="只允许填入纯数字"></el-input>
                 </el-form-item>
                 <el-form-item label="前端组件">
-                    <el-input v-model="editForm.fieldComponentType"></el-input>
+                    <!-- <el-input v-model="editForm.fieldComponentType"></el-input> -->
+                    <el-select v-model="editForm.fieldComponentType"  filterable allow-create default-first-option>
+                        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.label"> 
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="枚举值">
                     <el-input v-model="editForm.optionsValue"></el-input>
@@ -537,6 +545,7 @@ import dayjs from "dayjs";
 import { getRolelist } from '@/api/item';
 import axios from "axios";
 var pinyin = require("pinyin");
+import {  getMapping } from "@/views/attributeComponents/index";
 export default {
     name: "FieldItem",
     mixins: [basicMixin, mixin],
@@ -632,7 +641,10 @@ export default {
         ...mapState({
             roles: state => state.config.roles,
             approvalItem:  state => state.home.item,
-        })
+        }),
+        options(){
+            return getMapping()
+        }
     },
     async created() {
         // 获取项目信息
@@ -669,7 +681,7 @@ export default {
     methods: {
         // 查询表格
         async reloadTable() {
-            console.log("this.itemId:", this.$route.query.itemId)
+            // console.log("this.itemId:", this.$route.query.itemId)
             let result = await listFieldUnionMaterial({ approvalItemId: this.itemId, pageNum: this.currentPage, pageSize: this.pageSize, 
             materialKeyword: this.materialKeyword, fieldKeyword: this.fieldKeyword, isFront: this.isFront, isCheckpoint: this.isCheckpoint });
             if (!result.success) return;
