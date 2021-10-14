@@ -18,6 +18,16 @@ export default {
         }
     },
     created(){
+        // if(this.value.length >=2){
+        //     if(this.value[1] === "长期") {
+        //         this.checkboxValue = true;
+        //     }
+        //     this.$set(this.inputValues,'start',this.value[0]);
+        //     this.$set(this.inputValues,'end',this.value[1] == '长期'? '' : this.value[1]);
+        // }
+        
+    },
+    render(h) {
         if(this.value.length >=2){
             if(this.value[1] === "长期") {
                 this.checkboxValue = true;
@@ -25,9 +35,6 @@ export default {
             this.$set(this.inputValues,'start',this.value[0]);
             this.$set(this.inputValues,'end',this.value[1] == '长期'? '' : this.value[1]);
         }
-        
-    },
-    render(h) {
         let dateDoms = Object.keys(this.inputValues).map((v,i) => {
             return <el-date-picker vModel={this.inputValues[v]} type={this.type} valueFormat={this.valueFormat} onChange={(val) => this.handleChange(val,i)} placeholder="选择日期"></el-date-picker>
         })
