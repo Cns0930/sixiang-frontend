@@ -6,14 +6,14 @@
         <!-- <el-switch v-model="isExpand" active-text="列表展开" inactive-text="列表收起" active-color="#13ce66"
             inactive-color="#ff4949" @change="changeExpand"></el-switch> -->
         <el-table :data="tableData" border :row-style="{height:'60px'}" :header-row-style="{height:'50px'}"
-            :default-expand-all="isExpand">
+            :default-expand-all="isExpand" cell-style="font-weight: 700;">
             <el-table-column type="expand">
                 <template slot-scope="scope">
                     <div class="title-box">
                         <span style="margin-right: 20px">关联一级材料</span>
-                        <el-switch v-model="scope.row.materialShow" active-color="#13ce66" inactive-color="#ff4949">
+                        <el-switch v-model="scope.row.materialShow" active-color="#808080" inactive-color="#F5F5F5">
                         </el-switch>
-                        <el-button type="primary" style="margin-left: 20px"
+                        <el-button style="margin-left: 20px"
                             @click="addText(0,scope.row.material.length,scope.row.material)">+新增</el-button>
                     </div>
                     <el-table v-if="scope.row.materialShow" :data="scope.row.material" border
@@ -77,9 +77,9 @@
                     </el-table>
                     <div class="title-box">
                         <span style="margin-right: 20px">关联二级材料</span>
-                        <el-switch v-model="scope.row.documentShow" active-color="#13ce66" inactive-color="#ff4949">
+                        <el-switch v-model="scope.row.documentShow" active-color="#808080" inactive-color="#F5F5F5">
                         </el-switch>
-                        <el-button type="primary" style="margin-left: 20px"
+                        <el-button style="margin-left: 20px"
                             @click="addTextAI(0, scope.row.documentSub.length, scope.row.documentSub)">+新增</el-button>
                     </div>
                     <el-table v-if="scope.row.documentShow" :data="scope.row.documentSub" border
@@ -143,11 +143,12 @@
             </el-table-column>
             <el-table-column prop="subitem.subitemName" label="情形" show-overflow-tooltip></el-table-column>
             <el-table-column prop="subitem.aliasName" label="别名" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="subitem.tips" label="提示语" width="200px" show-overflow-tooltip></el-table-column>
             <el-table-column prop="subitem.materialName" label="所需材料" :formatter="formatterMaterial"
                 show-overflow-tooltip></el-table-column>
             <el-table-column prop="subitem.note" label="备注" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="subitem.createTime" label="创建时间" :formatter="timeFormatter" width="160">
-            </el-table-column>
+            <!-- <el-table-column prop="subitem.createTime" label="创建时间" :formatter="timeFormatter" width="160">
+            </el-table-column> -->
             <el-table-column prop="subitem.updateTime" label="更新时间" :formatter="timeFormatter" width="160">
             </el-table-column>
             <el-table-column label="操作">
@@ -773,8 +774,8 @@ export default {
         letter-spacing: 1px;
     }
     .title-box {
-        font-size: 16px;
-        font-weight: bold;
+        font-size: 14px;
+        // font-weight: bold;
         line-height: 40px;
         letter-spacing: 1px;
     }
