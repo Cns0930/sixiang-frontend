@@ -2,20 +2,21 @@
     <div class="workWrap">
         <header>情形管理</header>
         <div class="top-content">
-            <el-input v-model="tips" type="textarea" style="width: 300px" placeholder="无情形提示语"></el-input>
+            <el-input v-model="tips" type="textarea" style="width: 330px" placeholder="无情形提示语" :autosize="{ minRows: 1, maxRows: 4 }" ></el-input>
             <!-- <el-button v-if="tips === ''" type="success" style="margin-left: 10px" @click="addTips(1)">新增</el-button> -->
             <el-button type="success" style="margin-left: 10px" @click="addTips(2)">修改</el-button>
         </div>
         <div style="display:flex;align-items:flex-start">
             <el-upload class="upload-demo" action=""  accept=".jpg,.png,.pdf," :http-request="httpRequest" :before-upload="beforeAvatarUpload" :on-remove="removeFile()" :limit="1" :file-list="fileList">
                 <el-button size="small" type="primary">上传提示语附件</el-button> 
-                <div slot="tip" class="el-upload__tip">如果需要更新文件，先点叉，再重新上传,只能上传jpg/png/pdf文件</div>
+                <div slot="tip" class="el-upload__tip">更新文件的操作：先点叉，再重新上传。只能上传jpg/png/pdf文件。</div>
+                <div slot="tip" class="el-upload__tip">上传后只支持替换、暂不支持删除，请谨慎操作。</div>
             </el-upload>
             <el-button type="success" @click="toDownload()">下载</el-button>
         </div>
        
-       
-        <el-button @click="addDialogVisible = true" type="primary" style="margin-bottom:10px">添加</el-button>
+       <el-divider />
+        <el-button @click="addDialogVisible = true" type="primary" style="margin-bottom:10px">添加情形</el-button>
         <el-button @click="handleImport()" type="primary" style="margin-bottom:10px">导入情形</el-button>
         <!-- <el-switch v-model="isExpand" active-text="列表展开" inactive-text="列表收起" active-color="#13ce66"
             inactive-color="#ff4949" @change="changeExpand"></el-switch> -->
@@ -817,7 +818,7 @@ export default {
             }
             if(result.data.length>0) {
                 let obj = {
-                    name:result.data[0].operateUser,
+                    name: result.data[0].filePath.substring(result.data[0].filePath.lastIndexOf("\/") + 1),
                     url:result.data[0].filePath,
                 }
                 this.fileList.push(obj)
@@ -830,7 +831,7 @@ export default {
             let fd = new FormData();
             fd.append("file",e.file);
             fd.append("type",'tips');
-            fd.append("operateUser",e.file.name);
+            fd.append("operateUser",localStorage.getItem("username"));
             fd.append("approvalItemId",itemId)
             const result = await api_uploadWord(fd);
             if (result.code !== 200 ) {
