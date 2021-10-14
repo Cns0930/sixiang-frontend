@@ -1,12 +1,26 @@
 <template>
     <div class="workWrap">
         <header>情形管理</header>
+        <div class="top-content">
+            <el-input v-model="tips" type="textarea" style="width: 300px" placeholder="无情形提示语"></el-input>
+            <!-- <el-button v-if="tips === ''" type="success" style="margin-left: 10px" @click="addTips(1)">新增</el-button> -->
+            <el-button type="success" style="margin-left: 10px" @click="addTips(2)">修改</el-button>
+        </div>
+        <div style="display:flex;align-items:flex-start">
+            <el-upload class="upload-demo" action=""  accept=".jpg,.png,.pdf," :http-request="httpRequest" :before-upload="beforeAvatarUpload" :on-remove="removeFile()" :limit="1" :file-list="fileList">
+                <el-button size="small" type="primary">上传提示语附件</el-button> 
+                <div slot="tip" class="el-upload__tip">如果需要更新文件，先点叉，再重新上传,只能上传jpg/png/pdf文件</div>
+            </el-upload>
+            <el-button type="success" @click="toDownload()">下载</el-button>
+        </div>
+       
+       
         <el-button @click="addDialogVisible = true" type="primary" style="margin-bottom:10px">添加</el-button>
         <el-button @click="handleImport()" type="primary" style="margin-bottom:10px">导入情形</el-button>
         <!-- <el-switch v-model="isExpand" active-text="列表展开" inactive-text="列表收起" active-color="#13ce66"
             inactive-color="#ff4949" @change="changeExpand"></el-switch> -->
         <el-table :data="tableData" border :row-style="{height:'60px'}" :header-row-style="{height:'50px'}"
-            :default-expand-all="isExpand" cell-style="font-weight: 700;">
+            :default-expand-all="isExpand" :cell-style="{'font-weight': 700}">
             <el-table-column type="expand">
                 <template slot-scope="scope">
                     <div class="title-box">
@@ -174,6 +188,9 @@
                 <el-form-item label="情形别名">
                     <el-input v-model="addForm.aliasName"></el-input>
                 </el-form-item>
+                <el-form-item label="提示语">
+                    <el-input v-model="addForm.tips"></el-input>
+                </el-form-item>
                 <el-form-item label="备注">
                     <el-input v-model="addForm.note"></el-input>
                 </el-form-item>
@@ -203,6 +220,9 @@
                 </el-form-item>
                 <el-form-item label="情形别名">
                     <el-input v-model="editForm.aliasName"></el-input>
+                </el-form-item>
+                <el-form-item label="提示语">
+                    <el-input v-model="editForm.tips"></el-input>
                 </el-form-item>
                 <el-form-item label="备注">
                     <el-input v-model="editForm.note"></el-input>
@@ -281,7 +301,8 @@ import { getApprovalSub,
 } from "@/api/basicInfo/approvalSub"
 import { getAllByApprovalItemId } from "@/api/basicInfo/field";
 import { listApprovalItemByUser, copyApprovalSub, listProjectAll } from "@/api/basicInfo/approval";
-import { listDocumentSubByItemId } from '@/api/basicInfo/ApprovalRules';
+import { listDocumentSubByItemId, api_queryTips, api_addOrUpdateTips, api_listAdditional, api_uploadWord, api_downloadWord } from '@/api/basicInfo/ApprovalRules';
+import { singleDownload } from "@/utils/download.js"
 import dayjs from "dayjs"
 
 export default {
@@ -340,6 +361,8 @@ export default {
             // AI材料关联
             AIMOptions: [],
             flagCount: 0,
+            fileList: [],
+            tips:"",
         };
     },
     computed: {
@@ -351,6 +374,8 @@ export default {
         // 获取项目信息
         await this.initProject();
         await this.init();
+        await this.getQueryTips();
+        await this.getListAdditional();
         this.reloadTable();
         this.getBangBanOptions();
         this.getAIMOptions();
@@ -388,7 +413,8 @@ export default {
                 "aliasName": this.addForm.aliasName,
                 "approvalItemId": this.itemId,
                 "note": this.addForm.note,
-                "subitemName": this.addForm.subitemName
+                "subitemName": this.addForm.subitemName,
+                "tips": this.addForm.tips
             })
             if (!result.success) return;
             this.addDialogVisible = false;
@@ -756,6 +782,68 @@ export default {
                 return true;
             }
             return false;
+        },
+        removeFile(e) {
+        },
+        async addTips(index) {
+            const { itemId } = this.$route.query;
+            let obj = {
+                approvalItemId: itemId,
+                tips: this.tips,
+            }
+            const result = await api_addOrUpdateTips(obj);
+            if (result.code !== 200) {
+                return
+            }
+            if (index === 1) {
+                this.$message.success("新增成功")
+            } else {
+                this.$message.success("修改成功")
+            }
+        },
+        async getQueryTips() {
+            const { itemId } = this.$route.query;
+            const result = await api_queryTips({approvalItemId: itemId});
+            if (result.code !== 200) {
+                return
+            };
+            this.tips = result.data && result.data.tips;
+        },
+        async getListAdditional () {
+            const { itemId } = this.$route.query;
+            const result = await api_listAdditional({ approvalItemId: itemId,type: "tips" });
+            if(result.code !== 200 ) {
+                return
+            }
+            if(result.data.length>0) {
+                let obj = {
+                    name:result.data[0].operateUser,
+                    url:result.data[0].filePath,
+                }
+                this.fileList.push(obj)
+            }
+        },
+        beforeAvatarUpload (e) {
+        },
+        async httpRequest (e) {
+            const { itemId } = this.$route.query;
+            let fd = new FormData();
+            fd.append("file",e.file);
+            fd.append("type",'tips');
+            fd.append("operateUser",e.file.name);
+            fd.append("approvalItemId",itemId)
+            const result = await api_uploadWord(fd);
+            if (result.code !== 200 ) {
+                return
+            }   
+        },
+        toDownload() {
+            const { itemId } = this.$route.query;
+            let obj = {
+                approvalItemId: itemId,
+                type:'tips'
+            };
+            singleDownload(obj,`/superform/additional/downloadWord`);
         }
     }
 };
@@ -778,6 +866,16 @@ export default {
         // font-weight: bold;
         line-height: 40px;
         letter-spacing: 1px;
+    }
+    .upload-demo {
+        margin: 10px 0;
+        width: 30%;
+    }
+    .top-content {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        margin-bottom: 10px;
     }
 }
 </style>
