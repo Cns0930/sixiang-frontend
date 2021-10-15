@@ -74,6 +74,7 @@
                             查询类事项：
                         <el-checkbox v-model="tempItem.featureScope.enquiry" @change="handleEnquiry">查询</el-checkbox>
                         <el-checkbox v-model="tempItem.featureScope.facialAuth">人脸识别</el-checkbox>
+                        <el-checkbox v-model="tempItem.featureScope.isPage">是否分页</el-checkbox>
                         </div>
                     </el-form-item>
                 </el-form>
@@ -170,11 +171,14 @@ export default {
                 this.tempItem.featureScope.yujian = false;
                 this.tempItem.featureScope.submit = false;
                 this.tempItem.featureScope.facialAuth = true;
+                this.tempItem.featureScope.isPage = true;
             }
         },
         checkConflict(v){
             if(v){
                 this.tempItem.featureScope.enquiry = false;
+                this.tempItem.featureScope.facialAuth = false;
+                this.tempItem.featureScope.isPage = false;
             }
         }
     }
