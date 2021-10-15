@@ -318,7 +318,7 @@
                 </el-form-item>
                 <span class="dialogTitle">帮办前端字段逻辑填写:</span>
                 <el-form-item label="是否前端字段">
-                    <el-select v-model="editForm.isFront" clearable placeholder="是否为提取点">
+                    <el-select v-model="editForm.isFront" clearable placeholder="是否前端字段">
                         <el-option label="是" :value="Number(1)"></el-option>
                         <el-option label="否" :value="Number(0)"></el-option>
                     </el-select>
