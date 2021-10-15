@@ -39,3 +39,18 @@ export const listGlobalDcumentSub = params => { return axios.get(`/ss/globalDocu
 // 获取判断方式列表
 export const listRuleType = params => { return axios.get(`/ss/rule/listRuleType`, {params}).then(res=>res.data); };
 
+// 无情形提示语查询
+ export const api_queryTips = params => { return axios.get(`/ss/approvalSub/queryTips`, {params}).then(res=>res.data )}
+
+// 新增 修改无情形提示语
+export const api_addOrUpdateTips = params => { return axios.post(`/ss/approvalSub/addOrUpdateTips`, params).then(res =>res.data )}
+
+// 获取附件列表
+export const api_listAdditional = params => {return axios.get(`/superform/additional/listAdditional`, {params}).then(res => res.data )}
+
+// 上传附件
+export const api_uploadWord =  params => { return axios.post(`/superform/additional/uploadWord`, params).then( res => res.data )}
+
+// 下载
+export const api_downloadWord  = params => { return axios.get('/superform​/additional​/downloadWord', params).then(res =>res.data )}
+
