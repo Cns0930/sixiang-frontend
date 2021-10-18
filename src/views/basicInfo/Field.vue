@@ -120,25 +120,25 @@
         </div>
 
         <!--添加字段-->
-        <el-dialog title="添加材料字段" :visible.sync="addDialogVisible" width="50%" :close-on-click-modal="false">
-            <el-form label-width="120px" :model="addForm">
+        <el-dialog title="添加材料字段"  :visible.sync="addDialogVisible" width="50%" :close-on-click-modal="false">
+            <el-form label-width="120px" ref="addForms"  :model="addForm" :rules="rules">
                 <span class="dialogTitle">事项材料的字段信息:</span>
-                <el-form-item label="展示清单材料名称（一级）" required>
+                <el-form-item label="展示清单材料名称（一级）" prop="materialId" required>
                     <el-select v-model="addForm.materialId" clearable placeholder="请选择材料名称" @focus="changeMaterialValue" @change="getSecondaryMaterialOptions(addForm)">
                         <el-option v-for="(v,i) in typeMaterialOptions" :key="i" :label="v.materialName"
                             :value="v.materialId"> </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="展示材料名称（二级）" required>
+                <el-form-item label="展示材料名称（二级）" prop="approvalItemAndDocumentsubId" required>
                     <el-select v-model="addForm.approvalItemAndDocumentsubId" clearable placeholder="请选择二级材料名称">
                         <el-option v-for="(v,i) in secondaryMaterialOptions" :key="i" :label="v.documentsubDisplayname"
                             :value="v.id"> </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="字段名称" required>
-                    <el-input v-model="addForm.fieldName" @change="getPinyin"></el-input>
+                <el-form-item label="字段名称" required prop="fieldName">
+                    <el-input ref="fieldName" v-model="addForm.fieldName" @change="getPinyin"></el-input>
                 </el-form-item>
-                <el-form-item label="字段编号" required>
+                <el-form-item label="字段编号" required prop="fieldNo" @keyup.enter.native="addField">
                     <el-input v-model="addForm.fieldNo"></el-input>
                 </el-form-item>
                 <el-form-item label="定义字段名称">
@@ -582,6 +582,7 @@ export default {
                 note: "",
                 approvalItemAndDocumentsubId: '',
                 fieldNo: '',
+                fieldName: '',
             },
             editDialogVisible: false,
             editForm: {
@@ -634,7 +635,30 @@ export default {
             typeOptions: defs.map(v => ({ value: v.value, label: v.label })),
             // 批量删除loading
             loadingDelete: false,
-            btnLoading:false
+            btnLoading:false,
+            rules: {
+                materialId: [
+                    {
+                        required: true, message: '请选择', trigger: 'change', 
+                    }
+                ],
+                approvalItemAndDocumentsubId: [
+                    {
+                        required: true, message: '请选择', trigger: 'change', 
+                    }
+                ],
+                fieldName: [
+                    {
+                        required: true, message: '请输入', trigger: 'blur' 
+                    }
+                ],
+                fieldNo: [
+                    {
+                        required: true, message: '请输入', trigger: 'blur' 
+                    }
+                ],
+                
+            }
         };
     },
     computed: {
@@ -644,6 +668,17 @@ export default {
         }),
         options(){
             return getMapping()
+        }
+    },
+    watch:{
+        addDialogVisible:{
+            handler(v) {
+                if(v) {
+                    this.$nextTick (()=>{
+                        this.$refs.fieldName.focus();
+                    })
+                }
+            }
         }
     },
     async created() {
@@ -736,6 +771,8 @@ export default {
         // 打开添加弹窗
         async addFiledOpen() {
             this.addDialogVisible = true;
+            this.addForm.fieldName = undefined;
+            this.addForm.fieldNo = undefined;
             let params = {
                 // globalDocumentSubName:this.globalDocumentSubName,
                 // checkpointName:this.checkpointName,
@@ -780,21 +817,24 @@ export default {
         },
         // 添加
         async addField() {
-            this.addForm.approvalItemId = this.itemId
-            this.addForm.materialId = this.addForm.materialId
-            let result = await addField(
-                this.addForm
-            )
-            if (!result.success) {
-                this.$message.warning('添加失败');
-                return;
-            }
-            this.addDialogVisible = false;
-            this.reloadTable();
-            this.$message({ type: "success", message: "添加成功" })
-
+            this.$refs.addForms.validate(async(valid) => {
+                if(valid) {
+                    this.addForm.approvalItemId = this.itemId
+                    this.addForm.materialId = this.addForm.materialId
+                    let result = await addField(
+                        this.addForm
+                    )
+                    if (!result.success) {
+                        this.$message.warning('添加失败');
+                        return;
+                    }
+                    this.addDialogVisible = false;
+                    this.reloadTable();
+                    this.$message({ type: "success", message: "添加成功" })
+                }
+            })
+            
         },
-
         // 处理编辑
         async handleEdit(scope) {
             if(scope.row.materialId) {
@@ -1243,7 +1283,7 @@ export default {
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-        }
+        },
     }
 };
 </script>
