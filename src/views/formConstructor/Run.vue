@@ -93,7 +93,7 @@ export default {
         await this.init();
 
         let result = await this.loadAll();
-        
+        console.log(result, '测试')
         this.stepsData = result[0].data.map(v => {
 
             if (typeof v.stepObject.configFn == "string" && v.stepObject.configFn.indexOf('function') > -1) {
@@ -108,7 +108,7 @@ export default {
                
             return { ...v.stepObject, stepPagenum: v.stepPagenum }
         }).sort((a, b) => a.stepPagenum - b.stepPagenum)
-
+        console.log(this.stepsData, '===')
         this.allFields = result[1].data.map(v => ({ id: v.id, fieldType: v.fieldType, fieldName: v.fieldName,
                 remark: v.remark,
                 children: v.children, ...v.object })).map(deserializeTableData);
