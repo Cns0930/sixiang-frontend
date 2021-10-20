@@ -194,6 +194,7 @@ export default {
         height: 548px;
         .left {
             width: 413px;
+            height: calc(100% - 50px);
             .title {
                 height: 50px;
                 background: #f4f0e7;
