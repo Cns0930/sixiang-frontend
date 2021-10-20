@@ -20,7 +20,7 @@
                             </div>
                             <div class="two-content">
                                 <div class="two-item" v-for="(ele, index) in item.ruleList" :key="ele.ruleId">
-                                    <span class="index-content">{{index+1}}</span><span>{{ele.rulePoint}}</span>
+                                    <span class="index-content">{{index+1}}</span><span>{{ele.ruleDesc}}</span>
                                 </div>
                             </div>
                         </div>
