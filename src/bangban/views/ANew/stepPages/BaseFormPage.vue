@@ -115,7 +115,6 @@ export default {
             return this.itemState["fact1"].value
         },
         fieldsGroup() {
-            console.log(config,'config 测试====')
             if (this.config.every(v => _.isString(v))) {
                 return [{
                     fact: '',
@@ -153,7 +152,6 @@ export default {
         }
     },
     async created() {
-        console.log(this.fieldsGroup, 'fieldsGroup++++++++++++++++++++++++++++++')
         if (this.hasQueryDefaultInfo) {
             this.executeAfterEnterFn();
             return;
