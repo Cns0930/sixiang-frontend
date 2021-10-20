@@ -177,8 +177,6 @@ export default {
                 this.getImageInfo(this.figureList[this.leftRight].id);
             }
         },
-        toBig() {
-        }
     }
 
 }
@@ -237,7 +235,7 @@ export default {
                 }
                 .two-item {
                     width: 100%;
-                    height: 22px;
+                    min-height: 22px;
                     font-size: 16px;
                     font-weight: 400;
                     text-align: left;
