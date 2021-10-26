@@ -34,7 +34,7 @@ Vue.use(VueCompositionAPI)
 Vue.directive('btn', {
     inserted: function (el, binding) {
         if(store.state.config.roles.includes('admin')) return
-        if(store.state.config.roles.includes('project-sales')) {
+        if(store.state.config.roles.length === 1 && store.state.config.roles.includes('project-sales')) {
             el.style = "display:none"
         }
     }
