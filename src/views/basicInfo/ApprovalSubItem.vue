@@ -1,19 +1,34 @@
 <template>
     <div class="workWrap">
         <header>情形管理</header>
-        <el-button @click="addDialogVisible = true" type="primary" style="margin-bottom:10px">添加</el-button>
+        <div class="top-content">
+            <el-input v-model="tips" type="textarea" style="width: 330px" placeholder="无情形提示语" :autosize="{ minRows: 1, maxRows: 4 }" ></el-input>
+            <!-- <el-button v-if="tips === ''" type="success" style="margin-left: 10px" @click="addTips(1)">新增</el-button> -->
+            <el-button type="success" style="margin-left: 10px" @click="addTips(2)">修改</el-button>
+        </div>
+        <div style="display:flex;align-items:flex-start">
+            <el-upload class="upload-demo" action=""  accept=".jpg,.png,.pdf," :http-request="httpRequest" :before-upload="beforeAvatarUpload" :on-remove="removeFile()" :limit="1" :file-list="fileList">
+                <el-button size="small" type="primary">上传提示语附件</el-button> 
+                <div slot="tip" class="el-upload__tip">更新文件的操作：先点叉，再重新上传。只能上传jpg/png/pdf文件。</div>
+                <div slot="tip" class="el-upload__tip">上传后只支持替换、暂不支持删除，请谨慎操作。</div>
+            </el-upload>
+            <el-button type="success" @click="toDownload()">下载</el-button>
+        </div>
+       
+       <el-divider />
+        <el-button @click="addDialogVisible = true" type="primary" style="margin-bottom:10px">添加情形</el-button>
         <el-button @click="handleImport()" type="primary" style="margin-bottom:10px">导入情形</el-button>
         <!-- <el-switch v-model="isExpand" active-text="列表展开" inactive-text="列表收起" active-color="#13ce66"
             inactive-color="#ff4949" @change="changeExpand"></el-switch> -->
         <el-table :data="tableData" border :row-style="{height:'60px'}" :header-row-style="{height:'50px'}"
-            :default-expand-all="isExpand">
+            :default-expand-all="isExpand" :cell-style="{'font-weight': 700}">
             <el-table-column type="expand">
                 <template slot-scope="scope">
                     <div class="title-box">
                         <span style="margin-right: 20px">关联一级材料</span>
-                        <el-switch v-model="scope.row.materialShow" active-color="#13ce66" inactive-color="#ff4949">
+                        <el-switch v-model="scope.row.materialShow" active-color="#808080" inactive-color="#F5F5F5">
                         </el-switch>
-                        <el-button type="primary" style="margin-left: 20px"
+                        <el-button style="margin-left: 20px"
                             @click="addText(0,scope.row.material.length,scope.row.material)">+新增</el-button>
                     </div>
                     <el-table v-if="scope.row.materialShow" :data="scope.row.material" border
@@ -77,9 +92,9 @@
                     </el-table>
                     <div class="title-box">
                         <span style="margin-right: 20px">关联二级材料</span>
-                        <el-switch v-model="scope.row.documentShow" active-color="#13ce66" inactive-color="#ff4949">
+                        <el-switch v-model="scope.row.documentShow" active-color="#808080" inactive-color="#F5F5F5">
                         </el-switch>
-                        <el-button type="primary" style="margin-left: 20px"
+                        <el-button style="margin-left: 20px"
                             @click="addTextAI(0, scope.row.documentSub.length, scope.row.documentSub)">+新增</el-button>
                     </div>
                     <el-table v-if="scope.row.documentShow" :data="scope.row.documentSub" border
@@ -143,11 +158,12 @@
             </el-table-column>
             <el-table-column prop="subitem.subitemName" label="情形" show-overflow-tooltip></el-table-column>
             <el-table-column prop="subitem.aliasName" label="别名" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="subitem.tips" label="提示语" width="200px" show-overflow-tooltip></el-table-column>
             <el-table-column prop="subitem.materialName" label="所需材料" :formatter="formatterMaterial"
                 show-overflow-tooltip></el-table-column>
             <el-table-column prop="subitem.note" label="备注" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="subitem.createTime" label="创建时间" :formatter="timeFormatter" width="160">
-            </el-table-column>
+            <!-- <el-table-column prop="subitem.createTime" label="创建时间" :formatter="timeFormatter" width="160">
+            </el-table-column> -->
             <el-table-column prop="subitem.updateTime" label="更新时间" :formatter="timeFormatter" width="160">
             </el-table-column>
             <el-table-column label="操作">
@@ -172,6 +188,9 @@
                 </el-form-item>
                 <el-form-item label="情形别名">
                     <el-input v-model="addForm.aliasName"></el-input>
+                </el-form-item>
+                <el-form-item label="提示语">
+                    <el-input v-model="addForm.tips"></el-input>
                 </el-form-item>
                 <el-form-item label="备注">
                     <el-input v-model="addForm.note"></el-input>
@@ -202,6 +221,9 @@
                 </el-form-item>
                 <el-form-item label="情形别名">
                     <el-input v-model="editForm.aliasName"></el-input>
+                </el-form-item>
+                <el-form-item label="提示语">
+                    <el-input v-model="editForm.tips"></el-input>
                 </el-form-item>
                 <el-form-item label="备注">
                     <el-input v-model="editForm.note"></el-input>
@@ -280,7 +302,8 @@ import { getApprovalSub,
 } from "@/api/basicInfo/approvalSub"
 import { getAllByApprovalItemId } from "@/api/basicInfo/field";
 import { listApprovalItemByUser, copyApprovalSub, listProjectAll } from "@/api/basicInfo/approval";
-import { listDocumentSubByItemId } from '@/api/basicInfo/ApprovalRules';
+import { listDocumentSubByItemId, api_queryTips, api_addOrUpdateTips, api_listAdditional, api_uploadWord, api_downloadWord } from '@/api/basicInfo/ApprovalRules';
+import { singleDownload } from "@/utils/download.js"
 import dayjs from "dayjs"
 
 export default {
@@ -339,6 +362,8 @@ export default {
             // AI材料关联
             AIMOptions: [],
             flagCount: 0,
+            fileList: [],
+            tips:"",
         };
     },
     computed: {
@@ -350,6 +375,8 @@ export default {
         // 获取项目信息
         await this.initProject();
         await this.init();
+        await this.getQueryTips();
+        await this.getListAdditional();
         this.reloadTable();
         this.getBangBanOptions();
         this.getAIMOptions();
@@ -387,7 +414,8 @@ export default {
                 "aliasName": this.addForm.aliasName,
                 "approvalItemId": this.itemId,
                 "note": this.addForm.note,
-                "subitemName": this.addForm.subitemName
+                "subitemName": this.addForm.subitemName,
+                "tips": this.addForm.tips
             })
             if (!result.success) return;
             this.addDialogVisible = false;
@@ -755,6 +783,68 @@ export default {
                 return true;
             }
             return false;
+        },
+        removeFile(e) {
+        },
+        async addTips(index) {
+            const { itemId } = this.$route.query;
+            let obj = {
+                approvalItemId: itemId,
+                tips: this.tips,
+            }
+            const result = await api_addOrUpdateTips(obj);
+            if (result.code !== 200) {
+                return
+            }
+            if (index === 1) {
+                this.$message.success("新增成功")
+            } else {
+                this.$message.success("修改成功")
+            }
+        },
+        async getQueryTips() {
+            const { itemId } = this.$route.query;
+            const result = await api_queryTips({approvalItemId: itemId});
+            if (result.code !== 200) {
+                return
+            };
+            this.tips = result.data && result.data.tips;
+        },
+        async getListAdditional () {
+            const { itemId } = this.$route.query;
+            const result = await api_listAdditional({ approvalItemId: itemId,type: "tips" });
+            if(result.code !== 200 ) {
+                return
+            }
+            if(result.data.length>0) {
+                let obj = {
+                    name: result.data[0].filePath.substring(result.data[0].filePath.lastIndexOf("\/") + 1),
+                    url:result.data[0].filePath,
+                }
+                this.fileList.push(obj)
+            }
+        },
+        beforeAvatarUpload (e) {
+        },
+        async httpRequest (e) {
+            const { itemId } = this.$route.query;
+            let fd = new FormData();
+            fd.append("file",e.file);
+            fd.append("type",'tips');
+            fd.append("operateUser",localStorage.getItem("username"));
+            fd.append("approvalItemId",itemId)
+            const result = await api_uploadWord(fd);
+            if (result.code !== 200 ) {
+                return
+            }   
+        },
+        toDownload() {
+            const { itemId } = this.$route.query;
+            let obj = {
+                approvalItemId: itemId,
+                type:'tips'
+            };
+            singleDownload(obj,`/superform/additional/downloadWord`);
         }
     }
 };
@@ -773,10 +863,20 @@ export default {
         letter-spacing: 1px;
     }
     .title-box {
-        font-size: 16px;
-        font-weight: bold;
+        font-size: 14px;
+        // font-weight: bold;
         line-height: 40px;
         letter-spacing: 1px;
+    }
+    .upload-demo {
+        margin: 10px 0;
+        width: 30%;
+    }
+    .top-content {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        margin-bottom: 10px;
     }
 }
 </style>

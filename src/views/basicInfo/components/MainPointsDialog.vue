@@ -20,7 +20,7 @@
                             </div>
                             <div class="two-content">
                                 <div class="two-item" v-for="(ele, index) in item.ruleList" :key="ele.ruleId">
-                                    <span class="index-content">{{index+1}}</span><span>{{ele.rulePoint}}</span>
+                                    <span class="index-content">{{index+1}}</span><span>{{ele.ruleDesc}}</span>
                                 </div>
                             </div>
                         </div>
@@ -177,8 +177,6 @@ export default {
                 this.getImageInfo(this.figureList[this.leftRight].id);
             }
         },
-        toBig() {
-        }
     }
 
 }
@@ -196,6 +194,7 @@ export default {
         height: 548px;
         .left {
             width: 413px;
+            height: calc(100% - 50px);
             .title {
                 height: 50px;
                 background: #f4f0e7;
@@ -237,7 +236,7 @@ export default {
                 }
                 .two-item {
                     width: 100%;
-                    height: 22px;
+                    min-height: 22px;
                     font-size: 16px;
                     font-weight: 400;
                     text-align: left;

@@ -26,20 +26,18 @@
                         </el-input>
                     </el-form-item> -->
                     <el-form-item label="补充业务信息描述" class="ruleItem">
-                        <div style="display:flex;align-items:flex-end">
-                            <div>
-                            <div v-for="(item,i) in extraInfoList" :key="i" class="ruleItems">
-                                <el-input v-model="item.keyValue" placeholder="请填入业务信息key值" clearable style="width:40%">
-                                </el-input>
-                                <el-input v-model="item.labelValue" placeholder="请填入业务信息value值" style="width:40%" clearable>
-                                </el-input>
-                                <i v-if="extraInfoList.length>1" style="margin-left:10px;color:red;cursor: pointer;"
+                        <div v-for="(item,i) in extraInfoList" :key="i" class="ruleItems">
+                            <el-input v-model="item.keyValue" placeholder="请填入业务信息key值" clearable style="width:40%">
+                            </el-input>
+                            <el-input v-model="item.labelValue" placeholder="请填入业务信息value值" style="width:40%" clearable>
+                            </el-input>
+                            <i v-if="extraInfoList.length>1" style="margin-left:10px;color:red;cursor: pointer;"
                                 class="el-icon-delete" @click="deletInputs(i)"></i>
-                            </div>
+                            <!-- </div> -->
                         </div>
                         <i class="el-icon-plus" style="margin-left:10px;color:#409EFF;cursor: pointer;"
                             @click="addExtraInfoList()"></i>
-                        </div>
+                        <!-- </div> -->
                     </el-form-item>
                     <el-form-item label="事项类型(如新增/变更)" prop="itemType">
                         <el-input v-model="tempItem.itemType">
@@ -77,6 +75,8 @@
                         <div style="margin-left:82px"> 
                             查询类事项：
                         <el-checkbox v-model="tempItem.featureScope.enquiry" @change="handleEnquiry">查询</el-checkbox>
+                        <el-checkbox v-model="tempItem.featureScope.facialAuth">人脸识别</el-checkbox>
+                        <el-checkbox v-model="tempItem.featureScope.isPage">是否分页</el-checkbox>
                         </div>
                     </el-form-item>
                 </el-form>
@@ -172,11 +172,15 @@ export default {
                 this.tempItem.featureScope.bangban = false;
                 this.tempItem.featureScope.yujian = false;
                 this.tempItem.featureScope.submit = false;
+                this.tempItem.featureScope.facialAuth = true;
+                this.tempItem.featureScope.isPage = true;
             }
         },
         checkConflict(v){
             if(v){
                 this.tempItem.featureScope.enquiry = false;
+                this.tempItem.featureScope.facialAuth = false;
+                this.tempItem.featureScope.isPage = false;
             }
         }
     }

@@ -125,7 +125,8 @@ export default {
             this.currentClickButton = '事项名';
             let newItem = await this.getRoleApprovalId(item);
             if (!newItem) return;
-            console.log('newItem', newItem);
+            console.log('newItem', newItem,);
+            this.$store.commit("changeProject", item);
             this.$store.commit("changeItem", newItem);
             sessionStorage.setItem("itemInfo", newItem);
             sessionStorage.setItem('activeName', 'approvalDetail');

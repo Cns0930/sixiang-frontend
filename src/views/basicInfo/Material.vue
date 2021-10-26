@@ -61,10 +61,10 @@
                     :row-style="{height:'60px'}" :header-row-style="{height:'50px'}" tooltip-effect="dark"
                     :default-sort="{prop: 'navigationOrder', order: 'ascending'}" :height="tableHeight">
                     <el-table-column label="序号" type="index" width="50px" :index="indexMethod"></el-table-column>
-                    <el-table-column prop="materialName" label="材料展示名称" width="200" show-overflow-tooltip>
+                    <el-table-column prop="materialName" label="产品前端材料名称" width="200" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="documentSeq" label="文档序号" width="50px">
-                    </el-table-column>
+                    <!-- <el-table-column prop="documentSeq" label="文档序号" width="50px">
+                    </el-table-column> -->
                     <el-table-column prop="isNavigation" label="是否材料清单展示" width="90px"
                         :formatter="isRequiredFormatter">
                     </el-table-column>
@@ -151,19 +151,19 @@
                             </div> -->
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="材料展示名称">
+                    <el-form-item label="产品前端材料名称">
                         <el-input v-model="materialT.materialName"></el-input>
                     </el-form-item>
-                    <el-form-item label="文档序号">
+                    <!-- <el-form-item label="文档序号">
                         <el-input v-model="materialT.documentSeq"></el-input>
-                    </el-form-item>
+                    </el-form-item> -->
                     <el-form-item label="超级帮办word模板名称">
                         <el-input v-model="materialT.docxTemplateName"></el-input>
                     </el-form-item>
                     <el-form-item label="模板名称(自取)">
                         <el-input v-model="materialT.templateName"></el-input>
                     </el-form-item>
-                    <el-form-item label="是否材料清单展示">
+                    <el-form-item label="材料清单是否在产品前端展示">
                         <el-select v-model="materialT.isNavigation">
                             <el-option label="是" :value="Number(1)"></el-option>
                             <el-option label="否" :value="Number(0)"></el-option>
@@ -171,6 +171,9 @@
                     </el-form-item>
                     <el-form-item label="材料清单展示顺序">
                         <el-input v-model="materialT.navigationOrder" placeholder="请输入数字"></el-input>
+                    </el-form-item>
+                    <el-form-item label="材料展示逻辑说明">
+                        <el-input type="textarea" :rows="3" v-model="materialT.descriptionInfo"></el-input>
                     </el-form-item>
                     <el-form-item label="是否必须上传">
                         <el-select v-model="materialT.uploadRequired" clearable>
@@ -180,9 +183,6 @@
                     </el-form-item>
                     <el-form-item label="上传逻辑说明">
                         <el-input v-model="materialT.uploadDescription"></el-input>
-                    </el-form-item>
-                    <el-form-item label="材料逻辑">
-                        <el-input type="textarea" :rows="3" v-model="materialT.descriptionInfo"></el-input>
                     </el-form-item>
                     <div>
                         <el-form-item label="产生方式">
@@ -241,13 +241,13 @@
         <el-dialog title="编辑材料信息" :visible.sync="editMaterialWriteVisible" width="40%" :close-on-click-modal="false">
             <el-form :model="materialTEdit" label-width="30%" class="demo-ruleForm">
                 <div>
-                    <el-form-item label="材料名称">
+                    <el-form-item label="产品前端材料名称">
                         <el-input v-model="materialTEdit.materialName"></el-input>
                     </el-form-item>
-                    <el-form-item label="文档序号">
+                    <!-- <el-form-item label="文档序号">
                         <el-input v-model="materialTEdit.documentSeq"></el-input>
-                    </el-form-item>
-                    <el-form-item label="是否材料清单展示">
+                    </el-form-item> -->
+                    <el-form-item label="材料清单是否在产品前端展示">
                         <el-select v-model="materialTEdit.isNavigation">
                             <el-option label="是" :value="Number(1)"></el-option>
                             <el-option label="否" :value="Number(0)"></el-option>

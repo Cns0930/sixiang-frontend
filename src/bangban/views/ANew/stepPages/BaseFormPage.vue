@@ -115,7 +115,6 @@ export default {
             return this.itemState["fact1"].value
         },
         fieldsGroup() {
-
             if (this.config.every(v => _.isString(v))) {
                 return [{
                     fact: '',
