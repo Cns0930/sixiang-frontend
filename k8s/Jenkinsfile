@@ -22,7 +22,7 @@ pipeline {
             steps {
 
                 echo "2.Maven Build Stage"
-                sh 'sudo npm run build'
+                sh 'npm run build'
             }
         }
         stage('Image Build') {
