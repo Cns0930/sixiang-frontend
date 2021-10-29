@@ -20,8 +20,8 @@ pipeline {
         }
         stage('Maven Build') {
             steps {
-
                 echo "2.Maven Build Stage"
+                sh 'ls;pwd;'
                 sh 'npm run build'
             }
         }
