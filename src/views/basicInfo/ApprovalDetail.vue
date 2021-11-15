@@ -5,7 +5,7 @@
                 <span class="title">事项详情</span>
             </header>
             <div class="handleBox">
-                <el-button type="primary" icon="el-icon-edit" style="margin-left: 20px" @click="edit">编辑事项</el-button>
+                <el-button type="primary" icon="el-icon-edit" style="margin-left: 20px" @click="edit">编辑基本信息</el-button>
             </div>
             <div class="workBox">
                 <el-form :inline="true" :model="formInline" class="formStyle demo-form" label-width="100px"
@@ -91,6 +91,24 @@
                 </div>
             </div>
         </div>
+
+        <div class="extraHandleBox">
+            <header>
+                <span class="title">文字信息</span>
+            </header>
+            <div class="handleBox">
+                <el-button type="primary" icon="el-icon-edit" style="margin-left: 20px" @click="dialogExtrasVisible=true">配置文字信息</el-button>
+            </div>
+            <div class="workBox">
+                <el-form :inline="true" :model="extrasInline" class="formStyle demo-form" label-width="100px"
+                    label-position="left">
+                    <el-form-item label="办事指南：">
+                        <div class="formItem"><span>{{ extrasInline.manual }}</span></div>
+                    </el-form-item>
+                </el-form>
+            </div>
+        </div>
+
         <!-- 事项编辑弹窗 -->
         <EditItemInfoDialog ref="editDialog" @changeDetil="updateEdit" />
         <!-- 事项多版本查看导入 -->
@@ -311,6 +329,34 @@
                 <el-button @click="reuseDialogVisible = false">关闭</el-button>
             </span>
         </el-dialog>
+
+        <el-dialog title="事项文字信息配置" :visible.sync="dialogExtrasVisible" width="50%" :close-on-click-modal="false"
+        :before-close="closeExtraDialog">
+            <div class="attribute-content">
+                <el-form :model="extrasInline" :inline="false" label-position="left"
+                    class="demo-form-inline">
+                    <el-form-item label="办事指南" prop="manual">
+                        <!-- <TEXTEditor v-model="extrasInline.manual" ref="editorManual"
+                            style="width: 380px">
+                        </TEXTEditor> -->
+                        <el-input
+                            type="textarea"
+                            :autosize="{ minRows: 2, maxRows: 10}"
+                            placeholder="请输入内容"
+                            v-model="extrasInline.manual">
+                        </el-input>
+                    </el-form-item>
+                    </el-form>
+                </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="closeExtraDialog">
+                    取消
+                </el-button>
+                <el-button type="primary" @click="editExtras">
+                    确定
+                </el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -330,7 +376,8 @@ import EditItemInfoDialog from "./basicInfoComponents/EditItemInfoDialog"
 import {
     getByApprovalItemId, submitItemInfo,
     listVersionItem, obtainVersionItem, addSysVersionItem, listSysGitVersionLog,
-    deleteSysGitVersion, listMachines, listHistoryRecord
+    deleteSysGitVersion, listMachines, listHistoryRecord,
+    getExtras, editExtras
 } from "@/api/basicInfo/approval"
 import {
     listApprovalItem, listProjectAll, copyVersionItem
@@ -405,7 +452,10 @@ export default {
                 { value: 'bug处理' },
             ],
             saveStep: '',
-            pushStep: ''
+            pushStep: '',
+            extrasInline: {
+            },
+            dialogExtrasVisible: false,
         }
     },
     computed: {
@@ -425,6 +475,7 @@ export default {
     },
     async mounted() {
         await this.getOptions();
+        await this.getExtraMap();
     },
     methods: {
         async getOptions() {
@@ -444,6 +495,26 @@ export default {
                 }];
             }
             this.formInline = Object.assign({}, this.formInline, this.itemInfo)
+        },
+        async getExtraMap(){
+            console.log("111")
+            let res = await getExtras({approvalItemId: this.itemId})
+            if(res.success){
+                this.extrasInline = res.data;
+            }
+        },
+        async editExtras(){
+            let res = await editExtras({approvalItemId: this.itemId, extrasMap: this.extrasInline});
+            if (res.success) {
+                this.$message.success('修改成功');
+                this.dialogExtrasVisible = false;
+            } else {
+                this.$message.warning('修改失败');
+            }
+        },
+        async closeExtraDialog(){
+            await this.getExtraMap();
+            this.dialogExtrasVisible=false;
         },
         async downLoad(url) {
             let res = await axios({
@@ -742,7 +813,7 @@ export default {
         box-sizing: border-box;
         background: #fff;
         .formStyle {
-            margin-left: 40px;
+            margin-left: 30px;
             font-size: 20px;
             display: flex;
             flex-direction: column;
@@ -780,6 +851,12 @@ export default {
                 }
             }
         }
+    }
+    .extraHandleBox {
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
     }
     .searchBox {
         margin-top: 10px;

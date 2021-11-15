@@ -126,3 +126,9 @@ export const apidelectFileByPath = params => { return axios.post('/ss/Import/del
 
 // 查询所有事项-分页-可筛选项目,事项,开发阶段,标签
 export const apilistAllApprovalItem = params => { return axios.get('/ss/approvalItem/listAllApprovalItem', { params }).then(res => res.data) }
+
+// 查询事项其他文字信息配置
+export const getExtras = params => { return axios.get('/ss/Extras/getByApprovalItemId', { params }).then(res => res.data) }
+
+// 修改事项其他文字信息配置
+export const editExtras = params => { return axios.post('/ss/Extras/editByApprovalItemId', params).then(res => res.data) }
