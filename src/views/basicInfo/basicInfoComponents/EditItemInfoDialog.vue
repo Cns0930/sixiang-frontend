@@ -78,6 +78,13 @@
                         <el-checkbox v-model="tempItem.featureScope.facialAuth">人脸识别</el-checkbox>
                         <el-checkbox v-model="tempItem.featureScope.isPage">是否分页</el-checkbox>
                         </div>
+                           <div style="margin-left:82px"> 
+                            是否为“一件事事项”：
+                            <el-checkbox v-model="tempItem.featureScope.isGroup">是</el-checkbox>
+                           </div>
+                            <div style="margin-left:82px" v-if="tempItem.featureScope.isGroup"> 
+                              内部事项编号：<InputArray v-model="tempItem.featureScope.subItemInternalNo" placeholder="多个编号,隔开"> </InputArray>
+                            </div>
                     </el-form-item>
                 </el-form>
             </div>
@@ -95,6 +102,7 @@
 
 <script>
 import { mixin } from "@/mixin/mixin"
+import { InputArray } from "@/views/attributeComponents/defRendererComponents/defRendererComponents";
 import axios from 'axios'
 // 接口
 import {
@@ -103,6 +111,7 @@ import {
 
 export default {
     mixins: [mixin],
+    components: { InputArray },
     data() {
         return {
             // 初始事项参数
