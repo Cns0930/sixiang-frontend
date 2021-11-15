@@ -670,6 +670,7 @@ export default {
             if (res.success) {
                 this.$message.success('导入事项数据成功！');
                 this.dialogVisibleVersion = false;
+                await this.getExtraMap();
             } else {
                 this.$message.warning('导入事项数据失败！');
             }
