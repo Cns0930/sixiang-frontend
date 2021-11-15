@@ -79,11 +79,11 @@
                         <el-checkbox v-model="tempItem.featureScope.isPage">是否分页</el-checkbox>
                         </div>
                            <div style="margin-left:82px"> 
-                            是否为“一件事事项”：
+                            是否为“一件事”：
                             <el-checkbox v-model="tempItem.featureScope.isGroup">是</el-checkbox>
                            </div>
                             <div style="margin-left:82px" v-if="tempItem.featureScope.isGroup"> 
-                              内部事项编号：<InputArray v-model="tempItem.featureScope.subItemInternalNo" placeholder="多个编号,隔开"> </InputArray>
+                              关联内部事项编号：<InputArray v-model="tempItem.featureScope.subItemInternalNo" placeholder="多个编号,隔开"> </InputArray>
                             </div>
                     </el-form-item>
                 </el-form>
